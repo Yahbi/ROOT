@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <!-- ROOT — Fully Autonomous AI System -->
+    <key>Label</key>
+    <string>com.root.ai</string>
+
+    <!-- Working directory -->
+    <key>WorkingDirectory</key>
+    <string>/Users/yohan/Desktop/ROOT</string>
+
+    <!-- Command: use venv python -->
+    <key>ProgramArguments</key>
+    <array>
+        <string>/Users/yohan/Desktop/ROOT/.venv/bin/python</string>
+        <string>-m</string>
+        <string>backend.main</string>
+    </array>
+
+    <!-- Environment variables (loaded from .env by dotenv, but set PATH) -->
+    <key>EnvironmentVariables</key>
+    <dict>
+        <key>PATH</key>
+        <string>/Users/yohan/Desktop/ROOT/.venv/bin:/usr/local/bin:/usr/bin:/bin</string>
+        <key>PYTHONPATH</key>
+        <string>/Users/yohan/Desktop/ROOT</string>
+    </dict>
+
+    <!-- Start at login -->
+    <key>RunAtLoad</key>
+    <true/>
+
+    <!-- Restart on crash (max 3 attempts per 60 seconds) -->
+    <key>KeepAlive</key>
+    <dict>
+        <key>SuccessfulExit</key>
+        <false/>
+    </dict>
+    <key>ThrottleInterval</key>
+    <integer>20</integer>
+
+    <!-- Logging -->
+    <key>StandardOutPath</key>
+    <string>/Users/yohan/Desktop/ROOT/logs/root-stdout.log</string>
+    <key>StandardErrorPath</key>
+    <string>/Users/yohan/Desktop/ROOT/logs/root-stderr.log</string>
+
+    <!-- Resource limits -->
+    <key>SoftResourceLimits</key>
+    <dict>
+        <key>NumberOfFiles</key>
+        <integer>4096</integer>
+    </dict>
+</dict>
+</plist>

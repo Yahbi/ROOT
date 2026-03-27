@@ -1,0 +1,81 @@
+2026-03-09 22:16:05,689 [root.security] INFO: API key auth: DISABLED (dev mode — no ROOT_API_KEY set)
+2026-03-09 22:16:05,690 [root.security] INFO: Rate limiter: 100 requests/minute per IP
+2026-03-09 22:16:05,690 [root.security] INFO: Security headers: ACTIVE (6 headers)
+INFO:     Started server process [10858]
+INFO:     Waiting for application startup.
+2026-03-09 22:16:05,690 [root] INFO: ============================================================
+2026-03-09 22:16:05,690 [root] INFO:   ROOT v0.3.0 — Personal AI System — Starting Up
+2026-03-09 22:16:05,690 [root] INFO: ============================================================
+2026-03-09 22:16:05,691 [root.bootstrap] INFO: Memory already bootstrapped (325 entries), skipping
+2026-03-09 22:16:05,691 [root] INFO: Memory engine: 325 entries
+2026-03-09 22:16:05,691 [root] INFO: Conversation store: ready (session=sess_5b267c19e1bc)
+2026-03-09 22:16:05,699 [root.skills] INFO: Loaded 32 skills from /Users/yohan/Desktop/ROOT/data/skills
+2026-03-09 22:16:05,699 [root] INFO: Skill engine: 32 skills loaded
+2026-03-09 22:16:05,700 [root] INFO: Self-dev engine: maturity=mastery
+2026-03-09 22:16:05,700 [root.hooks] INFO: Hook registered: boot_logger on on_startup
+2026-03-09 22:16:05,700 [root.hooks] INFO: Hook registered: interaction_counter on on_chat
+2026-03-09 22:16:05,700 [root.hooks] INFO: Hook registered: memory_logger on on_learn
+2026-03-09 22:16:05,700 [root.hooks] INFO: Hook registered: error_capture on on_error
+2026-03-09 22:16:05,700 [root.hooks] INFO: Hook registered: skill_reindex on on_skill_create
+2026-03-09 22:16:05,700 [root.hooks] INFO: ROOT startup hook fired
+2026-03-09 22:16:05,700 [root] INFO: Hook engine: 5 hooks registered
+2026-03-09 22:16:05,700 [root.agents] INFO: Registered agent: ROOT (root)
+2026-03-09 22:16:05,700 [root.agents] INFO: Registered agent: HERMES (hermes)
+2026-03-09 22:16:05,700 [root.agents] INFO: Registered agent: ASTRA (astra)
+2026-03-09 22:16:05,700 [root.agents] INFO: Registered agent: MiRo (miro)
+2026-03-09 22:16:05,700 [root.agents] INFO: Registered agent: Trading Swarm (swarm)
+2026-03-09 22:16:05,700 [root.agents] INFO: Registered agent: Builder (builder)
+2026-03-09 22:16:05,700 [root.agents] INFO: Registered agent: Researcher (researcher)
+2026-03-09 22:16:05,700 [root.agents] INFO: Registered agent: Coder (coder)
+2026-03-09 22:16:05,700 [root.agents] INFO: Registered agent: Writer (writer)
+2026-03-09 22:16:05,700 [root.agents] INFO: Registered agent: Analyst (analyst)
+2026-03-09 22:16:05,700 [root.agents] INFO: Registered agent: Guardian (guardian)
+2026-03-09 22:16:05,700 [root] INFO: Agent registry: 11 agents (connectors pending LLM)
+2026-03-09 22:16:05,700 [root] INFO: Money engine: Strategy Council ready
+2026-03-09 22:16:05,700 [root.plugins] INFO: Plugin registered: System Tools (2 tools)
+2026-03-09 22:16:05,700 [root.plugins] INFO: Plugin registered: Web Tools (2 tools)
+2026-03-09 22:16:05,700 [root.plugins] INFO: Plugin registered: Calculator (1 tools)
+2026-03-09 22:16:05,700 [root.plugins] INFO: Plugin registered: File Manager (2 tools)
+2026-03-09 22:16:05,700 [root.plugins] INFO: Plugin registered: Quick Notes (2 tools)
+2026-03-09 22:16:05,701 [root.plugins] INFO: Plugin registered: Shell Executor (1 tools)
+2026-03-09 22:16:05,701 [root.plugins] INFO: Plugin registered: Reminders (2 tools)
+2026-03-09 22:16:05,701 [root.plugins] INFO: Plugin registered: Code Analyzer (1 tools)
+2026-03-09 22:16:05,701 [root.plugins] INFO: Plugin registered: Financial Intelligence (3 tools)
+2026-03-09 22:16:05,701 [root.plugins] INFO: Plugin registered: Decision Analysis (2 tools)
+2026-03-09 22:16:05,701 [root] INFO: Plugin engine: 10 plugins, 18 tools
+2026-03-09 22:16:05,896 [root] INFO: LLM service: CONNECTED (OpenAI GPT)
+2026-03-09 22:16:05,896 [root] INFO: Interest engine: ready (Yohan's interest filter active)
+2026-03-09 22:16:05,896 [root] INFO: Brain: ONLINE (full reasoning + plugins + skills + interest filter)
+2026-03-09 22:16:05,896 [root] INFO: Internal agent connectors: 5 agents wired with LLM + tools
+2026-03-09 22:16:05,896 [root] INFO: Builder agent: initialized
+2026-03-09 22:16:05,897 [root] INFO: ============================================================
+2026-03-09 22:16:05,897 [root] INFO:   ROOT v0.3.0 is ALIVE — ONLINE mode
+2026-03-09 22:16:05,897 [root] INFO:   Maturity: mastery (100%)
+2026-03-09 22:16:05,897 [root] INFO:   Memories: 325 | Skills: 32 | Agents: 11 | Plugins: 10
+2026-03-09 22:16:05,897 [root] INFO:   Builder: ACTIVE (auto-improving every 5 min)
+2026-03-09 22:16:05,897 [root] INFO:   Dashboard: http://127.0.0.1:9000
+2026-03-09 22:16:05,897 [root] INFO: ============================================================
+2026-03-09 22:16:05,897 [root.builder] INFO: Builder Agent started (interval=300s)
+2026-03-09 22:16:05,897 [root.builder] INFO: Builder cycle #1 starting
+2026-03-09 22:16:05,897 [root.builder] INFO: Builder: no improvements needed this cycle
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:9000 (Press CTRL+C to quit)
+2026-03-09 22:16:16,040 [httpx] INFO: HTTP Request: GET http://localhost:5555/health "HTTP/1.1 200 OK"
+2026-03-09 22:16:24,348 [httpx] INFO: HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-03-09 22:16:24,352 [root.connectors.internal] INFO: [researcher] Tool call: web_web_search({"query": "current Bitcoin price"})
+2026-03-09 22:16:25,206 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=current+Bitcoin+price "HTTP/1.1 200 OK"
+2026-03-09 22:16:26,702 [httpx] INFO: HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-03-09 22:16:26,703 [root.connectors.internal] INFO: [researcher] Tool call: web_fetch_url({"url": "https://coinmarketcap.com/currencies/bitcoin/", "max_chars": 2000})
+2026-03-09 22:16:26,825 [httpx] INFO: HTTP Request: GET https://coinmarketcap.com/currencies/bitcoin/ "HTTP/1.1 200 OK"
+2026-03-09 22:16:26,857 [root.connectors.internal] INFO: [researcher] Tool call: web_fetch_url({"url": "https://www.coindesk.com/price/bitcoin", "max_chars": 2000})
+2026-03-09 22:16:27,184 [httpx] INFO: HTTP Request: GET https://www.coindesk.com/price/bitcoin "HTTP/1.1 200 OK"
+2026-03-09 22:16:27,223 [root.connectors.internal] INFO: [researcher] Tool call: web_fetch_url({"url": "https://finance.yahoo.com/quote/BTC-USD/", "max_chars": 2000})
+2026-03-09 22:16:27,623 [httpx] INFO: HTTP Request: GET https://finance.yahoo.com/quote/BTC-USD/ "HTTP/1.1 404 Not Found"
+2026-03-09 22:16:29,112 [httpx] INFO: HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-03-09 22:16:29,117 [root.connectors.internal] INFO: [researcher] Tool call: web_fetch_url({"url": "https://www.google.com/finance/quote/BTC-usd"})
+2026-03-09 22:16:29,467 [httpx] INFO: HTTP Request: GET https://www.google.com/finance/quote/BTC-usd "HTTP/1.1 200 OK"
+2026-03-09 22:16:29,892 [root.connectors.internal] INFO: [researcher] Tool call: web_fetch_url({"url": "https://www.binance.com/en/price/bitcoin"})
+2026-03-09 22:16:30,006 [httpx] INFO: HTTP Request: GET https://www.binance.com/en/price/bitcoin "HTTP/1.1 202 Accepted"
+2026-03-09 22:16:32,288 [httpx] INFO: HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-03-09 22:16:46,848 [httpx] INFO: HTTP Request: POST http://localhost:5555/auth/login "HTTP/1.1 303 See Other"
+2026-03-09 22:16:46,861 [httpx] INFO: HTTP Request: POST http://localhost:5555/api/astra/chat "HTTP/1.1 422 Unprocessable Content"

@@ -1,0 +1,1583 @@
+2026-03-13 11:38:03,981 [root.security] INFO: API key auth: DISABLED (dev mode — no ROOT_API_KEY set)
+2026-03-13 11:38:03,981 [root.security] INFO: Rate limiter: 100 requests/minute per IP
+2026-03-13 11:38:03,981 [root.security] INFO: Security headers: ACTIVE (6 headers)
+INFO:     Will watch for changes in these directories: ['/Users/yohan/Desktop/ROOT']
+INFO:     Uvicorn running on http://127.0.0.1:9000 (Press CTRL+C to quit)
+INFO:     Started reloader process [90547] using WatchFiles
+2026-03-13 11:38:04,205 [root.security] INFO: API key auth: DISABLED (dev mode — no ROOT_API_KEY set)
+2026-03-13 11:38:04,205 [root.security] INFO: Rate limiter: 100 requests/minute per IP
+2026-03-13 11:38:04,205 [root.security] INFO: Security headers: ACTIVE (6 headers)
+2026-03-13 11:38:04,262 [root.security] INFO: API key auth: DISABLED (dev mode — no ROOT_API_KEY set)
+2026-03-13 11:38:04,262 [root.security] INFO: Rate limiter: 100 requests/minute per IP
+2026-03-13 11:38:04,262 [root.security] INFO: Security headers: ACTIVE (6 headers)
+INFO:     Started server process [90550]
+INFO:     Waiting for application startup.
+2026-03-13 11:38:04,262 [root] INFO: ============================================================
+2026-03-13 11:38:04,262 [root] INFO:   ROOT v0.5.0 — Fully Autonomous AI — Starting Up
+2026-03-13 11:38:04,262 [root] INFO: ============================================================
+2026-03-13 11:38:04,267 [root.bootstrap] INFO: Memory already bootstrapped (545 entries), skipping
+2026-03-13 11:38:04,267 [root] INFO: Memory engine: 545 entries
+2026-03-13 11:38:04,267 [root] INFO: Conversation store: ready (session=sess_0acea071a257)
+2026-03-13 11:38:04,279 [root.skills] INFO: Loaded 32 skills from /Users/yohan/Desktop/ROOT/data/skills
+2026-03-13 11:38:04,279 [root] INFO: Skill engine: 32 skills loaded
+2026-03-13 11:38:04,280 [root] INFO: Self-dev engine: maturity=mastery
+2026-03-13 11:38:04,280 [root.hooks] INFO: Hook registered: boot_logger on on_startup
+2026-03-13 11:38:04,281 [root.hooks] INFO: Hook registered: interaction_counter on on_chat
+2026-03-13 11:38:04,281 [root.hooks] INFO: Hook registered: memory_logger on on_learn
+2026-03-13 11:38:04,281 [root.hooks] INFO: Hook registered: error_capture on on_error
+2026-03-13 11:38:04,281 [root.hooks] INFO: Hook registered: skill_reindex on on_skill_create
+2026-03-13 11:38:04,281 [root.hooks] INFO: ROOT startup hook fired
+2026-03-13 11:38:04,281 [root] INFO: Hook engine: 5 hooks registered
+2026-03-13 11:38:04,281 [root.agents] INFO: Registered agent: ASTRA (astra)
+2026-03-13 11:38:04,281 [root.agents] INFO: Registered agent: ROOT (root)
+2026-03-13 11:38:04,281 [root.agents] INFO: Registered agent: HERMES (hermes)
+2026-03-13 11:38:04,281 [root.agents] INFO: Registered agent: MiRo (miro)
+2026-03-13 11:38:04,281 [root.agents] INFO: Registered agent: Trading Swarm (swarm)
+2026-03-13 11:38:04,281 [root.agents] INFO: Registered agent: OpenClaw (openclaw)
+2026-03-13 11:38:04,281 [root.agents] INFO: Registered agent: Builder (builder)
+2026-03-13 11:38:04,281 [root.agents] INFO: Registered agent: Researcher (researcher)
+2026-03-13 11:38:04,281 [root.agents] INFO: Registered agent: Coder (coder)
+2026-03-13 11:38:04,281 [root.agents] INFO: Registered agent: Writer (writer)
+2026-03-13 11:38:04,281 [root.agents] INFO: Registered agent: Analyst (analyst)
+2026-03-13 11:38:04,281 [root.agents] INFO: Registered agent: Guardian (guardian)
+2026-03-13 11:38:04,281 [root] INFO: Agent registry: 12 agents
+2026-03-13 11:38:04,281 [root] INFO: Money engine: Strategy Council ready
+2026-03-13 11:38:04,281 [root.plugins] INFO: Plugin registered: System Tools (2 tools)
+2026-03-13 11:38:04,302 [root.plugins] INFO: Plugin registered: Web Tools (2 tools)
+2026-03-13 11:38:04,302 [root.plugins] INFO: Plugin registered: Calculator (1 tools)
+2026-03-13 11:38:04,302 [root.plugins] INFO: Plugin registered: File Manager (2 tools)
+2026-03-13 11:38:04,302 [root.plugins] INFO: Plugin registered: Quick Notes (2 tools)
+2026-03-13 11:38:04,302 [root.plugins] INFO: Plugin registered: Shell Executor (1 tools)
+2026-03-13 11:38:04,302 [root.plugins] INFO: Plugin registered: Reminders (2 tools)
+2026-03-13 11:38:04,302 [root.plugins] INFO: Plugin registered: Code Analyzer (1 tools)
+2026-03-13 11:38:04,302 [root.plugins] INFO: Plugin registered: Financial Intelligence (3 tools)
+2026-03-13 11:38:04,302 [root.plugins] INFO: Plugin registered: Decision Analysis (2 tools)
+2026-03-13 11:38:04,302 [root.plugins] INFO: Plugin registered: Alpaca Trading (6 tools)
+2026-03-13 11:38:04,302 [root.plugins] INFO: Alpaca Trading plugin: ACTIVE (paper mode)
+2026-03-13 11:38:04,303 [root] INFO: Plugin engine: 11 plugins, 24 tools
+2026-03-13 11:38:04,596 [root] INFO: LLM service: CONNECTED (OpenAI GPT)
+2026-03-13 11:38:04,596 [root] INFO: Interest engine: ready
+2026-03-13 11:38:04,597 [root] INFO: Brain: ONLINE
+2026-03-13 11:38:04,597 [root] INFO: All agent connectors wired: LLM + tools bound
+2026-03-13 11:38:04,597 [root] INFO: Message bus: ready
+2026-03-13 11:38:04,597 [root] INFO: Approval chain: LOW=auto | MED=notify | HIGH/CRIT=approve
+2026-03-13 11:38:04,597 [root] INFO: Agent collaboration: delegate/pipeline/fanout/council
+2026-03-13 11:38:04,597 [root] INFO: Proactive engine: 11 behaviors
+2026-03-13 11:38:04,597 [root] INFO: Autonomous loop: self-improving every 30min
+2026-03-13 11:38:04,597 [root] INFO: ============================================================
+2026-03-13 11:38:04,597 [root] INFO:   ROOT v0.5.0 ALIVE — ONLINE — FULLY AUTONOMOUS
+2026-03-13 11:38:04,597 [root] INFO:   Maturity: mastery (100%)
+2026-03-13 11:38:04,597 [root] INFO:   Memories: 545 | Skills: 32 | Agents: 12 | Plugins: 11
+2026-03-13 11:38:04,597 [root] INFO:   Autonomous: Builder + Proactive + Self-Improving Loop
+2026-03-13 11:38:04,597 [root] INFO:   Collaboration: Delegate | Pipeline | Fanout | Council
+2026-03-13 11:38:04,597 [root] INFO:   Approval: Auto(low) | Notify(med) | Approve(high/critical)
+2026-03-13 11:38:04,597 [root] INFO:   Dashboard: http://127.0.0.1:9000
+2026-03-13 11:38:04,597 [root] INFO: ============================================================
+2026-03-13 11:38:04,597 [root.proactive] INFO: Proactive engine starting with 11 behaviors
+2026-03-13 11:38:04,597 [root.autonomous] INFO: Autonomous loop started (interval=1800s)
+2026-03-13 11:38:04,597 [root.builder] INFO: Builder Agent started (interval=300s)
+2026-03-13 11:38:04,597 [root.builder] INFO: Builder cycle #1 starting
+2026-03-13 11:38:04,598 [root.builder] INFO: Builder: no improvements needed this cycle
+INFO:     Application startup complete.
+2026-03-13 11:38:06,599 [root.proactive] INFO: Proactive: running 'data_intelligence'
+2026-03-13 11:38:06,612 [root.connectors.openclaw] INFO: OpenClaw: running stage 'gaps'
+2026-03-13 11:38:06,615 [openclaw.gaps] INFO: Gap report saved to /tmp/openclaw/data/gap_report.json
+INFO:     127.0.0.1:65281 - "GET /api/health HTTP/1.1" 200 OK
+2026-03-13 11:38:08,599 [root.proactive] INFO: Proactive: running 'market_scanner'
+2026-03-13 11:38:09,599 [root.proactive] INFO: Proactive: running 'self_rewrite'
+2026-03-13 11:38:11,602 [httpx] INFO: HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-03-13 11:38:11,611 [root.connectors.swarm] INFO: [swarm] Tool: web_web_search({"query": "SPY current price and daily change"})
+2026-03-13 11:38:12,587 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=SPY+current+price+and+daily+change "HTTP/1.1 200 OK"
+2026-03-13 11:38:12,588 [root.connectors.swarm] INFO: [swarm] Tool: web_web_search({"query": "QQQ current price and daily change"})
+2026-03-13 11:38:13,496 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=QQQ+current+price+and+daily+change "HTTP/1.1 200 OK"
+2026-03-13 11:38:13,497 [root.connectors.swarm] INFO: [swarm] Tool: web_web_search({"query": "BTC current price and daily change"})
+2026-03-13 11:38:14,369 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=BTC+current+price+and+daily+change "HTTP/1.1 200 OK"
+2026-03-13 11:38:14,370 [root.connectors.swarm] INFO: [swarm] Tool: web_web_search({"query": "major stock market news October 25 2023"})
+2026-03-13 11:38:15,200 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=major+stock+market+news+October+25+2023 "HTTP/1.1 200 OK"
+2026-03-13 11:38:15,201 [root.connectors.swarm] INFO: [swarm] Tool: web_web_search({"query": "Bitcoin news October 25 2023"})
+2026-03-13 11:38:16,023 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=Bitcoin+news+October+25+2023 "HTTP/1.1 200 OK"
+2026-03-13 11:38:19,176 [httpx] INFO: HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-03-13 11:38:19,179 [root.connectors.swarm] INFO: [swarm] Tool: web_fetch_url({"url": "https://www.marketwatch.com/investing/fund/SPY"})
+2026-03-13 11:38:19,316 [httpx] INFO: HTTP Request: GET https://www.marketwatch.com/investing/fund/SPY "HTTP/1.1 401 HTTP Forbidden"
+2026-03-13 11:38:19,317 [root.connectors.swarm] INFO: [swarm] Tool: web_fetch_url({"url": "https://finance.yahoo.com/quote/QQQ/"})
+2026-03-13 11:38:19,373 [httpx] INFO: HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-03-13 11:38:19,600 [root.proactive] INFO: Proactive: running 'skill_discovery'
+2026-03-13 11:38:19,642 [httpx] INFO: HTTP Request: GET https://finance.yahoo.com/quote/QQQ/ "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:65351 - "GET /api/autonomous/status HTTP/1.1" 200 OK
+2026-03-13 11:38:19,828 [root.connectors.swarm] INFO: [swarm] Tool: web_fetch_url({"url": "https://finance.yahoo.com/quote/BTC-USD/"})
+2026-03-13 11:38:20,428 [httpx] INFO: HTTP Request: GET https://finance.yahoo.com/quote/BTC-USD/ "HTTP/1.1 404 Not Found"
+2026-03-13 11:38:20,429 [root.connectors.swarm] INFO: [swarm] Tool: web_fetch_url({"url": "https://www.nasdaq.com/articles/stock-market-news-for-oct-25-2023"})
+2026-03-13 11:38:20,796 [httpx] INFO: HTTP Request: GET https://www.nasdaq.com/articles/stock-market-news-for-oct-25-2023 "HTTP/1.1 200 OK"
+2026-03-13 11:38:20,814 [root.connectors.swarm] INFO: [swarm] Tool: web_fetch_url({"url": "https://www.coindesk.com/price/bitcoin"})
+2026-03-13 11:38:21,189 [httpx] INFO: HTTP Request: GET https://www.coindesk.com/price/bitcoin "HTTP/1.1 200 OK"
+2026-03-13 11:38:21,600 [root.proactive] INFO: Proactive: running 'knowledge_consolidation'
+2026-03-13 11:38:27,343 [httpx] INFO: HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-03-13 11:38:28,875 [httpx] INFO: HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-03-13 11:38:28,974 [watchfiles.main] INFO: 1 change detected
+2026-03-13 11:38:34,600 [root.proactive] INFO: Proactive: running 'health_monitor'
+2026-03-13 11:38:41,599 [root.proactive] INFO: Proactive: running 'miro_prediction'
+2026-03-13 11:38:42,599 [root.proactive] INFO: Proactive: running 'opportunity_scanner'
+2026-03-13 11:38:44,130 [httpx] INFO: HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-03-13 11:38:44,135 [root.connectors.miro] INFO: [miro] Tool: web_web_search({"query": "current AI trading trends October 2023"})
+2026-03-13 11:38:44,442 [httpx] INFO: HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-03-13 11:38:44,452 [root.connectors.internal] INFO: [researcher] Tool call: web_web_search({"query": "latest developments in AI development October 2023"})
+2026-03-13 11:38:44,600 [root.proactive] INFO: Proactive: running 'agent_evolution'
+2026-03-13 11:38:45,090 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=current+AI+trading+trends+October+2023 "HTTP/1.1 200 OK"
+2026-03-13 11:38:45,091 [root.connectors.miro] INFO: [miro] Tool: web_web_search({"query": "latest advancements in autonomous agent systems"})
+2026-03-13 11:38:45,372 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=latest+developments+in+AI+development+October+2023 "HTTP/1.1 200 OK"
+2026-03-13 11:38:45,374 [root.connectors.internal] INFO: [researcher] Tool call: web_web_search({"query": "new innovations in trading strategies October 2023"})
+2026-03-13 11:38:45,977 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=latest+advancements+in+autonomous+agent+systems "HTTP/1.1 200 OK"
+2026-03-13 11:38:45,979 [root.connectors.miro] INFO: [miro] Tool: web_web_search({"query": "real estate data intelligence innovations 2023"})
+2026-03-13 11:38:46,276 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=new+innovations+in+trading+strategies+October+2023 "HTTP/1.1 200 OK"
+2026-03-13 11:38:46,278 [root.connectors.internal] INFO: [researcher] Tool call: web_web_search({"query": "recent advancements in real estate data October 2023"})
+2026-03-13 11:38:46,901 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=real+estate+data+intelligence+innovations+2023 "HTTP/1.1 200 OK"
+2026-03-13 11:38:47,322 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=recent+advancements+in+real+estate+data+October+2023 "HTTP/1.1 200 OK"
+2026-03-13 11:38:47,323 [root.connectors.internal] INFO: [researcher] Tool call: web_web_search({"query": "latest trends in automation technology October 2023"})
+2026-03-13 11:38:47,599 [root.proactive] INFO: Proactive: running 'github_scanner'
+2026-03-13 11:38:48,538 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=latest+trends+in+automation+technology+October+2023 "HTTP/1.1 200 OK"
+2026-03-13 11:38:49,957 [httpx] INFO: HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-03-13 11:38:49,960 [root.connectors.internal] INFO: [researcher] Tool call: web_web_search({"query": "latest trending AI repositories GitHub 2023"})
+2026-03-13 11:38:50,148 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=latest+trending+AI+repositories+GitHub+2023 "HTTP/1.1 202 Accepted"
+2026-03-13 11:38:50,149 [root.connectors.internal] INFO: [researcher] Tool call: web_web_search({"query": "latest AI agent frameworks 2023"})
+2026-03-13 11:38:50,353 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=latest+AI+agent+frameworks+2023 "HTTP/1.1 202 Accepted"
+2026-03-13 11:38:50,354 [root.connectors.internal] INFO: [researcher] Tool call: web_web_search({"query": "new AI trading finance projects 2023"})
+2026-03-13 11:38:50,574 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=new+AI+trading+finance+projects+2023 "HTTP/1.1 202 Accepted"
+2026-03-13 11:38:50,575 [root.connectors.internal] INFO: [researcher] Tool call: web_web_search({"query": "local LLM inference improvements 2023"})
+2026-03-13 11:38:50,780 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=local+LLM+inference+improvements+2023 "HTTP/1.1 202 Accepted"
+2026-03-13 11:38:50,781 [root.connectors.internal] INFO: [researcher] Tool call: web_web_search({"query": "latest AI automation tools 2023"})
+2026-03-13 11:38:50,983 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=latest+AI+automation+tools+2023 "HTTP/1.1 202 Accepted"
+2026-03-13 11:38:51,608 [httpx] INFO: HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-03-13 11:38:51,610 [root.connectors.miro] INFO: [miro] Tool: web_fetch_url({"url": "https://www.trade-ideas.com/2023/10/31/trading-insights-october-market-trends-and-analysis/"})
+2026-03-13 11:38:52,034 [httpx] INFO: HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-03-13 11:38:52,037 [root.connectors.internal] INFO: [researcher] Tool call: web_fetch_url({"url": "https://www.constructdigital.com/blogs-all/latest-developments-in-ai-october-2023-edition"})
+2026-03-13 11:38:52,354 [httpx] INFO: HTTP Request: GET https://www.trade-ideas.com/2023/10/31/trading-insights-october-market-trends-and-analysis/ "HTTP/1.1 200 OK"
+2026-03-13 11:38:52,357 [root.connectors.miro] INFO: [miro] Tool: web_fetch_url({"url": "https://ubos.tech/ai-developments-and-trends-in-october-2023/"})
+2026-03-13 11:38:52,668 [httpx] INFO: HTTP Request: GET https://www.constructdigital.com/blogs-all/latest-developments-in-ai-october-2023-edition "HTTP/1.1 200 OK"
+2026-03-13 11:38:52,671 [root.connectors.internal] INFO: [researcher] Tool call: web_fetch_url({"url": "https://www.marketmasters.chat/blog/The-Future-of-Trading-The-Role-of-Innovation-and-Technology"})
+2026-03-13 11:38:52,962 [httpx] INFO: HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-03-13 11:38:52,969 [root.connectors.internal] INFO: [researcher] Tool call: web_web_search({"query": "latest trending AI repositories GitHub 2023"})
+2026-03-13 11:38:53,006 [httpx] INFO: HTTP Request: GET https://www.marketmasters.chat/blog/The-Future-of-Trading-The-Role-of-Innovation-and-Technology "HTTP/1.1 200 OK"
+2026-03-13 11:38:53,043 [root.connectors.internal] INFO: [researcher] Tool call: web_fetch_url({"url": "https://www.realtor.com/research/october-2023-data/"})
+2026-03-13 11:38:53,164 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=latest+trending+AI+repositories+GitHub+2023 "HTTP/1.1 202 Accepted"
+2026-03-13 11:38:53,165 [root.connectors.internal] INFO: [researcher] Tool call: web_web_search({"query": "latest AI agent frameworks GitHub 2023"})
+2026-03-13 11:38:53,352 [httpx] INFO: HTTP Request: GET https://www.realtor.com/research/october-2023-data/ "HTTP/1.1 200 OK"
+2026-03-13 11:38:53,355 [root.connectors.internal] INFO: [researcher] Tool call: web_fetch_url({"url": "https://smartbridge.com/2023-automation-trends-unlock-the-future-of-intelligent-automation/"})
+2026-03-13 11:38:53,375 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=latest+AI+agent+frameworks+GitHub+2023 "HTTP/1.1 202 Accepted"
+2026-03-13 11:38:53,376 [root.connectors.internal] INFO: [researcher] Tool call: web_web_search({"query": "new AI trading finance projects GitHub 2023"})
+2026-03-13 11:38:53,571 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=new+AI+trading+finance+projects+GitHub+2023 "HTTP/1.1 202 Accepted"
+2026-03-13 11:38:53,572 [root.connectors.internal] INFO: [researcher] Tool call: web_web_search({"query": "local LLM inference improvements GitHub 2023"})
+2026-03-13 11:38:53,593 [httpx] INFO: HTTP Request: GET https://ubos.tech/ai-developments-and-trends-in-october-2023/ "HTTP/1.1 200 OK"
+2026-03-13 11:38:53,764 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=local+LLM+inference+improvements+GitHub+2023 "HTTP/1.1 202 Accepted"
+2026-03-13 11:38:53,765 [root.connectors.internal] INFO: [researcher] Tool call: web_web_search({"query": "latest AI automation tools GitHub 2023"})
+2026-03-13 11:38:53,792 [root.connectors.miro] INFO: [miro] Tool: web_fetch_url({"url": "https://www.researchgate.net/publication/389505727_Latest_Advances_in_Agentic_AI_Architectures_Frameworks_Technical_Capabilities_and_Applications"})
+2026-03-13 11:38:53,927 [httpx] INFO: HTTP Request: GET https://www.researchgate.net/publication/389505727_Latest_Advances_in_Agentic_AI_Architectures_Frameworks_Technical_Capabilities_and_Applications "HTTP/1.1 403 Forbidden"
+2026-03-13 11:38:53,927 [root.connectors.miro] INFO: [miro] Tool: web_fetch_url({"url": "https://www.linkedin.com/pulse/latest-advances-agentic-ai-architectures-frameworks-ramachandran-ry3fe"})
+2026-03-13 11:38:53,954 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=latest+AI+automation+tools+GitHub+2023 "HTTP/1.1 202 Accepted"
+INFO:     127.0.0.1:65478 - "GET /api/autonomous/proactive/actions HTTP/1.1" 200 OK
+2026-03-13 11:38:54,161 [httpx] INFO: HTTP Request: GET https://smartbridge.com/2023-automation-trends-unlock-the-future-of-intelligent-automation/ "HTTP/1.1 200 OK"
+2026-03-13 11:38:55,495 [httpx] INFO: HTTP Request: GET https://www.linkedin.com/pulse/latest-advances-agentic-ai-architectures-frameworks-ramachandran-ry3fe "HTTP/1.1 200 OK"
+2026-03-13 11:38:55,508 [root.connectors.miro] INFO: [miro] Tool: web_fetch_url({"url": "https://www.mckinsey.com/industries/real-estate/our-insights/generative-ai-can-change-real-estate-but-the-industry-must-change-to-reap-the-benefits"})
+2026-03-13 11:38:55,730 [httpx] INFO: HTTP Request: GET https://www.mckinsey.com/industries/real-estate/our-insights/generative-ai-can-change-real-estate-but-the-industry-must-change-to-reap-the-benefits "HTTP/1.1 200 OK"
+2026-03-13 11:38:57,644 [httpx] INFO: HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-03-13 11:38:57,646 [root.connectors.internal] INFO: [researcher] Tool call: web_web_search({"query": "latest trending AI repositories GitHub 2023"})
+2026-03-13 11:38:57,846 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=latest+trending+AI+repositories+GitHub+2023 "HTTP/1.1 202 Accepted"
+2026-03-13 11:38:57,847 [root.connectors.internal] INFO: [researcher] Tool call: web_web_search({"query": "latest AI agent frameworks 2023"})
+2026-03-13 11:38:58,041 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=latest+AI+agent+frameworks+2023 "HTTP/1.1 202 Accepted"
+2026-03-13 11:38:58,043 [root.connectors.internal] INFO: [researcher] Tool call: web_web_search({"query": "new AI trading finance projects 2023"})
+2026-03-13 11:38:58,247 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=new+AI+trading+finance+projects+2023 "HTTP/1.1 202 Accepted"
+2026-03-13 11:38:58,247 [root.connectors.internal] INFO: [researcher] Tool call: web_web_search({"query": "local LLM inference improvements 2023"})
+2026-03-13 11:38:58,444 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=local+LLM+inference+improvements+2023 "HTTP/1.1 202 Accepted"
+2026-03-13 11:38:58,445 [root.connectors.internal] INFO: [researcher] Tool call: web_web_search({"query": "latest AI automation tools 2023"})
+2026-03-13 11:38:58,599 [root.proactive] INFO: Proactive: running 'goal_tracker'
+2026-03-13 11:38:58,600 [root.proactive] ERROR: Proactive action 'goal_tracker' failed: MemoryEngine.search() got an unexpected keyword argument 'limit'
+2026-03-13 11:38:58,644 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=latest+AI+automation+tools+2023 "HTTP/1.1 202 Accepted"
+2026-03-13 11:39:01,343 [httpx] INFO: HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-03-13 11:39:01,345 [root.connectors.internal] INFO: [researcher] Tool call: web_web_search({"query": "trending AI repositories GitHub October 2023"})
+2026-03-13 11:39:01,539 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=trending+AI+repositories+GitHub+October+2023 "HTTP/1.1 202 Accepted"
+2026-03-13 11:39:01,540 [root.connectors.internal] INFO: [researcher] Tool call: web_web_search({"query": "new AI agent frameworks 2023 GitHub"})
+2026-03-13 11:39:01,557 [httpx] INFO: HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-03-13 11:39:01,737 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=new+AI+agent+frameworks+2023+GitHub "HTTP/1.1 202 Accepted"
+2026-03-13 11:39:01,738 [root.connectors.internal] INFO: [researcher] Tool call: web_web_search({"query": "AI trading finance projects 2023 GitHub"})
+2026-03-13 11:39:01,935 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=AI+trading+finance+projects+2023+GitHub "HTTP/1.1 202 Accepted"
+2026-03-13 11:39:01,935 [root.connectors.internal] INFO: [researcher] Tool call: web_web_search({"query": "local LLM inference improvements 2023 GitHub"})
+2026-03-13 11:39:02,184 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=local+LLM+inference+improvements+2023+GitHub "HTTP/1.1 202 Accepted"
+2026-03-13 11:39:02,185 [root.connectors.internal] INFO: [researcher] Tool call: web_web_search({"query": "AI automation tools 2023 GitHub"})
+2026-03-13 11:39:02,384 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=AI+automation+tools+2023+GitHub "HTTP/1.1 202 Accepted"
+INFO:     127.0.0.1:65511 - "GET /api/agents HTTP/1.1" 200 OK
+2026-03-13 11:39:05,021 [httpx] INFO: HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-03-13 11:39:05,023 [root.connectors.internal] INFO: [researcher] Tool call: web_web_search({"query": "trending AI repositories on GitHub October 2023"})
+2026-03-13 11:39:05,222 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=trending+AI+repositories+on+GitHub+October+2023 "HTTP/1.1 202 Accepted"
+2026-03-13 11:39:05,223 [root.connectors.internal] INFO: [researcher] Tool call: web_web_search({"query": "new AI agent frameworks GitHub 2023"})
+2026-03-13 11:39:05,493 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=new+AI+agent+frameworks+GitHub+2023 "HTTP/1.1 202 Accepted"
+2026-03-13 11:39:05,494 [root.connectors.internal] INFO: [researcher] Tool call: web_web_search({"query": "AI trading finance projects October 2023"})
+2026-03-13 11:39:05,690 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=AI+trading+finance+projects+October+2023 "HTTP/1.1 202 Accepted"
+2026-03-13 11:39:05,691 [root.connectors.internal] INFO: [researcher] Tool call: web_web_search({"query": "local LLM inference improvements GitHub 2023"})
+2026-03-13 11:39:05,881 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=local+LLM+inference+improvements+GitHub+2023 "HTTP/1.1 202 Accepted"
+2026-03-13 11:39:05,882 [root.connectors.internal] INFO: [researcher] Tool call: web_web_search({"query": "AI automation tools GitHub October 2023"})
+2026-03-13 11:39:06,086 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=AI+automation+tools+GitHub+October+2023 "HTTP/1.1 202 Accepted"
+2026-03-13 11:39:09,523 [httpx] INFO: HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-03-13 11:39:12,733 [httpx] INFO: HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-03-13 11:39:12,746 [root.connectors.internal] INFO: [analyst] Tool call: web_web_search({"query": "current trends in AI trading 2023"})
+2026-03-13 11:39:12,952 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=current+trends+in+AI+trading+2023 "HTTP/1.1 202 Accepted"
+2026-03-13 11:39:12,952 [root.connectors.internal] INFO: [analyst] Tool call: web_web_search({"query": "current trends in AI real estate 2023"})
+2026-03-13 11:39:13,152 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=current+trends+in+AI+real+estate+2023 "HTTP/1.1 202 Accepted"
+2026-03-13 11:39:13,153 [root.connectors.internal] INFO: [analyst] Tool call: web_web_search({"query": "current trends in autonomous systems 2023"})
+2026-03-13 11:39:13,365 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=current+trends+in+autonomous+systems+2023 "HTTP/1.1 202 Accepted"
+2026-03-13 11:39:13,367 [root.connectors.internal] INFO: [analyst] Tool call: web_web_search({"query": "risks of AI in trading 2023"})
+2026-03-13 11:39:13,376 [httpx] INFO: HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-03-13 11:39:13,584 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=risks+of+AI+in+trading+2023 "HTTP/1.1 202 Accepted"
+2026-03-13 11:39:13,586 [root.connectors.internal] INFO: [analyst] Tool call: web_web_search({"query": "risks of AI in real estate 2023"})
+2026-03-13 11:39:13,785 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=risks+of+AI+in+real+estate+2023 "HTTP/1.1 202 Accepted"
+2026-03-13 11:39:13,786 [root.connectors.internal] INFO: [analyst] Tool call: web_web_search({"query": "risks of autonomous systems 2023"})
+2026-03-13 11:39:13,987 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=risks+of+autonomous+systems+2023 "HTTP/1.1 202 Accepted"
+2026-03-13 11:39:17,493 [httpx] INFO: HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-03-13 11:39:17,499 [root.connectors.internal] INFO: [analyst] Tool call: web_web_search({"query": "current trends in AI trading 2023"})
+2026-03-13 11:39:17,809 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=current+trends+in+AI+trading+2023 "HTTP/1.1 202 Accepted"
+2026-03-13 11:39:17,810 [root.connectors.internal] INFO: [analyst] Tool call: web_web_search({"query": "current trends in AI real estate 2023"})
+2026-03-13 11:39:18,004 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=current+trends+in+AI+real+estate+2023 "HTTP/1.1 202 Accepted"
+2026-03-13 11:39:18,005 [root.connectors.internal] INFO: [analyst] Tool call: web_web_search({"query": "current trends in autonomous systems 2023"})
+2026-03-13 11:39:18,193 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=current+trends+in+autonomous+systems+2023 "HTTP/1.1 202 Accepted"
+2026-03-13 11:39:18,194 [root.connectors.internal] INFO: [analyst] Tool call: web_web_search({"query": "risks of AI in trading 2023"})
+2026-03-13 11:39:18,394 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=risks+of+AI+in+trading+2023 "HTTP/1.1 202 Accepted"
+2026-03-13 11:39:18,395 [root.connectors.internal] INFO: [analyst] Tool call: web_web_search({"query": "risks of AI in real estate 2023"})
+2026-03-13 11:39:18,586 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=risks+of+AI+in+real+estate+2023 "HTTP/1.1 202 Accepted"
+2026-03-13 11:39:18,587 [root.connectors.internal] INFO: [analyst] Tool call: web_web_search({"query": "risks of autonomous systems 2023"})
+2026-03-13 11:39:18,785 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=risks+of+autonomous+systems+2023 "HTTP/1.1 202 Accepted"
+2026-03-13 11:39:32,041 [httpx] INFO: HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-03-13 11:40:04,600 [root.autonomous] INFO: Autonomous cycle cycle_1 starting
+2026-03-13 11:40:07,351 [httpx] INFO: HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-03-13 11:40:07,359 [root.connectors.internal] INFO: [researcher] Tool call: web_web_search({"query": "how expanding knowledge base improves task routing accuracy"})
+2026-03-13 11:40:08,244 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=how+expanding+knowledge+base+improves+task+routing+accuracy "HTTP/1.1 200 OK"
+2026-03-13 11:40:10,043 [httpx] INFO: HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-03-13 11:40:10,045 [root.connectors.internal] INFO: [researcher] Tool call: web_fetch_url({"url": "https://us.fitgap.com/stack-guides/maintain-knowledge-base-accuracy-with-review-cadences-and-change-detection"})
+2026-03-13 11:40:11,175 [httpx] INFO: HTTP Request: GET https://us.fitgap.com/stack-guides/maintain-knowledge-base-accuracy-with-review-cadences-and-change-detection "HTTP/1.1 200 OK"
+2026-03-13 11:40:13,466 [httpx] INFO: HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-03-13 11:40:13,474 [root.autonomous] ERROR: Experiment exp_73bd91c2 failed: MemoryEngine.search() got an unexpected keyword argument 'limit'
+2026-03-13 11:40:13,476 [root.autonomous] INFO: Autonomous cycle cycle_1 complete: 2 proposed, 2 run, 1 kept
+2026-03-13 11:40:22,245 [watchfiles.main] INFO: 3 changes detected
+WARNING:  WatchFiles detected changes in 'backend/core/proactive_engine.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+2026-03-13 11:40:22,448 [root.proactive] INFO: Proactive engine stopped
+2026-03-13 11:40:22,448 [root.autonomous] INFO: Autonomous loop stopped
+2026-03-13 11:40:22,449 [root.builder] INFO: Builder Agent stopped
+2026-03-13 11:40:22,458 [root] INFO: === ROOT v0.5.0 shut down ===
+INFO:     Application shutdown complete.
+INFO:     Finished server process [90550]
+2026-03-13 11:40:22,778 [root.security] INFO: API key auth: DISABLED (dev mode — no ROOT_API_KEY set)
+2026-03-13 11:40:22,778 [root.security] INFO: Rate limiter: 100 requests/minute per IP
+2026-03-13 11:40:22,778 [root.security] INFO: Security headers: ACTIVE (6 headers)
+2026-03-13 11:40:22,833 [root.security] INFO: API key auth: DISABLED (dev mode — no ROOT_API_KEY set)
+2026-03-13 11:40:22,833 [root.security] INFO: Rate limiter: 100 requests/minute per IP
+2026-03-13 11:40:22,833 [root.security] INFO: Security headers: ACTIVE (6 headers)
+INFO:     Started server process [90701]
+INFO:     Waiting for application startup.
+2026-03-13 11:40:22,834 [root] INFO: ============================================================
+2026-03-13 11:40:22,834 [root] INFO:   ROOT v0.5.0 — Fully Autonomous AI — Starting Up
+2026-03-13 11:40:22,834 [root] INFO: ============================================================
+2026-03-13 11:40:22,834 [watchfiles.main] INFO: 8 changes detected
+2026-03-13 11:40:22,834 [root.bootstrap] INFO: Memory already bootstrapped (551 entries), skipping
+2026-03-13 11:40:22,834 [root] INFO: Memory engine: 551 entries
+2026-03-13 11:40:22,835 [root] INFO: Conversation store: ready (session=sess_769fcb3616a3)
+2026-03-13 11:40:22,844 [root.skills] INFO: Loaded 32 skills from /Users/yohan/Desktop/ROOT/data/skills
+2026-03-13 11:40:22,844 [root] INFO: Skill engine: 32 skills loaded
+2026-03-13 11:40:22,845 [root] INFO: Self-dev engine: maturity=mastery
+2026-03-13 11:40:22,845 [root.hooks] INFO: Hook registered: boot_logger on on_startup
+2026-03-13 11:40:22,845 [root.hooks] INFO: Hook registered: interaction_counter on on_chat
+2026-03-13 11:40:22,845 [root.hooks] INFO: Hook registered: memory_logger on on_learn
+2026-03-13 11:40:22,845 [root.hooks] INFO: Hook registered: error_capture on on_error
+2026-03-13 11:40:22,845 [root.hooks] INFO: Hook registered: skill_reindex on on_skill_create
+2026-03-13 11:40:22,845 [root.hooks] INFO: ROOT startup hook fired
+2026-03-13 11:40:22,845 [root] INFO: Hook engine: 5 hooks registered
+2026-03-13 11:40:22,845 [root.agents] INFO: Registered agent: ASTRA (astra)
+2026-03-13 11:40:22,845 [root.agents] INFO: Registered agent: ROOT (root)
+2026-03-13 11:40:22,845 [root.agents] INFO: Registered agent: HERMES (hermes)
+2026-03-13 11:40:22,845 [root.agents] INFO: Registered agent: MiRo (miro)
+2026-03-13 11:40:22,845 [root.agents] INFO: Registered agent: Trading Swarm (swarm)
+2026-03-13 11:40:22,846 [root.agents] INFO: Registered agent: OpenClaw (openclaw)
+2026-03-13 11:40:22,846 [root.agents] INFO: Registered agent: Builder (builder)
+2026-03-13 11:40:22,846 [root.agents] INFO: Registered agent: Researcher (researcher)
+2026-03-13 11:40:22,846 [root.agents] INFO: Registered agent: Coder (coder)
+2026-03-13 11:40:22,846 [root.agents] INFO: Registered agent: Writer (writer)
+2026-03-13 11:40:22,846 [root.agents] INFO: Registered agent: Analyst (analyst)
+2026-03-13 11:40:22,846 [root.agents] INFO: Registered agent: Guardian (guardian)
+2026-03-13 11:40:22,846 [root] INFO: Agent registry: 12 agents
+2026-03-13 11:40:22,846 [root] INFO: Money engine: Strategy Council ready
+2026-03-13 11:40:22,846 [root.plugins] INFO: Plugin registered: System Tools (2 tools)
+2026-03-13 11:40:22,864 [root.plugins] INFO: Plugin registered: Web Tools (2 tools)
+2026-03-13 11:40:22,864 [root.plugins] INFO: Plugin registered: Calculator (1 tools)
+2026-03-13 11:40:22,864 [root.plugins] INFO: Plugin registered: File Manager (2 tools)
+2026-03-13 11:40:22,864 [root.plugins] INFO: Plugin registered: Quick Notes (2 tools)
+2026-03-13 11:40:22,864 [root.plugins] INFO: Plugin registered: Shell Executor (1 tools)
+2026-03-13 11:40:22,864 [root.plugins] INFO: Plugin registered: Reminders (2 tools)
+2026-03-13 11:40:22,864 [root.plugins] INFO: Plugin registered: Code Analyzer (1 tools)
+2026-03-13 11:40:22,865 [root.plugins] INFO: Plugin registered: Financial Intelligence (3 tools)
+2026-03-13 11:40:22,865 [root.plugins] INFO: Plugin registered: Decision Analysis (2 tools)
+2026-03-13 11:40:22,865 [root.plugins] INFO: Plugin registered: Alpaca Trading (6 tools)
+2026-03-13 11:40:22,865 [root.plugins] INFO: Alpaca Trading plugin: ACTIVE (paper mode)
+2026-03-13 11:40:22,865 [root] INFO: Plugin engine: 11 plugins, 24 tools
+2026-03-13 11:40:23,075 [root] INFO: LLM service: CONNECTED (OpenAI GPT)
+2026-03-13 11:40:23,076 [root] INFO: Interest engine: ready
+2026-03-13 11:40:23,076 [root] INFO: Brain: ONLINE
+2026-03-13 11:40:23,076 [root] INFO: All agent connectors wired: LLM + tools bound
+2026-03-13 11:40:23,076 [root] INFO: Message bus: ready
+2026-03-13 11:40:23,076 [root] INFO: Approval chain: LOW=auto | MED=notify | HIGH/CRIT=approve
+2026-03-13 11:40:23,076 [root] INFO: Agent collaboration: delegate/pipeline/fanout/council
+2026-03-13 11:40:23,076 [root] INFO: Proactive engine: 11 behaviors
+2026-03-13 11:40:23,076 [root] INFO: Autonomous loop: self-improving every 30min
+2026-03-13 11:40:23,077 [root] INFO: ============================================================
+2026-03-13 11:40:23,077 [root] INFO:   ROOT v0.5.0 ALIVE — ONLINE — FULLY AUTONOMOUS
+2026-03-13 11:40:23,077 [root] INFO:   Maturity: mastery (100%)
+2026-03-13 11:40:23,077 [root] INFO:   Memories: 551 | Skills: 32 | Agents: 12 | Plugins: 11
+2026-03-13 11:40:23,077 [root] INFO:   Autonomous: Builder + Proactive + Self-Improving Loop
+2026-03-13 11:40:23,077 [root] INFO:   Collaboration: Delegate | Pipeline | Fanout | Council
+2026-03-13 11:40:23,077 [root] INFO:   Approval: Auto(low) | Notify(med) | Approve(high/critical)
+2026-03-13 11:40:23,077 [root] INFO:   Dashboard: http://127.0.0.1:9000
+2026-03-13 11:40:23,077 [root] INFO: ============================================================
+2026-03-13 11:40:23,077 [root.proactive] INFO: Proactive engine starting with 11 behaviors
+2026-03-13 11:40:23,077 [root.autonomous] INFO: Autonomous loop started (interval=1800s)
+2026-03-13 11:40:23,077 [root.builder] INFO: Builder Agent started (interval=300s)
+2026-03-13 11:40:23,077 [root.builder] INFO: Builder cycle #1 starting
+2026-03-13 11:40:23,078 [root.builder] INFO: Builder: no improvements needed this cycle
+INFO:     Application startup complete.
+2026-03-13 11:40:23,197 [watchfiles.main] INFO: 4 changes detected
+2026-03-13 11:40:38,078 [root.proactive] INFO: Proactive: running 'miro_prediction'
+2026-03-13 11:40:40,159 [httpx] INFO: HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-03-13 11:40:40,167 [root.connectors.miro] INFO: [miro] Tool: web_web_search({"query": "latest trends in AI trading 2023"})
+2026-03-13 11:40:41,123 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=latest+trends+in+AI+trading+2023 "HTTP/1.1 200 OK"
+2026-03-13 11:40:41,126 [root.connectors.miro] INFO: [miro] Tool: web_web_search({"query": "autonomous agent systems developments 2023"})
+2026-03-13 11:40:42,056 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=autonomous+agent+systems+developments+2023 "HTTP/1.1 200 OK"
+2026-03-13 11:40:42,057 [root.connectors.miro] INFO: [miro] Tool: web_web_search({"query": "real estate data intelligence tools 2023"})
+2026-03-13 11:40:42,979 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=real+estate+data+intelligence+tools+2023 "HTTP/1.1 200 OK"
+2026-03-13 11:40:47,079 [root.proactive] INFO: Proactive: running 'github_scanner'
+2026-03-13 11:40:48,917 [httpx] INFO: HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-03-13 11:40:48,923 [root.connectors.miro] INFO: [miro] Tool: web_fetch_url({"url": "https://www.forbes.com/councils/forbesbusinesscouncil/2023/07/17/embrace-the-future-but-proceed-with-caution-navigating-ai-in-trading/"})
+2026-03-13 11:40:49,044 [httpx] INFO: HTTP Request: GET https://www.forbes.com/councils/forbesbusinesscouncil/2023/07/17/embrace-the-future-but-proceed-with-caution-navigating-ai-in-trading/ "HTTP/1.1 403 Forbidden"
+2026-03-13 11:40:49,047 [root.connectors.miro] INFO: [miro] Tool: web_fetch_url({"url": "https://www.mdpi.com/2673-4591/56/1/254"})
+2026-03-13 11:40:49,743 [httpx] INFO: HTTP Request: GET https://www.mdpi.com/2673-4591/56/1/254 "HTTP/1.1 200 OK"
+2026-03-13 11:40:49,772 [root.connectors.miro] INFO: [miro] Tool: web_fetch_url({"url": "https://www.bcg.com/publications/2023/gpt-was-only-the-beginning-autonomous-agents-are-coming"})
+2026-03-13 11:40:49,834 [httpx] INFO: HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-03-13 11:40:49,840 [root.connectors.internal] INFO: [researcher] Tool call: web_web_search({"query": "latest trending AI repositories on GitHub 2023"})
+2026-03-13 11:40:50,712 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=latest+trending+AI+repositories+on+GitHub+2023 "HTTP/1.1 200 OK"
+2026-03-13 11:40:50,713 [root.connectors.internal] INFO: [researcher] Tool call: web_web_search({"query": "new agent frameworks AI 2023"})
+2026-03-13 11:40:51,108 [httpx] INFO: HTTP Request: GET https://www.bcg.com/publications/2023/gpt-was-only-the-beginning-autonomous-agents-are-coming "HTTP/1.1 200 OK"
+2026-03-13 11:40:51,178 [root.connectors.miro] INFO: [miro] Tool: web_fetch_url({"url": "https://www.mckinsey.com/capabilities/quantumblack/our-insights/seizing-the-agentic-ai-advantage"})
+2026-03-13 11:40:51,344 [httpx] INFO: HTTP Request: GET https://www.mckinsey.com/capabilities/quantumblack/our-insights/seizing-the-agentic-ai-advantage "HTTP/1.1 200 OK"
+2026-03-13 11:40:51,380 [root.connectors.miro] INFO: [miro] Tool: web_fetch_url({"url": "https://www.marketingmedia.solutions/software-and-tools/top-5-real-estate-data-providers-in-2023"})
+2026-03-13 11:40:51,630 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=new+agent+frameworks+AI+2023 "HTTP/1.1 200 OK"
+2026-03-13 11:40:51,631 [root.connectors.internal] INFO: [researcher] Tool call: web_web_search({"query": "trading AI projects GitHub 2023"})
+2026-03-13 11:40:51,643 [root.plugins] ERROR: Plugin tool web_fetch_url failed: [Errno 8] nodename nor servname provided, or not known
+2026-03-13 11:40:52,079 [root.proactive] INFO: Proactive: running 'health_monitor'
+2026-03-13 11:40:52,401 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=trading+AI+projects+GitHub+2023 "HTTP/1.1 200 OK"
+2026-03-13 11:40:52,403 [root.connectors.internal] INFO: [researcher] Tool call: web_web_search({"query": "local LLM inference improvements GitHub 2023"})
+2026-03-13 11:40:53,178 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=local+LLM+inference+improvements+GitHub+2023 "HTTP/1.1 200 OK"
+2026-03-13 11:40:53,179 [root.connectors.internal] INFO: [researcher] Tool call: web_web_search({"query": "AI automation tools GitHub 2023"})
+2026-03-13 11:40:54,040 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=AI+automation+tools+GitHub+2023 "HTTP/1.1 200 OK"
+2026-03-13 11:40:54,079 [root.proactive] INFO: Proactive: running 'market_scanner'
+2026-03-13 11:40:56,079 [root.proactive] INFO: Proactive: running 'goal_tracker'
+2026-03-13 11:40:56,227 [httpx] INFO: HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-03-13 11:40:56,230 [root.connectors.swarm] INFO: [swarm] Tool: web_web_search({"query": "SPY current price and news October 2023"})
+2026-03-13 11:40:57,044 [httpx] INFO: HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-03-13 11:40:57,045 [root.connectors.internal] INFO: [researcher] Tool call: web_fetch_url({"url": "https://github.com/trending"})
+2026-03-13 11:40:57,138 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=SPY+current+price+and+news+October+2023 "HTTP/1.1 200 OK"
+2026-03-13 11:40:57,139 [root.connectors.swarm] INFO: [swarm] Tool: web_web_search({"query": "QQQ current price and news October 2023"})
+2026-03-13 11:40:57,249 [httpx] INFO: HTTP Request: GET https://github.com/trending "HTTP/1.1 200 OK"
+2026-03-13 11:40:57,349 [root.connectors.internal] INFO: [researcher] Tool call: web_fetch_url({"url": "https://github.com/microsoft/agent-framework"})
+2026-03-13 11:40:58,070 [httpx] INFO: HTTP Request: GET https://github.com/microsoft/agent-framework "HTTP/1.1 200 OK"
+2026-03-13 11:40:58,078 [root.proactive] INFO: Proactive: running 'data_intelligence'
+2026-03-13 11:40:58,079 [root.connectors.openclaw] INFO: OpenClaw: running stage 'gaps'
+2026-03-13 11:40:58,084 [openclaw.gaps] INFO: Gap report saved to /tmp/openclaw/data/gap_report.json
+2026-03-13 11:40:58,139 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=QQQ+current+price+and+news+October+2023 "HTTP/1.1 200 OK"
+2026-03-13 11:40:58,141 [root.connectors.swarm] INFO: [swarm] Tool: web_web_search({"query": "BTC current price and news October 2023"})
+2026-03-13 11:40:58,153 [root.connectors.internal] INFO: [researcher] Tool call: web_fetch_url({"url": "https://github.com/vince-lam/awesome-local-llms"})
+2026-03-13 11:40:58,646 [httpx] INFO: HTTP Request: GET https://github.com/vince-lam/awesome-local-llms "HTTP/1.1 200 OK"
+2026-03-13 11:40:59,071 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=BTC+current+price+and+news+October+2023 "HTTP/1.1 200 OK"
+2026-03-13 11:41:00,078 [root.proactive] INFO: Proactive: running 'agent_evolution'
+2026-03-13 11:41:03,055 [httpx] INFO: HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-03-13 11:41:03,063 [root.connectors.swarm] INFO: [swarm] Tool: web_fetch_url({"url": "https://www.statmuse.com/money/ask/spy-price-in-october-2023"})
+2026-03-13 11:41:03,535 [httpx] INFO: HTTP Request: GET https://www.statmuse.com/money/ask/spy-price-in-october-2023 "HTTP/1.1 200 OK"
+2026-03-13 11:41:03,543 [root.connectors.swarm] INFO: [swarm] Tool: web_fetch_url({"url": "https://finance.yahoo.com/quote/QQQ/history/"})
+2026-03-13 11:41:03,713 [httpx] INFO: HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-03-13 11:41:03,909 [httpx] INFO: HTTP Request: GET https://finance.yahoo.com/quote/QQQ/history/ "HTTP/1.1 404 Not Found"
+2026-03-13 11:41:03,910 [root.connectors.swarm] INFO: [swarm] Tool: web_fetch_url({"url": "https://finance.yahoo.com/quote/BTC-USD/history/"})
+2026-03-13 11:41:04,240 [httpx] INFO: HTTP Request: GET https://finance.yahoo.com/quote/BTC-USD/history/ "HTTP/1.1 404 Not Found"
+2026-03-13 11:41:07,078 [root.proactive] INFO: Proactive: running 'knowledge_consolidation'
+2026-03-13 11:41:08,310 [httpx] INFO: HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-03-13 11:41:11,079 [root.proactive] INFO: Proactive: running 'skill_discovery'
+2026-03-13 11:41:11,279 [httpx] INFO: HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-03-13 11:41:12,078 [root.proactive] INFO: Proactive: running 'opportunity_scanner'
+2026-03-13 11:41:14,007 [httpx] INFO: HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-03-13 11:41:14,008 [root.connectors.internal] INFO: [researcher] Tool call: web_web_search({"query": "latest developments in AI development 2023"})
+2026-03-13 11:41:14,965 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=latest+developments+in+AI+development+2023 "HTTP/1.1 200 OK"
+2026-03-13 11:41:14,966 [root.connectors.internal] INFO: [researcher] Tool call: web_web_search({"query": "recent trends in trading strategies 2023"})
+2026-03-13 11:41:15,899 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=recent+trends+in+trading+strategies+2023 "HTTP/1.1 200 OK"
+2026-03-13 11:41:15,900 [root.connectors.internal] INFO: [researcher] Tool call: web_web_search({"query": "new developments in real estate data 2023"})
+2026-03-13 11:41:16,792 [httpx] INFO: HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-03-13 11:41:16,796 [root.connectors.internal] INFO: [analyst] Tool call: web_web_search({"query": "current market for AI trading tools 2023"})
+2026-03-13 11:41:16,806 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=new+developments+in+real+estate+data+2023 "HTTP/1.1 200 OK"
+2026-03-13 11:41:16,807 [root.connectors.internal] INFO: [researcher] Tool call: web_web_search({"query": "current advancements in automation 2023"})
+2026-03-13 11:41:17,730 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=current+advancements+in+automation+2023 "HTTP/1.1 200 OK"
+2026-03-13 11:41:17,810 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=current+market+for+AI+trading+tools+2023 "HTTP/1.1 200 OK"
+2026-03-13 11:41:17,811 [root.connectors.internal] INFO: [analyst] Tool call: web_web_search({"query": "integration of agentic AI in business processes 2023"})
+2026-03-13 11:41:18,715 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=integration+of+agentic+AI+in+business+processes+2023 "HTTP/1.1 200 OK"
+2026-03-13 11:41:18,716 [root.connectors.internal] INFO: [analyst] Tool call: web_web_search({"query": "real estate data intelligence tools market 2023"})
+2026-03-13 11:41:19,595 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=real+estate+data+intelligence+tools+market+2023 "HTTP/1.1 200 OK"
+2026-03-13 11:41:20,079 [root.proactive] INFO: Proactive: running 'self_rewrite'
+2026-03-13 11:41:20,290 [httpx] INFO: HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-03-13 11:41:20,298 [root.connectors.internal] INFO: [researcher] Tool call: web_fetch_url({"url": "https://www.zdnet.com/article/ai-in-2023-a-year-of-breakthroughs-that-left-no-human-thing-unchanged/"})
+2026-03-13 11:41:20,685 [httpx] INFO: HTTP Request: GET https://www.zdnet.com/article/ai-in-2023-a-year-of-breakthroughs-that-left-no-human-thing-unchanged/ "HTTP/1.1 200 OK"
+2026-03-13 11:41:20,718 [root.connectors.internal] INFO: [researcher] Tool call: web_fetch_url({"url": "https://daytraderbusiness.com/strategies/innovative-day-trading-strategies-for-2023/"})
+2026-03-13 11:41:21,262 [httpx] INFO: HTTP Request: GET https://daytraderbusiness.com/strategies/innovative-day-trading-strategies-for-2023/ "HTTP/1.1 200 OK"
+2026-03-13 11:41:21,266 [root.connectors.internal] INFO: [researcher] Tool call: web_fetch_url({"url": "https://americas.uli.org/emerging-trends-in-real-estate-2023/"})
+2026-03-13 11:41:21,440 [httpx] INFO: HTTP Request: GET https://americas.uli.org/emerging-trends-in-real-estate-2023/ "HTTP/1.1 403 Forbidden"
+2026-03-13 11:41:21,444 [root.connectors.internal] INFO: [researcher] Tool call: web_fetch_url({"url": "https://www.visualcomponents.com/blog/automation-and-robotics-trends-in-2023/"})
+2026-03-13 11:41:22,267 [httpx] INFO: HTTP Request: GET https://www.visualcomponents.com/blog/automation-and-robotics-trends-in-2023/ "HTTP/1.1 200 OK"
+2026-03-13 11:41:26,553 [httpx] INFO: HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-03-13 11:41:28,661 [httpx] INFO: HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-03-13 11:41:29,867 [httpx] INFO: HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-03-13 11:41:38,324 [httpx] INFO: HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-03-13 11:41:38,413 [watchfiles.main] INFO: 1 change detected
+2026-03-13 11:42:23,082 [root.autonomous] INFO: Autonomous cycle cycle_1 starting
+2026-03-13 11:42:24,267 [httpx] INFO: HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-03-13 11:42:24,269 [root.connectors.internal] INFO: [researcher] Tool call: web_web_search({"query": "expanding knowledge base improves task routing accuracy"})
+2026-03-13 11:42:25,271 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=expanding+knowledge+base+improves+task+routing+accuracy "HTTP/1.1 200 OK"
+2026-03-13 11:42:26,310 [httpx] INFO: HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-03-13 11:42:26,314 [root.connectors.internal] INFO: [researcher] Tool call: web_fetch_url({"url": "https://digitalworkplacegroup.com/knowledge-management-best-practices/"})
+2026-03-13 11:42:26,588 [httpx] INFO: HTTP Request: GET https://digitalworkplacegroup.com/knowledge-management-best-practices/ "HTTP/1.1 200 OK"
+2026-03-13 11:42:27,782 [httpx] INFO: HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-03-13 11:42:27,783 [root.connectors.internal] INFO: [researcher] Tool call: web_fetch_url({"url": "https://us.fitgap.com/stack-guides/maintain-knowledge-base-accuracy-with-review-cadences-and-change-detection"})
+2026-03-13 11:42:28,463 [httpx] INFO: HTTP Request: GET https://us.fitgap.com/stack-guides/maintain-knowledge-base-accuracy-with-review-cadences-and-change-detection "HTTP/1.1 200 OK"
+2026-03-13 11:42:31,967 [httpx] INFO: HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-03-13 11:42:31,970 [root.connectors.internal] INFO: [researcher] Tool call: notes_add_note({"content": "To maintain the accuracy of a knowledge base, it's essential to implement a system of review cadences and change detection. According to Fitgap (2026), the sustainable approach involves a)
+2026-03-13 11:42:35,475 [httpx] INFO: HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-03-13 11:42:35,482 [root.autonomous] ERROR: Experiment exp_4a584044 failed: MemoryEngine.search() got an unexpected keyword argument 'limit'
+2026-03-13 11:42:35,483 [root.autonomous] INFO: Autonomous cycle cycle_1 complete: 2 proposed, 2 run, 1 kept
+2026-03-13 11:44:44,032 [watchfiles.main] INFO: 1 change detected
+WARNING:  WatchFiles detected changes in 'backend/agents/connectors/miro.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+2026-03-13 11:44:44,215 [root.proactive] INFO: Proactive engine stopped
+2026-03-13 11:44:44,216 [root.autonomous] INFO: Autonomous loop stopped
+2026-03-13 11:44:44,216 [root.builder] INFO: Builder Agent stopped
+2026-03-13 11:44:44,228 [root] INFO: === ROOT v0.5.0 shut down ===
+INFO:     Application shutdown complete.
+INFO:     Finished server process [90701]
+2026-03-13 11:44:44,527 [root.security] INFO: API key auth: DISABLED (dev mode — no ROOT_API_KEY set)
+2026-03-13 11:44:44,527 [root.security] INFO: Rate limiter: 100 requests/minute per IP
+2026-03-13 11:44:44,527 [root.security] INFO: Security headers: ACTIVE (6 headers)
+2026-03-13 11:44:44,577 [root.security] INFO: API key auth: DISABLED (dev mode — no ROOT_API_KEY set)
+2026-03-13 11:44:44,577 [root.security] INFO: Rate limiter: 100 requests/minute per IP
+2026-03-13 11:44:44,577 [root.security] INFO: Security headers: ACTIVE (6 headers)
+INFO:     Started server process [90995]
+INFO:     Waiting for application startup.
+2026-03-13 11:44:44,577 [root] INFO: ============================================================
+2026-03-13 11:44:44,577 [root] INFO:   ROOT v0.5.0 — Fully Autonomous AI — Starting Up
+2026-03-13 11:44:44,577 [root] INFO: ============================================================
+2026-03-13 11:44:44,578 [root.bootstrap] INFO: Memory already bootstrapped (556 entries), skipping
+2026-03-13 11:44:44,578 [root] INFO: Memory engine: 556 entries
+2026-03-13 11:44:44,578 [root] INFO: Conversation store: ready (session=sess_53fb7830c646)
+2026-03-13 11:44:44,588 [root.skills] INFO: Loaded 32 skills from /Users/yohan/Desktop/ROOT/data/skills
+2026-03-13 11:44:44,588 [root] INFO: Skill engine: 32 skills loaded
+2026-03-13 11:44:44,588 [root] INFO: Self-dev engine: maturity=mastery
+2026-03-13 11:44:44,588 [root.hooks] INFO: Hook registered: boot_logger on on_startup
+2026-03-13 11:44:44,588 [root.hooks] INFO: Hook registered: interaction_counter on on_chat
+2026-03-13 11:44:44,588 [root.hooks] INFO: Hook registered: memory_logger on on_learn
+2026-03-13 11:44:44,588 [root.hooks] INFO: Hook registered: error_capture on on_error
+2026-03-13 11:44:44,588 [root.hooks] INFO: Hook registered: skill_reindex on on_skill_create
+2026-03-13 11:44:44,588 [root.hooks] INFO: ROOT startup hook fired
+2026-03-13 11:44:44,589 [root] INFO: Hook engine: 5 hooks registered
+2026-03-13 11:44:44,589 [root.agents] INFO: Registered agent: ASTRA (astra)
+2026-03-13 11:44:44,589 [root.agents] INFO: Registered agent: ROOT (root)
+2026-03-13 11:44:44,589 [root.agents] INFO: Registered agent: HERMES (hermes)
+2026-03-13 11:44:44,589 [root.agents] INFO: Registered agent: MiRo (miro)
+2026-03-13 11:44:44,589 [root.agents] INFO: Registered agent: Trading Swarm (swarm)
+2026-03-13 11:44:44,589 [root.agents] INFO: Registered agent: OpenClaw (openclaw)
+2026-03-13 11:44:44,589 [root.agents] INFO: Registered agent: Builder (builder)
+2026-03-13 11:44:44,589 [root.agents] INFO: Registered agent: Researcher (researcher)
+2026-03-13 11:44:44,589 [root.agents] INFO: Registered agent: Coder (coder)
+2026-03-13 11:44:44,589 [root.agents] INFO: Registered agent: Writer (writer)
+2026-03-13 11:44:44,589 [root.agents] INFO: Registered agent: Analyst (analyst)
+2026-03-13 11:44:44,589 [root.agents] INFO: Registered agent: Guardian (guardian)
+2026-03-13 11:44:44,589 [root] INFO: Agent registry: 12 agents
+2026-03-13 11:44:44,589 [root] INFO: Money engine: Strategy Council ready
+2026-03-13 11:44:44,589 [root.plugins] INFO: Plugin registered: System Tools (2 tools)
+2026-03-13 11:44:44,605 [root.plugins] INFO: Plugin registered: Web Tools (2 tools)
+2026-03-13 11:44:44,605 [root.plugins] INFO: Plugin registered: Calculator (1 tools)
+2026-03-13 11:44:44,605 [root.plugins] INFO: Plugin registered: File Manager (2 tools)
+2026-03-13 11:44:44,605 [root.plugins] INFO: Plugin registered: Quick Notes (2 tools)
+2026-03-13 11:44:44,605 [root.plugins] INFO: Plugin registered: Shell Executor (1 tools)
+2026-03-13 11:44:44,605 [root.plugins] INFO: Plugin registered: Reminders (2 tools)
+2026-03-13 11:44:44,605 [root.plugins] INFO: Plugin registered: Code Analyzer (1 tools)
+2026-03-13 11:44:44,605 [root.plugins] INFO: Plugin registered: Financial Intelligence (3 tools)
+2026-03-13 11:44:44,605 [root.plugins] INFO: Plugin registered: Decision Analysis (2 tools)
+2026-03-13 11:44:44,605 [root.plugins] INFO: Plugin registered: Alpaca Trading (6 tools)
+2026-03-13 11:44:44,605 [root.plugins] INFO: Alpaca Trading plugin: ACTIVE (paper mode)
+2026-03-13 11:44:44,605 [root] INFO: Plugin engine: 11 plugins, 24 tools
+2026-03-13 11:44:44,658 [watchfiles.main] INFO: 12 changes detected
+2026-03-13 11:44:44,796 [root] INFO: LLM service: CONNECTED (OpenAI GPT)
+2026-03-13 11:44:44,796 [root] INFO: Interest engine: ready
+2026-03-13 11:44:44,797 [root] INFO: Brain: ONLINE
+2026-03-13 11:44:44,797 [root] INFO: All agent connectors wired: LLM + tools bound
+2026-03-13 11:44:44,797 [root] INFO: Message bus: ready
+2026-03-13 11:44:44,797 [root] INFO: Approval chain: LOW=auto | MED=notify | HIGH/CRIT=approve
+2026-03-13 11:44:44,797 [root] INFO: Agent collaboration: delegate/pipeline/fanout/council
+2026-03-13 11:44:44,797 [root] INFO: Proactive engine: 11 behaviors
+2026-03-13 11:44:44,797 [root] INFO: Autonomous loop: self-improving every 30min
+2026-03-13 11:44:44,797 [root] INFO: ============================================================
+2026-03-13 11:44:44,797 [root] INFO:   ROOT v0.5.0 ALIVE — ONLINE — FULLY AUTONOMOUS
+2026-03-13 11:44:44,797 [root] INFO:   Maturity: mastery (100%)
+2026-03-13 11:44:44,797 [root] INFO:   Memories: 556 | Skills: 32 | Agents: 12 | Plugins: 11
+2026-03-13 11:44:44,797 [root] INFO:   Autonomous: Builder + Proactive + Self-Improving Loop
+2026-03-13 11:44:44,797 [root] INFO:   Collaboration: Delegate | Pipeline | Fanout | Council
+2026-03-13 11:44:44,797 [root] INFO:   Approval: Auto(low) | Notify(med) | Approve(high/critical)
+2026-03-13 11:44:44,797 [root] INFO:   Dashboard: http://127.0.0.1:9000
+2026-03-13 11:44:44,797 [root] INFO: ============================================================
+2026-03-13 11:44:44,797 [root.proactive] INFO: Proactive engine starting with 11 behaviors
+2026-03-13 11:44:44,797 [root.autonomous] INFO: Autonomous loop started (interval=1800s)
+2026-03-13 11:44:44,797 [root.builder] INFO: Builder Agent started (interval=300s)
+2026-03-13 11:44:44,797 [root.builder] INFO: Builder cycle #1 starting
+2026-03-13 11:44:44,798 [root.builder] INFO: Builder: no improvements needed this cycle
+INFO:     Application startup complete.
+2026-03-13 11:44:45,799 [root.proactive] INFO: Proactive: running 'miro_prediction'
+2026-03-13 11:44:47,800 [root.proactive] INFO: Proactive: running 'data_intelligence'
+2026-03-13 11:44:47,831 [root.connectors.openclaw] INFO: OpenClaw: running stage 'gaps'
+2026-03-13 11:44:47,835 [openclaw.gaps] INFO: Gap report saved to /tmp/openclaw/data/gap_report.json
+2026-03-13 11:44:50,183 [httpx] INFO: HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-03-13 11:44:50,187 [root.connectors.miro] INFO: [miro] Tool: web_web_search({"query": "current AI and trading trends October 2023"})
+2026-03-13 11:44:51,138 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=current+AI+and+trading+trends+October+2023 "HTTP/1.1 200 OK"
+2026-03-13 11:44:51,140 [root.connectors.miro] INFO: [miro] Tool: web_web_search({"query": "latest autonomous agent systems news October 2023"})
+2026-03-13 11:44:51,967 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=latest+autonomous+agent+systems+news+October+2023 "HTTP/1.1 200 OK"
+2026-03-13 11:44:51,969 [root.connectors.miro] INFO: [miro] Tool: web_web_search({"query": "real estate data intelligence trends October 2023"})
+2026-03-13 11:44:52,827 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=real+estate+data+intelligence+trends+October+2023 "HTTP/1.1 200 OK"
+2026-03-13 11:44:55,437 [httpx] INFO: HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-03-13 11:44:55,439 [root.connectors.miro] INFO: [miro] Tool: web_fetch_url({"url": "https://ubos.tech/ai-developments-and-trends-in-october-2023/"})
+2026-03-13 11:44:56,151 [httpx] INFO: HTTP Request: GET https://ubos.tech/ai-developments-and-trends-in-october-2023/ "HTTP/1.1 200 OK"
+2026-03-13 11:44:56,350 [root.connectors.miro] INFO: [miro] Tool: web_fetch_url({"url": "https://www.trade-ideas.com/2023/10/31/trading-insights-october-market-trends-and-analysis/"})
+2026-03-13 11:44:56,799 [root.proactive] INFO: Proactive: running 'goal_tracker'
+2026-03-13 11:44:57,089 [httpx] INFO: HTTP Request: GET https://www.trade-ideas.com/2023/10/31/trading-insights-october-market-trends-and-analysis/ "HTTP/1.1 200 OK"
+2026-03-13 11:44:57,092 [root.connectors.miro] INFO: [miro] Tool: web_fetch_url({"url": "https://www.aboutamazon.com/news/aws/amazon-ai-frontier-agents-autonomous-kiro"})
+2026-03-13 11:44:57,204 [httpx] INFO: HTTP Request: GET https://www.aboutamazon.com/news/aws/amazon-ai-frontier-agents-autonomous-kiro "HTTP/1.1 200 OK"
+2026-03-13 11:44:57,222 [root.connectors.miro] INFO: [miro] Tool: web_fetch_url({"url": "https://www.jll.com/en-us/newsroom/real-estate-tech-strategies-advance-ai-workplace-and-sustainability"})
+2026-03-13 11:44:58,739 [httpx] INFO: HTTP Request: GET https://www.jll.com/en-us/newsroom/real-estate-tech-strategies-advance-ai-workplace-and-sustainability "HTTP/1.1 200 OK"
+2026-03-13 11:45:08,747 [httpx] INFO: HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-03-13 11:45:08,799 [root.proactive] INFO: Proactive: running 'knowledge_consolidation'
+2026-03-13 11:45:08,816 [root.proactive] INFO: Proactive: running 'market_scanner'
+2026-03-13 11:45:09,799 [root.proactive] INFO: Proactive: running 'health_monitor'
+2026-03-13 11:45:12,123 [httpx] INFO: HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-03-13 11:45:12,129 [root.connectors.swarm] INFO: [swarm] Tool: web_web_search({"query": "SPY current price and daily change October 2023"})
+2026-03-13 11:45:13,056 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=SPY+current+price+and+daily+change+October+2023 "HTTP/1.1 200 OK"
+2026-03-13 11:45:13,057 [root.connectors.swarm] INFO: [swarm] Tool: web_web_search({"query": "QQQ current price and daily change October 2023"})
+2026-03-13 11:45:13,944 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=QQQ+current+price+and+daily+change+October+2023 "HTTP/1.1 200 OK"
+2026-03-13 11:45:13,945 [root.connectors.swarm] INFO: [swarm] Tool: web_web_search({"query": "BTC current price and daily change October 2023"})
+2026-03-13 11:45:14,812 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=BTC+current+price+and+daily+change+October+2023 "HTTP/1.1 200 OK"
+2026-03-13 11:45:14,813 [root.connectors.swarm] INFO: [swarm] Tool: web_web_search({"query": "major stock market news October 2023"})
+2026-03-13 11:45:15,684 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=major+stock+market+news+October+2023 "HTTP/1.1 200 OK"
+2026-03-13 11:45:15,686 [root.connectors.swarm] INFO: [swarm] Tool: web_web_search({"query": "stock trading opportunities October 2023"})
+2026-03-13 11:45:15,799 [root.proactive] INFO: Proactive: running 'self_rewrite'
+2026-03-13 11:45:16,507 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=stock+trading+opportunities+October+2023 "HTTP/1.1 200 OK"
+2026-03-13 11:45:17,799 [root.proactive] INFO: Proactive: running 'github_scanner'
+2026-03-13 11:45:20,011 [httpx] INFO: HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-03-13 11:45:20,013 [root.connectors.internal] INFO: [researcher] Tool call: web_web_search({"query": "trending AI agent frameworks GitHub 2023"})
+2026-03-13 11:45:20,419 [httpx] INFO: HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-03-13 11:45:20,421 [root.connectors.swarm] INFO: [swarm] Tool: web_fetch_url({"url": "https://finance.yahoo.com/quote/SPY/history/", "max_chars": 500})
+2026-03-13 11:45:21,035 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=trending+AI+agent+frameworks+GitHub+2023 "HTTP/1.1 200 OK"
+2026-03-13 11:45:21,037 [httpx] INFO: HTTP Request: GET https://finance.yahoo.com/quote/SPY/history/ "HTTP/1.1 404 Not Found"
+2026-03-13 11:45:21,038 [root.connectors.internal] INFO: [researcher] Tool call: web_web_search({"query": "trading finance AI projects GitHub 2023"})
+2026-03-13 11:45:21,048 [root.connectors.swarm] INFO: [swarm] Tool: web_fetch_url({"url": "https://finance.yahoo.com/quote/QQQ/history/", "max_chars": 500})
+2026-03-13 11:45:21,239 [httpx] INFO: HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-03-13 11:45:21,482 [httpx] INFO: HTTP Request: GET https://finance.yahoo.com/quote/QQQ/history/ "HTTP/1.1 404 Not Found"
+2026-03-13 11:45:21,484 [root.connectors.swarm] INFO: [swarm] Tool: web_fetch_url({"url": "https://finance.yahoo.com/quote/BTC-USD/history/", "max_chars": 500})
+2026-03-13 11:45:21,799 [root.proactive] INFO: Proactive: running 'agent_evolution'
+2026-03-13 11:45:21,854 [httpx] INFO: HTTP Request: GET https://finance.yahoo.com/quote/BTC-USD/history/ "HTTP/1.1 404 Not Found"
+2026-03-13 11:45:21,855 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=trading+finance+AI+projects+GitHub+2023 "HTTP/1.1 200 OK"
+2026-03-13 11:45:21,856 [root.connectors.swarm] INFO: [swarm] Tool: web_fetch_url({"url": "https://www.confluencefp.com/monthly-market-recap-october-2023/", "max_chars": 500})
+2026-03-13 11:45:21,865 [root.connectors.internal] INFO: [researcher] Tool call: web_web_search({"query": "local LLM inference improvements GitHub 2023"})
+2026-03-13 11:45:21,966 [httpx] INFO: HTTP Request: GET https://www.confluencefp.com/monthly-market-recap-october-2023/ "HTTP/1.1 200 OK"
+2026-03-13 11:45:21,972 [root.connectors.swarm] INFO: [swarm] Tool: web_fetch_url({"url": "https://www.nasdaq.com/articles/the-only-3-stocks-you-should-be-buying-in-october-2023", "max_chars": 500})
+2026-03-13 11:45:22,062 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=local+LLM+inference+improvements+GitHub+2023 "HTTP/1.1 202 Accepted"
+2026-03-13 11:45:22,063 [root.connectors.internal] INFO: [researcher] Tool call: web_web_search({"query": "AI automation tools GitHub 2023"})
+2026-03-13 11:45:22,255 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=AI+automation+tools+GitHub+2023 "HTTP/1.1 202 Accepted"
+2026-03-13 11:45:22,374 [httpx] INFO: HTTP Request: GET https://www.nasdaq.com/articles/the-only-3-stocks-you-should-be-buying-in-october-2023 "HTTP/1.1 200 OK"
+2026-03-13 11:45:22,982 [httpx] INFO: HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-03-13 11:45:24,541 [httpx] INFO: HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-03-13 11:45:24,542 [root.connectors.internal] INFO: [researcher] Tool call: web_fetch_url({"url": "https://github.com/topics/ai-agents-framework", "max_chars": 20000})
+2026-03-13 11:45:25,501 [httpx] INFO: HTTP Request: GET https://github.com/topics/ai-agents-framework "HTTP/1.1 200 OK"
+2026-03-13 11:45:25,589 [root.connectors.internal] INFO: [researcher] Tool call: web_fetch_url({"url": "https://github.com/topics/ai-trading", "max_chars": 20000})
+2026-03-13 11:45:25,611 [httpx] INFO: HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-03-13 11:45:25,613 [root.connectors.swarm] INFO: [swarm] Tool: web_web_search({"query": "SPY latest price October 2023"})
+2026-03-13 11:45:25,813 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=SPY+latest+price+October+2023 "HTTP/1.1 202 Accepted"
+2026-03-13 11:45:25,814 [root.connectors.swarm] INFO: [swarm] Tool: web_web_search({"query": "QQQ latest price October 2023"})
+2026-03-13 11:45:26,003 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=QQQ+latest+price+October+2023 "HTTP/1.1 202 Accepted"
+2026-03-13 11:45:26,005 [root.connectors.swarm] INFO: [swarm] Tool: web_web_search({"query": "BTC latest price October 2023"})
+2026-03-13 11:45:26,199 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=BTC+latest+price+October+2023 "HTTP/1.1 202 Accepted"
+2026-03-13 11:45:26,565 [httpx] INFO: HTTP Request: GET https://github.com/topics/ai-trading "HTTP/1.1 200 OK"
+2026-03-13 11:45:26,642 [root.connectors.internal] INFO: [researcher] Tool call: web_fetch_url({"url": "https://srecharan.github.io/projects/2_project/", "max_chars": 20000})
+2026-03-13 11:45:26,875 [httpx] INFO: HTTP Request: GET https://srecharan.github.io/projects/2_project/ "HTTP/1.1 200 OK"
+2026-03-13 11:45:29,126 [httpx] INFO: HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-03-13 11:45:29,127 [root.connectors.swarm] INFO: [swarm] Tool: alpaca_alpaca_market_data({"symbols": "SPY,QQQ,BTC/USD"})
+2026-03-13 11:45:29,474 [httpx] INFO: HTTP Request: GET https://data.alpaca.markets/v2/stocks/quotes/latest?symbols=SPY%2CQQQ%2CBTC%2FUSD "HTTP/1.1 400 Bad Request"
+2026-03-13 11:45:29,475 [root.connectors.swarm] INFO: [swarm] Tool: web_web_search({"query": "current stock market news October 2023"})
+2026-03-13 11:45:29,674 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=current+stock+market+news+October+2023 "HTTP/1.1 202 Accepted"
+2026-03-13 11:45:30,799 [root.proactive] INFO: Proactive: running 'skill_discovery'
+2026-03-13 11:45:32,587 [httpx] INFO: HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-03-13 11:45:32,597 [root.connectors.swarm] INFO: [swarm] Tool: web_web_search({"query": "SPY ETF current price October 2023"})
+2026-03-13 11:45:32,793 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=SPY+ETF+current+price+October+2023 "HTTP/1.1 202 Accepted"
+2026-03-13 11:45:32,794 [root.connectors.swarm] INFO: [swarm] Tool: web_web_search({"query": "Invesco QQQ Trust current price October 2023"})
+2026-03-13 11:45:33,171 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=Invesco+QQQ+Trust+current+price+October+2023 "HTTP/1.1 202 Accepted"
+2026-03-13 11:45:33,172 [root.connectors.swarm] INFO: [swarm] Tool: web_web_search({"query": "Bitcoin current price October 2023"})
+2026-03-13 11:45:33,380 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=Bitcoin+current+price+October+2023 "HTTP/1.1 202 Accepted"
+2026-03-13 11:45:33,799 [root.proactive] INFO: Proactive: running 'opportunity_scanner'
+2026-03-13 11:45:36,312 [httpx] INFO: HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-03-13 11:45:36,320 [root.connectors.internal] INFO: [researcher] Tool call: web_web_search({"query": "latest AI development news 2023"})
+2026-03-13 11:45:36,525 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=latest+AI+development+news+2023 "HTTP/1.1 202 Accepted"
+2026-03-13 11:45:36,527 [root.connectors.internal] INFO: [researcher] Tool call: web_web_search({"query": "latest trading strategies 2023"})
+2026-03-13 11:45:36,631 [httpx] INFO: HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-03-13 11:45:36,719 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=latest+trading+strategies+2023 "HTTP/1.1 202 Accepted"
+2026-03-13 11:45:36,721 [root.connectors.internal] INFO: [researcher] Tool call: web_web_search({"query": "latest real estate data trends 2023"})
+2026-03-13 11:45:36,924 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=latest+real+estate+data+trends+2023 "HTTP/1.1 202 Accepted"
+2026-03-13 11:45:36,926 [root.connectors.internal] INFO: [researcher] Tool call: web_web_search({"query": "latest automation technologies 2023"})
+2026-03-13 11:45:37,130 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=latest+automation+technologies+2023 "HTTP/1.1 202 Accepted"
+2026-03-13 11:45:39,151 [httpx] INFO: HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-03-13 11:45:39,157 [root.connectors.internal] INFO: [researcher] Tool call: web_web_search({"query": "latest AI development news 2023"})
+2026-03-13 11:45:39,348 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=latest+AI+development+news+2023 "HTTP/1.1 202 Accepted"
+2026-03-13 11:45:39,349 [root.connectors.internal] INFO: [researcher] Tool call: web_web_search({"query": "latest trading strategies 2023"})
+2026-03-13 11:45:39,381 [httpx] INFO: HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-03-13 11:45:39,502 [watchfiles.main] INFO: 1 change detected
+2026-03-13 11:45:39,556 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=latest+trading+strategies+2023 "HTTP/1.1 202 Accepted"
+2026-03-13 11:45:39,558 [root.connectors.internal] INFO: [researcher] Tool call: web_web_search({"query": "latest real estate data trends 2023"})
+2026-03-13 11:45:39,761 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=latest+real+estate+data+trends+2023 "HTTP/1.1 202 Accepted"
+2026-03-13 11:45:39,763 [root.connectors.internal] INFO: [researcher] Tool call: web_web_search({"query": "latest automation technologies 2023"})
+2026-03-13 11:45:39,966 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=latest+automation+technologies+2023 "HTTP/1.1 202 Accepted"
+2026-03-13 11:45:40,073 [httpx] INFO: HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2026-03-13 11:45:40,074 [openai._base_client] INFO: Retrying request to /chat/completions in 0.884000 seconds
+2026-03-13 11:45:41,047 [httpx] INFO: HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2026-03-13 11:45:41,048 [openai._base_client] INFO: Retrying request to /chat/completions in 0.884000 seconds
+2026-03-13 11:45:42,023 [httpx] INFO: HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2026-03-13 11:45:42,024 [root.llm.openai] ERROR: OpenAI API error (tool_use): Error code: 429 - {'error': {'message': 'Rate limit reached for gpt-4o in organization org-aKvH4nU9cMSeG3hKbU9Yh2oD on tokens per min (TPM): Limit 30000, Used 30000, Requested 442. Please try again in 884ms. Visit https://platform.openai.com/account/rate-limits to learn more.', 'type': 'tokens', 'param': None, 'code': 'rate_limit_exceeded'}}
+2026-03-13 11:45:42,028 [httpx] INFO: HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-03-13 11:45:52,270 [watchfiles.main] INFO: 3 changes detected
+WARNING:  WatchFiles detected changes in 'backend/core/approval_chain.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+2026-03-13 11:45:52,404 [root.proactive] INFO: Proactive engine stopped
+2026-03-13 11:45:52,404 [root.autonomous] INFO: Autonomous loop stopped
+2026-03-13 11:45:52,404 [root.builder] INFO: Builder Agent stopped
+2026-03-13 11:45:52,409 [root] INFO: === ROOT v0.5.0 shut down ===
+INFO:     Application shutdown complete.
+INFO:     Finished server process [90995]
+2026-03-13 11:45:52,681 [root.security] INFO: API key auth: DISABLED (dev mode — no ROOT_API_KEY set)
+2026-03-13 11:45:52,682 [root.security] INFO: Rate limiter: 100 requests/minute per IP
+2026-03-13 11:45:52,682 [root.security] INFO: Security headers: ACTIVE (6 headers)
+2026-03-13 11:45:52,727 [root.security] INFO: API key auth: DISABLED (dev mode — no ROOT_API_KEY set)
+2026-03-13 11:45:52,727 [root.security] INFO: Rate limiter: 100 requests/minute per IP
+2026-03-13 11:45:52,727 [root.security] INFO: Security headers: ACTIVE (6 headers)
+INFO:     Started server process [91078]
+INFO:     Waiting for application startup.
+2026-03-13 11:45:52,728 [root] INFO: ============================================================
+2026-03-13 11:45:52,728 [root] INFO:   ROOT v0.5.0 — Fully Autonomous AI — Starting Up
+2026-03-13 11:45:52,728 [root] INFO: ============================================================
+2026-03-13 11:45:52,728 [root.bootstrap] INFO: Memory already bootstrapped (560 entries), skipping
+2026-03-13 11:45:52,728 [root] INFO: Memory engine: 560 entries
+2026-03-13 11:45:52,728 [root] INFO: Conversation store: ready (session=sess_2f9c0ec55d74)
+2026-03-13 11:45:52,737 [root.skills] INFO: Loaded 32 skills from /Users/yohan/Desktop/ROOT/data/skills
+2026-03-13 11:45:52,737 [root] INFO: Skill engine: 32 skills loaded
+2026-03-13 11:45:52,737 [root] INFO: Self-dev engine: maturity=mastery
+2026-03-13 11:45:52,737 [root.hooks] INFO: Hook registered: boot_logger on on_startup
+2026-03-13 11:45:52,737 [root.hooks] INFO: Hook registered: interaction_counter on on_chat
+2026-03-13 11:45:52,737 [root.hooks] INFO: Hook registered: memory_logger on on_learn
+2026-03-13 11:45:52,737 [root.hooks] INFO: Hook registered: error_capture on on_error
+2026-03-13 11:45:52,737 [root.hooks] INFO: Hook registered: skill_reindex on on_skill_create
+2026-03-13 11:45:52,737 [root.hooks] INFO: ROOT startup hook fired
+2026-03-13 11:45:52,737 [root] INFO: Hook engine: 5 hooks registered
+2026-03-13 11:45:52,737 [root.agents] INFO: Registered agent: ASTRA (astra)
+2026-03-13 11:45:52,737 [root.agents] INFO: Registered agent: ROOT (root)
+2026-03-13 11:45:52,737 [root.agents] INFO: Registered agent: HERMES (hermes)
+2026-03-13 11:45:52,737 [root.agents] INFO: Registered agent: MiRo (miro)
+2026-03-13 11:45:52,737 [root.agents] INFO: Registered agent: Trading Swarm (swarm)
+2026-03-13 11:45:52,737 [root.agents] INFO: Registered agent: OpenClaw (openclaw)
+2026-03-13 11:45:52,737 [root.agents] INFO: Registered agent: Builder (builder)
+2026-03-13 11:45:52,737 [root.agents] INFO: Registered agent: Researcher (researcher)
+2026-03-13 11:45:52,738 [root.agents] INFO: Registered agent: Coder (coder)
+2026-03-13 11:45:52,738 [root.agents] INFO: Registered agent: Writer (writer)
+2026-03-13 11:45:52,738 [root.agents] INFO: Registered agent: Analyst (analyst)
+2026-03-13 11:45:52,738 [root.agents] INFO: Registered agent: Guardian (guardian)
+2026-03-13 11:45:52,738 [root] INFO: Agent registry: 12 agents
+2026-03-13 11:45:52,738 [root] INFO: Money engine: Strategy Council ready
+2026-03-13 11:45:52,738 [root.plugins] INFO: Plugin registered: System Tools (2 tools)
+2026-03-13 11:45:52,752 [root.plugins] INFO: Plugin registered: Web Tools (2 tools)
+2026-03-13 11:45:52,752 [root.plugins] INFO: Plugin registered: Calculator (1 tools)
+2026-03-13 11:45:52,752 [root.plugins] INFO: Plugin registered: File Manager (2 tools)
+2026-03-13 11:45:52,752 [root.plugins] INFO: Plugin registered: Quick Notes (2 tools)
+2026-03-13 11:45:52,752 [root.plugins] INFO: Plugin registered: Shell Executor (1 tools)
+2026-03-13 11:45:52,752 [root.plugins] INFO: Plugin registered: Reminders (2 tools)
+2026-03-13 11:45:52,752 [root.plugins] INFO: Plugin registered: Code Analyzer (1 tools)
+2026-03-13 11:45:52,752 [root.plugins] INFO: Plugin registered: Financial Intelligence (3 tools)
+2026-03-13 11:45:52,752 [root.plugins] INFO: Plugin registered: Decision Analysis (2 tools)
+2026-03-13 11:45:52,752 [root.plugins] INFO: Plugin registered: Alpaca Trading (6 tools)
+2026-03-13 11:45:52,752 [root.plugins] INFO: Alpaca Trading plugin: ACTIVE (paper mode)
+2026-03-13 11:45:52,752 [root] INFO: Plugin engine: 11 plugins, 24 tools
+2026-03-13 11:45:52,824 [watchfiles.main] INFO: 12 changes detected
+2026-03-13 11:45:52,931 [root] INFO: LLM service: CONNECTED (OpenAI GPT)
+2026-03-13 11:45:52,931 [root] INFO: Interest engine: ready
+2026-03-13 11:45:52,932 [root] INFO: Brain: ONLINE
+2026-03-13 11:45:52,932 [root] INFO: All agent connectors wired: LLM + tools bound
+2026-03-13 11:45:52,932 [root] INFO: Message bus: ready
+2026-03-13 11:45:52,932 [root] INFO: Approval chain: LOW=auto | MED=notify | HIGH/CRIT=approve
+2026-03-13 11:45:52,932 [root] INFO: Agent collaboration: delegate/pipeline/fanout/council
+2026-03-13 11:45:52,932 [root] INFO: Proactive engine: 11 behaviors
+2026-03-13 11:45:52,932 [root] INFO: Autonomous loop: self-improving every 30min
+2026-03-13 11:45:52,932 [root] INFO: ============================================================
+2026-03-13 11:45:52,932 [root] INFO:   ROOT v0.5.0 ALIVE — ONLINE — FULLY AUTONOMOUS
+2026-03-13 11:45:52,932 [root] INFO:   Maturity: mastery (100%)
+2026-03-13 11:45:52,932 [root] INFO:   Memories: 560 | Skills: 32 | Agents: 12 | Plugins: 11
+2026-03-13 11:45:52,932 [root] INFO:   Autonomous: Builder + Proactive + Self-Improving Loop
+2026-03-13 11:45:52,932 [root] INFO:   Collaboration: Delegate | Pipeline | Fanout | Council
+2026-03-13 11:45:52,932 [root] INFO:   Approval: Auto(low) | Notify(med) | Approve(high/critical)
+2026-03-13 11:45:52,932 [root] INFO:   Dashboard: http://127.0.0.1:9000
+2026-03-13 11:45:52,932 [root] INFO: ============================================================
+2026-03-13 11:45:52,933 [root.proactive] INFO: Proactive engine starting with 11 behaviors
+2026-03-13 11:45:52,933 [root.autonomous] INFO: Autonomous loop started (interval=1800s)
+2026-03-13 11:45:52,933 [root.builder] INFO: Builder Agent started (interval=300s)
+2026-03-13 11:45:52,933 [root.builder] INFO: Builder cycle #1 starting
+2026-03-13 11:45:52,933 [root.builder] INFO: Builder: no improvements needed this cycle
+INFO:     Application startup complete.
+2026-03-13 11:46:00,934 [root.proactive] INFO: Proactive: running 'agent_evolution'
+2026-03-13 11:46:01,934 [root.proactive] INFO: Proactive: running 'health_monitor'
+2026-03-13 11:46:04,934 [root.proactive] INFO: Proactive: running 'skill_discovery'
+2026-03-13 11:46:05,934 [root.proactive] INFO: Proactive: running 'market_scanner'
+2026-03-13 11:46:08,141 [httpx] INFO: HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-03-13 11:46:08,173 [root.connectors.swarm] INFO: [swarm] Tool: web_web_search({"query": "current SPY index price and daily change"})
+2026-03-13 11:46:08,365 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=current+SPY+index+price+and+daily+change "HTTP/1.1 202 Accepted"
+2026-03-13 11:46:08,367 [root.connectors.swarm] INFO: [swarm] Tool: web_web_search({"query": "current QQQ index price and daily change"})
+2026-03-13 11:46:08,572 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=current+QQQ+index+price+and+daily+change "HTTP/1.1 202 Accepted"
+2026-03-13 11:46:08,573 [root.connectors.swarm] INFO: [swarm] Tool: web_web_search({"query": "current BTC price and daily change"})
+2026-03-13 11:46:08,772 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=current+BTC+price+and+daily+change "HTTP/1.1 202 Accepted"
+2026-03-13 11:46:08,774 [root.connectors.swarm] INFO: [swarm] Tool: web_web_search({"query": "major financial news October 2023"})
+2026-03-13 11:46:08,971 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=major+financial+news+October+2023 "HTTP/1.1 202 Accepted"
+2026-03-13 11:46:11,861 [httpx] INFO: HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-03-13 11:46:11,890 [root.connectors.swarm] INFO: [swarm] Tool: web_web_search({"query": "current SPY index price and daily change October 2023"})
+2026-03-13 11:46:12,082 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=current+SPY+index+price+and+daily+change+October+2023 "HTTP/1.1 202 Accepted"
+2026-03-13 11:46:12,084 [root.connectors.swarm] INFO: [swarm] Tool: web_web_search({"query": "current QQQ index price and daily change October 2023"})
+2026-03-13 11:46:12,917 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=current+QQQ+index+price+and+daily+change+October+2023 "HTTP/1.1 200 OK"
+2026-03-13 11:46:12,917 [root.connectors.swarm] INFO: [swarm] Tool: web_web_search({"query": "current BTC price and daily change October 2023"})
+2026-03-13 11:46:13,853 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=current+BTC+price+and+daily+change+October+2023 "HTTP/1.1 200 OK"
+2026-03-13 11:46:13,854 [root.connectors.swarm] INFO: [swarm] Tool: web_web_search({"query": "major financial news October 2023"})
+2026-03-13 11:46:14,776 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=major+financial+news+October+2023 "HTTP/1.1 200 OK"
+2026-03-13 11:46:16,934 [root.proactive] INFO: Proactive: running 'miro_prediction'
+2026-03-13 11:46:18,643 [httpx] INFO: HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-03-13 11:46:18,648 [root.connectors.swarm] INFO: [swarm] Tool: web_fetch_url({"url": "https://finance.yahoo.com/quote/SPY?p=SPY", "max_chars": 1000})
+2026-03-13 11:46:18,817 [httpx] INFO: HTTP Request: GET https://finance.yahoo.com/quote/SPY?p=SPY "HTTP/1.1 301 Moved Permanently"
+2026-03-13 11:46:19,001 [httpx] INFO: HTTP Request: GET https://finance.yahoo.com/quote/SPY/?p=SPY "HTTP/1.1 200 OK"
+2026-03-13 11:46:19,141 [root.connectors.swarm] INFO: [swarm] Tool: web_fetch_url({"url": "https://finance.yahoo.com/quote/QQQ?p=QQQ", "max_chars": 1000})
+2026-03-13 11:46:19,273 [httpx] INFO: HTTP Request: GET https://finance.yahoo.com/quote/QQQ?p=QQQ "HTTP/1.1 301 Moved Permanently"
+2026-03-13 11:46:19,532 [httpx] INFO: HTTP Request: GET https://finance.yahoo.com/quote/QQQ/?p=QQQ "HTTP/1.1 200 OK"
+2026-03-13 11:46:19,676 [root.connectors.swarm] INFO: [swarm] Tool: web_fetch_url({"url": "https://finance.yahoo.com/quote/BTC-USD?p=BTC-USD", "max_chars": 1000})
+2026-03-13 11:46:19,804 [httpx] INFO: HTTP Request: GET https://finance.yahoo.com/quote/BTC-USD?p=BTC-USD "HTTP/1.1 301 Moved Permanently"
+2026-03-13 11:46:20,119 [httpx] INFO: HTTP Request: GET https://finance.yahoo.com/quote/BTC-USD/?p=BTC-USD "HTTP/1.1 404 Not Found"
+2026-03-13 11:46:20,121 [root.connectors.swarm] INFO: [swarm] Tool: web_fetch_url({"url": "https://www.wsj.com/news/archive/2023/october", "max_chars": 1000})
+2026-03-13 11:46:20,131 [httpx] INFO: HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-03-13 11:46:20,132 [root.connectors.miro] INFO: [miro] Tool: web_web_search({"query": "current AI and trading trends October 2023"})
+2026-03-13 11:46:20,360 [httpx] INFO: HTTP Request: GET https://www.wsj.com/news/archive/2023/october "HTTP/1.1 200 OK"
+2026-03-13 11:46:20,934 [root.proactive] INFO: Proactive: running 'knowledge_consolidation'
+2026-03-13 11:46:21,042 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=current+AI+and+trading+trends+October+2023 "HTTP/1.1 200 OK"
+2026-03-13 11:46:21,044 [root.connectors.miro] INFO: [miro] Tool: web_web_search({"query": "autonomous agent systems development trends October 2023"})
+2026-03-13 11:46:21,934 [root.proactive] INFO: Proactive: running 'data_intelligence'
+2026-03-13 11:46:21,935 [root.connectors.openclaw] INFO: OpenClaw: running stage 'gaps'
+2026-03-13 11:46:21,942 [openclaw.gaps] INFO: Gap report saved to /tmp/openclaw/data/gap_report.json
+2026-03-13 11:46:22,337 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=autonomous+agent+systems+development+trends+October+2023 "HTTP/1.1 200 OK"
+2026-03-13 11:46:22,339 [root.connectors.miro] INFO: [miro] Tool: web_web_search({"query": "real estate data intelligence trends October 2023"})
+2026-03-13 11:46:22,988 [httpx] INFO: HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-03-13 11:46:22,990 [root.connectors.swarm] INFO: [swarm] Tool: web_web_search({"query": "SPY current price October 2023 yahoo finance"})
+2026-03-13 11:46:23,216 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=real+estate+data+intelligence+trends+October+2023 "HTTP/1.1 200 OK"
+2026-03-13 11:46:23,891 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=SPY+current+price+October+2023+yahoo+finance "HTTP/1.1 200 OK"
+2026-03-13 11:46:23,892 [root.connectors.swarm] INFO: [swarm] Tool: web_web_search({"query": "QQQ current price October 2023 yahoo finance"})
+2026-03-13 11:46:23,934 [root.proactive] INFO: Proactive: running 'opportunity_scanner'
+2026-03-13 11:46:24,661 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=QQQ+current+price+October+2023+yahoo+finance "HTTP/1.1 200 OK"
+2026-03-13 11:46:24,662 [root.connectors.swarm] INFO: [swarm] Tool: web_web_search({"query": "BTC current price October 2023 Yahoo Finance"})
+2026-03-13 11:46:25,565 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=BTC+current+price+October+2023+Yahoo+Finance "HTTP/1.1 200 OK"
+2026-03-13 11:46:25,567 [root.connectors.swarm] INFO: [swarm] Tool: web_web_search({"query": "major financial news October 2023"})
+2026-03-13 11:46:26,371 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=major+financial+news+October+2023 "HTTP/1.1 200 OK"
+2026-03-13 11:46:26,527 [httpx] INFO: HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2026-03-13 11:46:26,528 [openai._base_client] INFO: Retrying request to /chat/completions in 2.876000 seconds
+2026-03-13 11:46:26,843 [httpx] INFO: HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-03-13 11:46:26,848 [root.connectors.internal] INFO: [researcher] Tool call: web_web_search({"query": "latest developments in AI development 2023"})
+2026-03-13 11:46:27,801 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=latest+developments+in+AI+development+2023 "HTTP/1.1 200 OK"
+2026-03-13 11:46:27,802 [root.connectors.internal] INFO: [researcher] Tool call: web_web_search({"query": "latest trading strategies 2023"})
+2026-03-13 11:46:28,722 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=latest+trading+strategies+2023 "HTTP/1.1 200 OK"
+2026-03-13 11:46:28,724 [root.connectors.internal] INFO: [researcher] Tool call: web_web_search({"query": "latest real estate data technology 2023"})
+2026-03-13 11:46:28,926 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=latest+real+estate+data+technology+2023 "HTTP/1.1 202 Accepted"
+2026-03-13 11:46:28,927 [root.connectors.internal] INFO: [researcher] Tool call: web_web_search({"query": "new automation technologies 2023"})
+2026-03-13 11:46:29,131 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=new+automation+technologies+2023 "HTTP/1.1 202 Accepted"
+2026-03-13 11:46:29,505 [httpx] INFO: HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2026-03-13 11:46:29,505 [openai._base_client] INFO: Retrying request to /chat/completions in 2.706000 seconds
+2026-03-13 11:46:29,934 [root.proactive] INFO: Proactive: running 'goal_tracker'
+2026-03-13 11:46:31,934 [root.proactive] INFO: Proactive: running 'self_rewrite'
+2026-03-13 11:46:32,371 [httpx] INFO: HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2026-03-13 11:46:32,373 [root.llm.openai] ERROR: OpenAI API error (tool_use): Error code: 429 - {'error': {'message': 'Rate limit reached for gpt-4o in organization org-aKvH4nU9cMSeG3hKbU9Yh2oD on tokens per min (TPM): Limit 30000, Used 27239, Requested 3763. Please try again in 2.004s. Visit https://platform.openai.com/account/rate-limits to learn more.', 'type': 'tokens', 'param': None, 'code': 'rate_limit_exceeded'}}
+2026-03-13 11:46:33,811 [httpx] INFO: HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-03-13 11:46:35,048 [httpx] INFO: HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-03-13 11:46:35,052 [root.connectors.internal] INFO: [researcher] Tool call: web_fetch_url({"url": "https://hai.stanford.edu/news/13-biggest-ai-stories-2023"})
+2026-03-13 11:46:35,619 [httpx] INFO: HTTP Request: GET https://hai.stanford.edu/news/13-biggest-ai-stories-2023 "HTTP/1.1 200 OK"
+2026-03-13 11:46:36,081 [httpx] INFO: HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-03-13 11:46:36,088 [root.connectors.internal] INFO: [analyst] Tool call: web_web_search({"query": "AI trading systems October 2023"})
+2026-03-13 11:46:36,295 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=AI+trading+systems+October+2023 "HTTP/1.1 202 Accepted"
+2026-03-13 11:46:36,296 [root.connectors.internal] INFO: [analyst] Tool call: web_web_search({"query": "autonomous agents market 2023"})
+2026-03-13 11:46:36,485 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=autonomous+agents+market+2023 "HTTP/1.1 202 Accepted"
+2026-03-13 11:46:36,486 [root.connectors.internal] INFO: [analyst] Tool call: web_web_search({"query": "AI in real estate October 2023"})
+2026-03-13 11:46:36,681 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=AI+in+real+estate+October+2023 "HTTP/1.1 202 Accepted"
+2026-03-13 11:46:36,781 [httpx] INFO: HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2026-03-13 11:46:36,782 [openai._base_client] INFO: Retrying request to /chat/completions in 1.638000 seconds
+2026-03-13 11:46:37,836 [root.connectors.internal] INFO: [researcher] Tool call: web_fetch_url({"url": "https://quantstrategy.io/blog/top-5-trading-strategies-every-trader-should-know-2023-special/"})
+2026-03-13 11:46:38,426 [httpx] INFO: HTTP Request: GET https://quantstrategy.io/blog/top-5-trading-strategies-every-trader-should-know-2023-special/ "HTTP/1.1 200 OK"
+2026-03-13 11:46:38,451 [root.connectors.internal] INFO: [researcher] Tool call: web_fetch_url({"url": "https://www.futuresfundedaccounts.com/the-7-best-futures-trading-strategies-in-2023/"})
+2026-03-13 11:46:38,524 [httpx] INFO: HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2026-03-13 11:46:38,525 [openai._base_client] INFO: Retrying request to /chat/completions in 1.638000 seconds
+2026-03-13 11:46:38,962 [httpx] INFO: HTTP Request: GET https://www.futuresfundedaccounts.com/the-7-best-futures-trading-strategies-in-2023/ "HTTP/1.1 200 OK"
+2026-03-13 11:46:39,210 [httpx] INFO: HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2026-03-13 11:46:39,212 [openai._base_client] INFO: Retrying request to /chat/completions in 5.474000 seconds
+2026-03-13 11:46:40,312 [httpx] INFO: HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2026-03-13 11:46:40,313 [root.llm.openai] ERROR: OpenAI API error (tool_use): Error code: 429 - {'error': {'message': 'Rate limit reached for gpt-4o in organization org-aKvH4nU9cMSeG3hKbU9Yh2oD on tokens per min (TPM): Limit 30000, Used 30000, Requested 819. Please try again in 1.638s. Visit https://platform.openai.com/account/rate-limits to learn more.', 'type': 'tokens', 'param': None, 'code': 'rate_limit_exceeded'}}
+2026-03-13 11:46:40,933 [root.proactive] INFO: Proactive: running 'github_scanner'
+2026-03-13 11:46:43,775 [httpx] INFO: HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-03-13 11:46:43,777 [root.connectors.internal] INFO: [researcher] Tool call: web_web_search({"query": "trending AI repositories on GitHub October 2023"})
+2026-03-13 11:46:43,843 [httpx] INFO: HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-03-13 11:46:43,987 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=trending+AI+repositories+on+GitHub+October+2023 "HTTP/1.1 202 Accepted"
+2026-03-13 11:46:43,987 [root.connectors.internal] INFO: [researcher] Tool call: web_web_search({"query": "latest AI breakthroughs October 2023"})
+2026-03-13 11:46:44,288 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=latest+AI+breakthroughs+October+2023 "HTTP/1.1 202 Accepted"
+2026-03-13 11:46:44,290 [root.connectors.internal] INFO: [researcher] Tool call: web_web_search({"query": "new AI agent frameworks 2023"})
+2026-03-13 11:46:44,577 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=new+AI+agent+frameworks+2023 "HTTP/1.1 202 Accepted"
+2026-03-13 11:46:44,578 [root.connectors.internal] INFO: [researcher] Tool call: web_web_search({"query": "AI trading finance projects GitHub 2023"})
+2026-03-13 11:46:44,780 [httpx] INFO: HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2026-03-13 11:46:44,781 [openai._base_client] INFO: Retrying request to /chat/completions in 5.474000 seconds
+2026-03-13 11:46:44,784 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=AI+trading+finance+projects+GitHub+2023 "HTTP/1.1 202 Accepted"
+2026-03-13 11:46:44,785 [root.connectors.internal] INFO: [researcher] Tool call: web_web_search({"query": "local LLM inference improvements 2023"})
+2026-03-13 11:46:44,980 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=local+LLM+inference+improvements+2023 "HTTP/1.1 202 Accepted"
+2026-03-13 11:46:44,981 [root.connectors.internal] INFO: [researcher] Tool call: web_web_search({"query": "AI automation tools GitHub 2023"})
+2026-03-13 11:46:45,170 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=AI+automation+tools+GitHub+2023 "HTTP/1.1 202 Accepted"
+2026-03-13 11:46:45,272 [httpx] INFO: HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2026-03-13 11:46:45,272 [openai._base_client] INFO: Retrying request to /chat/completions in 0.868000 seconds
+2026-03-13 11:46:46,252 [httpx] INFO: HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2026-03-13 11:46:46,253 [openai._base_client] INFO: Retrying request to /chat/completions in 0.868000 seconds
+2026-03-13 11:46:47,221 [httpx] INFO: HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2026-03-13 11:46:47,222 [root.llm.openai] ERROR: OpenAI API error (tool_use): Error code: 429 - {'error': {'message': 'Rate limit reached for gpt-4o in organization org-aKvH4nU9cMSeG3hKbU9Yh2oD on tokens per min (TPM): Limit 30000, Used 30000, Requested 434. Please try again in 868ms. Visit https://platform.openai.com/account/rate-limits to learn more.', 'type': 'tokens', 'param': None, 'code': 'rate_limit_exceeded'}}
+2026-03-13 11:46:50,360 [httpx] INFO: HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2026-03-13 11:46:50,361 [root.llm.openai] ERROR: OpenAI API error (tool_use): Error code: 429 - {'error': {'message': 'Rate limit reached for gpt-4o in organization org-aKvH4nU9cMSeG3hKbU9Yh2oD on tokens per min (TPM): Limit 30000, Used 29262, Requested 2737. Please try again in 3.998s. Visit https://platform.openai.com/account/rate-limits to learn more.', 'type': 'tokens', 'param': None, 'code': 'rate_limit_exceeded'}}
+2026-03-13 11:46:53,950 [httpx] INFO: HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-03-13 11:46:54,040 [watchfiles.main] INFO: 1 change detected
+2026-03-13 11:47:44,956 [watchfiles.main] INFO: 3 changes detected
+WARNING:  WatchFiles detected changes in 'backend/core/brain.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+2026-03-13 11:47:45,071 [root.proactive] INFO: Proactive engine stopped
+2026-03-13 11:47:45,072 [root.autonomous] INFO: Autonomous loop stopped
+2026-03-13 11:47:45,072 [root.builder] INFO: Builder Agent stopped
+2026-03-13 11:47:45,077 [root] INFO: === ROOT v0.5.0 shut down ===
+INFO:     Application shutdown complete.
+INFO:     Finished server process [91078]
+2026-03-13 11:47:45,376 [root.security] INFO: API key auth: DISABLED (dev mode — no ROOT_API_KEY set)
+2026-03-13 11:47:45,376 [root.security] INFO: Rate limiter: 100 requests/minute per IP
+2026-03-13 11:47:45,376 [root.security] INFO: Security headers: ACTIVE (6 headers)
+2026-03-13 11:47:45,426 [root.security] INFO: API key auth: DISABLED (dev mode — no ROOT_API_KEY set)
+2026-03-13 11:47:45,426 [root.security] INFO: Rate limiter: 100 requests/minute per IP
+2026-03-13 11:47:45,426 [root.security] INFO: Security headers: ACTIVE (6 headers)
+INFO:     Started server process [91213]
+INFO:     Waiting for application startup.
+2026-03-13 11:47:45,426 [root] INFO: ============================================================
+2026-03-13 11:47:45,426 [root] INFO:   ROOT v0.5.0 — Fully Autonomous AI — Starting Up
+2026-03-13 11:47:45,426 [root] INFO: ============================================================
+2026-03-13 11:47:45,427 [root.bootstrap] INFO: Memory already bootstrapped (564 entries), skipping
+2026-03-13 11:47:45,427 [root] INFO: Memory engine: 564 entries
+2026-03-13 11:47:45,427 [root] INFO: Conversation store: ready (session=sess_513bd89c452f)
+2026-03-13 11:47:45,437 [root.skills] INFO: Loaded 32 skills from /Users/yohan/Desktop/ROOT/data/skills
+2026-03-13 11:47:45,437 [root] INFO: Skill engine: 32 skills loaded
+2026-03-13 11:47:45,437 [root] INFO: Self-dev engine: maturity=mastery
+2026-03-13 11:47:45,437 [root.hooks] INFO: Hook registered: boot_logger on on_startup
+2026-03-13 11:47:45,437 [root.hooks] INFO: Hook registered: interaction_counter on on_chat
+2026-03-13 11:47:45,437 [root.hooks] INFO: Hook registered: memory_logger on on_learn
+2026-03-13 11:47:45,437 [root.hooks] INFO: Hook registered: error_capture on on_error
+2026-03-13 11:47:45,437 [root.hooks] INFO: Hook registered: skill_reindex on on_skill_create
+2026-03-13 11:47:45,437 [root.hooks] INFO: ROOT startup hook fired
+2026-03-13 11:47:45,437 [root] INFO: Hook engine: 5 hooks registered
+2026-03-13 11:47:45,437 [root.agents] INFO: Registered agent: ASTRA (astra)
+2026-03-13 11:47:45,437 [root.agents] INFO: Registered agent: ROOT (root)
+2026-03-13 11:47:45,437 [root.agents] INFO: Registered agent: HERMES (hermes)
+2026-03-13 11:47:45,438 [root.agents] INFO: Registered agent: MiRo (miro)
+2026-03-13 11:47:45,438 [root.agents] INFO: Registered agent: Trading Swarm (swarm)
+2026-03-13 11:47:45,438 [root.agents] INFO: Registered agent: OpenClaw (openclaw)
+2026-03-13 11:47:45,438 [root.agents] INFO: Registered agent: Builder (builder)
+2026-03-13 11:47:45,438 [root.agents] INFO: Registered agent: Researcher (researcher)
+2026-03-13 11:47:45,438 [root.agents] INFO: Registered agent: Coder (coder)
+2026-03-13 11:47:45,438 [root.agents] INFO: Registered agent: Writer (writer)
+2026-03-13 11:47:45,438 [root.agents] INFO: Registered agent: Analyst (analyst)
+2026-03-13 11:47:45,438 [root.agents] INFO: Registered agent: Guardian (guardian)
+2026-03-13 11:47:45,438 [root] INFO: Agent registry: 12 agents
+2026-03-13 11:47:45,438 [root] INFO: Money engine: Strategy Council ready
+2026-03-13 11:47:45,438 [root.plugins] INFO: Plugin registered: System Tools (2 tools)
+2026-03-13 11:47:45,454 [root.plugins] INFO: Plugin registered: Web Tools (2 tools)
+2026-03-13 11:47:45,454 [root.plugins] INFO: Plugin registered: Calculator (1 tools)
+2026-03-13 11:47:45,454 [root.plugins] INFO: Plugin registered: File Manager (2 tools)
+2026-03-13 11:47:45,454 [root.plugins] INFO: Plugin registered: Quick Notes (2 tools)
+2026-03-13 11:47:45,454 [root.plugins] INFO: Plugin registered: Shell Executor (1 tools)
+2026-03-13 11:47:45,454 [root.plugins] INFO: Plugin registered: Reminders (2 tools)
+2026-03-13 11:47:45,454 [root.plugins] INFO: Plugin registered: Code Analyzer (1 tools)
+2026-03-13 11:47:45,454 [root.plugins] INFO: Plugin registered: Financial Intelligence (3 tools)
+2026-03-13 11:47:45,454 [root.plugins] INFO: Plugin registered: Decision Analysis (2 tools)
+2026-03-13 11:47:45,454 [root.plugins] INFO: Plugin registered: Alpaca Trading (6 tools)
+2026-03-13 11:47:45,454 [root.plugins] INFO: Alpaca Trading plugin: ACTIVE (paper mode)
+2026-03-13 11:47:45,454 [root] INFO: Plugin engine: 11 plugins, 24 tools
+2026-03-13 11:47:45,504 [watchfiles.main] INFO: 9 changes detected
+2026-03-13 11:47:45,644 [root] INFO: LLM service: CONNECTED (OpenAI GPT)
+2026-03-13 11:47:45,644 [root] INFO: Interest engine: ready
+2026-03-13 11:47:45,647 [root] INFO: Brain: ONLINE
+2026-03-13 11:47:45,647 [root] INFO: All agent connectors wired: LLM + tools bound
+2026-03-13 11:47:45,647 [root] INFO: Message bus: ready
+2026-03-13 11:47:45,647 [root] INFO: Approval chain: LOW=auto | MED=notify | HIGH/CRIT=approve
+2026-03-13 11:47:45,647 [root] INFO: Agent collaboration: delegate/pipeline/fanout/council
+2026-03-13 11:47:45,648 [root] INFO: Proactive engine: 11 behaviors
+2026-03-13 11:47:45,648 [root] INFO: Autonomous loop: self-improving every 30min
+2026-03-13 11:47:45,648 [root] INFO: ============================================================
+2026-03-13 11:47:45,648 [root] INFO:   ROOT v0.5.0 ALIVE — ONLINE — FULLY AUTONOMOUS
+2026-03-13 11:47:45,648 [root] INFO:   Maturity: mastery (100%)
+2026-03-13 11:47:45,648 [root] INFO:   Memories: 564 | Skills: 32 | Agents: 12 | Plugins: 11
+2026-03-13 11:47:45,648 [root] INFO:   Autonomous: Builder + Proactive + Self-Improving Loop
+2026-03-13 11:47:45,648 [root] INFO:   Collaboration: Delegate | Pipeline | Fanout | Council
+2026-03-13 11:47:45,648 [root] INFO:   Approval: Auto(low) | Notify(med) | Approve(high/critical)
+2026-03-13 11:47:45,648 [root] INFO:   Dashboard: http://127.0.0.1:9000
+2026-03-13 11:47:45,648 [root] INFO: ============================================================
+2026-03-13 11:47:45,648 [root.proactive] INFO: Proactive engine starting with 11 behaviors
+2026-03-13 11:47:45,648 [root.autonomous] INFO: Autonomous loop started (interval=1800s)
+2026-03-13 11:47:45,648 [root.builder] INFO: Builder Agent started (interval=300s)
+2026-03-13 11:47:45,648 [root.builder] INFO: Builder cycle #1 starting
+2026-03-13 11:47:45,649 [root.builder] INFO: Builder: no improvements needed this cycle
+INFO:     Application startup complete.
+2026-03-13 11:47:45,865 [watchfiles.main] INFO: 3 changes detected
+2026-03-13 11:47:49,650 [root.proactive] INFO: Proactive: running 'health_monitor'
+2026-03-13 11:47:51,650 [root.proactive] INFO: Proactive: running 'knowledge_consolidation'
+2026-03-13 11:47:59,650 [root.proactive] INFO: Proactive: running 'self_rewrite'
+2026-03-13 11:48:02,649 [root.proactive] INFO: Proactive: running 'market_scanner'
+2026-03-13 11:48:05,083 [httpx] INFO: HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-03-13 11:48:05,092 [root.connectors.swarm] INFO: [swarm] Tool: web_web_search({"query": "current SPY price and daily change October 2023"})
+2026-03-13 11:48:06,003 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=current+SPY+price+and+daily+change+October+2023 "HTTP/1.1 200 OK"
+2026-03-13 11:48:06,004 [root.connectors.swarm] INFO: [swarm] Tool: web_web_search({"query": "current QQQ price and daily change October 2023"})
+2026-03-13 11:48:06,650 [root.proactive] INFO: Proactive: running 'opportunity_scanner'
+2026-03-13 11:48:06,853 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=current+QQQ+price+and+daily+change+October+2023 "HTTP/1.1 200 OK"
+2026-03-13 11:48:06,854 [root.connectors.swarm] INFO: [swarm] Tool: web_web_search({"query": "current BTC price and daily change October 2023"})
+2026-03-13 11:48:07,165 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=current+BTC+price+and+daily+change+October+2023 "HTTP/1.1 202 Accepted"
+2026-03-13 11:48:07,167 [root.connectors.swarm] INFO: [swarm] Tool: web_web_search({"query": "major stock market news October 2023"})
+2026-03-13 11:48:08,040 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=major+stock+market+news+October+2023 "HTTP/1.1 200 OK"
+2026-03-13 11:48:08,040 [root.connectors.swarm] INFO: [swarm] Tool: web_web_search({"query": "crypto market news October 2023"})
+2026-03-13 11:48:08,650 [root.proactive] INFO: Proactive: running 'skill_discovery'
+2026-03-13 11:48:08,973 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=crypto+market+news+October+2023 "HTTP/1.1 200 OK"
+2026-03-13 11:48:09,305 [httpx] INFO: HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-03-13 11:48:09,310 [root.connectors.internal] INFO: [researcher] Tool call: web_web_search({"query": "latest in AI development 2023"})
+2026-03-13 11:48:09,650 [root.proactive] INFO: Proactive: running 'data_intelligence'
+2026-03-13 11:48:09,651 [root.connectors.openclaw] INFO: OpenClaw: running stage 'gaps'
+2026-03-13 11:48:09,658 [openclaw.gaps] INFO: Gap report saved to /tmp/openclaw/data/gap_report.json
+2026-03-13 11:48:10,407 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=latest+in+AI+development+2023 "HTTP/1.1 200 OK"
+2026-03-13 11:48:10,408 [root.connectors.internal] INFO: [researcher] Tool call: web_web_search({"query": "trading strategies innovations 2023"})
+2026-03-13 11:48:10,961 [httpx] INFO: HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-03-13 11:48:11,330 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=trading+strategies+innovations+2023 "HTTP/1.1 200 OK"
+2026-03-13 11:48:11,331 [root.connectors.internal] INFO: [researcher] Tool call: web_web_search({"query": "real estate data trends 2023"})
+2026-03-13 11:48:11,618 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=real+estate+data+trends+2023 "HTTP/1.1 202 Accepted"
+2026-03-13 11:48:11,619 [root.connectors.internal] INFO: [researcher] Tool call: web_web_search({"query": "automation technology advances 2023"})
+2026-03-13 11:48:11,830 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=automation+technology+advances+2023 "HTTP/1.1 202 Accepted"
+2026-03-13 11:48:12,661 [httpx] INFO: HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-03-13 11:48:12,663 [root.connectors.swarm] INFO: [swarm] Tool: web_fetch_url({"url": "https://www.investing.com/etfs/spdr-s-p-500-historical-data"})
+2026-03-13 11:48:13,275 [httpx] INFO: HTTP Request: GET https://www.investing.com/etfs/spdr-s-p-500-historical-data "HTTP/1.1 200 OK"
+2026-03-13 11:48:13,315 [root.connectors.swarm] INFO: [swarm] Tool: web_fetch_url({"url": "https://www.investing.com/etfs/powershares-qqqq-historical-data"})
+2026-03-13 11:48:13,793 [httpx] INFO: HTTP Request: GET https://www.investing.com/etfs/powershares-qqqq-historical-data "HTTP/1.1 200 OK"
+2026-03-13 11:48:13,894 [root.connectors.swarm] INFO: [swarm] Tool: web_web_search({"query": "current BTC price and daily change October 2023"})
+2026-03-13 11:48:14,100 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=current+BTC+price+and+daily+change+October+2023 "HTTP/1.1 202 Accepted"
+2026-03-13 11:48:14,710 [httpx] INFO: HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-03-13 11:48:14,712 [root.connectors.internal] INFO: [researcher] Tool call: web_fetch_url({"url": "https://deepmind.google/blog/2023-a-year-of-groundbreaking-advances-in-ai-and-computing"})
+2026-03-13 11:48:15,011 [httpx] INFO: HTTP Request: GET https://deepmind.google/blog/2023-a-year-of-groundbreaking-advances-in-ai-and-computing "HTTP/1.1 302 Found"
+2026-03-13 11:48:15,247 [httpx] INFO: HTTP Request: GET https://deepmind.google/blog/2023-a-year-of-groundbreaking-advances-in-ai-and-computing/ "HTTP/1.1 200 OK"
+2026-03-13 11:48:15,298 [root.connectors.internal] INFO: [researcher] Tool call: web_fetch_url({"url": "https://daytraderbusiness.com/strategies/innovative-day-trading-strategies-for-2023/"})
+2026-03-13 11:48:15,650 [root.proactive] INFO: Proactive: running 'github_scanner'
+2026-03-13 11:48:15,914 [httpx] INFO: HTTP Request: GET https://daytraderbusiness.com/strategies/innovative-day-trading-strategies-for-2023/ "HTTP/1.1 200 OK"
+2026-03-13 11:48:15,917 [root.connectors.internal] INFO: [researcher] Tool call: web_fetch_url({"url": "https://doms2cents.com/stories/the-best-innovations-in-online-trading-for-2023/"})
+2026-03-13 11:48:16,447 [httpx] INFO: HTTP Request: GET https://doms2cents.com/stories/the-best-innovations-in-online-trading-for-2023/ "HTTP/1.1 200 OK"
+2026-03-13 11:48:17,371 [httpx] INFO: HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-03-13 11:48:17,373 [root.connectors.swarm] INFO: [swarm] Tool: web_web_search({"query": "SPY current price October 31st 2023"})
+2026-03-13 11:48:17,563 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=SPY+current+price+October+31st+2023 "HTTP/1.1 202 Accepted"
+2026-03-13 11:48:17,564 [root.connectors.swarm] INFO: [swarm] Tool: web_web_search({"query": "QQQ current price October 31st 2023"})
+2026-03-13 11:48:17,769 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=QQQ+current+price+October+31st+2023 "HTTP/1.1 202 Accepted"
+2026-03-13 11:48:17,770 [root.connectors.swarm] INFO: [swarm] Tool: web_web_search({"query": "BTC current price October 31st 2023"})
+2026-03-13 11:48:17,977 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=BTC+current+price+October+31st+2023 "HTTP/1.1 202 Accepted"
+2026-03-13 11:48:19,419 [httpx] INFO: HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-03-13 11:48:19,421 [root.connectors.internal] INFO: [researcher] Tool call: web_web_search({"query": "trending AI repositories on GitHub 2023"})
+2026-03-13 11:48:19,631 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=trending+AI+repositories+on+GitHub+2023 "HTTP/1.1 202 Accepted"
+2026-03-13 11:48:19,632 [root.connectors.internal] INFO: [researcher] Tool call: web_web_search({"query": "new agent AI frameworks 2023"})
+2026-03-13 11:48:19,825 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=new+agent+AI+frameworks+2023 "HTTP/1.1 202 Accepted"
+2026-03-13 11:48:19,826 [root.connectors.internal] INFO: [researcher] Tool call: web_web_search({"query": "trading finance AI projects 2023"})
+2026-03-13 11:48:20,210 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=trading+finance+AI+projects+2023 "HTTP/1.1 202 Accepted"
+2026-03-13 11:48:20,211 [root.connectors.internal] INFO: [researcher] Tool call: web_web_search({"query": "local LLM inference improvements 2023"})
+2026-03-13 11:48:20,406 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=local+LLM+inference+improvements+2023 "HTTP/1.1 202 Accepted"
+2026-03-13 11:48:20,407 [root.connectors.internal] INFO: [researcher] Tool call: web_web_search({"query": "AI automation tools 2023"})
+2026-03-13 11:48:20,605 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=AI+automation+tools+2023 "HTTP/1.1 202 Accepted"
+2026-03-13 11:48:21,179 [httpx] INFO: HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-03-13 11:48:21,185 [root.connectors.swarm] INFO: [swarm] Tool: web_web_search({"query": "SPY ETF current price October 2023"})
+2026-03-13 11:48:21,391 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=SPY+ETF+current+price+October+2023 "HTTP/1.1 202 Accepted"
+2026-03-13 11:48:21,392 [root.connectors.swarm] INFO: [swarm] Tool: web_web_search({"query": "QQQ ETF current price October 2023"})
+2026-03-13 11:48:21,597 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=QQQ+ETF+current+price+October+2023 "HTTP/1.1 202 Accepted"
+2026-03-13 11:48:21,599 [root.connectors.swarm] INFO: [swarm] Tool: web_web_search({"query": "BTC current price October 2023"})
+2026-03-13 11:48:21,808 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=BTC+current+price+October+2023 "HTTP/1.1 202 Accepted"
+2026-03-13 11:48:21,903 [httpx] INFO: HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-03-13 11:48:21,964 [httpx] INFO: HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-03-13 11:48:22,075 [watchfiles.main] INFO: 1 change detected
+2026-03-13 11:48:23,310 [httpx] INFO: HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-03-13 11:48:23,313 [root.connectors.swarm] INFO: [swarm] Tool: alpaca_alpaca_market_data({"symbols": "SPY,QQQ"})
+2026-03-13 11:48:23,321 [httpx] INFO: HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-03-13 11:48:23,322 [root.connectors.internal] INFO: [researcher] Tool call: web_web_search({"query": "trending AI repositories on GitHub 2023"})
+2026-03-13 11:48:23,521 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=trending+AI+repositories+on+GitHub+2023 "HTTP/1.1 202 Accepted"
+2026-03-13 11:48:23,522 [root.connectors.internal] INFO: [researcher] Tool call: web_web_search({"query": "new agent AI frameworks 2023"})
+2026-03-13 11:48:23,565 [httpx] INFO: HTTP Request: GET https://data.alpaca.markets/v2/stocks/quotes/latest?symbols=SPY%2CQQQ "HTTP/1.1 200 OK"
+2026-03-13 11:48:23,566 [root.connectors.swarm] INFO: [swarm] Tool: web_web_search({"query": "BTC price October 31 2023"})
+2026-03-13 11:48:23,754 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=new+agent+AI+frameworks+2023 "HTTP/1.1 202 Accepted"
+2026-03-13 11:48:23,755 [root.connectors.internal] INFO: [researcher] Tool call: web_web_search({"query": "trading finance AI projects 2023"})
+2026-03-13 11:48:23,769 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=BTC+price+October+31+2023 "HTTP/1.1 202 Accepted"
+2026-03-13 11:48:23,862 [httpx] INFO: HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2026-03-13 11:48:23,863 [openai._base_client] INFO: Retrying request to /chat/completions in 9.498000 seconds
+2026-03-13 11:48:23,946 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=trading+finance+AI+projects+2023 "HTTP/1.1 202 Accepted"
+2026-03-13 11:48:23,947 [root.connectors.internal] INFO: [researcher] Tool call: web_web_search({"query": "local LLM inference improvements 2023"})
+2026-03-13 11:48:24,141 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=local+LLM+inference+improvements+2023 "HTTP/1.1 202 Accepted"
+2026-03-13 11:48:24,141 [root.connectors.internal] INFO: [researcher] Tool call: web_web_search({"query": "AI automation tools 2023"})
+2026-03-13 11:48:24,337 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=AI+automation+tools+2023 "HTTP/1.1 202 Accepted"
+2026-03-13 11:48:24,437 [httpx] INFO: HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2026-03-13 11:48:24,438 [openai._base_client] INFO: Retrying request to /chat/completions in 1.028000 seconds
+2026-03-13 11:48:25,567 [httpx] INFO: HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2026-03-13 11:48:25,568 [openai._base_client] INFO: Retrying request to /chat/completions in 1.028000 seconds
+2026-03-13 11:48:26,701 [httpx] INFO: HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2026-03-13 11:48:26,702 [root.llm.openai] ERROR: OpenAI API error (tool_use): Error code: 429 - {'error': {'message': 'Rate limit reached for gpt-4o in organization org-aKvH4nU9cMSeG3hKbU9Yh2oD on tokens per min (TPM): Limit 30000, Used 30000, Requested 514. Please try again in 1.028s. Visit https://platform.openai.com/account/rate-limits to learn more.', 'type': 'tokens', 'param': None, 'code': 'rate_limit_exceeded'}}
+2026-03-13 11:48:28,650 [root.proactive] INFO: Proactive: running 'goal_tracker'
+2026-03-13 11:48:30,874 [watchfiles.main] INFO: 3 changes detected
+WARNING:  WatchFiles detected changes in 'backend/core/brain.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+2026-03-13 11:48:31,049 [root.proactive] INFO: Proactive engine stopped
+2026-03-13 11:48:31,049 [root.autonomous] INFO: Autonomous loop stopped
+2026-03-13 11:48:31,049 [root.builder] INFO: Builder Agent stopped
+2026-03-13 11:48:31,052 [root] INFO: === ROOT v0.5.0 shut down ===
+INFO:     Application shutdown complete.
+INFO:     Finished server process [91213]
+2026-03-13 11:48:31,419 [root.security] INFO: API key auth: DISABLED (dev mode — no ROOT_API_KEY set)
+2026-03-13 11:48:31,419 [root.security] INFO: Rate limiter: 100 requests/minute per IP
+2026-03-13 11:48:31,419 [root.security] INFO: Security headers: ACTIVE (6 headers)
+2026-03-13 11:48:31,419 [watchfiles.main] INFO: 5 changes detected
+2026-03-13 11:48:31,469 [root.security] INFO: API key auth: DISABLED (dev mode — no ROOT_API_KEY set)
+2026-03-13 11:48:31,469 [root.security] INFO: Rate limiter: 100 requests/minute per IP
+2026-03-13 11:48:31,469 [root.security] INFO: Security headers: ACTIVE (6 headers)
+INFO:     Started server process [91287]
+INFO:     Waiting for application startup.
+2026-03-13 11:48:31,469 [root] INFO: ============================================================
+2026-03-13 11:48:31,469 [root] INFO:   ROOT v0.5.0 — Fully Autonomous AI — Starting Up
+2026-03-13 11:48:31,469 [root] INFO: ============================================================
+2026-03-13 11:48:31,470 [root.bootstrap] INFO: Memory already bootstrapped (565 entries), skipping
+2026-03-13 11:48:31,470 [root] INFO: Memory engine: 565 entries
+2026-03-13 11:48:31,470 [root] INFO: Conversation store: ready (session=sess_0b03e9db1f9e)
+2026-03-13 11:48:31,479 [root.skills] INFO: Loaded 32 skills from /Users/yohan/Desktop/ROOT/data/skills
+2026-03-13 11:48:31,479 [root] INFO: Skill engine: 32 skills loaded
+2026-03-13 11:48:31,480 [root] INFO: Self-dev engine: maturity=mastery
+2026-03-13 11:48:31,480 [root.hooks] INFO: Hook registered: boot_logger on on_startup
+2026-03-13 11:48:31,480 [root.hooks] INFO: Hook registered: interaction_counter on on_chat
+2026-03-13 11:48:31,480 [root.hooks] INFO: Hook registered: memory_logger on on_learn
+2026-03-13 11:48:31,480 [root.hooks] INFO: Hook registered: error_capture on on_error
+2026-03-13 11:48:31,480 [root.hooks] INFO: Hook registered: skill_reindex on on_skill_create
+2026-03-13 11:48:31,480 [root.hooks] INFO: ROOT startup hook fired
+2026-03-13 11:48:31,480 [root] INFO: Hook engine: 5 hooks registered
+2026-03-13 11:48:31,480 [root.agents] INFO: Registered agent: ASTRA (astra)
+2026-03-13 11:48:31,480 [root.agents] INFO: Registered agent: ROOT (root)
+2026-03-13 11:48:31,480 [root.agents] INFO: Registered agent: HERMES (hermes)
+2026-03-13 11:48:31,480 [root.agents] INFO: Registered agent: MiRo (miro)
+2026-03-13 11:48:31,480 [root.agents] INFO: Registered agent: Trading Swarm (swarm)
+2026-03-13 11:48:31,480 [root.agents] INFO: Registered agent: OpenClaw (openclaw)
+2026-03-13 11:48:31,480 [root.agents] INFO: Registered agent: Builder (builder)
+2026-03-13 11:48:31,480 [root.agents] INFO: Registered agent: Researcher (researcher)
+2026-03-13 11:48:31,480 [root.agents] INFO: Registered agent: Coder (coder)
+2026-03-13 11:48:31,480 [root.agents] INFO: Registered agent: Writer (writer)
+2026-03-13 11:48:31,480 [root.agents] INFO: Registered agent: Analyst (analyst)
+2026-03-13 11:48:31,480 [root.agents] INFO: Registered agent: Guardian (guardian)
+2026-03-13 11:48:31,480 [root] INFO: Agent registry: 12 agents
+2026-03-13 11:48:31,480 [root] INFO: Money engine: Strategy Council ready
+2026-03-13 11:48:31,480 [root.plugins] INFO: Plugin registered: System Tools (2 tools)
+2026-03-13 11:48:31,496 [root.plugins] INFO: Plugin registered: Web Tools (2 tools)
+2026-03-13 11:48:31,496 [root.plugins] INFO: Plugin registered: Calculator (1 tools)
+2026-03-13 11:48:31,496 [root.plugins] INFO: Plugin registered: File Manager (2 tools)
+2026-03-13 11:48:31,496 [root.plugins] INFO: Plugin registered: Quick Notes (2 tools)
+2026-03-13 11:48:31,496 [root.plugins] INFO: Plugin registered: Shell Executor (1 tools)
+2026-03-13 11:48:31,496 [root.plugins] INFO: Plugin registered: Reminders (2 tools)
+2026-03-13 11:48:31,496 [root.plugins] INFO: Plugin registered: Code Analyzer (1 tools)
+2026-03-13 11:48:31,496 [root.plugins] INFO: Plugin registered: Financial Intelligence (3 tools)
+2026-03-13 11:48:31,496 [root.plugins] INFO: Plugin registered: Decision Analysis (2 tools)
+2026-03-13 11:48:31,496 [root.plugins] INFO: Plugin registered: Alpaca Trading (6 tools)
+2026-03-13 11:48:31,496 [root.plugins] INFO: Alpaca Trading plugin: ACTIVE (paper mode)
+2026-03-13 11:48:31,496 [root] INFO: Plugin engine: 11 plugins, 24 tools
+2026-03-13 11:48:31,707 [root] INFO: LLM service: CONNECTED (OpenAI GPT)
+2026-03-13 11:48:31,707 [root] INFO: Interest engine: ready
+2026-03-13 11:48:31,710 [root] INFO: Brain: ONLINE
+2026-03-13 11:48:31,710 [root] INFO: All agent connectors wired: LLM + tools bound
+2026-03-13 11:48:31,710 [root] INFO: Message bus: ready
+2026-03-13 11:48:31,710 [root] INFO: Approval chain: LOW=auto | MED=notify | HIGH/CRIT=approve
+2026-03-13 11:48:31,710 [root] INFO: Agent collaboration: delegate/pipeline/fanout/council
+2026-03-13 11:48:31,710 [root] INFO: Proactive engine: 11 behaviors
+2026-03-13 11:48:31,710 [root] INFO: Autonomous loop: self-improving every 30min
+2026-03-13 11:48:31,711 [root] INFO: ============================================================
+2026-03-13 11:48:31,711 [root] INFO:   ROOT v0.5.0 ALIVE — ONLINE — FULLY AUTONOMOUS
+2026-03-13 11:48:31,711 [root] INFO:   Maturity: mastery (100%)
+2026-03-13 11:48:31,711 [root] INFO:   Memories: 565 | Skills: 32 | Agents: 12 | Plugins: 11
+2026-03-13 11:48:31,711 [root] INFO:   Autonomous: Builder + Proactive + Self-Improving Loop
+2026-03-13 11:48:31,711 [root] INFO:   Collaboration: Delegate | Pipeline | Fanout | Council
+2026-03-13 11:48:31,711 [root] INFO:   Approval: Auto(low) | Notify(med) | Approve(high/critical)
+2026-03-13 11:48:31,711 [root] INFO:   Dashboard: http://127.0.0.1:9000
+2026-03-13 11:48:31,711 [root] INFO: ============================================================
+2026-03-13 11:48:31,711 [root.proactive] INFO: Proactive engine starting with 11 behaviors
+2026-03-13 11:48:31,711 [root.autonomous] INFO: Autonomous loop started (interval=1800s)
+2026-03-13 11:48:31,711 [root.builder] INFO: Builder Agent started (interval=300s)
+2026-03-13 11:48:31,711 [root.builder] INFO: Builder cycle #1 starting
+2026-03-13 11:48:31,711 [root.builder] INFO: Builder: no improvements needed this cycle
+INFO:     Application startup complete.
+2026-03-13 11:48:31,779 [watchfiles.main] INFO: 7 changes detected
+2026-03-13 11:48:37,713 [root.proactive] INFO: Proactive: running 'github_scanner'
+2026-03-13 11:48:38,713 [root.proactive] INFO: Proactive: running 'skill_discovery'
+2026-03-13 11:48:40,776 [httpx] INFO: HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-03-13 11:48:40,784 [root.connectors.internal] INFO: [researcher] Tool call: web_web_search({"query": "latest trending AI repositories 2023 GitHub"})
+2026-03-13 11:48:40,971 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=latest+trending+AI+repositories+2023+GitHub "HTTP/1.1 202 Accepted"
+2026-03-13 11:48:40,973 [root.connectors.internal] INFO: [researcher] Tool call: web_web_search({"query": "latest AI breakthroughs 2023"})
+2026-03-13 11:48:41,156 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=latest+AI+breakthroughs+2023 "HTTP/1.1 202 Accepted"
+2026-03-13 11:48:41,157 [root.connectors.internal] INFO: [researcher] Tool call: web_web_search({"query": "new agent frameworks AI 2023"})
+2026-03-13 11:48:41,352 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=new+agent+frameworks+AI+2023 "HTTP/1.1 202 Accepted"
+2026-03-13 11:48:41,353 [root.connectors.internal] INFO: [researcher] Tool call: web_web_search({"query": "AI trading finance projects 2023"})
+2026-03-13 11:48:41,551 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=AI+trading+finance+projects+2023 "HTTP/1.1 202 Accepted"
+2026-03-13 11:48:41,552 [root.connectors.internal] INFO: [researcher] Tool call: web_web_search({"query": "local LLM inference improvements 2023"})
+2026-03-13 11:48:41,757 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=local+LLM+inference+improvements+2023 "HTTP/1.1 202 Accepted"
+2026-03-13 11:48:41,759 [root.connectors.internal] INFO: [researcher] Tool call: web_web_search({"query": "AI automation tools 2023"})
+2026-03-13 11:48:41,960 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=AI+automation+tools+2023 "HTTP/1.1 202 Accepted"
+2026-03-13 11:48:44,314 [httpx] INFO: HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-03-13 11:48:44,316 [root.connectors.internal] INFO: [researcher] Tool call: web_web_search({"query": "latest trending AI repositories 2023 GitHub"})
+2026-03-13 11:48:44,501 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=latest+trending+AI+repositories+2023+GitHub "HTTP/1.1 202 Accepted"
+2026-03-13 11:48:44,501 [root.connectors.internal] INFO: [researcher] Tool call: web_web_search({"query": "latest AI breakthroughs 2023"})
+2026-03-13 11:48:44,696 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=latest+AI+breakthroughs+2023 "HTTP/1.1 202 Accepted"
+2026-03-13 11:48:44,697 [root.connectors.internal] INFO: [researcher] Tool call: web_web_search({"query": "new agent frameworks AI 2023"})
+2026-03-13 11:48:44,909 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=new+agent+frameworks+AI+2023 "HTTP/1.1 202 Accepted"
+2026-03-13 11:48:44,910 [root.connectors.internal] INFO: [researcher] Tool call: web_web_search({"query": "AI trading finance projects 2023"})
+2026-03-13 11:48:45,107 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=AI+trading+finance+projects+2023 "HTTP/1.1 202 Accepted"
+2026-03-13 11:48:45,109 [root.connectors.internal] INFO: [researcher] Tool call: web_web_search({"query": "local LLM inference improvements 2023"})
+2026-03-13 11:48:45,312 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=local+LLM+inference+improvements+2023 "HTTP/1.1 202 Accepted"
+2026-03-13 11:48:45,313 [root.connectors.internal] INFO: [researcher] Tool call: web_web_search({"query": "AI automation tools 2023"})
+2026-03-13 11:48:45,566 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=AI+automation+tools+2023 "HTTP/1.1 202 Accepted"
+2026-03-13 11:48:47,713 [root.proactive] INFO: Proactive: running 'goal_tracker'
+2026-03-13 11:48:48,009 [httpx] INFO: HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-03-13 11:48:48,011 [root.connectors.internal] INFO: [researcher] Tool call: web_web_search({"query": "latest trending AI repositories GitHub 2023"})
+2026-03-13 11:48:48,207 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=latest+trending+AI+repositories+GitHub+2023 "HTTP/1.1 202 Accepted"
+2026-03-13 11:48:48,209 [root.connectors.internal] INFO: [researcher] Tool call: web_web_search({"query": "new AI agent frameworks 2023"})
+2026-03-13 11:48:48,402 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=new+AI+agent+frameworks+2023 "HTTP/1.1 202 Accepted"
+2026-03-13 11:48:48,402 [root.connectors.internal] INFO: [researcher] Tool call: web_web_search({"query": "trending AI tools for trading 2023"})
+2026-03-13 11:48:48,595 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=trending+AI+tools+for+trading+2023 "HTTP/1.1 202 Accepted"
+2026-03-13 11:48:48,597 [root.connectors.internal] INFO: [researcher] Tool call: web_web_search({"query": "local LLM inference optimization 2023"})
+2026-03-13 11:48:48,792 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=local+LLM+inference+optimization+2023 "HTTP/1.1 202 Accepted"
+2026-03-13 11:48:48,793 [root.connectors.internal] INFO: [researcher] Tool call: web_web_search({"query": "AI-based automation tools 2023"})
+2026-03-13 11:48:48,979 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=AI-based+automation+tools+2023 "HTTP/1.1 202 Accepted"
+2026-03-13 11:48:49,713 [root.proactive] INFO: Proactive: running 'health_monitor'
+2026-03-13 11:48:51,062 [httpx] INFO: HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-03-13 11:48:51,063 [root.connectors.internal] INFO: [researcher] Tool call: web_web_search({"query": "latest trending AI repositories GitHub 2023"})
+2026-03-13 11:48:51,262 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=latest+trending+AI+repositories+GitHub+2023 "HTTP/1.1 202 Accepted"
+2026-03-13 11:48:51,263 [root.connectors.internal] INFO: [researcher] Tool call: web_web_search({"query": "new AI agent frameworks 2023"})
+2026-03-13 11:48:51,461 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=new+AI+agent+frameworks+2023 "HTTP/1.1 202 Accepted"
+2026-03-13 11:48:51,462 [root.connectors.internal] INFO: [researcher] Tool call: web_web_search({"query": "trending AI tools for trading 2023"})
+2026-03-13 11:48:51,653 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=trending+AI+tools+for+trading+2023 "HTTP/1.1 202 Accepted"
+2026-03-13 11:48:51,654 [root.connectors.internal] INFO: [researcher] Tool call: web_web_search({"query": "local LLM inference optimization 2023"})
+2026-03-13 11:48:51,712 [root.proactive] INFO: Proactive: running 'market_scanner'
+2026-03-13 11:48:51,850 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=local+LLM+inference+optimization+2023 "HTTP/1.1 202 Accepted"
+2026-03-13 11:48:51,851 [root.connectors.internal] INFO: [researcher] Tool call: web_web_search({"query": "AI-based automation tools 2023"})
+2026-03-13 11:48:52,063 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=AI-based+automation+tools+2023 "HTTP/1.1 202 Accepted"
+2026-03-13 11:48:52,206 [httpx] INFO: HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2026-03-13 11:48:52,208 [openai._base_client] INFO: Retrying request to /chat/completions in 1.072000 seconds
+2026-03-13 11:48:53,369 [httpx] INFO: HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2026-03-13 11:48:53,370 [openai._base_client] INFO: Retrying request to /chat/completions in 1.138000 seconds
+2026-03-13 11:48:53,713 [root.proactive] INFO: Proactive: running 'agent_evolution'
+2026-03-13 11:48:54,198 [httpx] INFO: HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-03-13 11:48:54,204 [root.connectors.swarm] INFO: [swarm] Tool: web_web_search({"query": "SPY current price and news October 2023"})
+2026-03-13 11:48:54,412 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=SPY+current+price+and+news+October+2023 "HTTP/1.1 202 Accepted"
+2026-03-13 11:48:54,413 [root.connectors.swarm] INFO: [swarm] Tool: web_web_search({"query": "QQQ current price and news October 2023"})
+2026-03-13 11:48:54,614 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=QQQ+current+price+and+news+October+2023 "HTTP/1.1 202 Accepted"
+2026-03-13 11:48:54,615 [root.connectors.swarm] INFO: [swarm] Tool: web_web_search({"query": "BTC current price and news October 2023"})
+2026-03-13 11:48:54,828 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=BTC+current+price+and+news+October+2023 "HTTP/1.1 202 Accepted"
+2026-03-13 11:48:54,923 [httpx] INFO: HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2026-03-13 11:48:54,924 [openai._base_client] INFO: Retrying request to /chat/completions in 1.196000 seconds
+2026-03-13 11:48:56,227 [httpx] INFO: HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2026-03-13 11:48:56,227 [openai._base_client] INFO: Retrying request to /chat/completions in 1.196000 seconds
+2026-03-13 11:48:57,146 [httpx] INFO: HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-03-13 11:48:57,151 [root.connectors.internal] INFO: [researcher] Tool call: web_web_search({"query": "top GitHub AI repositories October 2023"})
+2026-03-13 11:48:57,341 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=top+GitHub+AI+repositories+October+2023 "HTTP/1.1 202 Accepted"
+2026-03-13 11:48:57,343 [root.connectors.internal] INFO: [researcher] Tool call: web_web_search({"query": "new AI agent frameworks October 2023"})
+2026-03-13 11:48:57,528 [httpx] INFO: HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2026-03-13 11:48:57,529 [root.llm.openai] ERROR: OpenAI API error (tool_use): Error code: 429 - {'error': {'message': 'Rate limit reached for gpt-4o in organization org-aKvH4nU9cMSeG3hKbU9Yh2oD on tokens per min (TPM): Limit 30000, Used 30000, Requested 598. Please try again in 1.196s. Visit https://platform.openai.com/account/rate-limits to learn more.', 'type': 'tokens', 'param': None, 'code': 'rate_limit_exceeded'}}
+2026-03-13 11:48:57,540 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=new+AI+agent+frameworks+October+2023 "HTTP/1.1 202 Accepted"
+2026-03-13 11:48:57,541 [root.connectors.internal] INFO: [researcher] Tool call: web_web_search({"query": "AI trading finance tools October 2023"})
+2026-03-13 11:48:57,733 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=AI+trading+finance+tools+October+2023 "HTTP/1.1 202 Accepted"
+2026-03-13 11:48:57,735 [root.connectors.internal] INFO: [researcher] Tool call: web_web_search({"query": "latest LLM inference improvements October 2023"})
+2026-03-13 11:48:57,922 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=latest+LLM+inference+improvements+October+2023 "HTTP/1.1 202 Accepted"
+2026-03-13 11:48:57,923 [root.connectors.internal] INFO: [researcher] Tool call: web_web_search({"query": "automation tools AI October 2023"})
+2026-03-13 11:48:58,157 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=automation+tools+AI+October+2023 "HTTP/1.1 202 Accepted"
+2026-03-13 11:48:58,290 [httpx] INFO: HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2026-03-13 11:48:58,291 [openai._base_client] INFO: Retrying request to /chat/completions in 1.778000 seconds
+2026-03-13 11:49:00,169 [httpx] INFO: HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2026-03-13 11:49:00,170 [openai._base_client] INFO: Retrying request to /chat/completions in 1.778000 seconds
+2026-03-13 11:49:02,053 [httpx] INFO: HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2026-03-13 11:49:02,055 [root.llm.openai] ERROR: OpenAI API error: Error code: 429 - {'error': {'message': 'Rate limit reached for gpt-4o in organization org-aKvH4nU9cMSeG3hKbU9Yh2oD on tokens per min (TPM): Limit 30000, Used 29112, Requested 889. Please try again in 2ms. Visit https://platform.openai.com/account/rate-limits to learn more.', 'type': 'tokens', 'param': None, 'code': 'rate_limit_exceeded'}}
+2026-03-13 11:49:05,713 [root.proactive] INFO: Proactive: running 'self_rewrite'
+2026-03-13 11:49:07,713 [root.proactive] INFO: Proactive: running 'miro_prediction'
+2026-03-13 11:49:08,713 [root.proactive] INFO: Proactive: running 'data_intelligence'
+2026-03-13 11:49:08,713 [root.connectors.openclaw] INFO: OpenClaw: running stage 'gaps'
+2026-03-13 11:49:08,720 [openclaw.gaps] INFO: Gap report saved to /tmp/openclaw/data/gap_report.json
+2026-03-13 11:49:09,405 [httpx] INFO: HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-03-13 11:49:09,407 [root.connectors.miro] INFO: [miro] Tool: web_web_search({"query": "AI trading trends November 2023"})
+2026-03-13 11:49:10,208 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=AI+trading+trends+November+2023 "HTTP/1.1 403 Forbidden"
+2026-03-13 11:49:10,209 [root.connectors.miro] INFO: [miro] Tool: web_web_search({"query": "autonomous agent systems developments 2023"})
+2026-03-13 11:49:10,966 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=autonomous+agent+systems+developments+2023 "HTTP/1.1 403 Forbidden"
+2026-03-13 11:49:10,966 [root.connectors.miro] INFO: [miro] Tool: web_web_search({"query": "real estate data intelligence trends November 2023"})
+2026-03-13 11:49:11,718 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=real+estate+data+intelligence+trends+November+2023 "HTTP/1.1 403 Forbidden"
+2026-03-13 11:49:13,334 [httpx] INFO: HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-03-13 11:49:13,335 [root.connectors.miro] INFO: [miro] Tool: web_web_search({"query": "AI trading innovations November 2023"})
+2026-03-13 11:49:14,100 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=AI+trading+innovations+November+2023 "HTTP/1.1 403 Forbidden"
+2026-03-13 11:49:14,101 [root.connectors.miro] INFO: [miro] Tool: web_web_search({"query": "latest developments in autonomous agents 2023"})
+2026-03-13 11:49:14,877 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=latest+developments+in+autonomous+agents+2023 "HTTP/1.1 403 Forbidden"
+2026-03-13 11:49:14,878 [root.connectors.miro] INFO: [miro] Tool: web_web_search({"query": "real estate data analytics updates November 2023"})
+2026-03-13 11:49:15,024 [httpx] INFO: HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-03-13 11:49:15,658 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=real+estate+data+analytics+updates+November+2023 "HTTP/1.1 403 Forbidden"
+2026-03-13 11:49:18,122 [httpx] INFO: HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-03-13 11:49:18,128 [root.connectors.miro] INFO: [miro] Tool: web_web_search({"query": "AI trading innovations November 2023"})
+2026-03-13 11:49:18,901 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=AI+trading+innovations+November+2023 "HTTP/1.1 403 Forbidden"
+2026-03-13 11:49:18,902 [root.connectors.miro] INFO: [miro] Tool: web_web_search({"query": "latest developments in autonomous agents 2023"})
+2026-03-13 11:49:19,116 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=latest+developments+in+autonomous+agents+2023 "HTTP/1.1 202 Accepted"
+2026-03-13 11:49:19,117 [root.connectors.miro] INFO: [miro] Tool: web_web_search({"query": "real estate data analytics updates November 2023"})
+2026-03-13 11:49:19,327 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=real+estate+data+analytics+updates+November+2023 "HTTP/1.1 202 Accepted"
+2026-03-13 11:49:21,604 [httpx] INFO: HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-03-13 11:49:21,606 [root.connectors.miro] INFO: [miro] Tool: web_web_search({"query": "AI trading innovations November 2023"})
+2026-03-13 11:49:21,818 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=AI+trading+innovations+November+2023 "HTTP/1.1 202 Accepted"
+2026-03-13 11:49:21,819 [root.connectors.miro] INFO: [miro] Tool: web_web_search({"query": "latest developments in autonomous agents 2023"})
+2026-03-13 11:49:22,037 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=latest+developments+in+autonomous+agents+2023 "HTTP/1.1 202 Accepted"
+2026-03-13 11:49:22,038 [root.connectors.miro] INFO: [miro] Tool: web_web_search({"query": "real estate data analytics updates November 2023"})
+2026-03-13 11:49:22,240 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=real+estate+data+analytics+updates+November+2023 "HTTP/1.1 202 Accepted"
+2026-03-13 11:49:24,680 [httpx] INFO: HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-03-13 11:49:24,681 [root.connectors.miro] INFO: [miro] Tool: web_web_search({"query": "AI trading news November 2023"})
+2026-03-13 11:49:24,897 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=AI+trading+news+November+2023 "HTTP/1.1 202 Accepted"
+2026-03-13 11:49:24,899 [httpx] INFO: HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-03-13 11:49:24,899 [root.connectors.miro] INFO: [miro] Tool: web_web_search({"query": "autonomous agent systems 2023 latest advancements"})
+2026-03-13 11:49:25,034 [watchfiles.main] INFO: 1 change detected
+2026-03-13 11:49:25,148 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=autonomous+agent+systems+2023+latest+advancements "HTTP/1.1 202 Accepted"
+2026-03-13 11:49:25,149 [root.connectors.miro] INFO: [miro] Tool: web_web_search({"query": "real estate data analytics news November 2023"})
+2026-03-13 11:49:25,372 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=real+estate+data+analytics+news+November+2023 "HTTP/1.1 202 Accepted"
+2026-03-13 11:49:25,466 [httpx] INFO: HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2026-03-13 11:49:25,467 [openai._base_client] INFO: Retrying request to /chat/completions in 1.836000 seconds
+2026-03-13 11:49:25,713 [root.proactive] INFO: Proactive: running 'knowledge_consolidation'
+2026-03-13 11:49:26,713 [root.proactive] INFO: Proactive: running 'opportunity_scanner'
+2026-03-13 11:49:26,817 [httpx] INFO: HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2026-03-13 11:49:26,818 [openai._base_client] INFO: Retrying request to /chat/completions in 0.534000 seconds
+2026-03-13 11:49:27,420 [httpx] INFO: HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2026-03-13 11:49:27,421 [openai._base_client] INFO: Retrying request to /chat/completions in 1.836000 seconds
+2026-03-13 11:49:27,459 [httpx] INFO: HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2026-03-13 11:49:27,459 [openai._base_client] INFO: Retrying request to /chat/completions in 0.534000 seconds
+2026-03-13 11:49:28,089 [httpx] INFO: HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2026-03-13 11:49:28,090 [root.llm.openai] ERROR: OpenAI API error (tool_use): Error code: 429 - {'error': {'message': 'Rate limit reached for gpt-4o in organization org-aKvH4nU9cMSeG3hKbU9Yh2oD on tokens per min (TPM): Limit 30000, Used 30000, Requested 267. Please try again in 534ms. Visit https://platform.openai.com/account/rate-limits to learn more.', 'type': 'tokens', 'param': None, 'code': 'rate_limit_exceeded'}}
+2026-03-13 11:49:29,353 [httpx] INFO: HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2026-03-13 11:49:29,354 [root.llm.openai] ERROR: OpenAI API error: Error code: 429 - {'error': {'message': 'Rate limit reached for gpt-4o in organization org-aKvH4nU9cMSeG3hKbU9Yh2oD on tokens per min (TPM): Limit 30000, Used 30000, Requested 918. Please try again in 1.836s. Visit https://platform.openai.com/account/rate-limits to learn more.', 'type': 'tokens', 'param': None, 'code': 'rate_limit_exceeded'}}
+2026-03-13 11:49:29,535 [httpx] INFO: HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2026-03-13 11:49:29,536 [openai._base_client] INFO: Retrying request to /chat/completions in 0.516000 seconds
+2026-03-13 11:49:30,166 [httpx] INFO: HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2026-03-13 11:49:30,167 [openai._base_client] INFO: Retrying request to /chat/completions in 0.258000 seconds
+2026-03-13 11:49:33,104 [httpx] INFO: HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-03-13 11:49:36,679 [watchfiles.main] INFO: 3 changes detected
+WARNING:  WatchFiles detected changes in 'backend/core/proactive_engine.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+2026-03-13 11:49:36,802 [root.proactive] INFO: Proactive engine stopped
+2026-03-13 11:49:36,802 [root.autonomous] INFO: Autonomous loop stopped
+2026-03-13 11:49:36,802 [root.builder] INFO: Builder Agent stopped
+2026-03-13 11:49:36,808 [root] INFO: === ROOT v0.5.0 shut down ===
+INFO:     Application shutdown complete.
+INFO:     Finished server process [91287]
+2026-03-13 11:49:37,080 [root.security] INFO: API key auth: DISABLED (dev mode — no ROOT_API_KEY set)
+2026-03-13 11:49:37,080 [root.security] INFO: Rate limiter: 100 requests/minute per IP
+2026-03-13 11:49:37,080 [root.security] INFO: Security headers: ACTIVE (6 headers)
+2026-03-13 11:49:37,124 [root.security] INFO: API key auth: DISABLED (dev mode — no ROOT_API_KEY set)
+2026-03-13 11:49:37,124 [root.security] INFO: Rate limiter: 100 requests/minute per IP
+2026-03-13 11:49:37,124 [root.security] INFO: Security headers: ACTIVE (6 headers)
+INFO:     Started server process [91366]
+INFO:     Waiting for application startup.
+2026-03-13 11:49:37,124 [root] INFO: ============================================================
+2026-03-13 11:49:37,124 [root] INFO:   ROOT v0.5.0 — Fully Autonomous AI — Starting Up
+2026-03-13 11:49:37,124 [root] INFO: ============================================================
+2026-03-13 11:49:37,125 [root.bootstrap] INFO: Memory already bootstrapped (567 entries), skipping
+2026-03-13 11:49:37,125 [root] INFO: Memory engine: 567 entries
+2026-03-13 11:49:37,125 [root] INFO: Conversation store: ready (session=sess_062aa800aceb)
+2026-03-13 11:49:37,133 [root.skills] INFO: Loaded 32 skills from /Users/yohan/Desktop/ROOT/data/skills
+2026-03-13 11:49:37,133 [root] INFO: Skill engine: 32 skills loaded
+2026-03-13 11:49:37,134 [root] INFO: Self-dev engine: maturity=mastery
+2026-03-13 11:49:37,134 [root.hooks] INFO: Hook registered: boot_logger on on_startup
+2026-03-13 11:49:37,134 [root.hooks] INFO: Hook registered: interaction_counter on on_chat
+2026-03-13 11:49:37,134 [root.hooks] INFO: Hook registered: memory_logger on on_learn
+2026-03-13 11:49:37,134 [root.hooks] INFO: Hook registered: error_capture on on_error
+2026-03-13 11:49:37,134 [root.hooks] INFO: Hook registered: skill_reindex on on_skill_create
+2026-03-13 11:49:37,134 [root.hooks] INFO: ROOT startup hook fired
+2026-03-13 11:49:37,134 [root] INFO: Hook engine: 5 hooks registered
+2026-03-13 11:49:37,134 [root.agents] INFO: Registered agent: ASTRA (astra)
+2026-03-13 11:49:37,134 [root.agents] INFO: Registered agent: ROOT (root)
+2026-03-13 11:49:37,134 [root.agents] INFO: Registered agent: HERMES (hermes)
+2026-03-13 11:49:37,134 [root.agents] INFO: Registered agent: MiRo (miro)
+2026-03-13 11:49:37,134 [root.agents] INFO: Registered agent: Trading Swarm (swarm)
+2026-03-13 11:49:37,134 [root.agents] INFO: Registered agent: OpenClaw (openclaw)
+2026-03-13 11:49:37,134 [root.agents] INFO: Registered agent: Builder (builder)
+2026-03-13 11:49:37,134 [root.agents] INFO: Registered agent: Researcher (researcher)
+2026-03-13 11:49:37,134 [root.agents] INFO: Registered agent: Coder (coder)
+2026-03-13 11:49:37,134 [root.agents] INFO: Registered agent: Writer (writer)
+2026-03-13 11:49:37,134 [root.agents] INFO: Registered agent: Analyst (analyst)
+2026-03-13 11:49:37,134 [root.agents] INFO: Registered agent: Guardian (guardian)
+2026-03-13 11:49:37,134 [root] INFO: Agent registry: 12 agents
+2026-03-13 11:49:37,134 [root] INFO: Money engine: Strategy Council ready
+2026-03-13 11:49:37,134 [root.plugins] INFO: Plugin registered: System Tools (2 tools)
+2026-03-13 11:49:37,150 [root.plugins] INFO: Plugin registered: Web Tools (2 tools)
+2026-03-13 11:49:37,150 [root.plugins] INFO: Plugin registered: Calculator (1 tools)
+2026-03-13 11:49:37,150 [root.plugins] INFO: Plugin registered: File Manager (2 tools)
+2026-03-13 11:49:37,150 [root.plugins] INFO: Plugin registered: Quick Notes (2 tools)
+2026-03-13 11:49:37,150 [root.plugins] INFO: Plugin registered: Shell Executor (1 tools)
+2026-03-13 11:49:37,150 [root.plugins] INFO: Plugin registered: Reminders (2 tools)
+2026-03-13 11:49:37,150 [root.plugins] INFO: Plugin registered: Code Analyzer (1 tools)
+2026-03-13 11:49:37,150 [root.plugins] INFO: Plugin registered: Financial Intelligence (3 tools)
+2026-03-13 11:49:37,150 [root.plugins] INFO: Plugin registered: Decision Analysis (2 tools)
+2026-03-13 11:49:37,150 [root.plugins] INFO: Plugin registered: Alpaca Trading (6 tools)
+2026-03-13 11:49:37,150 [root.plugins] INFO: Alpaca Trading plugin: ACTIVE (paper mode)
+2026-03-13 11:49:37,150 [root] INFO: Plugin engine: 11 plugins, 24 tools
+2026-03-13 11:49:37,234 [watchfiles.main] INFO: 12 changes detected
+2026-03-13 11:49:37,341 [root] INFO: LLM service: CONNECTED (OpenAI GPT)
+2026-03-13 11:49:37,341 [root] INFO: Interest engine: ready
+2026-03-13 11:49:37,342 [root] INFO: Brain: ONLINE
+2026-03-13 11:49:37,342 [root] INFO: All agent connectors wired: LLM + tools bound
+2026-03-13 11:49:37,342 [root] INFO: Message bus: ready
+2026-03-13 11:49:37,342 [root] INFO: Approval chain: LOW=auto | MED=notify | HIGH/CRIT=approve
+2026-03-13 11:49:37,342 [root] INFO: Agent collaboration: delegate/pipeline/fanout/council
+2026-03-13 11:49:37,342 [root] INFO: Proactive engine: 11 behaviors
+2026-03-13 11:49:37,342 [root] INFO: Autonomous loop: self-improving every 30min
+2026-03-13 11:49:37,342 [root] INFO: ============================================================
+2026-03-13 11:49:37,342 [root] INFO:   ROOT v0.5.0 ALIVE — ONLINE — FULLY AUTONOMOUS
+2026-03-13 11:49:37,342 [root] INFO:   Maturity: mastery (100%)
+2026-03-13 11:49:37,342 [root] INFO:   Memories: 567 | Skills: 32 | Agents: 12 | Plugins: 11
+2026-03-13 11:49:37,342 [root] INFO:   Autonomous: Builder + Proactive + Self-Improving Loop
+2026-03-13 11:49:37,342 [root] INFO:   Collaboration: Delegate | Pipeline | Fanout | Council
+2026-03-13 11:49:37,342 [root] INFO:   Approval: Auto(low) | Notify(med) | Approve(high/critical)
+2026-03-13 11:49:37,342 [root] INFO:   Dashboard: http://127.0.0.1:9000
+2026-03-13 11:49:37,342 [root] INFO: ============================================================
+2026-03-13 11:49:37,343 [root.proactive] INFO: Proactive engine starting with 11 behaviors
+2026-03-13 11:49:37,343 [root.autonomous] INFO: Autonomous loop started (interval=1800s)
+2026-03-13 11:49:37,343 [root.builder] INFO: Builder Agent started (interval=300s)
+2026-03-13 11:49:37,343 [root.builder] INFO: Builder cycle #1 starting
+2026-03-13 11:49:37,343 [root.builder] INFO: Builder: no improvements needed this cycle
+INFO:     Application startup complete.
+2026-03-13 11:49:38,344 [root.proactive] INFO: Proactive: running 'github_scanner'
+2026-03-13 11:49:42,082 [httpx] INFO: HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-03-13 11:49:42,094 [root.connectors.internal] INFO: [researcher] Tool call: web_web_search({"query": "latest trending AI repositories GitHub 2023"})
+2026-03-13 11:49:42,289 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=latest+trending+AI+repositories+GitHub+2023 "HTTP/1.1 202 Accepted"
+2026-03-13 11:49:42,291 [root.connectors.internal] INFO: [researcher] Tool call: web_web_search({"query": "new AI agent frameworks 2023"})
+2026-03-13 11:49:42,499 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=new+AI+agent+frameworks+2023 "HTTP/1.1 202 Accepted"
+2026-03-13 11:49:42,501 [root.connectors.internal] INFO: [researcher] Tool call: web_web_search({"query": "trading finance AI projects GitHub 2023"})
+2026-03-13 11:49:42,710 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=trading+finance+AI+projects+GitHub+2023 "HTTP/1.1 202 Accepted"
+2026-03-13 11:49:42,711 [root.connectors.internal] INFO: [researcher] Tool call: web_web_search({"query": "local LLM inference improvements 2023"})
+2026-03-13 11:49:42,916 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=local+LLM+inference+improvements+2023 "HTTP/1.1 202 Accepted"
+2026-03-13 11:49:42,917 [root.connectors.internal] INFO: [researcher] Tool call: web_web_search({"query": "AI automation tools GitHub 2023"})
+2026-03-13 11:49:43,126 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=AI+automation+tools+GitHub+2023 "HTTP/1.1 202 Accepted"
+2026-03-13 11:49:46,734 [httpx] INFO: HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-03-13 11:49:46,747 [root.connectors.internal] INFO: [researcher] Tool call: web_web_search({"query": "trending AI repositories GitHub 2023"})
+2026-03-13 11:49:46,949 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=trending+AI+repositories+GitHub+2023 "HTTP/1.1 202 Accepted"
+2026-03-13 11:49:46,950 [root.connectors.internal] INFO: [researcher] Tool call: web_web_search({"query": "new AI agent frameworks GitHub 2023"})
+2026-03-13 11:49:47,138 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=new+AI+agent+frameworks+GitHub+2023 "HTTP/1.1 202 Accepted"
+2026-03-13 11:49:47,138 [root.connectors.internal] INFO: [researcher] Tool call: web_web_search({"query": "trading finance AI projects GitHub 2023"})
+2026-03-13 11:49:47,333 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=trading+finance+AI+projects+GitHub+2023 "HTTP/1.1 202 Accepted"
+2026-03-13 11:49:47,334 [root.connectors.internal] INFO: [researcher] Tool call: web_web_search({"query": "local LLM inference improvements GitHub 2023"})
+2026-03-13 11:49:47,536 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=local+LLM+inference+improvements+GitHub+2023 "HTTP/1.1 202 Accepted"
+2026-03-13 11:49:47,538 [root.connectors.internal] INFO: [researcher] Tool call: web_web_search({"query": "AI automation tools GitHub trending 2023"})
+2026-03-13 11:49:47,862 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=AI+automation+tools+GitHub+trending+2023 "HTTP/1.1 202 Accepted"
+2026-03-13 11:49:51,029 [httpx] INFO: HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-03-13 11:49:51,037 [root.connectors.internal] INFO: [researcher] Tool call: web_web_search({"query": "latest AI agent frameworks GitHub 2023"})
+2026-03-13 11:49:51,963 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=latest+AI+agent+frameworks+GitHub+2023 "HTTP/1.1 403 Forbidden"
+2026-03-13 11:49:51,964 [root.connectors.internal] INFO: [researcher] Tool call: web_web_search({"query": "trending trading finance AI projects GitHub 2023"})
+2026-03-13 11:49:52,155 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=trending+trading+finance+AI+projects+GitHub+2023 "HTTP/1.1 202 Accepted"
+2026-03-13 11:49:52,157 [root.connectors.internal] INFO: [researcher] Tool call: web_web_search({"query": "latest local LLM inference improvements GitHub 2023"})
+2026-03-13 11:49:52,361 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=latest+local+LLM+inference+improvements+GitHub+2023 "HTTP/1.1 202 Accepted"
+2026-03-13 11:49:52,362 [root.connectors.internal] INFO: [researcher] Tool call: web_web_search({"query": "trending AI automation tools GitHub 2023"})
+2026-03-13 11:49:52,580 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=trending+AI+automation+tools+GitHub+2023 "HTTP/1.1 202 Accepted"
+2026-03-13 11:49:57,007 [httpx] INFO: HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-03-13 11:49:57,009 [root.connectors.internal] INFO: [researcher] Tool call: web_web_search({"query": "trending AI repositories GitHub October 2023"})
+2026-03-13 11:49:57,217 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=trending+AI+repositories+GitHub+October+2023 "HTTP/1.1 202 Accepted"
+2026-03-13 11:49:57,219 [root.connectors.internal] INFO: [researcher] Tool call: web_web_search({"query": "latest AI agent frameworks GitHub October 2023"})
+2026-03-13 11:49:57,420 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=latest+AI+agent+frameworks+GitHub+October+2023 "HTTP/1.1 202 Accepted"
+2026-03-13 11:49:57,421 [root.connectors.internal] INFO: [researcher] Tool call: web_web_search({"query": "trending finance AI projects GitHub October 2023"})
+2026-03-13 11:49:58,235 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=trending+finance+AI+projects+GitHub+October+2023 "HTTP/1.1 403 Forbidden"
+2026-03-13 11:49:58,237 [root.connectors.internal] INFO: [researcher] Tool call: web_web_search({"query": "local LLM inference improvements GitHub October 2023"})
+2026-03-13 11:49:58,440 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=local+LLM+inference+improvements+GitHub+October+2023 "HTTP/1.1 202 Accepted"
+2026-03-13 11:49:58,441 [root.connectors.internal] INFO: [researcher] Tool call: web_web_search({"query": "AI automation tools GitHub October 2023"})
+2026-03-13 11:49:58,645 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=AI+automation+tools+GitHub+October+2023 "HTTP/1.1 202 Accepted"
+2026-03-13 11:50:00,344 [root.proactive] INFO: Proactive: running 'health_monitor'
+2026-03-13 11:50:01,344 [root.proactive] INFO: Proactive: running 'miro_prediction'
+2026-03-13 11:50:03,154 [httpx] INFO: HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-03-13 11:50:03,162 [root.connectors.internal] INFO: [researcher] Tool call: web_web_search({"query": "trending AI repositories GitHub October 2023"})
+2026-03-13 11:50:03,344 [root.proactive] INFO: Proactive: running 'opportunity_scanner'
+2026-03-13 11:50:03,348 [root.proactive] INFO: Proactive: running 'data_intelligence'
+2026-03-13 11:50:03,348 [root.connectors.openclaw] INFO: OpenClaw: running stage 'gaps'
+2026-03-13 11:50:03,354 [openclaw.gaps] INFO: Gap report saved to /tmp/openclaw/data/gap_report.json
+2026-03-13 11:50:03,443 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=trending+AI+repositories+GitHub+October+2023 "HTTP/1.1 202 Accepted"
+2026-03-13 11:50:03,444 [root.connectors.internal] INFO: [researcher] Tool call: web_web_search({"query": "AI agent frameworks GitHub October 2023"})
+2026-03-13 11:50:03,645 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=AI+agent+frameworks+GitHub+October+2023 "HTTP/1.1 202 Accepted"
+2026-03-13 11:50:03,647 [root.connectors.internal] INFO: [researcher] Tool call: web_web_search({"query": "finance AI projects GitHub October 2023"})
+2026-03-13 11:50:03,835 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=finance+AI+projects+GitHub+October+2023 "HTTP/1.1 202 Accepted"
+2026-03-13 11:50:03,837 [root.connectors.internal] INFO: [researcher] Tool call: web_web_search({"query": "local LLM inference GitHub October 2023"})
+2026-03-13 11:50:04,040 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=local+LLM+inference+GitHub+October+2023 "HTTP/1.1 202 Accepted"
+2026-03-13 11:50:04,041 [root.connectors.internal] INFO: [researcher] Tool call: web_web_search({"query": "AI automation tools GitHub October 2023"})
+2026-03-13 11:50:04,242 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=AI+automation+tools+GitHub+October+2023 "HTTP/1.1 202 Accepted"
+2026-03-13 11:50:04,995 [httpx] INFO: HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-03-13 11:50:04,997 [root.connectors.miro] INFO: [miro] Tool: web_web_search({"query": "current SPY price October 2023"})
+2026-03-13 11:50:05,193 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=current+SPY+price+October+2023 "HTTP/1.1 202 Accepted"
+2026-03-13 11:50:05,194 [root.connectors.miro] INFO: [miro] Tool: web_web_search({"query": "current QQQ price October 2023"})
+2026-03-13 11:50:05,415 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=current+QQQ+price+October+2023 "HTTP/1.1 202 Accepted"
+2026-03-13 11:50:05,416 [root.connectors.miro] INFO: [miro] Tool: web_web_search({"query": "current Bitcoin BTC-USD price October 2023"})
+2026-03-13 11:50:05,612 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=current+Bitcoin+BTC-USD+price+October+2023 "HTTP/1.1 202 Accepted"
+2026-03-13 11:50:05,613 [root.connectors.miro] INFO: [miro] Tool: web_web_search({"query": "key news October 2023"})
+2026-03-13 11:50:05,670 [httpx] INFO: HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-03-13 11:50:05,680 [root.connectors.internal] INFO: [researcher] Tool call: web_web_search({"query": "latest developments AI development October 2023"})
+2026-03-13 11:50:05,823 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=key+news+October+2023 "HTTP/1.1 202 Accepted"
+2026-03-13 11:50:05,824 [root.connectors.miro] INFO: [miro] Tool: web_web_search({"query": "earnings reports October 2023"})
+2026-03-13 11:50:05,874 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=latest+developments+AI+development+October+2023 "HTTP/1.1 202 Accepted"
+2026-03-13 11:50:05,875 [root.connectors.internal] INFO: [researcher] Tool call: web_web_search({"query": "recent trading strategy innovations October 2023"})
+2026-03-13 11:50:06,023 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=earnings+reports+October+2023 "HTTP/1.1 202 Accepted"
+2026-03-13 11:50:06,024 [root.connectors.miro] INFO: [miro] Tool: web_web_search({"query": "macro economic events October 2023"})
+2026-03-13 11:50:06,072 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=recent+trading+strategy+innovations+October+2023 "HTTP/1.1 202 Accepted"
+2026-03-13 11:50:06,073 [root.connectors.internal] INFO: [researcher] Tool call: web_web_search({"query": "recent real estate data technology updates October 2023"})
+2026-03-13 11:50:06,223 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=macro+economic+events+October+2023 "HTTP/1.1 202 Accepted"
+2026-03-13 11:50:06,399 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=recent+real+estate+data+technology+updates+October+2023 "HTTP/1.1 202 Accepted"
+2026-03-13 11:50:07,344 [root.proactive] INFO: Proactive: running 'agent_evolution'
+2026-03-13 11:50:08,447 [httpx] INFO: HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-03-13 11:50:08,451 [root.connectors.miro] INFO: [miro] Tool: web_web_search({"query": "current SPY price October 2023"})
+2026-03-13 11:50:08,646 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=current+SPY+price+October+2023 "HTTP/1.1 202 Accepted"
+2026-03-13 11:50:08,647 [root.connectors.miro] INFO: [miro] Tool: web_web_search({"query": "current QQQ price October 2023"})
+2026-03-13 11:50:08,711 [httpx] INFO: HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-03-13 11:50:08,715 [root.connectors.internal] INFO: [researcher] Tool call: web_web_search({"query": "latest developments AI development October 2023"})
+2026-03-13 11:50:08,873 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=current+QQQ+price+October+2023 "HTTP/1.1 202 Accepted"
+2026-03-13 11:50:08,875 [root.connectors.miro] INFO: [miro] Tool: web_web_search({"query": "current Bitcoin BTC-USD price October 2023"})
+2026-03-13 11:50:08,924 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=latest+developments+AI+development+October+2023 "HTTP/1.1 202 Accepted"
+2026-03-13 11:50:08,925 [root.connectors.internal] INFO: [researcher] Tool call: web_web_search({"query": "recent trading strategy innovations October 2023"})
+2026-03-13 11:50:09,089 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=current+Bitcoin+BTC-USD+price+October+2023 "HTTP/1.1 202 Accepted"
+2026-03-13 11:50:09,091 [root.connectors.miro] INFO: [miro] Tool: web_web_search({"query": "key news October 2023"})
+2026-03-13 11:50:09,344 [root.proactive] INFO: Proactive: running 'knowledge_consolidation'
+2026-03-13 11:50:09,706 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=recent+trading+strategy+innovations+October+2023 "HTTP/1.1 403 Forbidden"
+2026-03-13 11:50:09,707 [root.connectors.internal] INFO: [researcher] Tool call: web_web_search({"query": "recent real estate data technology updates October 2023"})
+2026-03-13 11:50:09,856 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=key+news+October+2023 "HTTP/1.1 403 Forbidden"
+2026-03-13 11:50:09,857 [root.connectors.miro] INFO: [miro] Tool: web_web_search({"query": "earnings reports October 2023"})
+2026-03-13 11:50:10,475 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=recent+real+estate+data+technology+updates+October+2023 "HTTP/1.1 403 Forbidden"
+2026-03-13 11:50:10,476 [root.connectors.internal] INFO: [researcher] Tool call: web_web_search({"query": "latest automation technologies October 2023"})
+2026-03-13 11:50:10,641 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=earnings+reports+October+2023 "HTTP/1.1 403 Forbidden"
+2026-03-13 11:50:10,642 [root.connectors.miro] INFO: [miro] Tool: web_web_search({"query": "macro economic events October 2023"})
+2026-03-13 11:50:11,223 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=latest+automation+technologies+October+2023 "HTTP/1.1 403 Forbidden"
+2026-03-13 11:50:11,407 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=macro+economic+events+October+2023 "HTTP/1.1 403 Forbidden"
+2026-03-13 11:50:13,404 [httpx] INFO: HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-03-13 11:50:13,412 [root.connectors.internal] INFO: [researcher] Tool call: web_web_search({"query": "latest developments AI development October 2023"})
+2026-03-13 11:50:13,705 [httpx] INFO: HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-03-13 11:50:13,722 [root.connectors.miro] INFO: [miro] Tool: alpaca_alpaca_market_data({"symbols": "SPY,QQQ,BTC/USD"})
+2026-03-13 11:50:13,990 [httpx] INFO: HTTP Request: GET https://data.alpaca.markets/v2/stocks/quotes/latest?symbols=SPY%2CQQQ%2CBTC%2FUSD "HTTP/1.1 400 Bad Request"
+2026-03-13 11:50:13,991 [root.connectors.miro] INFO: [miro] Tool: web_web_search({"query": "top news October 2023"})
+2026-03-13 11:50:14,049 [httpx] INFO: HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-03-13 11:50:14,171 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=latest+developments+AI+development+October+2023 "HTTP/1.1 403 Forbidden"
+2026-03-13 11:50:14,172 [root.connectors.internal] INFO: [researcher] Tool call: web_web_search({"query": "recent trading strategy innovations October 2023"})
+2026-03-13 11:50:14,199 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=top+news+October+2023 "HTTP/1.1 202 Accepted"
+2026-03-13 11:50:14,200 [root.connectors.miro] INFO: [miro] Tool: web_web_search({"query": "financial earnings reports October 2023"})
+2026-03-13 11:50:14,345 [root.proactive] INFO: Proactive: running 'skill_discovery'
+2026-03-13 11:50:14,379 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=recent+trading+strategy+innovations+October+2023 "HTTP/1.1 202 Accepted"
+2026-03-13 11:50:14,381 [root.connectors.internal] INFO: [researcher] Tool call: web_web_search({"query": "recent real estate data technology updates October 2023"})
+2026-03-13 11:50:14,396 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=financial+earnings+reports+October+2023 "HTTP/1.1 202 Accepted"
+2026-03-13 11:50:14,397 [root.connectors.miro] INFO: [miro] Tool: web_web_search({"query": "macro economic events October 2023"})
+2026-03-13 11:50:14,598 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=recent+real+estate+data+technology+updates+October+2023 "HTTP/1.1 202 Accepted"
+2026-03-13 11:50:14,599 [root.connectors.internal] INFO: [researcher] Tool call: web_web_search({"query": "latest automation technologies October 2023"})
+2026-03-13 11:50:14,609 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=macro+economic+events+October+2023 "HTTP/1.1 202 Accepted"
+2026-03-13 11:50:14,715 [httpx] INFO: HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2026-03-13 11:50:14,716 [openai._base_client] INFO: Retrying request to /chat/completions in 1.782000 seconds
+2026-03-13 11:50:14,802 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=latest+automation+technologies+October+2023 "HTTP/1.1 202 Accepted"
+2026-03-13 11:50:14,903 [httpx] INFO: HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2026-03-13 11:50:14,904 [openai._base_client] INFO: Retrying request to /chat/completions in 1.104000 seconds
+2026-03-13 11:50:16,100 [httpx] INFO: HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2026-03-13 11:50:16,101 [openai._base_client] INFO: Retrying request to /chat/completions in 1.104000 seconds
+2026-03-13 11:50:16,594 [httpx] INFO: HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2026-03-13 11:50:16,594 [openai._base_client] INFO: Retrying request to /chat/completions in 1.782000 seconds
+2026-03-13 11:50:17,297 [httpx] INFO: HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2026-03-13 11:50:17,298 [root.llm.openai] ERROR: OpenAI API error (tool_use): Error code: 429 - {'error': {'message': 'Rate limit reached for gpt-4o in organization org-aKvH4nU9cMSeG3hKbU9Yh2oD on tokens per min (TPM): Limit 30000, Used 30000, Requested 552. Please try again in 1.104s. Visit https://platform.openai.com/account/rate-limits to learn more.', 'type': 'tokens', 'param': None, 'code': 'rate_limit_exceeded'}}
+2026-03-13 11:50:18,483 [httpx] INFO: HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2026-03-13 11:50:18,485 [root.llm.openai] ERROR: OpenAI API error (tool_use): Error code: 429 - {'error': {'message': 'Rate limit reached for gpt-4o in organization org-aKvH4nU9cMSeG3hKbU9Yh2oD on tokens per min (TPM): Limit 30000, Used 30000, Requested 891. Please try again in 1.782s. Visit https://platform.openai.com/account/rate-limits to learn more.', 'type': 'tokens', 'param': None, 'code': 'rate_limit_exceeded'}}
+2026-03-13 11:50:18,597 [httpx] INFO: HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2026-03-13 11:50:18,598 [openai._base_client] INFO: Retrying request to /chat/completions in 0.536000 seconds
+2026-03-13 11:50:19,226 [httpx] INFO: HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2026-03-13 11:50:19,227 [openai._base_client] INFO: Retrying request to /chat/completions in 0.416000 seconds
+2026-03-13 11:50:19,345 [root.proactive] INFO: Proactive: running 'self_rewrite'
+2026-03-13 11:50:19,444 [httpx] INFO: HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2026-03-13 11:50:19,445 [openai._base_client] INFO: Retrying request to /chat/completions in 0.220000 seconds
+2026-03-13 11:50:21,614 [httpx] INFO: HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-03-13 11:50:22,343 [root.proactive] INFO: Proactive: running 'market_scanner'
+2026-03-13 11:50:24,552 [httpx] INFO: HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-03-13 11:50:24,554 [root.connectors.swarm] INFO: [swarm] Tool: web_web_search({"query": "SPY current price and daily change October 2023"})
+2026-03-13 11:50:24,764 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=SPY+current+price+and+daily+change+October+2023 "HTTP/1.1 202 Accepted"
+2026-03-13 11:50:24,766 [root.connectors.swarm] INFO: [swarm] Tool: web_web_search({"query": "QQQ current price and daily change October 2023"})
+2026-03-13 11:50:24,959 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=QQQ+current+price+and+daily+change+October+2023 "HTTP/1.1 202 Accepted"
+2026-03-13 11:50:24,961 [root.connectors.swarm] INFO: [swarm] Tool: web_web_search({"query": "BTC current price and daily change October 2023"})
+2026-03-13 11:50:25,294 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=BTC+current+price+and+daily+change+October+2023 "HTTP/1.1 202 Accepted"
+2026-03-13 11:50:25,296 [root.connectors.swarm] INFO: [swarm] Tool: web_web_search({"query": "major market news October 2023"})
+2026-03-13 11:50:25,524 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=major+market+news+October+2023 "HTTP/1.1 202 Accepted"
+2026-03-13 11:50:25,622 [httpx] INFO: HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2026-03-13 11:50:25,623 [openai._base_client] INFO: Retrying request to /chat/completions in 1.248000 seconds
+2026-03-13 11:50:26,982 [httpx] INFO: HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2026-03-13 11:50:26,983 [openai._base_client] INFO: Retrying request to /chat/completions in 1.106000 seconds
+2026-03-13 11:50:28,344 [root.proactive] INFO: Proactive: running 'goal_tracker'
+2026-03-13 11:50:30,258 [httpx] INFO: HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-03-13 11:50:30,260 [root.connectors.swarm] INFO: [swarm] Tool: web_web_search({"query": "current SPY price and daily change October 2023"})
+2026-03-13 11:50:30,471 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=current+SPY+price+and+daily+change+October+2023 "HTTP/1.1 202 Accepted"
+2026-03-13 11:50:30,472 [root.connectors.swarm] INFO: [swarm] Tool: web_web_search({"query": "current QQQ price and daily change October 2023"})
+2026-03-13 11:50:30,676 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=current+QQQ+price+and+daily+change+October+2023 "HTTP/1.1 202 Accepted"
+2026-03-13 11:50:30,678 [root.connectors.swarm] INFO: [swarm] Tool: web_web_search({"query": "current BTC price and daily change October 2023"})
+2026-03-13 11:50:30,868 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=current+BTC+price+and+daily+change+October+2023 "HTTP/1.1 202 Accepted"
+2026-03-13 11:50:30,869 [root.connectors.swarm] INFO: [swarm] Tool: web_web_search({"query": "October 2023 major market news and catalysts"})
+2026-03-13 11:50:31,075 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=October+2023+major+market+news+and+catalysts "HTTP/1.1 202 Accepted"
+2026-03-13 11:50:31,170 [httpx] INFO: HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2026-03-13 11:50:31,170 [openai._base_client] INFO: Retrying request to /chat/completions in 1.164000 seconds
+2026-03-13 11:50:33,261 [httpx] INFO: HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-03-13 11:50:33,363 [httpx] INFO: HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2026-03-13 11:50:33,364 [openai._base_client] INFO: Retrying request to /chat/completions in 0.186000 seconds
+2026-03-13 11:50:35,374 [httpx] INFO: HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-03-13 11:50:35,376 [root.connectors.swarm] INFO: [swarm] Tool: web_web_search({"query": "current SPY ETF price and daily change October 2023"})
+2026-03-13 11:50:35,592 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=current+SPY+ETF+price+and+daily+change+October+2023 "HTTP/1.1 202 Accepted"
+2026-03-13 11:50:35,593 [root.connectors.swarm] INFO: [swarm] Tool: web_web_search({"query": "current QQQ ETF price and daily change October 2023"})
+2026-03-13 11:50:35,801 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=current+QQQ+ETF+price+and+daily+change+October+2023 "HTTP/1.1 202 Accepted"
+2026-03-13 11:50:35,803 [root.connectors.swarm] INFO: [swarm] Tool: web_web_search({"query": "current Bitcoin price and daily change October 2023"})
+2026-03-13 11:50:36,003 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=current+Bitcoin+price+and+daily+change+October+2023 "HTTP/1.1 202 Accepted"
+2026-03-13 11:50:36,005 [root.connectors.swarm] INFO: [swarm] Tool: web_web_search({"query": "October 2023 financial news and market catalysts"})
+2026-03-13 11:50:36,203 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=October+2023+financial+news+and+market+catalysts "HTTP/1.1 202 Accepted"
+2026-03-13 11:50:36,302 [httpx] INFO: HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2026-03-13 11:50:36,303 [openai._base_client] INFO: Retrying request to /chat/completions in 1.658000 seconds
+2026-03-13 11:50:38,053 [httpx] INFO: HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2026-03-13 11:50:38,054 [openai._base_client] INFO: Retrying request to /chat/completions in 1.658000 seconds
+2026-03-13 11:50:39,809 [httpx] INFO: HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2026-03-13 11:50:39,810 [root.llm.openai] ERROR: OpenAI API error (tool_use): Error code: 429 - {'error': {'message': 'Rate limit reached for gpt-4o in organization org-aKvH4nU9cMSeG3hKbU9Yh2oD on tokens per min (TPM): Limit 30000, Used 30000, Requested 829. Please try again in 1.658s. Visit https://platform.openai.com/account/rate-limits to learn more.', 'type': 'tokens', 'param': None, 'code': 'rate_limit_exceeded'}}
+2026-03-13 11:50:46,981 [httpx] INFO: HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-03-13 11:50:47,086 [watchfiles.main] INFO: 1 change detected
+2026-03-13 11:51:37,344 [root.autonomous] INFO: Autonomous cycle cycle_1 starting
+2026-03-13 11:51:39,102 [httpx] INFO: HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-03-13 11:51:39,104 [root.connectors.internal] INFO: [researcher] Tool call: web_web_search({"query": "expanding knowledge base improves task routing accuracy"})
+2026-03-13 11:51:39,884 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=expanding+knowledge+base+improves+task+routing+accuracy "HTTP/1.1 403 Forbidden"
+2026-03-13 11:51:41,566 [httpx] INFO: HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-03-13 11:51:41,569 [root.connectors.internal] INFO: [researcher] Tool call: web_web_search({"query": "how expanding knowledge base improves task routing accuracy in AI"})
+2026-03-13 11:51:42,339 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=how+expanding+knowledge+base+improves+task+routing+accuracy+in+AI "HTTP/1.1 403 Forbidden"
+2026-03-13 11:51:42,341 [root.connectors.internal] INFO: [researcher] Tool call: web_web_search({"query": "benefits of expanding knowledge base for AI task routing"})
+2026-03-13 11:51:43,116 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=benefits+of+expanding+knowledge+base+for+AI+task+routing "HTTP/1.1 403 Forbidden"
+2026-03-13 11:51:44,837 [httpx] INFO: HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-03-13 11:51:44,847 [root.connectors.internal] INFO: [researcher] Tool call: web_web_search({"query": "effects of expanding knowledge base on AI task routing efficiency"})
+2026-03-13 11:51:45,601 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=effects+of+expanding+knowledge+base+on+AI+task+routing+efficiency "HTTP/1.1 403 Forbidden"
+2026-03-13 11:51:45,602 [root.connectors.internal] INFO: [researcher] Tool call: web_web_search({"query": "improving AI task routing through enhanced knowledge base"})
+2026-03-13 11:51:46,368 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=improving+AI+task+routing+through+enhanced+knowledge+base "HTTP/1.1 403 Forbidden"
+2026-03-13 11:51:47,858 [httpx] INFO: HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-03-13 11:51:47,867 [root.connectors.internal] INFO: [researcher] Tool call: web_web_search({"query": "importance of expanding knowledge base for AI task allocation"})
+2026-03-13 11:51:48,634 [httpx] INFO: HTTP Request: GET https://html.duckduckgo.com/html/?q=importance+of+expanding+knowledge+base+for+AI+task+allocation "HTTP/1.1 403 Forbidden"
+2026-03-13 11:51:48,635 [root.connectors.internal] INFO: [researcher] Tool call: web_web_search({"query": "expanding AI knowledge base task routing benefits"})

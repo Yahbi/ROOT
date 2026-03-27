@@ -1,0 +1,130 @@
+{
+  "timestamp": "2026-03-15T06:14:35.482147+00:00",
+  "lmsr_impact": [
+    {
+      "liquidity_b": 25,
+      "price_before": 0.5,
+      "price_after": 0.5987,
+      "impact_pct": 19.74,
+      "cost": 5.4967
+    },
+    {
+      "liquidity_b": 50,
+      "price_before": 0.5,
+      "price_after": 0.5498,
+      "impact_pct": 9.97,
+      "cost": 5.2496
+    },
+    {
+      "liquidity_b": 100,
+      "price_before": 0.5,
+      "price_after": 0.525,
+      "impact_pct": 5.0,
+      "cost": 5.1249
+    },
+    {
+      "liquidity_b": 200,
+      "price_before": 0.5,
+      "price_after": 0.5125,
+      "impact_pct": 2.5,
+      "cost": 5.0625
+    },
+    {
+      "liquidity_b": 500,
+      "price_before": 0.5,
+      "price_after": 0.505,
+      "impact_pct": 1.0,
+      "cost": 5.025
+    }
+  ],
+  "kelly_scenarios": [
+    {
+      "scenario": "Conservative edge (p=0.55, price=0.50)",
+      "edge_p": 0.55,
+      "market_price": 0.5,
+      "ev": 0.1,
+      "full_kelly": 0.1,
+      "half_kelly": 0.05,
+      "quarter_kelly": 0.025
+    },
+    {
+      "scenario": "Moderate edge (p=0.60, price=0.50)",
+      "edge_p": 0.6,
+      "market_price": 0.5,
+      "ev": 0.2,
+      "full_kelly": 0.2,
+      "half_kelly": 0.1,
+      "quarter_kelly": 0.05
+    },
+    {
+      "scenario": "Strong edge (p=0.25, price=0.21)",
+      "edge_p": 0.25,
+      "market_price": 0.21,
+      "ev": 0.1905,
+      "full_kelly": 0.0506,
+      "half_kelly": 0.0253,
+      "quarter_kelly": 0.0127
+    },
+    {
+      "scenario": "Small edge (p=0.52, price=0.47)",
+      "edge_p": 0.52,
+      "market_price": 0.47,
+      "ev": 0.1064,
+      "full_kelly": 0.0943,
+      "half_kelly": 0.0472,
+      "quarter_kelly": 0.0236
+    },
+    {
+      "scenario": "Large edge (p=0.70, price=0.50)",
+      "edge_p": 0.7,
+      "market_price": 0.5,
+      "ev": 0.4,
+      "full_kelly": 0.4,
+      "half_kelly": 0.2,
+      "quarter_kelly": 0.1
+    }
+  ],
+  "ev_opportunities_found": 167,
+  "kl_arb_pairs_found": 749,
+  "kelly_simulation": {
+    "Full Kelly": {
+      "fraction": 0.1,
+      "median_final": 1.6501,
+      "mean_final": 2.7335,
+      "p90_final": 6.723,
+      "p10_final": 0.405,
+      "avg_max_drawdown": 0.5947,
+      "p95_max_drawdown": 0.8438,
+      "ruin_rate": 0.0
+    },
+    "Half Kelly": {
+      "fraction": 0.05,
+      "median_final": 1.4554,
+      "mean_final": 1.6609,
+      "p90_final": 2.6532,
+      "p10_final": 0.7983,
+      "avg_max_drawdown": 0.3488,
+      "p95_max_drawdown": 0.5555,
+      "ruin_rate": 0.0
+    },
+    "Quarter Kelly": {
+      "fraction": 0.025,
+      "median_final": 1.2446,
+      "mean_final": 1.286,
+      "p90_final": 1.6801,
+      "p10_final": 0.9219,
+      "avg_max_drawdown": 0.1903,
+      "p95_max_drawdown": 0.3279,
+      "ruin_rate": 0.0
+    }
+  },
+  "backtest": {
+    "starting_capital": 500,
+    "final_bankroll": 10546288.84,
+    "total_return": 21091.5777,
+    "total_bets": 80,
+    "win_rate": 0.9625,
+    "max_drawdown": 0.1331,
+    "sharpe": 3.96
+  }
+}

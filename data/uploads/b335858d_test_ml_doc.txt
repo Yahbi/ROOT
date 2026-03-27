@@ -1,0 +1,6 @@
+This is a test document about machine learning.
+Key concepts:
+1. Neural networks use layers of connected nodes
+2. Transformers revolutionized NLP with attention mechanisms
+3. Fine-tuning adapts pre-trained models to specific tasks
+4. RAG combines retrieval with generation for better accuracy

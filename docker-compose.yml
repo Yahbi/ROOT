@@ -1,0 +1,76 @@
+version: "3.8"
+
+services:
+  # Ollama — local LLM inference (free, no rate limits)
+  ollama:
+    image: ollama/ollama:latest
+    container_name: root-ollama
+    volumes:
+      - ollama_data:/root/.ollama
+    ports:
+      - "11434:11434"
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    deploy:
+      resources:
+        limits:
+          memory: 12G
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:11434/api/tags"]
+      interval: 30s
+      timeout: 5s
+      start_period: 30s
+
+  # Model puller — downloads required models on first start
+  ollama-pull:
+    image: curlimages/curl:latest
+    container_name: root-ollama-pull
+    depends_on:
+      ollama:
+        condition: service_healthy
+    entrypoint: ["/bin/sh", "-c"]
+    command:
+      - |
+        echo "Pulling models..."
+        curl -s http://ollama:11434/api/pull -d '{"name":"llama3.1:8b"}' && echo "llama3.1:8b OK"
+        curl -s http://ollama:11434/api/pull -d '{"name":"llama3.2:3b"}' && echo "llama3.2:3b OK"
+        curl -s http://ollama:11434/api/pull -d '{"name":"deepseek-r1:8b"}' && echo "deepseek-r1:8b OK"
+        echo "All models ready."
+    restart: "no"
+
+  # ROOT — the AI civilization
+  root:
+    build: .
+    container_name: root-server
+    depends_on:
+      ollama:
+        condition: service_healthy
+    ports:
+      - "9000:9000"
+    env_file:
+      - .env
+    environment:
+      # Override Ollama URL to point to Docker service
+      - OLLAMA_BASE_URL=http://ollama:11434
+      - ROOT_OLLAMA_ENABLED=true
+      - ROOT_HOST=0.0.0.0
+    volumes:
+      - ./data:/app/data
+      - ./data/skills:/app/data/skills
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "20m"
+        max-file: "5"
+    deploy:
+      resources:
+        limits:
+          memory: 2G
+
+volumes:
+  ollama_data:

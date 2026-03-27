@@ -1,0 +1,686 @@
+"""
+Persistent Task Queue — SQLite-backed task persistence for crash recovery.
+
+Tasks survive server restarts. On startup, incomplete tasks are resumed.
+Autonomous goals, scheduled jobs, and recurring tasks all persist here.
+
+Tables:
+- queued_tasks: High-level goals with status, priority, schedule
+- task_runs: Execution attempts with results and timing
+"""
+
+from __future__ import annotations
+
+import json
+import logging
+import sqlite3
+import uuid
+from dataclasses import dataclass, field
+from datetime import datetime, timedelta, timezone
+from pathlib import Path
+from typing import Any, Optional
+
+from backend.config import ROOT_DIR
+
+logger = logging.getLogger("root.task_queue")
+
+
+def _next_cron_run(cron_expr: str) -> Optional[str]:
+    """Compute the next run time from a simple cron expression.
+
+    Supports: '*/N * * * *' (every N minutes), '0 */N * * *' (every N hours),
+    '0 0 * * *' (daily), '0 0 * * 0' (weekly). Returns ISO timestamp or None.
+    """
+    parts = cron_expr.strip().split()
+    if len(parts) != 5:
+        return None
+
+    now = datetime.now(timezone.utc)
+    minute_part, hour_part, _dom, _month, dow_part = parts
+
+    try:
+        if minute_part.startswith("*/"):
+            interval_min = int(minute_part[2:])
+            from datetime import timedelta
+            return (now + timedelta(minutes=interval_min)).isoformat()
+
+        if hour_part.startswith("*/"):
+            interval_hr = int(hour_part[2:])
+            from datetime import timedelta
+            next_time = now.replace(minute=int(minute_part), second=0, microsecond=0)
+            next_time = next_time + timedelta(hours=interval_hr)
+            if next_time <= now:
+                next_time = next_time + timedelta(hours=interval_hr)
+            return next_time.isoformat()
+
+        # Daily: '0 0 * * *'
+        if _dom == "*" and _month == "*" and dow_part == "*":
+            from datetime import timedelta
+            next_time = now.replace(
+                hour=int(hour_part), minute=int(minute_part),
+                second=0, microsecond=0,
+            )
+            if next_time <= now:
+                next_time = next_time + timedelta(days=1)
+            return next_time.isoformat()
+
+        # Weekly: '0 0 * * 0' (dow 0=Sunday)
+        if _dom == "*" and _month == "*" and dow_part.isdigit():
+            from datetime import timedelta
+            target_dow = int(dow_part)
+            days_ahead = (target_dow - now.weekday()) % 7 or 7
+            next_time = (now + timedelta(days=days_ahead)).replace(
+                hour=int(hour_part), minute=int(minute_part),
+                second=0, microsecond=0,
+            )
+            return next_time.isoformat()
+
+    except (ValueError, TypeError):
+        return None
+
+    return None
+
+TASK_QUEUE_DB = ROOT_DIR / "data" / "task_queue.db"
+
+
+def _now_iso() -> str:
+    return datetime.now(timezone.utc).isoformat()
+
+
+# ── Data Models (immutable) ──────────────────────────────────────
+
+
+@dataclass(frozen=True)
+class QueuedTask:
+    """A persistent task in the queue."""
+    id: str
+    goal: str
+    priority: int = 5  # 1=critical, 5=normal, 9=background
+    status: str = "pending"  # pending | scheduled | running | completed | failed | cancelled
+    source: str = "user"  # user | autonomous | proactive | scheduled | goal_engine
+    schedule_cron: Optional[str] = None  # cron expression for recurring tasks
+    next_run_at: Optional[str] = None
+    max_retries: int = 2
+    retry_count: int = 0
+    metadata: dict[str, Any] = field(default_factory=dict)
+    result: Optional[str] = None
+    error: Optional[str] = None
+    created_at: str = field(default_factory=_now_iso)
+    started_at: Optional[str] = None
+    completed_at: Optional[str] = None
+
+
+@dataclass(frozen=True)
+class TaskRun:
+    """A single execution attempt of a queued task."""
+    id: str
+    task_id: str
+    attempt: int
+    status: str  # running | completed | failed
+    result: Optional[str] = None
+    error: Optional[str] = None
+    started_at: str = field(default_factory=_now_iso)
+    completed_at: Optional[str] = None
+    duration_seconds: float = 0.0
+
+
+# ── Task Queue ────────────────────────────────────────────────────
+
+
+class TaskQueue:
+    """SQLite-backed persistent task queue with crash recovery."""
+
+    MAX_QUEUE_SIZE = 1000
+
+    def __init__(self) -> None:
+        self._conn: Optional[sqlite3.Connection] = None
+
+    # ── Lifecycle ─────────────────────────────────────────────────
+
+    def start(self) -> None:
+        """Initialize the task queue database."""
+        TASK_QUEUE_DB.parent.mkdir(parents=True, exist_ok=True)
+        self._conn = sqlite3.connect(str(TASK_QUEUE_DB), check_same_thread=False)
+        self._conn.row_factory = sqlite3.Row
+        self._conn.execute("PRAGMA journal_mode=WAL")
+        self._create_tables()
+        recovered = self._recover_interrupted()
+        logger.info("TaskQueue started (db=%s, recovered=%d)", TASK_QUEUE_DB, recovered)
+
+    def stop(self) -> None:
+        if self._conn:
+            self._conn.close()
+            self._conn = None
+
+    @property
+    def conn(self) -> sqlite3.Connection:
+        if self._conn is None:
+            raise RuntimeError("TaskQueue not started")
+        return self._conn
+
+    def _create_tables(self) -> None:
+        self.conn.executescript("""
+            CREATE TABLE IF NOT EXISTS queued_tasks (
+                id TEXT PRIMARY KEY,
+                goal TEXT NOT NULL,
+                priority INTEGER DEFAULT 5,
+                status TEXT DEFAULT 'pending',
+                source TEXT DEFAULT 'user',
+                schedule_cron TEXT,
+                next_run_at TEXT,
+                max_retries INTEGER DEFAULT 2,
+                retry_count INTEGER DEFAULT 0,
+                metadata TEXT DEFAULT '{}',
+                result TEXT,
+                error TEXT,
+                created_at TEXT NOT NULL,
+                started_at TEXT,
+                completed_at TEXT
+            );
+
+            CREATE TABLE IF NOT EXISTS task_runs (
+                id TEXT PRIMARY KEY,
+                task_id TEXT NOT NULL,
+                attempt INTEGER DEFAULT 1,
+                status TEXT NOT NULL,
+                result TEXT,
+                error TEXT,
+                started_at TEXT NOT NULL,
+                completed_at TEXT,
+                duration_seconds REAL DEFAULT 0,
+                FOREIGN KEY (task_id) REFERENCES queued_tasks(id)
+            );
+
+            CREATE INDEX IF NOT EXISTS idx_tasks_status
+                ON queued_tasks(status);
+            CREATE INDEX IF NOT EXISTS idx_tasks_priority
+                ON queued_tasks(priority, created_at);
+            CREATE INDEX IF NOT EXISTS idx_tasks_next_run
+                ON queued_tasks(next_run_at);
+            CREATE INDEX IF NOT EXISTS idx_runs_task
+                ON task_runs(task_id);
+        """)
+
+    def _recover_interrupted(self) -> int:
+        """Mark any 'running' tasks from a previous crash as 'pending' for retry."""
+        cursor = self.conn.execute(
+            "UPDATE queued_tasks SET status = 'pending' WHERE status = 'running'"
+        )
+        self.conn.commit()
+        return cursor.rowcount
+
+    # ── Enqueue / Dequeue ─────────────────────────────────────────
+
+    def enqueue(
+        self,
+        goal: str,
+        priority: int = 5,
+        source: str = "user",
+        schedule_cron: Optional[str] = None,
+        next_run_at: Optional[str] = None,
+        max_retries: int = 2,
+        metadata: Optional[dict[str, Any]] = None,
+    ) -> QueuedTask:
+        """Add a task to the persistent queue."""
+        task_id = f"qt_{uuid.uuid4().hex[:12]}"
+        now = _now_iso()
+        meta_json = json.dumps(metadata or {})
+
+        self.conn.execute(
+            """INSERT INTO queued_tasks
+               (id, goal, priority, status, source, schedule_cron, next_run_at,
+                max_retries, retry_count, metadata, created_at)
+               VALUES (?, ?, ?, 'pending', ?, ?, ?, ?, 0, ?, ?)""",
+            (task_id, goal[:5000], priority, source, schedule_cron,
+             next_run_at, max_retries, meta_json, now),
+        )
+        self.conn.commit()
+
+        # Trim old completed tasks if queue gets too large
+        total = self.conn.execute("SELECT COUNT(*) as c FROM queued_tasks").fetchone()["c"]
+        if total > self.MAX_QUEUE_SIZE:
+            self.conn.execute(
+                """DELETE FROM queued_tasks WHERE id IN (
+                    SELECT id FROM queued_tasks
+                    WHERE status IN ('completed', 'cancelled')
+                    ORDER BY completed_at ASC
+                    LIMIT ?
+                )""",
+                (total - self.MAX_QUEUE_SIZE,),
+            )
+            self.conn.commit()
+
+        return QueuedTask(
+            id=task_id, goal=goal[:5000], priority=priority,
+            source=source, schedule_cron=schedule_cron,
+            next_run_at=next_run_at, max_retries=max_retries,
+            metadata=metadata or {}, created_at=now,
+        )
+
+    def dequeue(self, limit: int = 5) -> list[QueuedTask]:
+        """Get the next pending tasks ordered by priority."""
+        rows = self.conn.execute(
+            """SELECT * FROM queued_tasks
+               WHERE status = 'pending'
+               ORDER BY priority ASC, created_at ASC
+               LIMIT ?""",
+            (limit,),
+        ).fetchall()
+        return [self._row_to_task(r) for r in rows]
+
+    def get_due_scheduled(self) -> list[QueuedTask]:
+        """Get scheduled tasks that are due to run."""
+        now = _now_iso()
+        rows = self.conn.execute(
+            """SELECT * FROM queued_tasks
+               WHERE status = 'scheduled'
+               AND next_run_at IS NOT NULL
+               AND next_run_at <= ?
+               ORDER BY priority ASC""",
+            (now,),
+        ).fetchall()
+        return [self._row_to_task(r) for r in rows]
+
+    # ── Status Updates ────────────────────────────────────────────
+
+    def mark_running(self, task_id: str) -> Optional[TaskRun]:
+        """Mark a task as running and create a run record."""
+        task = self.get_task(task_id)
+        if not task:
+            return None
+
+        now = _now_iso()
+        run_id = f"run_{uuid.uuid4().hex[:12]}"
+
+        with self.conn:
+            self.conn.execute(
+                "UPDATE queued_tasks SET status = 'running', started_at = ? WHERE id = ?",
+                (now, task_id),
+            )
+            self.conn.execute(
+                """INSERT INTO task_runs (id, task_id, attempt, status, started_at)
+                   VALUES (?, ?, ?, 'running', ?)""",
+                (run_id, task_id, task.retry_count + 1, now),
+            )
+
+        return TaskRun(id=run_id, task_id=task_id,
+                       attempt=task.retry_count + 1, status="running",
+                       started_at=now)
+
+    def mark_completed(self, task_id: str, run_id: str, result: str) -> None:
+        """Mark a task and its run as completed."""
+        now = _now_iso()
+
+        # Calculate duration outside transaction (read-only)
+        run = self.conn.execute(
+            "SELECT started_at FROM task_runs WHERE id = ?", (run_id,)
+        ).fetchone()
+        duration = 0.0
+        if run and run["started_at"]:
+            try:
+                start = datetime.fromisoformat(run["started_at"])
+                duration = (datetime.now(timezone.utc) - start).total_seconds()
+            except (ValueError, TypeError):
+                pass
+
+        with self.conn:
+            self.conn.execute(
+                """UPDATE queued_tasks SET status = 'completed', result = ?,
+                   completed_at = ? WHERE id = ?""",
+                (result[:5000], now, task_id),
+            )
+            self.conn.execute(
+                """UPDATE task_runs SET status = 'completed', result = ?,
+                   completed_at = ?, duration_seconds = ? WHERE id = ?""",
+                (result[:5000], now, duration, run_id),
+            )
+
+    def mark_failed(self, task_id: str, run_id: str, error: str) -> bool:
+        """Mark a run as failed. Returns True if task should retry."""
+        now = _now_iso()
+        task = self.get_task(task_id)
+        if not task:
+            return False
+
+        new_retry_count = task.retry_count + 1
+        should_retry = new_retry_count < task.max_retries
+
+        with self.conn:
+            self.conn.execute(
+                """UPDATE task_runs SET status = 'failed', error = ?,
+                   completed_at = ? WHERE id = ?""",
+                (error[:2000], now, run_id),
+            )
+            if should_retry:
+                self.conn.execute(
+                    """UPDATE queued_tasks SET status = 'pending',
+                       retry_count = ?, error = ? WHERE id = ?""",
+                    (new_retry_count, error[:2000], task_id),
+                )
+            else:
+                self.conn.execute(
+                    """UPDATE queued_tasks SET status = 'failed',
+                       retry_count = ?, error = ?, completed_at = ? WHERE id = ?""",
+                    (new_retry_count, error[:2000], now, task_id),
+                )
+
+        return should_retry
+
+    def cancel(self, task_id: str) -> bool:
+        """Cancel a pending or running task."""
+        cursor = self.conn.execute(
+            """UPDATE queued_tasks SET status = 'cancelled', completed_at = ?
+               WHERE id = ? AND status IN ('pending', 'running', 'scheduled')""",
+            (_now_iso(), task_id),
+        )
+        self.conn.commit()
+        return cursor.rowcount > 0
+
+    # ── Queries ───────────────────────────────────────────────────
+
+    def get_task(self, task_id: str) -> Optional[QueuedTask]:
+        row = self.conn.execute(
+            "SELECT * FROM queued_tasks WHERE id = ?", (task_id,)
+        ).fetchone()
+        return self._row_to_task(row) if row else None
+
+    def get_runs(self, task_id: str) -> list[TaskRun]:
+        rows = self.conn.execute(
+            "SELECT * FROM task_runs WHERE task_id = ? ORDER BY attempt", (task_id,)
+        ).fetchall()
+        return [
+            TaskRun(
+                id=r["id"], task_id=r["task_id"], attempt=r["attempt"],
+                status=r["status"], result=r["result"], error=r["error"],
+                started_at=r["started_at"], completed_at=r["completed_at"],
+                duration_seconds=r["duration_seconds"] or 0.0,
+            )
+            for r in rows
+        ]
+
+    def get_pending(self, limit: int = 20) -> list[QueuedTask]:
+        rows = self.conn.execute(
+            """SELECT * FROM queued_tasks WHERE status IN ('pending', 'scheduled')
+               ORDER BY priority ASC, created_at ASC LIMIT ?""",
+            (limit,),
+        ).fetchall()
+        return [self._row_to_task(r) for r in rows]
+
+    def get_active(self) -> list[QueuedTask]:
+        rows = self.conn.execute(
+            "SELECT * FROM queued_tasks WHERE status = 'running'"
+        ).fetchall()
+        return [self._row_to_task(r) for r in rows]
+
+    def get_recent(self, limit: int = 20) -> list[QueuedTask]:
+        rows = self.conn.execute(
+            "SELECT * FROM queued_tasks ORDER BY created_at DESC LIMIT ?",
+            (limit,),
+        ).fetchall()
+        return [self._row_to_task(r) for r in rows]
+
+    def stats(self) -> dict[str, Any]:
+        rows = self.conn.execute(
+            """SELECT status, COUNT(*) as cnt FROM queued_tasks GROUP BY status"""
+        ).fetchall()
+        by_status = {r["status"]: r["cnt"] for r in rows}
+        total_runs = self.conn.execute(
+            "SELECT COUNT(*) as c FROM task_runs"
+        ).fetchone()["c"]
+        return {
+            "total_tasks": sum(by_status.values()),
+            "by_status": by_status,
+            "total_runs": total_runs,
+        }
+
+    # ── Scheduling ─────────────────────────────────────────────────
+
+    def reschedule(self, task_id: str) -> Optional[QueuedTask]:
+        """Re-enqueue a recurring task with the next cron-computed run time.
+
+        After a cron-based task completes, call this to schedule the next run.
+        Returns a new QueuedTask if rescheduled, or None if not recurring.
+        """
+        task = self.get_task(task_id)
+        if not task or not task.schedule_cron:
+            return None
+
+        next_run = _next_cron_run(task.schedule_cron)
+        if not next_run:
+            logger.warning("Invalid cron expression '%s' for task %s", task.schedule_cron, task_id)
+            return None
+
+        return self.enqueue(
+            goal=task.goal,
+            priority=task.priority,
+            source=task.source,
+            schedule_cron=task.schedule_cron,
+            next_run_at=next_run,
+            max_retries=task.max_retries,
+            metadata=task.metadata,
+        )
+
+    def activate_scheduled(self) -> list[QueuedTask]:
+        """Move due scheduled tasks to 'pending' so they can be dequeued.
+
+        Call this periodically (e.g. every minute) from a background loop.
+        """
+        now = _now_iso()
+        self.conn.execute(
+            """UPDATE queued_tasks SET status = 'pending'
+               WHERE status = 'scheduled'
+               AND next_run_at IS NOT NULL
+               AND next_run_at <= ?""",
+            (now,),
+        )
+        self.conn.commit()
+        return self.get_due_scheduled()
+
+    # ── Metadata & Source Queries ─────────────────────────────────
+
+    def update_metadata(self, task_id: str, updates: dict[str, Any]) -> bool:
+        """Merge new keys into a task's metadata dict."""
+        task = self.get_task(task_id)
+        if not task:
+            return False
+
+        merged = {**task.metadata, **updates}
+        self.conn.execute(
+            "UPDATE queued_tasks SET metadata = ? WHERE id = ?",
+            (json.dumps(merged), task_id),
+        )
+        self.conn.commit()
+        return True
+
+    def get_by_source(self, source: str, limit: int = 50) -> list[QueuedTask]:
+        """Get tasks by their originating source (goal_engine, trigger, etc.)."""
+        rows = self.conn.execute(
+            """SELECT * FROM queued_tasks WHERE source = ?
+               ORDER BY created_at DESC LIMIT ?""",
+            (source, limit),
+        ).fetchall()
+        return [self._row_to_task(r) for r in rows]
+
+    _HISTORY_ALLOWED_STATUSES = frozenset({
+        "pending", "scheduled", "running", "completed", "failed", "cancelled",
+    })
+    _HISTORY_ALLOWED_SOURCES = frozenset({
+        "user", "autonomous", "proactive", "scheduled", "goal_engine",
+    })
+
+    def get_history(
+        self,
+        status: Optional[str] = None,
+        source: Optional[str] = None,
+        limit: int = 50,
+    ) -> list[QueuedTask]:
+        """Query completed/failed tasks for reporting and digest generation."""
+        conditions = []
+        params: list[Any] = []
+
+        if status:
+            if status not in self._HISTORY_ALLOWED_STATUSES:
+                raise ValueError(f"Disallowed status filter: {status}")
+            conditions.append("status = ?")
+            params.append(status)
+        else:
+            conditions.append("status IN ('completed', 'failed', 'cancelled')")
+
+        if source:
+            if source not in self._HISTORY_ALLOWED_SOURCES:
+                raise ValueError(f"Disallowed source filter: {source}")
+            conditions.append("source = ?")
+            params.append(source)
+
+        where = " AND ".join(conditions)
+        params.append(limit)
+
+        rows = self.conn.execute(
+            f"SELECT * FROM queued_tasks WHERE {where} ORDER BY completed_at DESC LIMIT ?",
+            params,
+        ).fetchall()
+        return [self._row_to_task(r) for r in rows]
+
+    # ── Maintenance ──────────────────────────────────────────────
+
+    def purge(self, older_than_days: int = 30) -> int:
+        """Delete completed/cancelled tasks and their runs older than N days.
+
+        Returns the number of tasks deleted.
+        """
+        cutoff = datetime.now(timezone.utc)
+        cutoff_iso = cutoff.isoformat().replace(
+            cutoff.isoformat()[-6:], ""
+        )  # rough cutoff
+        from datetime import timedelta
+        cutoff = cutoff - timedelta(days=older_than_days)
+        cutoff_iso = cutoff.isoformat()
+
+        # Delete orphaned runs first
+        self.conn.execute(
+            """DELETE FROM task_runs WHERE task_id IN (
+                SELECT id FROM queued_tasks
+                WHERE status IN ('completed', 'cancelled', 'failed')
+                AND completed_at IS NOT NULL
+                AND completed_at < ?
+            )""",
+            (cutoff_iso,),
+        )
+
+        cursor = self.conn.execute(
+            """DELETE FROM queued_tasks
+               WHERE status IN ('completed', 'cancelled', 'failed')
+               AND completed_at IS NOT NULL
+               AND completed_at < ?""",
+            (cutoff_iso,),
+        )
+        self.conn.commit()
+        deleted = cursor.rowcount
+        if deleted:
+            logger.info("Purged %d old tasks (older than %d days)", deleted, older_than_days)
+        return deleted
+
+    # ── Executor Bridge ──────────────────────────────────────────
+
+    async def drain_to_executor(self, executor: Any, limit: int = 5) -> int:
+        """Pull pending tasks from the queue and submit them to the TaskExecutor.
+
+        This bridges persistent storage → in-memory execution. Call from a
+        background loop to continuously process queued tasks.
+
+        Returns the number of tasks submitted.
+        """
+        pending = self.dequeue(limit=limit)
+        submitted = 0
+
+        for queued_task in pending:
+            run = self.mark_running(queued_task.id)
+            if not run:
+                continue
+
+            try:
+                atask = await executor.submit(
+                    goal=queued_task.goal,
+                    metadata={
+                        **queued_task.metadata,
+                        "queue_task_id": queued_task.id,
+                        "queue_run_id": run.id,
+                    },
+                )
+                self.update_metadata(queued_task.id, {"executor_task_id": atask.id})
+                submitted = submitted + 1
+                logger.info(
+                    "Queued task %s → executor %s",
+                    queued_task.id, atask.id,
+                )
+            except Exception as exc:
+                error_msg = str(exc)[:500]
+                should_retry = self.mark_failed(queued_task.id, run.id, error_msg)
+                logger.warning(
+                    "Failed to submit queued task %s: %s (retry=%s)",
+                    queued_task.id, error_msg, should_retry,
+                )
+
+        return submitted
+
+    async def sync_from_executor(self, executor: Any) -> int:
+        """Sync completed executor tasks back to the persistent queue.
+
+        Checks all running queue tasks to see if their executor counterpart
+        has finished, and updates the queue accordingly.
+
+        Returns the number of tasks synced.
+        """
+        active = self.get_active()
+        synced = 0
+
+        for queued_task in active:
+            executor_id = queued_task.metadata.get("executor_task_id")
+            run_id = queued_task.metadata.get("queue_run_id")
+            if not executor_id or not run_id:
+                continue
+
+            etask = executor.get_task(executor_id)
+            if not etask:
+                continue
+
+            if etask.status == "completed":
+                result = etask.final_result or "Completed"
+                self.mark_completed(queued_task.id, run_id, result)
+                # Reschedule if recurring
+                if queued_task.schedule_cron:
+                    self.reschedule(queued_task.id)
+                synced += 1
+
+            elif etask.status == "failed":
+                error = etask.final_result or "Execution failed"
+                self.mark_failed(queued_task.id, run_id, error)
+                synced += 1
+
+        return synced
+
+    # ── Helpers ───────────────────────────────────────────────────
+
+    def _row_to_task(self, row: sqlite3.Row) -> QueuedTask:
+        meta = {}
+        try:
+            meta = json.loads(row["metadata"] or "{}")
+        except (json.JSONDecodeError, TypeError) as e:
+            logger.warning("Failed to parse task metadata: %s", e)
+        return QueuedTask(
+            id=row["id"],
+            goal=row["goal"],
+            priority=row["priority"],
+            status=row["status"],
+            source=row["source"] or "user",
+            schedule_cron=row["schedule_cron"],
+            next_run_at=row["next_run_at"],
+            max_retries=row["max_retries"],
+            retry_count=row["retry_count"],
+            metadata=meta,
+            result=row["result"],
+            error=row["error"],
+            created_at=row["created_at"],
+            started_at=row["started_at"],
+            completed_at=row["completed_at"],
+        )
