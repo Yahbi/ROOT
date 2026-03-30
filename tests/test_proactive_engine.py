@@ -41,6 +41,8 @@ _HANDLER_NAMES = [
     "track_goals",
     "track_revenue_health",
     "validate_strategies",
+    "scalp_trade_cycle",
+    "deploy_promoted",
 ]
 
 # Pre-populate sys.modules with a fake proactive_actions module
@@ -103,8 +105,8 @@ class TestProactiveAction:
 
 class TestRegistration:
     def test_register_default_actions_count(self, proactive):
-        """_register_default_actions() should register exactly 33 actions."""
-        assert len(proactive._actions) == 33
+        """_register_default_actions() should register exactly 35 actions."""
+        assert len(proactive._actions) == 35
 
     def test_all_expected_action_names(self, proactive):
         expected = {
@@ -141,6 +143,8 @@ class TestRegistration:
             "polymarket_scanner",
             "polymarket_trade_cycle",
             "polymarket_monitor",
+            "scalp_trade_cycle",
+            "deploy_promoted",
         }
         assert set(proactive._actions.keys()) == expected
 
@@ -153,7 +157,7 @@ class TestGetActions:
     async def test_returns_list_of_dicts(self, proactive):
         actions = await proactive.get_actions()
         assert isinstance(actions, list)
-        assert len(actions) == 33
+        assert len(actions) == 35
 
     @pytest.mark.asyncio
     async def test_action_dict_keys(self, proactive):
@@ -235,8 +239,8 @@ class TestStats:
     async def test_stats_initial(self, proactive):
         stats = await proactive.stats()
         assert stats["running"] is False
-        assert stats["total_actions"] == 33
-        assert stats["enabled"] == 33
+        assert stats["total_actions"] == 35
+        assert stats["enabled"] == 35
         assert stats["total_runs"] == 0
         assert stats["total_errors"] == 0
         assert stats["success_rate"] == 0.0
@@ -245,7 +249,7 @@ class TestStats:
     async def test_stats_after_disable(self, proactive):
         await proactive.disable("health_monitor")
         stats = await proactive.stats()
-        assert stats["enabled"] == 32
+        assert stats["enabled"] == 34
 
     @pytest.mark.asyncio
     async def test_stats_with_runs(self, proactive):

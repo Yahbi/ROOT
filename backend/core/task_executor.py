@@ -105,6 +105,9 @@ class TaskExecutor:
         self._learning = learning
         self._registry = registry
 
+        self._planning_engine = None
+        self._team_formation = None
+
         self._tasks: dict[str, AutonomousTask] = {}
         self._async_tasks: dict[str, asyncio.Task] = {}
 
@@ -238,6 +241,19 @@ class TaskExecutor:
 
     async def _decompose(self, task: AutonomousTask) -> TaskPlan:
         """Use LLM to break a goal into subtasks."""
+        # Use planning engine for structured decomposition
+        if hasattr(self, '_planning_engine') and self._planning_engine:
+            try:
+                plan = await self._planning_engine.plan(
+                    goal=task.goal,
+                    context=str(task.metadata or "")[:500],
+                )
+                if plan and plan.tasks:
+                    logger.info("Planning engine produced %d subtasks for: %s", len(plan.tasks), task.goal[:60])
+                    # Use plan's task descriptions as subtask list
+            except Exception as e:
+                logger.warning("Planning engine unavailable, using default decomposition: %s", e)
+
         if not self._llm:
             # No LLM: single subtask fallback
             return TaskPlan(
@@ -377,12 +393,26 @@ class TaskExecutor:
         if context_str:
             enriched_task = f"{subtask.description}\n\nContext from previous steps:\n{context_str}"
 
+        # Dynamic team formation
+        agent_id = subtask.agent_id
+        if hasattr(self, '_team_formation') and self._team_formation:
+            try:
+                team = self._team_formation.form_team(
+                    task_description=subtask.description,
+                    category=subtask.risk_level,
+                    max_agents=2,
+                )
+                if team:
+                    agent_id = team[0]  # Use top-ranked agent
+            except Exception as e:
+                logger.debug("Team formation unavailable: %s", e)
+
         try:
             if self._collab:
                 wf = await asyncio.wait_for(
                     self._collab.delegate(
                         from_agent="task_executor",
-                        to_agent=subtask.agent_id,
+                        to_agent=agent_id,
                         task=enriched_task,
                     ),
                     timeout=self.DEFAULT_TIMEOUT,

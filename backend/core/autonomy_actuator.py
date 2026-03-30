@@ -255,9 +255,9 @@ class AutonomyActuator:
 
                     # Notify about recovery action
                     if self._notifications:
-                        self._notifications.notify(
+                        await self._notifications.send(
                             title=f"Goal auto-recovery: {title[:60]}",
-                            message=f"Stalled {days_inactive}d — decomposed into {len(task_ids)} new tasks",
+                            body=f"Stalled {days_inactive}d — decomposed into {len(task_ids)} new tasks",
                             level="medium",
                             source="actuator",
                         )
@@ -342,29 +342,41 @@ class AutonomyActuator:
             self._directive._store_directive(cost_directive)
             logger.info("Actuator: created emergency cost-cutting directive %s", cost_directive.id)
 
-        # Action 3: Create recovery goal
+        # Action 3: Create recovery goal (with deduplication check)
         if self._goal_engine:
             try:
-                self._goal_engine.add_goal(
-                    title="Revenue recovery — exit emergency mode",
-                    description=(
-                        f"Current state: revenue ${snapshot.total_revenue:.0f}/mo, "
-                        f"cost ${snapshot.total_cost:.0f}/mo. "
-                        f"Target: achieve positive profit within 30 days."
-                    ),
-                    priority=1,
-                    source="autonomous",
-                    category="trading",
-                    metadata={"trigger": "revenue_emergency", "auto_created": True},
+                # Check for existing active recovery goal to avoid duplicates
+                active_goals = self._goal_engine.get_active_goals(limit=50)
+                has_recovery_goal = any(
+                    "revenue recovery" in g.title.lower() or
+                    "exit emergency mode" in g.title.lower()
+                    for g in active_goals
                 )
+                if not has_recovery_goal:
+                    self._goal_engine.add_goal(
+                        title="Revenue recovery — exit emergency mode",
+                        description=(
+                            f"Current state: revenue ${snapshot.total_revenue:.0f}/mo, "
+                            f"cost ${snapshot.total_cost:.0f}/mo. "
+                            f"Target: achieve positive profit within 30 days."
+                        ),
+                        priority=1,
+                        source="autonomous",
+                        category="trading",
+                        metadata={"trigger": "revenue_emergency", "auto_created": True},
+                    )
+                else:
+                    logger.debug(
+                        "Actuator: skipping recovery goal creation — active recovery goal already exists"
+                    )
             except Exception as exc:
                 logger.warning("Actuator: recovery goal creation failed: %s", exc)
 
         # Notify
         if self._notifications:
-            self._notifications.notify(
+            await self._notifications.send(
                 title="REVENUE EMERGENCY — Auto-remediation active",
-                message=(
+                body=(
                     f"Profit: ${snapshot.profit:.0f}/mo. "
                     f"Paused {paused_count} products. Created cost-cutting directive."
                 ),
@@ -513,9 +525,9 @@ class AutonomyActuator:
 
         # Notify
         if self._notifications:
-            self._notifications.notify(
+            await self._notifications.send(
                 title="Health issue detected — auto-investigating",
-                message=result[:200],
+                body=result[:200],
                 level="high",
                 source="actuator",
             )
@@ -536,9 +548,9 @@ class AutonomyActuator:
                 # After 30 minutes: escalate via notification
                 if 30 <= age_minutes < 60:
                     if self._notifications:
-                        self._notifications.notify(
+                        await self._notifications.send(
                             title=f"Approval pending 30min: {req.action}",
-                            message=f"[{req.risk_level.value}] {req.description[:150]}",
+                            body=f"[{req.risk_level.value}] {req.description[:150]}",
                             level="high",
                             source="actuator",
                         )
@@ -548,9 +560,9 @@ class AutonomyActuator:
                     if req.risk_level.value in ("high", "critical"):
                         # Critical: never auto-approve, but notify urgently
                         if self._notifications:
-                            self._notifications.notify(
+                            await self._notifications.send(
                                 title=f"CRITICAL approval stale ({age_minutes:.0f}min): {req.action}",
-                                message=f"Requires manual resolution: {req.description[:150]}",
+                                body=f"Requires manual resolution: {req.description[:150]}",
                                 level="critical",
                                 source="actuator",
                             )

@@ -52,6 +52,21 @@ async function loadAgents() {
             <div class="stat-card"><div class="stat-value" style="color:var(--accent-purple)">${divCount}</div><div class="stat-label">Divisions</div></div>`;
     }
 
+    // Agent activity metrics from AGI status
+    const agiData = await api('/api/agi/status').catch(() => null);
+    const activityEl = document.getElementById('agents-activity');
+    if (activityEl && agiData?.data) {
+        const tf = agiData.data.team_formation || {};
+        const se = agiData.data.skill_executor || {};
+        activityEl.innerHTML = `
+            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px">
+                <div class="stat-card"><div class="stat-value" style="color:var(--accent-green)">${tf.total_teams_formed || 0}</div><div class="stat-label">Teams Formed</div></div>
+                <div class="stat-card"><div class="stat-value" style="color:var(--accent-blue)">${se.total_executions || 0}</div><div class="stat-label">Skills Executed</div></div>
+                <div class="stat-card"><div class="stat-value" style="color:var(--accent-purple)">${se.successes || 0}</div><div class="stat-label">Skill Successes</div></div>
+            </div>
+        `;
+    }
+
     const container = document.getElementById('agents-list');
     if (container && Array.isArray(agents)) {
         container.innerHTML = agents.map(a => {
@@ -367,11 +382,12 @@ async function loadCivilization() {
                     <div id="${divId}" style="display:none;margin-top:10px;border-top:1px solid var(--border);padding-top:8px">
                         ${agentList.map(a => {
                             const n = typeof a === 'string' ? a : (a.name || a.id || '');
+                            const agId = typeof a === 'object' ? (a.id || a.name || '') : a;
                             const role = typeof a === 'object' ? (a.role || '') : '';
                             const tier = typeof a === 'object' ? (a.tier ?? '') : '';
                             const caps = typeof a === 'object' && Array.isArray(a.capabilities) ? a.capabilities : [];
                             return `<div style="display:flex;align-items:center;gap:8px;padding:4px 0;border-bottom:1px solid var(--border)">
-                                <span style="font-size:12px;font-weight:600;min-width:140px">${escHtml(n)}</span>
+                                <span style="font-size:12px;font-weight:600;min-width:140px;cursor:pointer;color:var(--accent);text-decoration:underline" onclick="showAgentDetail('${escHtml(agId)}')">${escHtml(n)}</span>
                                 ${tier !== '' ? `<span style="background:var(--accent)22;color:var(--accent);padding:1px 6px;border-radius:8px;font-size:10px;font-weight:600">T${tier}</span>` : ''}
                                 <span style="font-size:11px;color:var(--text-secondary);flex:1">${escHtml(role)}</span>
                                 ${caps.length ? `<span style="font-size:10px;color:var(--text-muted)">${caps.length} caps</span>` : ''}
@@ -500,6 +516,12 @@ async function approveAllCodeProposals() {
         }
         if (btn) { btn.textContent = `Approved ${approved}`; btn.style.color = 'var(--accent-green)'; }
         pushActivity('Bulk approved', `${approved} code proposals`, 'civilization', 'coder');
+        // After successful approval, dismiss all approval toasts
+        document.querySelectorAll('.toast--warning').forEach(t => {
+            t.classList.remove('toast--visible');
+            t.classList.add('toast--exit');
+            setTimeout(() => { if (t.parentNode) t.parentNode.removeChild(t); }, 300);
+        });
         setTimeout(() => loadCivilization(), 800);
     } catch (e) {
         if (btn) { btn.textContent = 'Error'; btn.disabled = false; }
@@ -513,6 +535,12 @@ async function approveCodeProposal(proposalId) {
         await api(`/api/civilization/code-proposals/${proposalId}/approve`, { method: 'POST' });
         if (btn) { btn.textContent = 'Approved'; btn.style.color = 'var(--accent-green)'; }
         pushActivity('Approved', `Code proposal ${proposalId.slice(0, 8)}`, 'civilization', 'coder');
+        // After successful approval, dismiss all approval toasts
+        document.querySelectorAll('.toast--warning').forEach(t => {
+            t.classList.remove('toast--visible');
+            t.classList.add('toast--exit');
+            setTimeout(() => { if (t.parentNode) t.parentNode.removeChild(t); }, 300);
+        });
         setTimeout(() => loadCivilization(), 800);
     } catch (e) {
         if (btn) { btn.textContent = 'Error'; btn.disabled = false; }
@@ -539,6 +567,12 @@ async function approveExperiment(experimentId) {
         await api(`/api/civilization/experiments/${experimentId}/approve`, { method: 'POST' });
         if (btn) { btn.textContent = 'Approved'; btn.style.color = 'var(--accent-green)'; }
         pushActivity('Approved', `Experiment ${experimentId.slice(0, 8)}`, 'civilization', 'analyst');
+        // After successful approval, dismiss all approval toasts
+        document.querySelectorAll('.toast--warning').forEach(t => {
+            t.classList.remove('toast--visible');
+            t.classList.add('toast--exit');
+            setTimeout(() => { if (t.parentNode) t.parentNode.removeChild(t); }, 300);
+        });
         setTimeout(() => loadCivilization(), 800);
     } catch (e) {
         if (btn) { btn.textContent = 'Error'; btn.disabled = false; }
@@ -762,22 +796,34 @@ async function showNetworkInsight(agentId) {
 async function showAgentDetail(agentId) {
     try {
         const [agentData, learningData] = await Promise.all([
-            api(`/api/agents/${agentId}`),
+            api(`/api/agents/${agentId}`).catch(() => null),
             api(`/api/agents/${agentId}/stats`).catch(() => null),
         ]);
-        const agent = agentData?.data || agentData || {};
+        let agent = agentData?.data || agentData || {};
         const stats = learningData?.data || learningData || {};
+
+        // Fallback for civilization agents not found via /api/agents
+        if (!agent || agent.error || !agent.name) {
+            const civAgent = await _findCivilizationAgent(agentId);
+            if (civAgent) {
+                agent = civAgent;
+            }
+        }
+
         const color = AGENT_COLORS[agentId] || 'var(--accent)';
         const h = agent.health?.status || 'unknown';
         const isCustom = agent.metadata?.custom;
+        const isCiv = !!agent._civilization;
 
         const successRate = stats.success_rate !== undefined ? (stats.success_rate * 100).toFixed(0) + '%' : '\u2014';
         const totalTasks = stats.total_tasks || agent.tasks_completed || 0;
         const routingWeight = stats.routing_weight !== undefined ? stats.routing_weight.toFixed(3) : '\u2014';
 
-        const caps = (agent.capabilities || []).map(c =>
-            `<span class="cap-tag" title="${escHtml(c.description || '')}">${escHtml(c.name)}</span>`
-        ).join('');
+        const caps = (agent.capabilities || []).map(c => {
+            const capName = typeof c === 'string' ? c : (c.name || '');
+            const capDesc = typeof c === 'object' ? (c.description || '') : '';
+            return `<span class="cap-tag" title="${escHtml(capDesc)}">${escHtml(capName)}</span>`;
+        }).join('');
 
         const recentTasks = (stats.recent_tasks || []).slice(0, 10);
         const taskList = recentTasks.length ? recentTasks.map(t => {
@@ -802,6 +848,7 @@ async function showAgentDetail(agentId) {
                         <div style="display:flex;gap:6px;margin-top:4px">
                             <span class="status-pill ${h}">${escHtml(h)}</span>
                             ${isCustom ? '<span style="font-size:10px;color:var(--accent-cyan);font-weight:600">CUSTOM</span>' : ''}
+                            ${isCiv ? `<span style="font-size:10px;color:var(--accent-purple);font-weight:600">CIVILIZATION · ${escHtml(agent._division || '')}</span>` : ''}
                         </div>
                     </div>
                 </div>
@@ -824,6 +871,31 @@ async function showAgentDetail(agentId) {
     } catch (e) {
         console.error('Agent detail error:', e);
     }
+}
+
+// Find a civilization agent by ID from division data
+async function _findCivilizationAgent(agentId) {
+    try {
+        const divisions = await api('/api/civilization/agents/divisions');
+        const divData = divisions?.divisions || {};
+        for (const [divName, agents] of Object.entries(divData)) {
+            const agentList = Array.isArray(agents) ? agents : [];
+            for (const a of agentList) {
+                const id = typeof a === 'object' ? (a.id || a.name || '') : a;
+                const name = typeof a === 'object' ? (a.name || a.id || '') : a;
+                if (id === agentId || name === agentId) {
+                    return {
+                        ...(typeof a === 'object' ? a : { name: a, id: a }),
+                        _civilization: true,
+                        _division: divName,
+                    };
+                }
+            }
+        }
+    } catch (e) {
+        console.error('Civilization agent lookup failed:', e);
+    }
+    return null;
 }
 
 async function shareNetworkInsight() {

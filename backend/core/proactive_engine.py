@@ -140,8 +140,11 @@ class ProactiveEngine:
         self._self_writing_code = self_writing_code
         self._strategy_validator = strategy_validator
         self._notifications = notification_engine
+        self._market_data = None  # Set via set_market_data()
+        self._planning_engine = None  # Set via set_planning_engine()
         self._experience_memory = None  # Set via set_experience_memory()
         self._polymarket_bot = None  # Set via set_polymarket_bot()
+        self._outcome_registry = None  # Set via main.py — closed-loop learning
 
         self._actions: dict[str, ProactiveAction] = {}
         self._actions_lock = asyncio.Lock()
@@ -156,6 +159,14 @@ class ProactiveEngine:
         self._chat_active.set()  # Not chatting → background can proceed
 
         self._register_default_actions()
+
+    def set_market_data(self, market_data) -> None:
+        """Late-bind MarketDataService for technical analysis in proactive actions."""
+        self._market_data = market_data
+
+    def set_planning_engine(self, planning_engine) -> None:
+        """Late-bind PlanningEngine for structured experiment/task design."""
+        self._planning_engine = planning_engine
 
     def set_experience_memory(self, exp_mem) -> None:
         """Late-bind experience memory for cross-project correlation."""
@@ -233,10 +244,11 @@ class ProactiveEngine:
             # ── Market Intelligence (Trading Swarm) ──
             ProactiveAction(
                 name="market_scanner",
-                description="Scan markets via Trading Swarm — prices, trends, opportunities",
+                description="Scan markets via Trading Swarm + technical analysis + hedge fund intelligence",
                 interval_seconds=PROACTIVE_INTERVALS.get("market_scanner", 1800),
                 handler=lambda: scan_markets(
                     collab=self._collab, llm=self._llm, memory=self._memory,
+                    hedge_fund=self._hedge_fund, market_data=self._market_data,
                 ),
                 risk_level="low",
             ),
@@ -367,12 +379,13 @@ class ProactiveEngine:
             # ── Experiment Auto-Proposer (generates testable hypotheses) ──
             ProactiveAction(
                 name="experiment_proposer",
-                description="Auto-propose experiments from market scans, business discoveries, and agent insights",
+                description="Auto-propose experiments from market scans, business discoveries, and agent insights (planning-enhanced)",
                 interval_seconds=PROACTIVE_INTERVALS.get("experiment_proposer", 7200),
                 handler=lambda: experiment_proposer(
                     experiment_lab=self._experiment_lab,
                     collab=self._collab, llm=self._llm,
                     memory=self._memory,
+                    planning_engine=self._planning_engine,
                 ),
                 risk_level="low",
             ),
@@ -758,6 +771,20 @@ class ProactiveEngine:
                 except Exception as exp_exc:
                     logger.warning("Experience recording failed for '%s': %s", action.name, exp_exc)
 
+            # Record outcome for closed-loop learning
+            if hasattr(self, '_outcome_registry') and self._outcome_registry and result:
+                try:
+                    self._outcome_registry.record(
+                        action_type="proactive",
+                        action_id=action.name,
+                        intent=action.description,
+                        result=str(result)[:500],
+                        quality_score=0.8 if result and len(str(result)) > 100 else 0.5,
+                        context={"action": action.name, "run_count": action.run_count},
+                    )
+                except Exception:
+                    pass
+
             # Evaluate action chains (reactive follow-ups)
             if self._chain_engine:
                 try:
@@ -774,6 +801,19 @@ class ProactiveEngine:
             return action.last_result
         except Exception as exc:
             action.error_count += 1
+            # Record failed outcome for closed-loop learning
+            if hasattr(self, '_outcome_registry') and self._outcome_registry:
+                try:
+                    self._outcome_registry.record(
+                        action_type="proactive",
+                        action_id=action.name,
+                        intent=action.description,
+                        result=str(exc)[:500],
+                        quality_score=0.1,
+                        context={"action": action.name, "error_count": action.error_count},
+                    )
+                except Exception:
+                    pass
             if self._state_store:
                 self._state_store.save_proactive_state(
                     action.name, action.run_count, action.error_count,

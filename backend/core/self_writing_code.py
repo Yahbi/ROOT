@@ -208,7 +208,35 @@ class SelfWritingCodeSystem:
         )
         self.conn.commit()
         logger.info("Proposal %s: %s", new_status, proposal_id)
+
+        # Auto-deploy MINOR proposals that pass tests
+        if hasattr(self, '_deployment_pipeline') and self._deployment_pipeline:
+            if scope in (ProposalScope.MINOR,) and new_status == "approved":
+                try:
+                    import asyncio
+                    proposal = self._get_by_id(proposal_id)
+                    if proposal:
+                        loop = asyncio.get_event_loop()
+                        loop.create_task(self._auto_deploy(proposal))
+                except Exception as e:
+                    logger.warning("Code auto-deploy scheduling failed: %s", e)
+
         return self._get_by_id(proposal_id)
+
+    async def _auto_deploy(self, proposal: CodeProposal) -> None:
+        """Auto-deploy a MINOR proposal via the deployment pipeline."""
+        try:
+            deploy_result = await self._deployment_pipeline.deploy_proposal(
+                file_path=proposal.file_path,
+                original_content="",
+                proposed_content=proposal.proposed_change,
+                proposal_id=proposal.id,
+            )
+            if deploy_result.success:
+                self.mark_deployed(proposal.id)
+                logger.info("Auto-deployed MINOR proposal %s", proposal.id)
+        except Exception as e:
+            logger.warning("Code deployment failed for %s: %s", proposal.id, e)
 
     def approve(self, proposal_id: str) -> bool:
         """Manually approve a pending proposal (Yohan approval for major changes)."""

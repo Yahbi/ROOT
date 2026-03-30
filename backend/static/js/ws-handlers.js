@@ -7,7 +7,8 @@ const WS_TOPICS = [
     'system.*', 'agent.*', 'collab.*', 'network.*',
     'memory.*', 'goal.*', 'trade.*', 'prediction.*',
     'experiment.*', 'directive.*', 'cost.*', 'skill.*',
-    'sandbox.*', 'experience.*', 'approval.*', 'revenue.*', 'plugin.*'
+    'sandbox.*', 'experience.*', 'approval.*', 'revenue.*', 'plugin.*',
+    'intelligence.*', 'swarm.*', 'research.*'
 ];
 
 // Map topic prefix -> panel name for auto-refresh
@@ -28,12 +29,16 @@ const TOPIC_PANEL_MAP = {
     experience: 'civilization',
     approval:   'dashboard',
     revenue:    'civilization',
-    plugin:     'plugins'
+    plugin:     'plugins',
+    intelligence: 'dashboard',
+    swarm:      'agents',
+    research:   'dashboard',
 };
 
 // Topics that trigger a toast notification
 const TOAST_TOPICS = new Set([
-    'approval', 'trade', 'experiment', 'directive', 'revenue', 'sandbox'
+    'approval', 'trade', 'experiment', 'directive', 'revenue', 'sandbox',
+    'intelligence', 'swarm'
 ]);
 
 // ── Subscribe to Extended Topics ────────────────────────────
@@ -65,6 +70,50 @@ function handleWsEvent(topic, data) {
         showToast(msg, type);
     }
 
+    // Visualize agent communication in Neural Galaxy — ALL events fire signals
+    if (window.NeuralGalaxy && typeof NeuralGalaxy.fireSignal === 'function') {
+        // Boost organic activity level when real events arrive
+        if (typeof NeuralGalaxy._boostActivity === 'function') NeuralGalaxy._boostActivity();
+        else if (window._neuralBoostActivity) window._neuralBoostActivity();
+
+        // Fire signals for ALL topic types, not just agent-related
+        const _galaxyTopics = new Set(['agent', 'collab', 'directive', 'system', 'skill', 'network', 'trade', 'prediction', 'experiment', 'memory', 'goal', 'approval', 'revenue', 'experience', 'cost', 'plugin', 'intelligence', 'swarm', 'research']);
+        if (_galaxyTopics.has(prefix)) {
+            // Extract agent IDs from the bus message fields + topic segments
+            const payload = (data && data.payload) || data || {};
+            const sender  = (data && data.sender) || null;
+            const topicParts = topic.split('.');
+            // fromAgent: sender field, or payload.from_agent / agent_id
+            const fromAgent = sender
+                || payload.from_agent || payload.agent_id || payload.source || null;
+            // toAgent: payload.to_agent / target_agent / target, or agent id embedded in topic (e.g. "agent.<id>.task")
+            const toAgent = payload.to_agent || payload.target_agent || payload.target
+                || (prefix === 'agent' && topicParts.length >= 2 ? topicParts[1] : null)
+                || null;
+
+            // Color map for different event types
+            const _signalColors = {
+                intelligence: 0x00FFFF,  // cyan
+                swarm: 0x4488FF,         // blue
+                trade: 0x00FF88,         // green
+                research: 0xFF88FF,      // pink
+                directive: 0xFFAA00,     // orange
+                agent: 0xFFD700,         // gold
+                collab: 0xFF4488,        // magenta
+            };
+            const signalColor = _signalColors[prefix] || undefined;
+
+            if (fromAgent && toAgent && fromAgent !== toAgent) {
+                NeuralGalaxy.fireSignal(fromAgent, toAgent, signalColor);
+            } else if (fromAgent) {
+                // Single-agent event — pulse the node
+                NeuralGalaxy.pulseAgent(fromAgent);
+            } else if (toAgent) {
+                NeuralGalaxy.pulseAgent(toAgent);
+            }
+        }
+    }
+
     // Store in activity feed
     _pushToActivityFeed(topic, data);
 }
@@ -88,13 +137,21 @@ function showToast(message, type = 'info', duration = 4000) {
     const colors = TOAST_COLORS[type] || TOAST_COLORS.info;
     const pulseClass = type === 'live' ? ' toast--live' : '';
 
+    const now = new Date();
+    const timeStr = now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit', second:'2-digit'});
+
     const toast = document.createElement('div');
     toast.id = id;
     toast.className = `toast toast--${type}${pulseClass}`;
     toast.setAttribute('role', 'alert');
     toast.innerHTML = `
-        <span class="toast-message">${escHtml(message)}</span>
-        <button class="toast-dismiss" onclick="_dismissToast('${id}')" aria-label="Dismiss">&times;</button>`;
+        <div style="display:flex;align-items:start;gap:8px;width:100%">
+            <div style="flex:1">
+                <span class="toast-message">${escHtml(message)}</span>
+                <div style="font-size:10px;color:rgba(255,255,255,0.6);margin-top:2px">${timeStr}</div>
+            </div>
+            <button class="toast-dismiss" onclick="_dismissToast('${id}')" aria-label="Dismiss">&times;</button>
+        </div>`;
 
     container.appendChild(toast);
 

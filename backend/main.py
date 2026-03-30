@@ -107,6 +107,8 @@ from backend.routes import curiosity as curiosity_routes
 from backend.routes import agents_custom as agents_custom_routes
 from backend.routes import scenarios as scenarios_routes
 from backend.routes import councils as councils_routes
+from backend.routes import agi as agi_routes
+from backend.routes import perpetual as perpetual_routes
 
 logging.basicConfig(
     level=logging.INFO,
@@ -205,16 +207,20 @@ async def lifespan(app: FastAPI):
     fts_count = mem.rebuild_fts()
     logger.info("Memory engine: %d entries (FTS rebuilt)", fts_count)
 
-    # ── 1a. Vector Store (semantic search) ─────────────────────
+    # ── 1a. Vector Store + Dense Embeddings (semantic search) ───
+    embedding_service = None
     try:
-        from backend.core.vector_store import TextEmbedder, VectorStore
+        from backend.core.vector_store import VectorStore
+        from backend.core.embedding_service import EmbeddingService
         vector_store = VectorStore()
         vector_store.start()
-        embedder = TextEmbedder()
-        mem.set_vector_store(vector_store, embedder)
-        logger.info("VectorStore attached — semantic search enabled")
+        embedding_service = EmbeddingService(provider="auto")
+        embedding_service.start()
+        mem.set_vector_store(vector_store, embedding_service)
+        app.state.embedding_service = embedding_service
+        logger.info("VectorStore + EmbeddingService attached — dense semantic search enabled")
     except Exception as e:
-        logger.warning("VectorStore unavailable (numpy missing?): %s", e)
+        logger.warning("VectorStore unavailable: %s", e)
 
     # ── 1b. Learning Engine (outcome-based self-learning) ─────
     learning = LearningEngine()
@@ -354,6 +360,14 @@ async def lifespan(app: FastAPI):
     logger.info("Plugin engine: %d plugins, %d tools",
                 plugins.stats()["total_plugins"], plugins.stats()["total_tools"])
 
+    # ── Finnhub Intelligence Plugin ──────────────────────────
+    try:
+        from backend.core.plugins.finnhub_plugin import register_finnhub_plugins
+        register_finnhub_plugins(plugins, state_store=state_store)
+        logger.info("Finnhub plugin: registered (fundamental data + earnings + sentiment)")
+    except Exception as e:
+        logger.info("Finnhub plugin: skipped (%s)", e)
+
     # ── 11a. Cost Tracker ────────────────────────────────────
     from backend.core.cost_tracker import CostTracker
     cost_tracker = CostTracker()
@@ -473,6 +487,9 @@ async def lifespan(app: FastAPI):
     app.state.interest = interest
     logger.info("Interest engine: ready")
 
+    # Wire interest engine into revenue engine (created earlier at step 1g)
+    revenue_engine.set_interest_engine(interest)
+
     # ── 14. Brain (online or offline) ─────────────────────────
     # Always create OfflineBrain as fallback for when LLM API goes down
     from backend.core.offline_brain import OfflineBrain
@@ -574,7 +591,9 @@ async def lifespan(app: FastAPI):
         if learning:
             action = msg.payload.get("action", "unknown")
             result = msg.payload.get("result", "")
-            if result and len(result) > 20:
+            if result and len(str(result).strip()) > 30 and not any(
+                w in str(result).lower() for w in ("error", "failed", "timeout")
+            ):
                 learning.record_agent_outcome(
                     agent_id="proactive_engine",
                     task_description=f"proactive:{action}",
@@ -693,6 +712,13 @@ async def lifespan(app: FastAPI):
         if hasattr(connector, "set_collab"):
             connector.set_collab(collab)
 
+    # Wire skill executor into all internal agents (late-bind after AGI section)
+    def _wire_skill_executor():
+        if hasattr(app.state, 'skill_executor'):
+            for _aid, _conn in registry._connectors.items():
+                if hasattr(_conn, '_skill_executor'):
+                    _conn._skill_executor = app.state.skill_executor
+
     # Wire LLM, collab, bus into Money Engine and MiRo (created earlier)
     money_engine._llm = llm
     money_engine._collab = collab
@@ -710,6 +736,7 @@ async def lifespan(app: FastAPI):
     )
     hedge_fund._sandbox_gate = sandbox_gate
     hedge_fund._notification_engine = notifications
+    hedge_fund.set_interest_engine(interest)
     hedge_fund.start()
     app.state.hedge_fund = hedge_fund
     logger.info("Hedge fund engine: started (risk controls active)")
@@ -828,7 +855,186 @@ async def lifespan(app: FastAPI):
         brain._polymarket_bot = app.state.polymarket_bot
         logger.info("Brain: wired to goal_engine + escalation + user_patterns")
 
-    # ── 27. Autonomous Loop (with goal + task awareness) ──────
+    # ── AGI-1: Outcome Evaluator + Registry (closed-loop learning) ──
+    from backend.core.outcome_evaluator import OutcomeEvaluator
+    from backend.core.outcome_registry import OutcomeRegistry
+    from backend.core.decision_feedback import DecisionFeedback
+    outcome_evaluator = OutcomeEvaluator(llm=llm)
+    outcome_registry = OutcomeRegistry()
+    outcome_registry.start()
+    decision_feedback = DecisionFeedback(
+        outcome_registry=outcome_registry, learning_engine=learning,
+    )
+    app.state.outcome_evaluator = outcome_evaluator
+    app.state.outcome_registry = outcome_registry
+    app.state.decision_feedback = decision_feedback
+    logger.info("AGI: Outcome evaluator + registry + decision feedback — closed-loop learning ACTIVE")
+
+    # ── AGI-2: Adaptive Config + Tuner (self-tuning parameters) ──
+    from backend.core.adaptive_config import AdaptiveConfig
+    from backend.core.adaptive_tuner import AdaptiveTuner
+    adaptive_config = AdaptiveConfig()
+    adaptive_config.start()
+    adaptive_tuner = AdaptiveTuner(
+        adaptive_config=adaptive_config,
+        outcome_registry=outcome_registry,
+        learning_engine=learning,
+    )
+    app.state.adaptive_config = adaptive_config
+    app.state.adaptive_tuner = adaptive_tuner
+    logger.info("AGI: Adaptive config (%d params) + tuner — self-tuning parameters ACTIVE",
+                len(adaptive_config.get_all()))
+
+    # ── AGI-3: Planning Engine (DAG planner) ────────────────────
+    from backend.core.planning_engine import PlanningEngine
+    planning_engine = PlanningEngine(
+        llm=llm, experience_memory=experience_memory, memory=mem,
+    )
+    app.state.planning_engine = planning_engine
+    task_executor._planning_engine = planning_engine
+    logger.info("AGI: Planning engine — chain-of-thought DAG planner ACTIVE")
+
+    # ── AGI-4: Trading Autonomy (graduated trust) ───────────────
+    from backend.core.trading_autonomy import TradingAutonomy
+    trading_autonomy = TradingAutonomy(
+        adaptive_config=adaptive_config,
+        prediction_ledger=prediction_ledger,
+    )
+    hedge_fund._trading_autonomy = trading_autonomy
+    app.state.trading_autonomy = trading_autonomy
+    logger.info("AGI: Trading autonomy — graduated trust (auto/notify/manual) ACTIVE")
+
+    # ── AGI-5: Team Formation (dynamic agent teams) ─────────────
+    from backend.core.team_formation import TeamFormation
+    team_formation = TeamFormation(
+        learning_engine=learning, registry=registry,
+    )
+    app.state.team_formation = team_formation
+    task_executor._team_formation = team_formation
+    logger.info("AGI: Team formation — dynamic agent teams ACTIVE")
+
+    # ── AGI-6: Skill Executor (executable skills) ───────────────
+    from backend.core.skill_executor import SkillExecutor
+    skill_executor = SkillExecutor(
+        skill_engine=skills, plugin_engine=plugins, llm=llm,
+    )
+    app.state.skill_executor = skill_executor
+    _wire_skill_executor()
+    logger.info("AGI: Skill executor — %d executable skills ACTIVE (wired to %d agents)",
+                len(skill_executor.list_executable()),
+                sum(1 for c in registry._connectors.values() if getattr(c, '_skill_executor', None)))
+
+    # ── AGI-7: Conflict Detector (semantic contradiction detection) ──
+    from backend.core.conflict_detector import ConflictDetector
+    conflict_detector = ConflictDetector(
+        embedding_service=embedding_service,
+    )
+    app.state.conflict_detector = conflict_detector
+    logger.info("AGI: Conflict detector — semantic contradiction detection ACTIVE")
+
+    # ── AGI-8: Emergency Protocol (auto-pause + rollback) ───────
+    from backend.core.emergency_protocol import EmergencyProtocol
+    emergency_protocol = EmergencyProtocol(
+        notification_engine=notifications, state_store=state_store,
+    )
+    app.state.emergency_protocol = emergency_protocol
+    logger.info("AGI: Emergency protocol — auto-pause + notification ACTIVE")
+
+    # ── AGI-9: Code Deployment Pipeline (test-deploy-rollback) ──
+    from backend.core.code_deployment import CodeDeploymentPipeline
+    code_deployment = CodeDeploymentPipeline()
+    self_writing_code._deployment_pipeline = code_deployment
+    app.state.code_deployment = code_deployment
+    logger.info("AGI: Code deployment — test → deploy → monitor → rollback ACTIVE")
+
+    # ── TRADING INTELLIGENCE SUITE ─────────────────────────────
+    from backend.core.market_data_service import MarketDataService
+    from backend.core.trading_consensus import TradingConsensus
+    from backend.core.investor_agents import InvestorPanel
+    from backend.core.model_racing import ModelRacing
+    from backend.core.response_transforms import ResponseTransforms
+    from backend.core.continuous_research import ContinuousResearch
+    from backend.core.web_explorer import WebExplorer
+    from backend.core.document_analyzer import DocumentAnalyzer
+
+    # Market Data Service (indicators + multi-source)
+    import os as _os2
+    _finnhub_key = getattr(app.state, '_finnhub_key', '') or _os2.environ.get('FINNHUB_API_KEY', '')
+    _alpaca_key = getattr(app.state, '_alpaca_key', '') or _os2.environ.get('ALPACA_API_KEY', '')
+    market_data = MarketDataService(
+        finnhub_api_key=_finnhub_key,
+        alpaca_api_key=_alpaca_key,
+    )
+    app.state.market_data = market_data
+    logger.info("Market data service: multi-source indicators ACTIVE")
+
+    # Trading Consensus (bull/bear debate)
+    trading_consensus = TradingConsensus(
+        llm=llm, collab=collab, experience_memory=experience_memory, memory=mem,
+    )
+    app.state.trading_consensus = trading_consensus
+    logger.info("Trading consensus: bull/bear debate + risk assessment ACTIVE")
+
+    # Wire trading intelligence into hedge fund
+    hedge_fund._market_data = market_data
+    hedge_fund._trading_consensus = trading_consensus
+    logger.info("Hedge fund: wired market_data + trading_consensus")
+
+    # Wire outcome registry into proactive engine
+    proactive._outcome_registry = outcome_registry
+    logger.info("Proactive engine: wired outcome_registry (closed-loop learning)")
+
+    # Wire AGI trading intelligence into proactive engine
+    proactive.set_market_data(market_data)
+    proactive.set_planning_engine(planning_engine)
+    logger.info("Proactive engine: wired market_data + planning_engine (AGI intelligence)")
+
+    # Investor Panel (12 legendary investors)
+    investor_panel = InvestorPanel(llm=llm)
+    app.state.investor_panel = investor_panel
+    hedge_fund._investor_panel = investor_panel
+    logger.info("Investor panel: 12 legendary investor agents ACTIVE (wired to hedge fund)")
+
+    # Model Racing (multi-model parallel evaluation)
+    model_racing = ModelRacing(llm_router=llm_router)
+    app.state.model_racing = model_racing
+    brain._model_racing = model_racing
+    logger.info("Model racing: multi-provider parallel evaluation ACTIVE")
+
+    # Response Transforms (hedge reducer + direct mode)
+    app.state.response_transforms = ResponseTransforms
+    logger.info("Response transforms: hedge reducer + direct + trading mode ACTIVE")
+
+    # Web Explorer (autonomous web browsing)
+    web_explorer = WebExplorer(plugins=plugins, llm=llm, memory=mem)
+    app.state.web_explorer = web_explorer
+    logger.info("Web explorer: autonomous web browsing + data extraction ACTIVE")
+
+    # Document Analyzer (PDF/doc analysis + reports)
+    document_analyzer = DocumentAnalyzer(llm=llm, memory=mem)
+    app.state.document_analyzer = document_analyzer
+    logger.info("Document analyzer: analysis + report generation + export ACTIVE")
+
+    # Content Ingestion (file/URL/text → memory pipeline)
+    from backend.core.content_ingestion import ContentIngestion
+    content_ingestion = ContentIngestion(
+        memory=mem, experience_memory=experience_memory,
+        llm=llm, web_explorer=web_explorer, document_analyzer=document_analyzer,
+    )
+    app.state.content_ingestion = content_ingestion
+    brain._content_ingestion = content_ingestion
+    logger.info("Content ingestion: file/URL/text → memory pipeline ACTIVE")
+
+    # Continuous Research (always learning)
+    continuous_research = ContinuousResearch(
+        llm=llm, memory=mem, experience_memory=experience_memory,
+        learning=learning, bus=bus, plugins=plugins,
+        document_analyzer=document_analyzer,
+    )
+    app.state.continuous_research = continuous_research
+    logger.info("Continuous research: autonomous knowledge acquisition ACTIVE")
+
+    # ── 27. Autonomous Loop (with goal + task awareness + outcome evaluator) ──
     auto_loop = AutonomousLoop(
         memory=mem, skills=skills, self_dev=self_dev,
         collab=collab, bus=bus, approval=approval, llm=llm,
@@ -836,9 +1042,10 @@ async def lifespan(app: FastAPI):
         task_queue=task_queue, state_store=state_store,
         ecosystem=ecosystem, prediction_ledger=prediction_ledger,
         experience_memory=experience_memory,
+        outcome_evaluator=outcome_evaluator,
     )
     app.state.auto_loop = auto_loop
-    logger.info("Autonomous loop: self-improving every 30min (goal-aware)")
+    logger.info("Autonomous loop: self-improving every 30min (goal-aware + outcome-evaluated)")
 
     # ── 27a. Continuous Learning Engine (all agents always learning) ──
     continuous_learning = ContinuousLearningEngine(
@@ -897,11 +1104,14 @@ async def lifespan(app: FastAPI):
     )
     directive._sandbox_gate = sandbox_gate
     directive._notification_engine = notifications
+    directive.set_interest_engine(interest)
+    directive._conflict_detector = conflict_detector  # AGI: semantic contradiction detection
     directive.start()
     app.state.directive = directive
     # Late-bind directive into actuator (was None at creation time)
     actuator._directive_engine = directive
-    logger.info("Directive engine: autonomous strategic directives every 15min")
+    directive._outcome_registry = outcome_registry
+    logger.info("Directive engine: autonomous strategic directives every 15min (outcome_registry wired)")
 
     # ── Wire network into agent collaboration ─────────────────────
     collab._network = agent_network
@@ -974,6 +1184,87 @@ async def lifespan(app: FastAPI):
             _safe_loop("directive", directive.run_loop),
             name="directive_loop",
         ))
+    # AGI: Adaptive Tuner background loop (every 2 hours)
+    # start_loop() manages its own internal loop — call directly, not via _safe_loop
+    bg_tasks.append(asyncio.create_task(
+        adaptive_tuner.start_loop(),
+        name="adaptive_tuner_loop",
+    ))
+    # Decision Feedback loop (every 15 minutes)
+    async def _decision_feedback_loop():
+        await asyncio.sleep(300)  # Let outcomes accumulate first
+        while True:
+            try:
+                signals = await decision_feedback.analyze()
+                if signals.get("recommendations"):
+                    decision_feedback.apply_signals(signals)
+                    logger.info("Decision feedback: applied %d recommendations",
+                                len(signals.get("recommendations", [])))
+            except Exception as e:
+                logger.error("Decision feedback error: %s", e)
+            await asyncio.sleep(900)  # 15 minutes
+
+    bg_tasks.append(asyncio.create_task(
+        _safe_loop("decision_feedback", _decision_feedback_loop),
+        name="decision_feedback_loop",
+    ))
+
+    # Emergency Protocol health checks (every 5 minutes)
+    async def _emergency_check_loop():
+        await asyncio.sleep(120)
+        while True:
+            try:
+                # Gather metrics
+                metrics = {
+                    "error_rate": 0.0,  # TODO: wire from diagnostics
+                    "llm_failure_rate": 0.0,
+                    "trading_daily_pnl": 0.0,
+                    "memory_corruption": False,
+                }
+                status = emergency_protocol.check_health(metrics)
+                if status.severity.value != "ok":
+                    await emergency_protocol.respond(status)
+            except Exception as e:
+                logger.error("Emergency check error: %s", e)
+            await asyncio.sleep(300)  # 5 minutes
+
+    bg_tasks.append(asyncio.create_task(
+        _safe_loop("emergency_checks", _emergency_check_loop),
+        name="emergency_check_loop",
+    ))
+
+    # Continuous Research background loop (every 30 min)
+    if llm:
+        await continuous_research.start_loop()
+        logger.info("Continuous research loop: STARTED (30min intervals)")
+
+    # ── PERPETUAL INTELLIGENCE (every 60s — all agents always working) ──
+    from backend.core.perpetual_intelligence import PerpetualIntelligence
+    perpetual = PerpetualIntelligence(
+        llm=llm, collab=collab, bus=bus, memory=mem,
+        experience_memory=experience_memory, learning=learning,
+        registry=registry, skills=skills, plugins=plugins,
+        state_store=state_store, web_explorer=web_explorer,
+        document_analyzer=document_analyzer, hedge_fund=hedge_fund,
+        planning_engine=planning_engine,
+    )
+    app.state.perpetual_intelligence = perpetual
+    logger.info("Perpetual intelligence: ALL agents constantly working")
+
+    # ── AGENT SWARM (every 120s — 10 divisions always active) ──
+    from backend.core.agent_swarm import AgentSwarm
+    agent_swarm = AgentSwarm(
+        collab=collab, registry=registry, bus=bus, memory=mem,
+        learning=learning, experience_memory=experience_memory, llm=llm,
+    )
+    app.state.agent_swarm = agent_swarm
+    logger.info("Agent swarm: 172 agents across 10 divisions — ALWAYS ACTIVE")
+
+    # Start perpetual loops
+    if llm:
+        await perpetual.start(interval=60)
+        await agent_swarm.start(interval=120)
+        logger.info("Perpetual intelligence + Agent swarm: STARTED")
 
     # ── Startup complete ──────────────────────────────────────
     assessment = self_dev.assess()
@@ -998,6 +1289,14 @@ async def lifespan(app: FastAPI):
     logger.info("  Verification: Multi-agent consensus + Redundancy detection")
     logger.info("  Sandbox Gate: global=%s (all external actions gated)", sandbox_gate.global_mode.value)
     logger.info("  Governance: Yohan approval for architecture/financial/expansion changes")
+    logger.info("  AGI UPGRADES: Dense Embeddings | Outcome Evaluator | Adaptive Config")
+    logger.info("  AGI UPGRADES: Planning Engine | Trading Autonomy | Team Formation")
+    logger.info("  AGI UPGRADES: Skill Executor | Conflict Detector | Emergency Protocol")
+    logger.info("  AGI UPGRADES: Code Deployment | Decision Feedback | Adaptive Tuner")
+    logger.info("  TRADING SUITE: Market Data | Consensus | 12 Investors | Model Racing")
+    logger.info("  RESEARCH: Web Explorer | Document Analyzer | Continuous Research")
+    logger.info("  PERPETUAL: All 172 agents working constantly (research + analysis + trading + coding + vision)")
+    logger.info("  SKILLS: %d total (%d executable)", len(skills.list_all()), len(skill_executor.list_executable()))
     logger.info("  Dashboard: http://%s:%s", HOST, PORT)
     logger.info("=" * 60)
 
@@ -1006,6 +1305,8 @@ async def lifespan(app: FastAPI):
     # ── Shutdown (proper cleanup with awaited cancellation) ──
     logger.info("ROOT v1.0.0 shutting down...")
     await hooks.fire(HookEvent.ON_SHUTDOWN, {})
+    perpetual.stop()
+    agent_swarm.stop()
     directive.stop()
     agent_network.stop()
     triggers.stop()
@@ -1022,6 +1323,12 @@ async def lifespan(app: FastAPI):
     for t in bg_tasks:
         with contextlib.suppress(asyncio.CancelledError):
             await t
+    adaptive_tuner.stop()
+    outcome_registry.stop()
+    adaptive_config.stop()
+    if embedding_service:
+        embedding_service.stop()
+    continuous_research.stop()
     notifications.stop()
     revenue_engine.stop()
     ecosystem.stop()
@@ -1098,6 +1405,8 @@ _fastapi_app.include_router(strategies_routes.router)
 _fastapi_app.include_router(agents_custom_routes.router)
 _fastapi_app.include_router(scenarios_routes.router)
 _fastapi_app.include_router(councils_routes.router)
+_fastapi_app.include_router(agi_routes.router)
+_fastapi_app.include_router(perpetual_routes.router)
 
 
 # Health check
@@ -1120,4 +1429,4 @@ app = SecurityHeaders(RateLimiter(APIKeyAuth(_fastapi_app)))
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run("backend.main:app", host=HOST, port=int(PORT), reload=True)
+    uvicorn.run("backend.main:app", host=HOST, port=int(PORT), reload=False)

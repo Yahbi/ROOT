@@ -371,14 +371,19 @@ class MemoryEngine:
         if self._vector_store is None or self._embedder is None:
             return
         try:
-            vector = self._embedder.embed(content)
+            # Support both old TextEmbedder.embed() and new EmbeddingService.embed_sync()
+            if hasattr(self._embedder, "embed_sync"):
+                vector = self._embedder.embed_sync(content)
+            else:
+                vector = self._embedder.embed(content)
             self._vector_store.store(
                 id=entry_id,
                 text=content,
                 vector=vector,
                 metadata={"source": "memory_engine"},
             )
-            self._embedder.partial_fit(content)
+            if hasattr(self._embedder, "partial_fit"):
+                self._embedder.partial_fit(content)
         except Exception as exc:
             logger.warning("Failed to embed memory %s: %s", entry_id, exc)
 

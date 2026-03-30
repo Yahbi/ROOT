@@ -95,7 +95,10 @@ const NeuralGalaxy = (() => {
         container = document.getElementById(containerId);
         if (!container || isInitialized) return;
 
-        const W = container.clientWidth, H = container.clientHeight;
+        // Ensure container has dimensions (panel may have just become visible)
+        let W = container.clientWidth, H = container.clientHeight;
+        if (W < 100) W = container.parentElement?.clientWidth || window.innerWidth - 260;
+        if (H < 100) H = container.parentElement?.clientHeight || window.innerHeight - 50;
 
         scene = new THREE.Scene();
         scene.fog = new THREE.FogExp2(0x040410, 0.00035);
@@ -521,7 +524,7 @@ const NeuralGalaxy = (() => {
 
         neuralSignals.push({
             mesh: sig, curve, progress: 0,
-            speed: 0.2 + Math.random() * 0.35,
+            speed: 0.5 + Math.random() * 0.6,  // faster travel for denser signal flow
             edge,                  // linked dendrite line (may be null)
             srcId, tgtId, color: c,
         });
@@ -533,17 +536,76 @@ const NeuralGalaxy = (() => {
         pulseQueue.push({ mesh: m, t0: clock.getElapsedTime(), dur: 0.6 });
     }
 
+    // ── Organic Activity System ─────────────────────────────────
+    // Every agent is ALWAYS working. Signals flow constantly between agents
+    // representing real autonomous activity: learning, researching, trading,
+    // monitoring, collaborating, planning, executing.
+
+    const _ORGANIC_PATTERNS = [
+        // ASTRA routing cycle — constantly dispatching work
+        { from: 'astra', targets: ['researcher','analyst','swarm','miro','coder','writer','guardian','builder'], weight: 5 },
+        // Learning chain — agents teaching each other
+        { from: 'researcher', targets: ['analyst','miro','astra'], weight: 3 },
+        { from: 'analyst', targets: ['swarm','researcher','astra'], weight: 3 },
+        // Trading intelligence chain — market data flows
+        { from: 'swarm', targets: ['analyst','miro','astra'], weight: 4 },
+        { from: 'miro', targets: ['swarm','analyst','astra'], weight: 3 },
+        // Builder self-improvement cycle
+        { from: 'builder', targets: ['coder','researcher','astra'], weight: 2 },
+        { from: 'coder', targets: ['builder','analyst','astra'], weight: 2 },
+        // Guardian monitoring everything
+        { from: 'guardian', targets: ['astra','researcher','analyst','swarm'], weight: 2 },
+        // Writer reporting findings
+        { from: 'writer', targets: ['astra','researcher','analyst'], weight: 1 },
+        // Cross-division collaboration (civilization agents)
+        { from: 'researcher', targets: ['coder','writer','guardian'], weight: 2 },
+        { from: 'miro', targets: ['researcher','guardian','swarm'], weight: 2 },
+    ];
+
+    let _organicTimer = 0;
+    let _burstTimer = 0;
+    let _activityLevel = 1.0; // increases with real WebSocket events
+
     function _autoFire() {
         const ids = Array.from(nodeObjects.keys());
         if (ids.length < 2) return;
-        const n = 3 + Math.floor(Math.random() * 4);
-        for (let i = 0; i < n; i++) {
+
+        // Scale signals based on activity level (more real events = more organic activity)
+        const baseSignals = 6 + Math.floor(Math.random() * 5); // 6-10 base signals per tick
+        const n = Math.min(Math.floor(baseSignals * _activityLevel), 18);
+
+        // 70% pattern-based (organic), 30% random (representing background work)
+        const patternCount = Math.ceil(n * 0.7);
+        const randomCount = n - patternCount;
+
+        // Pattern-based signals (follow real agent communication patterns)
+        for (let i = 0; i < patternCount; i++) {
+            const pattern = _ORGANIC_PATTERNS[Math.floor(Math.random() * _ORGANIC_PATTERNS.length)];
+            const srcId = pattern.from;
+            const tgtId = pattern.targets[Math.floor(Math.random() * pattern.targets.length)];
+            if (nodeObjects.has(srcId) && nodeObjects.has(tgtId)) {
+                const c = nodeObjects.get(srcId)?.userData.agentColor || 0xFFD700;
+                // Stagger signals slightly for organic feel
+                setTimeout(() => _fireSignal(srcId, tgtId, c), Math.random() * 400);
+            }
+        }
+
+        // Random signals (civilization agents working in background)
+        for (let i = 0; i < randomCount; i++) {
             const si = Math.floor(Math.random() * ids.length);
             let ti = Math.floor(Math.random() * ids.length);
             if (si === ti) ti = (ti + 1) % ids.length;
             const c = nodeObjects.get(ids[si])?.userData.agentColor || 0xFFD700;
-            _fireSignal(ids[si], ids[ti], c);
+            setTimeout(() => _fireSignal(ids[si], ids[ti], c), Math.random() * 600);
         }
+
+        // Activity level slowly decays toward baseline but never below 1.0
+        _activityLevel = Math.max(1.0, _activityLevel * 0.98);
+    }
+
+    // Boost activity when real WebSocket events arrive
+    function _boostActivity() {
+        _activityLevel = Math.min(_activityLevel + 0.3, 3.0);
     }
 
     function _updateSignals() {
@@ -659,11 +721,15 @@ const NeuralGalaxy = (() => {
             const vz = Math.sin(t * u.vFreq * .7 + u.vPhase + 2.6) * u.vAmp * .6;
             mesh.position.set(bp.x + vx, bp.y + vy, bp.z + vz);
 
-            // Pulse
-            mesh.scale.setScalar(1 + Math.sin(t * u.pFreq + u.vPhase) * .06);
+            // Pulse — agents breathe visibly, always alive
+            const pulseBase = 1 + Math.sin(t * u.pFreq + u.vPhase) * .10;
+            const workPulse = Math.sin(t * 3.5 + u.vPhase * 2) * .04; // fast subtle work pulse
+            mesh.scale.setScalar(pulseBase + workPulse);
 
-            // Emissive
-            mesh.material.emissiveIntensity = u.baseEmissive + Math.sin(t * 1.1 + u.vPhase) * .08;
+            // Emissive — glow brighter showing constant activity
+            const baseGlow = u.baseEmissive + Math.sin(t * 1.1 + u.vPhase) * .12;
+            const activityGlow = Math.sin(t * 4 + u.vPhase) * .06; // rapid flicker = working
+            mesh.material.emissiveIntensity = baseGlow + activityGlow;
 
             // Update label position if core
             const label = labelSprites.get(u.id);
@@ -707,8 +773,9 @@ const NeuralGalaxy = (() => {
 
         // Sacred geometry rotation
         if (sacredGroup) {
-            sacredGroup.rotation.y += .00025;
-            sacredGroup.rotation.x = Math.sin(t * .04) * .012;
+            sacredGroup.rotation.y += .0006;
+            sacredGroup.rotation.x = Math.sin(t * .08) * .02;
+            sacredGroup.rotation.z = Math.cos(t * .05) * .008;
         }
 
         // Nebula
@@ -719,7 +786,7 @@ const NeuralGalaxy = (() => {
         // Signals
         _updateSignals();
         signalTimer += dt;
-        if (signalTimer > 1.3) { signalTimer = 0; _autoFire(); }
+        if (signalTimer > 0.4) { signalTimer = 0; _autoFire(); }
 
         // Pulses
         _processPulses(t);
@@ -1065,7 +1132,20 @@ const NeuralGalaxy = (() => {
         }).join('');
     }
 
-    return { init, destroy, pulseAgent, pulseEdge, deselect: _deselect, refresh: _fetchAndBuild };
+    /**
+     * Fire a visible neural signal between two agent nodes.
+     * Called externally by WebSocket handlers to visualize real communication.
+     * @param {string} srcId - source agent id
+     * @param {string} tgtId - target agent id
+     * @param {number} [color] - optional hex color override
+     */
+    function fireSignal(srcId, tgtId, color) {
+        if (!isInitialized) return;
+        const c = color || (agentColorMap.get(srcId)) || 0xFFD700;
+        _fireSignal(srcId, tgtId, c);
+    }
+
+    return { init, destroy, pulseAgent, pulseEdge, fireSignal, _boostActivity, deselect: _deselect, refresh: _fetchAndBuild };
 })();
 
 // Global cleanup function for use when switching away from the neural panel

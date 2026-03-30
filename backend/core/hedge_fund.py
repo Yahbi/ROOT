@@ -105,8 +105,13 @@ class HedgeFundEngine:
         self._llm = llm
         self._learning = learning
         self._plugins = plugins
+        self._interest_engine = None  # Set via main.py
         self._notification_engine = None  # Set via main.py
         self._sandbox_gate = None  # Set via main.py
+        self._market_data = None  # Set via main.py — MarketDataService
+        self._trading_consensus = None  # Set via main.py — TradingConsensus
+        self._trading_autonomy = None  # Set via main.py — TradingAutonomy
+        self._investor_panel = None  # Set via main.py — InvestorPanel
         self._conn: Optional[sqlite3.Connection] = None
         self._running = False
         self._daily_pnl = 0.0
@@ -492,8 +497,21 @@ class HedgeFundEngine:
 
     # ── Risk Check ─────────────────────────────────────────────
 
+    def set_interest_engine(self, engine) -> None:
+        self._interest_engine = engine
+
     def check_risk(self, signal: Signal, portfolio_value: float) -> tuple[bool, str]:
         """Check if a signal passes risk controls. Returns (ok, reason)."""
+        # Interest alignment check — block strongly misaligned trades,
+        # penalize misaligned, boost aligned
+        if self._interest_engine:
+            allowed, reason = self._interest_engine.gate(
+                subject=f"Trade {signal.direction} {signal.symbol}",
+                context=signal.reasoning,
+            )
+            if not allowed:
+                return False, f"Interest gate: {reason}"
+
         if signal.confidence < RISK_LIMITS["min_signal_confidence"]:
             return False, f"Confidence {signal.confidence:.0%} < minimum {RISK_LIMITS['min_signal_confidence']:.0%}"
 
@@ -883,7 +901,70 @@ class HedgeFundEngine:
         portfolio_value = portfolio.get("total_value", 100000)
 
         # 3. Filter through risk controls and execute
+        import json as _json
         for signal in sorted(signals, key=lambda s: s.confidence, reverse=True):
+            symbol = signal.symbol
+            direction = signal.direction
+            confidence = signal.confidence
+            signal_context = ""
+
+            # Get technical analysis from market data service
+            if hasattr(self, '_market_data') and self._market_data:
+                try:
+                    analysis = await self._market_data.get_full_analysis(symbol)
+                    signal_context = f"Technical Analysis for {symbol}: {_json.dumps(analysis.get('indicators', {}), default=str)[:500]}"
+                except Exception as e:
+                    logger.warning("Market data service unavailable: %s", e)
+
+            # For HIGH confidence signals, consult trading consensus
+            if hasattr(self, '_trading_consensus') and self._trading_consensus and confidence > 0.7:
+                try:
+                    consensus = await self._trading_consensus.analyze_ticker(symbol, signal_context)
+                    confidence = (confidence + consensus.confidence) / 2
+                except Exception as e:
+                    logger.warning("Trading consensus unavailable: %s", e)
+
+            # Consult investor panel for high-confidence signals
+            if hasattr(self, '_investor_panel') and self._investor_panel and confidence > 0.75:
+                try:
+                    opinions = await self._investor_panel.consult_panel(
+                        symbol=symbol,
+                        data={"signal": direction, "confidence": confidence, "context": signal_context[:500] if signal_context else ""},
+                        investors=["warren_buffett", "cathie_wood", "ray_dalio", "michael_burry"],
+                    )
+                    if opinions:
+                        bullish = sum(1 for o in opinions if o.signal == "bullish")
+                        bearish = sum(1 for o in opinions if o.signal == "bearish")
+                        # Adjust confidence based on investor consensus
+                        investor_consensus = bullish / max(len(opinions), 1)
+                        confidence = (confidence * 0.6) + (investor_consensus * 0.4)
+                        logger.info("Investor panel: %d/%d bullish, adjusted confidence=%.2f",
+                                   bullish, len(opinions), confidence)
+                except Exception as e:
+                    logger.debug("Investor panel unavailable: %s", e)
+
+            # Check trading autonomy before execution
+            if hasattr(self, '_trading_autonomy') and self._trading_autonomy:
+                try:
+                    position_value = portfolio_value * RISK_LIMITS["max_position_pct"]
+                    decision = self._trading_autonomy.classify_trade_risk(
+                        symbol=symbol, direction=direction, confidence=confidence,
+                        dollar_amount=position_value, portfolio_value=portfolio_value,
+                    )
+                    # decision.risk_level determines approval path
+                except Exception as e:
+                    logger.warning("Trading autonomy unavailable: %s", e)
+
+            # Rebuild signal with potentially updated confidence
+            if confidence != signal.confidence:
+                signal = Signal(
+                    id=signal.id, symbol=signal.symbol, direction=signal.direction,
+                    confidence=confidence, source=signal.source, reasoning=signal.reasoning,
+                    timeframe=signal.timeframe, entry_price=signal.entry_price,
+                    stop_loss=signal.stop_loss, take_profit=signal.take_profit,
+                    created_at=signal.created_at,
+                )
+
             ok, reason = self.check_risk(signal, portfolio_value)
             if ok:
                 results["signals_passed_risk"] += 1

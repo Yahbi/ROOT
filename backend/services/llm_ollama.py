@@ -165,6 +165,13 @@ class OllamaLLMService:
                     from backend.services.llm import LLMUnavailableError
                     raise LLMUnavailableError(str(e)) from e
             except Exception as e:
+                err_str = str(e)
+                # If tool_use caused an invalid message format, retry without tools
+                if tools and ("invalid message format" in err_str or "400" in err_str):
+                    logger.warning("Ollama tool_use unsupported by %s, retrying without tools: %s", model, e)
+                    kwargs.pop("tools", None)
+                    tools = None  # prevent re-adding on next attempt
+                    continue
                 logger.error("Ollama error: %s", e)
                 return ""
         return ""
@@ -185,21 +192,25 @@ class OllamaLLMService:
             ollama_messages.append({"role": "system", "content": system})
         ollama_messages.extend(messages)
 
+        use_tools = True
         for attempt in range(MAX_RETRIES):
             try:
-                response = await self._client.chat.completions.create(
-                    model=model,
-                    max_tokens=max_tokens,
-                    messages=ollama_messages,
-                    tools=_convert_tools_to_openai(tools),
-                )
+                call_kwargs: dict[str, Any] = {
+                    "model": model,
+                    "max_tokens": max_tokens,
+                    "messages": ollama_messages,
+                }
+                if use_tools:
+                    call_kwargs["tools"] = _convert_tools_to_openai(tools)
+
+                response = await self._client.chat.completions.create(**call_kwargs)
                 self._track_usage(response, model, model_tier, method="complete_with_tools")
 
                 choice = response.choices[0].message
                 text = choice.content or ""
                 tool_calls = []
 
-                if choice.tool_calls:
+                if use_tools and choice.tool_calls:
                     import json
                     for tc in choice.tool_calls:
                         tool_calls.append({
@@ -216,6 +227,12 @@ class OllamaLLMService:
                     from backend.services.llm import LLMUnavailableError
                     raise LLMUnavailableError(str(e)) from e
             except Exception as e:
+                err_str = str(e)
+                # If tool_use caused an invalid message format, retry without tools
+                if use_tools and ("invalid message format" in err_str or "400" in err_str):
+                    logger.warning("Ollama tool_use unsupported by %s, falling back to plain completion: %s", model, e)
+                    use_tools = False
+                    continue
                 logger.error("Ollama tool_use error: %s", e)
                 return "", []
         return "", []

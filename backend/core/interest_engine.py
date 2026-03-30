@@ -264,6 +264,19 @@ class InterestEngine:
 
         return assessment
 
+    def gate(self, subject: str, context: str = "", block_misaligned: bool = True) -> tuple[bool, str]:
+        """Quick gate check — returns (allowed, reason).
+
+        Use before autonomous actions to filter misaligned decisions.
+        """
+        assessment = self.assess(subject, context)
+        if assessment.verdict in (Verdict.MISALIGNED, Verdict.STRONGLY_MISALIGNED):
+            reason = f"Blocked: {assessment.verdict.value} (score={assessment.score:.2f}) — {assessment.recommendation}"
+            if block_misaligned:
+                logger.info("Interest gate BLOCKED: %s — %s", subject[:80], reason)
+                return False, reason
+        return True, f"Passed: {assessment.verdict.value} (score={assessment.score:.2f})"
+
     async def assess_with_llm(self, subject: str, context: str = "") -> InterestAssessment:
         """Deep assessment using LLM for nuanced analysis."""
         if not self._llm:

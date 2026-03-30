@@ -450,7 +450,7 @@ function switchPanel(panel) {
     // Manage Neural Galaxy lifecycle
     if (panel === 'neural') {
         if (typeof NeuralGalaxy !== 'undefined') {
-            setTimeout(() => NeuralGalaxy.init('neural-galaxy-container'), 50);
+            setTimeout(() => NeuralGalaxy.init('neural-galaxy-container'), 200);
         }
     } else {
         if (typeof NeuralGalaxy !== 'undefined' && state._neuralActive) {
@@ -1445,9 +1445,38 @@ function selectModel(tier, label, modelId) {
         dd.classList.remove('open');
         const opts = dd.querySelectorAll('.model-opt');
         const tiers = { fast: 0, default: 1, thinking: 2, gpt4: 3 };
-        if (opts[tiers[tier]]) opts[tiers[tier]].classList.add('active');
+        if (tiers[tier] !== undefined && opts[tiers[tier]]) opts[tiers[tier]].classList.add('active');
+        // Highlight Ollama option if selected
+        dd.querySelectorAll('.ollama-model-opt').forEach(b => {
+            b.classList.toggle('active', b.dataset.model === tier);
+        });
     }
 }
+
+// ── Ollama Model Fetcher ────────────────────────────────────
+function _fetchOllamaModels() {
+    fetch('http://localhost:11434/api/tags').then(r => r.json()).then(data => {
+        const models = data.models || [];
+        const container = document.getElementById('ollama-model-pills');
+        const title = document.getElementById('ollama-section-title');
+        if (!container) return;
+        const filtered = models.filter(m => !m.name.includes('root-'));
+        if (filtered.length && title) title.style.display = '';
+        container.innerHTML = filtered.map(m => {
+            const shortName = m.name.split(':')[0];
+            const tier = 'ollama:' + m.name;
+            return `<button class="model-opt ollama-model-opt" data-model="${tier}" onclick="selectModel('${tier}','${shortName}','${m.name}')">
+                <div>
+                    <div class="model-opt-name">${shortName} <span class="model-tag" style="background:#6c5ce7;color:#fff">Local</span></div>
+                    <div class="model-opt-desc">Ollama · ${(m.size / 1e9).toFixed(1)}GB · Free</div>
+                </div>
+            </button>`;
+        }).join('');
+    }).catch(() => {});
+}
+// Fetch on load and periodically
+_fetchOllamaModels();
+setInterval(_fetchOllamaModels, 60000);
 
 // Close model picker on outside click
 document.addEventListener('click', e => {

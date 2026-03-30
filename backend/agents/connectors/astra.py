@@ -443,7 +443,10 @@ class AstraConnector:
             if self._registry:
                 valid_ids = set()
                 for aid in parsed.get("agent_ids", []):
-                    if self._registry.get_connector(aid):
+                    aid_norm = aid.lower().replace(" ", "_")
+                    if self._registry.get_connector(aid_norm):
+                        valid_ids.add(aid_norm)
+                    elif self._registry.get_connector(aid):
                         valid_ids.add(aid)
                     else:
                         logger.warning("ASTRA routed to non-existent agent '%s', replacing with 'researcher'", aid)
@@ -453,9 +456,13 @@ class AstraConnector:
                 # Also fix subtasks
                 for st in parsed.get("subtasks", []):
                     aid = st.get("agent_id", "")
-                    if aid and not self._registry.get_connector(aid):
-                        logger.warning("ASTRA subtask agent '%s' not found, replacing with 'researcher'", aid)
-                        st["agent_id"] = "researcher"
+                    if aid:
+                        aid_norm = aid.lower().replace(" ", "_")
+                        if self._registry.get_connector(aid_norm):
+                            st["agent_id"] = aid_norm
+                        elif not self._registry.get_connector(aid):
+                            logger.warning("ASTRA subtask agent '%s' not found, replacing with 'researcher'", aid)
+                            st["agent_id"] = "researcher"
 
             return parsed
         except (json.JSONDecodeError, ValueError) as exc:

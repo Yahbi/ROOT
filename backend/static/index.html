@@ -342,6 +342,8 @@
                                                 <div class="model-opt-desc">Alternative model · Broad knowledge</div>
                                             </div>
                                         </button>
+                                        <div class="model-picker-title" id="ollama-section-title" style="display:none">Ollama (Local)</div>
+                                        <div id="ollama-model-pills"></div>
                                     </div>
                                 </div>
                                 <div style="flex:1"></div>
@@ -446,6 +448,27 @@
                         <div id="dashboard-activity" style="max-height:300px;overflow-y:auto"></div>
                     </div>
 <div class="card"><div class="card-title">Pending Approvals</div><div id="dashboard-approvals"></div></div>
+                    <div class="card" style="margin-bottom:12px"><div class="card-title">AGI Systems</div><div id="dashboard-agi-status"></div></div>
+
+<div class="card" id="dashboard-perpetual" style="margin-top:16px">
+    <div class="card-title">Perpetual Intelligence <span style="color:var(--accent-green);font-size:11px">● ALWAYS ON</span></div>
+    <div id="perpetual-content" style="font-size:12px">Loading...</div>
+</div>
+
+<div class="card" id="dashboard-swarm" style="margin-top:16px">
+    <div class="card-title">Agent Swarm <span style="color:var(--accent-blue);font-size:11px">● 172 AGENTS</span></div>
+    <div id="swarm-content" style="font-size:12px">Loading...</div>
+</div>
+
+<div class="card" id="dashboard-research-feed" style="margin-top:16px">
+    <div class="card-title">Latest Research Findings <span style="color:var(--accent-cyan);font-size:11px">● LIVE</span></div>
+    <div id="research-feed-content" style="max-height:250px;overflow-y:auto;font-size:12px">Loading...</div>
+</div>
+
+                    <div class="card" id="dashboard-activity-feed" style="margin-top:16px">
+                        <div class="card-title">Live Activity Feed <span style="color:var(--accent-green);font-size:11px">● LIVE</span></div>
+                        <div id="activity-feed-list" style="max-height:300px;overflow-y:auto;font-size:12px"></div>
+                    </div>
                     <div class="card" id="digest-card" style="display:none">
                         <div class="card-title" style="display:flex;justify-content:space-between;align-items:center">
                             Daily Brief
@@ -484,6 +507,7 @@
                         </div>
                     </div>
                     <div class="grid-4" id="agents-stats" style="margin-bottom:16px"></div>
+                    <div id="agents-activity"></div>
                     <div id="agents-list"></div>
                     <div id="agents-civilization" style="display:none"></div>
                 </div>
@@ -638,6 +662,7 @@
                         <button class="btn-secondary" onclick="showPerformance()">Performance</button>
                     </div>
                     <div id="trading-extra-info"></div>
+                    <div class="card" style="margin-bottom:12px"><div class="card-title">Trading Autonomy</div><div id="trading-autonomy-status"></div></div>
                     <div class="grid-2" style="margin-bottom:16px">
                         <div class="card"><div class="card-title">Portfolio Value</div><div class="chart-container"><canvas id="chart-portfolio"></canvas></div></div>
                         <div class="card"><div class="card-title">Trade History</div><div class="chart-container"><canvas id="chart-trades"></canvas></div></div>
@@ -645,6 +670,14 @@
                     <div class="grid-2">
                         <div class="card"><div class="card-title">Open Positions</div><div id="positions-list"><div class="empty-state">No open positions</div></div></div>
                         <div class="card"><div class="card-title">Recent Signals</div><div id="signals-list"><div class="empty-state">No signals</div></div></div>
+                    </div>
+                    <div class="card" id="trading-market-analysis" style="margin-top:16px">
+                        <div class="card-title">Market Analysis <span style="font-size:11px;color:var(--text-muted)">via Market Data Service</span></div>
+                        <div id="market-analysis-content" style="font-size:12px">Loading...</div>
+                    </div>
+                    <div class="card" id="trading-intelligence-feed" style="margin-top:16px">
+                        <div class="card-title">Trading Intelligence Feed <span style="font-size:11px;color:var(--accent-green)">&bull; LIVE</span></div>
+                        <div id="trading-intel-content" style="font-size:12px">Loading...</div>
                     </div>
                 </div>
             </div>
@@ -804,6 +837,11 @@
                             <div class="card-title">Calibration Trend (Weekly)</div>
                             <div id="miro-cal-trend"></div>
                         </div>
+                    </div>
+                    <!-- AGI Intelligence Status -->
+                    <div class="card" style="margin-bottom:12px">
+                        <div class="card-title">AGI Intelligence Status</div>
+                        <div id="miro-agi-intel"></div>
                     </div>
                     <!-- Predictions feed -->
                     <div class="card">

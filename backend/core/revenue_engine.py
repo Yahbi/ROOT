@@ -88,6 +88,7 @@ class RevenueEngine:
     def __init__(self, db_path: Optional[Path] = None) -> None:
         self._db_path = str(db_path or REVENUE_DB)
         self._conn: Optional[sqlite3.Connection] = None
+        self._interest_engine = None  # Set via main.py
         self._sandbox_gate = None  # Set via main.py
         self._notification_engine = None  # Set via main.py
 
@@ -145,6 +146,9 @@ class RevenueEngine:
 
     # ── Product Management ─────────────────────────────────────
 
+    def set_interest_engine(self, engine) -> None:
+        self._interest_engine = engine
+
     def add_product(
         self,
         name: str,
@@ -153,6 +157,22 @@ class RevenueEngine:
         monthly_cost: float = 0.0,
     ) -> RevenueProduct:
         """Add a new product to a revenue stream."""
+        # Interest gate — block misaligned products before creation
+        if self._interest_engine:
+            allowed, reason = self._interest_engine.gate(
+                subject=name,
+                context=f"Revenue stream: {stream}. {description}",
+            )
+            if not allowed:
+                logger.info("Product blocked by interest gate: %s — %s", name, reason)
+                return RevenueProduct(
+                    id="blocked", name=name,
+                    stream=RevenueStream(stream),
+                    status=StreamStatus.PAUSED,
+                    description=f"[BLOCKED] {reason}",
+                    monthly_cost=monthly_cost,
+                )
+
         rv_stream = RevenueStream(stream)
         prod_id = f"prod_{uuid.uuid4().hex[:12]}"
         now = datetime.now(timezone.utc).isoformat()
@@ -180,6 +200,21 @@ class RevenueEngine:
         """Update product status."""
         new_status = StreamStatus(status)
         now = datetime.now(timezone.utc).isoformat()
+
+        # Interest gate — check alignment before launching a product
+        if new_status == StreamStatus.LAUNCHED and self._interest_engine:
+            row = self.conn.execute(
+                "SELECT name, description, stream FROM revenue_products WHERE id = ?",
+                (product_id,),
+            ).fetchone()
+            if row:
+                allowed, reason = self._interest_engine.gate(
+                    subject=row["name"],
+                    context=f"Launching product in {row['stream']} stream. {row['description']}",
+                )
+                if not allowed:
+                    logger.info("Product launch blocked by interest gate: %s — %s", row["name"], reason)
+                    return False
 
         if new_status == StreamStatus.LAUNCHED:
             cursor = self.conn.execute(
@@ -282,7 +317,16 @@ class RevenueEngine:
             total_cost += cost
 
         profit = total_rev - total_cost
-        emergency = profit < SURVIVAL_BUDGET and total_rev < total_cost
+        # Only trigger emergency mode when there are actual costs exceeding revenue.
+        # A fresh install with $0 revenue and $0 cost is not an emergency — it's
+        # just a system that hasn't started earning yet.  Require at least some
+        # cost activity before declaring an emergency to avoid false positives.
+        has_meaningful_activity = total_cost > 0 or total_rev > 0
+        emergency = (
+            has_meaningful_activity
+            and total_rev < total_cost
+            and profit < SURVIVAL_BUDGET
+        )
 
         return FinancialSnapshot(
             total_revenue=total_rev,

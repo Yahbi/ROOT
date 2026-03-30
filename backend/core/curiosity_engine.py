@@ -288,18 +288,18 @@ class CuriosityEngine:
 
         try:
             # Query recent failures from experience memory
-            failures = self._experience.query(
+            failures = self._experience.get_experiences(
                 experience_type="failure",
                 limit=10,
             )
             for f in failures:
-                fid = f.get("id", "")
+                fid = getattr(f, "id", "") or ""
                 if fid in self._failed_task_ids:
                     continue
                 self._failed_task_ids.add(fid)
 
-                desc = f.get("description", "")[:200]
-                domain = f.get("domain", "general")
+                desc = (getattr(f, "description", "") or "")[:200]
+                domain = getattr(f, "domain", "general") or "general"
 
                 items.append(CuriosityItem(
                     id=f"curiosity_fail_{fid[:12]}",
@@ -447,7 +447,7 @@ class CuriosityEngine:
                     # Store in experience memory
                     if self._experience:
                         try:
-                            self._experience.record(
+                            self._experience.record_experience(
                                 experience_type="strategy",
                                 domain=item.domain,
                                 title=f"[Curiosity] {item.question[:80]}",

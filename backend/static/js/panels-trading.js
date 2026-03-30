@@ -57,6 +57,11 @@ async function loadTrading() {
         }
     }
 
+    // Trading autonomy status
+    loadTradingAutonomy();
+    loadMarketAnalysis();
+    loadTradingIntelFeed();
+
     // Portfolio chart
     if (typeof Chart !== 'undefined' && portfolio?.snapshots?.length) {
         _renderChart('chart-portfolio', {
@@ -185,6 +190,119 @@ async function showPerformance() {
                 </div>`).join('')}
             </div>
         </div>`;
+    }
+}
+
+// ── Market Analysis ─────────────────────────────────────────
+async function loadMarketAnalysis() {
+    const el = document.getElementById('market-analysis-content');
+    if (!el) return;
+    const data = await api('/api/agi/status').catch(() => null);
+    if (!data?.data) { el.innerHTML = '<div style="color:var(--text-muted)">Market analysis unavailable</div>'; return; }
+
+    const agi = data.data;
+    const tc = agi.trading_autonomy || {};
+    const se = agi.skill_executor || {};
+    const or = agi.outcome_registry || {};
+
+    el.innerHTML = `
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px">
+            <div class="stat-card"><div class="stat-value" style="color:var(--accent)">${or.total_outcomes || 0}</div><div class="stat-label">Trade Outcomes</div></div>
+            <div class="stat-card"><div class="stat-value" style="color:var(--accent-green)">${((or.avg_quality || 0) * 100).toFixed(0)}%</div><div class="stat-label">Avg Quality</div></div>
+            <div class="stat-card"><div class="stat-value" style="color:var(--accent-blue)">${tc.total_decisions || 0}</div><div class="stat-label">Auto Decisions</div></div>
+        </div>
+        <div style="margin-top:12px;padding:10px;background:var(--bg-hover);border-radius:6px">
+            <div style="font-weight:600;margin-bottom:6px">Intelligence Pipeline</div>
+            <div style="display:flex;align-items:center;gap:4px;font-size:11px;color:var(--text-secondary)">
+                <span style="padding:2px 6px;background:var(--accent-green);color:#000;border-radius:3px">Market Data</span>
+                →
+                <span style="padding:2px 6px;background:var(--accent-blue);color:#fff;border-radius:3px">Consensus</span>
+                →
+                <span style="padding:2px 6px;background:var(--accent-purple);color:#fff;border-radius:3px">12 Investors</span>
+                →
+                <span style="padding:2px 6px;background:var(--accent);color:#000;border-radius:3px">Auto/Manual</span>
+            </div>
+        </div>
+    `;
+}
+
+// ── Trading Intelligence Feed ───────────────────────────────
+async function loadTradingIntelFeed() {
+    const el = document.getElementById('trading-intel-content');
+    if (!el) return;
+    const [outcomes, perpetual] = await Promise.all([
+        api('/api/agi/outcomes?limit=10').catch(() => ({data:[]})),
+        api('/api/perpetual/status').catch(() => ({data:{}})),
+    ]);
+
+    const outcomeList = outcomes?.data || [];
+    const tradeOutcomes = (Array.isArray(outcomeList) ? outcomeList : []).filter(
+        o => o.action_type === 'proactive' && (o.intent || '').toLowerCase().includes('trade')
+    );
+
+    const p = perpetual?.data?.perpetual || {};
+
+    el.innerHTML = `
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px">
+            <div class="stat-card"><div class="stat-value" style="color:var(--accent)">${p.trades_evaluated || 0}</div><div class="stat-label">Trades Evaluated</div></div>
+            <div class="stat-card"><div class="stat-value" style="color:var(--accent-green)">${p.analysis_insights || 0}</div><div class="stat-label">Analysis Done</div></div>
+            <div class="stat-card"><div class="stat-value" style="color:var(--accent-purple)">${p.research_findings || 0}</div><div class="stat-label">Research Findings</div></div>
+        </div>
+        <div style="font-weight:600;margin-bottom:8px;font-size:13px">Intelligence Pipeline</div>
+        <div style="display:flex;flex-wrap:wrap;gap:4px;font-size:11px;margin-bottom:12px">
+            <span style="padding:3px 8px;background:var(--accent-cyan);color:#000;border-radius:4px">Market Data</span>
+            <span style="padding:3px 8px;background:var(--accent-blue);color:#fff;border-radius:4px">Bull/Bear Debate</span>
+            <span style="padding:3px 8px;background:var(--accent-purple);color:#fff;border-radius:4px">12 Investors</span>
+            <span style="padding:3px 8px;background:var(--accent-green);color:#000;border-radius:4px">Auto/Manual</span>
+            <span style="padding:3px 8px;background:var(--accent-gold);color:#000;border-radius:4px">Execute</span>
+        </div>
+        ${tradeOutcomes.length ? `<div style="font-weight:600;margin-bottom:6px;font-size:12px">Recent Evaluations</div>` +
+            tradeOutcomes.slice(0, 5).map(o => `
+                <div style="padding:6px 0;border-bottom:1px solid var(--border);font-size:11px">
+                    <span style="color:${o.quality_score >= 0.7 ? 'var(--accent-green)' : 'var(--accent)'}">${(o.quality_score * 100).toFixed(0)}%</span>
+                    ${escHtml((o.intent || '').substring(0, 80))}
+                </div>`).join('') : '<div style="color:var(--text-muted)">Trading intelligence warming up...</div>'}`;
+}
+
+// ── Trading Autonomy Status ─────────────────────────────────
+async function loadTradingAutonomy() {
+    const el = document.getElementById('trading-autonomy-status');
+    if (!el) return;
+    try {
+        const raw = await api('/api/agi/trading-autonomy');
+        const data = raw?.data ?? raw;
+        if (!data || data.error) {
+            el.innerHTML = '<div style="color:var(--text-muted);font-size:12px;padding:8px">Trading autonomy unavailable</div>';
+            return;
+        }
+
+        const level = data.autonomy_level || data.level || 'unknown';
+        const enabled = data.enabled !== false;
+        const maxRisk = data.max_risk_pct || data.max_position_risk || 0;
+        const dailyLimit = data.daily_trade_limit || data.max_daily_trades || 0;
+        const totalTrades = data.total_autonomous_trades || data.trades_today || 0;
+        const approval = data.requires_approval !== false;
+
+        const levelColors = {
+            manual: 'var(--text-muted)', assisted: 'var(--accent-blue)',
+            semi_auto: 'var(--accent-gold)', autonomous: 'var(--accent-green)',
+            full_auto: 'var(--accent-cyan)', unknown: 'var(--text-muted)',
+        };
+        const levelColor = levelColors[level] || 'var(--accent)';
+
+        el.innerHTML = `
+            <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+                <div style="display:flex;align-items:center;gap:6px">
+                    <span style="width:8px;height:8px;border-radius:50%;background:${enabled ? 'var(--accent-green)' : 'var(--accent-red)'}"></span>
+                    <span style="font-size:12px;font-weight:600;color:${levelColor};text-transform:uppercase">${escHtml(level.replace(/_/g, ' '))}</span>
+                </div>
+                <span style="font-size:11px;color:var(--text-muted)">Risk: ${typeof maxRisk === 'number' && maxRisk < 1 ? (maxRisk * 100).toFixed(0) + '%' : maxRisk}</span>
+                <span style="font-size:11px;color:var(--text-muted)">Limit: ${dailyLimit}/day</span>
+                <span style="font-size:11px;color:var(--text-muted)">Traded: ${totalTrades}</span>
+                ${approval ? '<span style="font-size:10px;background:var(--accent-orange)22;color:var(--accent-orange);padding:2px 6px;border-radius:8px">Approval req</span>' : ''}
+            </div>`;
+    } catch {
+        el.innerHTML = '<div style="color:var(--text-muted);font-size:12px;padding:8px">Trading autonomy unavailable</div>';
     }
 }
 

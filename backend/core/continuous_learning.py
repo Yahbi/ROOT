@@ -456,7 +456,7 @@ class ContinuousLearningEngine:
     ) -> None:
         """Store learning result in experience memory."""
         try:
-            self._experience.record(
+            self._experience.record_experience(
                 experience_type="strategy",
                 domain=domain,
                 title=f"[{agent_name}] Learning: {topic[:80]}",

@@ -14,6 +14,7 @@ async def experiment_proposer(
     collab: Any = None,
     llm: Any = None,
     memory: Any = None,
+    planning_engine: Any = None,
 ) -> str:
     """Auto-propose experiments from market scans, business discoveries, and agent insights."""
     if not experiment_lab:
@@ -41,11 +42,32 @@ async def experiment_proposer(
 
     context = "\n".join(context_parts) if context_parts else "No recent insights available."
 
+    # Use planning engine for structured experiment design (if available)
+    planning_context = ""
+    if planning_engine:
+        try:
+            plan = await planning_engine.plan(
+                goal="Design 2-3 testable experiments based on recent intelligence",
+                context=context[:500],
+            )
+            if plan and hasattr(plan, "tasks") and plan.tasks:
+                planning_context = (
+                    f"\n\nPlanning engine reasoning: {getattr(plan, 'reasoning', '')[:200]}\n"
+                    "Structured approach:\n"
+                    + "\n".join(
+                        f"- {getattr(t, 'title', str(t))[:60]}: {getattr(t, 'description', '')[:80]}"
+                        for t in plan.tasks[:5]
+                    )
+                )
+        except Exception as plan_exc:
+            logger.debug("Planning engine for experiments failed: %s", plan_exc)
+
     prompt = (
         "Based on the following recent intelligence, propose 2-3 concrete experiments "
         "that ROOT should run. Each experiment should test a specific hypothesis about "
         "revenue generation, trading strategy, or system optimization.\n\n"
-        f"Recent intelligence:\n{context}\n\n"
+        f"Recent intelligence:\n{context}\n"
+        f"{planning_context}\n\n"
         "For each experiment, provide:\n"
         "1. title (short)\n"
         "2. hypothesis (what we're testing)\n"

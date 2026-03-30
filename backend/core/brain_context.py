@@ -269,7 +269,7 @@ def build_experience_context(experience_memory, user_message: str) -> str:
         lines = [f"## Experience Wisdom ({total_experiences} lessons)"]
 
         # Query relevant experiences for the current topic
-        relevant = experience_memory.query(user_message, limit=3)
+        relevant = experience_memory.search_experiences(user_message, limit=3)
         if relevant:
             lines.append("Relevant past experiences:")
             for exp in relevant:

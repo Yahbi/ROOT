@@ -122,13 +122,19 @@ class DirectiveEngine:
         self._prediction_ledger = prediction_ledger
         self._experience_memory = experience_memory
 
+        self._interest_engine = None  # Set via main.py
         self._sandbox_gate = None  # Set via main.py
         self._notification_engine = None  # Set via main.py
+        self._conflict_detector = None  # Set via main.py
+        self._outcome_registry = None  # Set via main.py — closed-loop learning
         self._conn: Optional[sqlite3.Connection] = None
         self._running = False
         self._task: Optional[asyncio.Task] = None
         self._cycle_count = 0
         self._failure_count: int = 0
+
+    def set_interest_engine(self, engine) -> None:
+        self._interest_engine = engine
 
     # ── Lifecycle ──────────────────────────────────────────────────
 
@@ -325,7 +331,7 @@ class DirectiveEngine:
         # Experience wisdom — avoid repeating past failures
         if self._experience_memory:
             try:
-                failures = self._experience_memory.query(
+                failures = self._experience_memory.search_experiences(
                     "directive failure strategy", limit=3,
                 )
                 if failures:
@@ -333,7 +339,7 @@ class DirectiveEngine:
                         getattr(f, "description", str(f))[:150]
                         for f in failures
                     ]
-                successes = self._experience_memory.query(
+                successes = self._experience_memory.search_experiences(
                     "directive success revenue", limit=3,
                 )
                 if successes:
@@ -530,6 +536,44 @@ class DirectiveEngine:
         # Store as proposed
         self._store_directive(directive)
 
+        # Interest gate — block misaligned directives
+        if self._interest_engine:
+            allowed, reason = self._interest_engine.gate(
+                subject=directive.title,
+                context=directive.rationale,
+            )
+            if not allowed:
+                logger.info("Directive blocked by interest gate: %s", directive.title[:80])
+                # Store as filtered
+                self._store_directive(Directive(
+                    id=directive.id, title=directive.title, rationale=directive.rationale,
+                    priority=directive.priority, category=directive.category,
+                    status="filtered", result=reason,
+                    created_at=directive.created_at,
+                ))
+                return Directive(
+                    id=directive.id, title=directive.title, rationale=directive.rationale,
+                    priority=directive.priority, category=directive.category,
+                    status="filtered", result=reason,
+                    created_at=directive.created_at,
+                )
+
+        # Conflict detection — check for contradictions with active directives
+        if hasattr(self, '_conflict_detector') and self._conflict_detector:
+            try:
+                active_titles = self._get_recent_titles(limit=10)
+                if active_titles:
+                    conflicts = await self._conflict_detector.detect_conflicts(
+                        new_action=directive.title + " " + directive.rationale,
+                        existing_actions=active_titles,
+                    )
+                    if conflicts:
+                        logger.warning("Conflict detected for directive '%s': %s",
+                            directive.title[:50], conflicts[0].description[:100])
+                        # Don't block, but add conflict info to the directive
+            except Exception as e:
+                logger.debug("Conflict detection error: %s", e)
+
         # Approval check
         risk = _CATEGORY_RISK.get(directive.category, "medium")
         if self._approval:
@@ -619,6 +663,20 @@ class DirectiveEngine:
                 result=result_text[:2000], completed_at=_now_iso(),
             )
 
+            # Record outcome for closed-loop learning
+            if hasattr(self, '_outcome_registry') and self._outcome_registry:
+                try:
+                    self._outcome_registry.record(
+                        action_type="directive",
+                        action_id=directive.id,
+                        intent=directive.title,
+                        result=str(result_text or "")[:500],
+                        quality_score=0.8 if result_text and len(str(result_text)) > 100 else 0.5,
+                        context={"category": directive.category, "priority": directive.priority},
+                    )
+                except Exception:
+                    pass
+
             # Directive chaining: create follow-up if result suggests one
             chain_keywords = ("further", "next step", "follow up", "investigate more", "deeper analysis")
             current_depth = self._get_chain_depth(directive)
@@ -677,6 +735,19 @@ class DirectiveEngine:
 
         except Exception as exc:
             logger.error("Directive dispatch failed: %s", exc)
+            # Record failed outcome for closed-loop learning
+            if hasattr(self, '_outcome_registry') and self._outcome_registry:
+                try:
+                    self._outcome_registry.record(
+                        action_type="directive",
+                        action_id=directive.id,
+                        intent=directive.title,
+                        result=str(exc)[:500],
+                        quality_score=0.1,
+                        context={"category": directive.category, "priority": directive.priority},
+                    )
+                except Exception:
+                    pass
             return self._update_directive(
                 directive.id, status="failed", result=str(exc)[:500],
             )

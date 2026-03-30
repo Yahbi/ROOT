@@ -106,11 +106,16 @@ async def scan_markets(
     collab: Any = None,
     llm: Any = None,
     memory: Any = None,
+    hedge_fund: Any = None,
+    market_data: Any = None,
 ) -> str:
-    """Scan markets via Trading Swarm agent — prices, trends, catalysts."""
+    """Scan markets via Trading Swarm agent + AGI trading intelligence pipeline."""
     if not collab or not llm:
         return "requires LLM + collaboration"
 
+    parts: list[str] = []
+
+    # ── Phase 1: Swarm agent web-based market scan ─────────────
     result = await collab.delegate(
         from_agent="proactive_engine",
         to_agent="swarm",
@@ -121,20 +126,64 @@ async def scan_markets(
             "Keep it brief — 5 sentences max."
         ),
     )
+    swarm_intel = result.final_result or ""
+    if swarm_intel:
+        parts.append(swarm_intel)
+
+    # ── Phase 2: Real technical analysis via MarketDataService ──
+    if market_data:
+        import json as _json
+        for symbol in ("SPY", "QQQ", "BTC-USD"):
+            try:
+                analysis = await market_data.get_full_analysis(symbol)
+                if analysis and "error" not in analysis:
+                    quote = analysis.get("quote", {})
+                    indicators = analysis.get("indicators", {})
+                    price = quote.get("current_price", "N/A")
+                    change_pct = quote.get("change_percent", "N/A")
+                    rsi = indicators.get("rsi_14", "N/A")
+                    macd = indicators.get("macd", {})
+                    macd_signal = macd.get("signal", "") if isinstance(macd, dict) else ""
+                    parts.append(
+                        f"[{symbol}] ${price} ({change_pct}%) RSI={rsi}"
+                        + (f" MACD-signal={macd_signal}" if macd_signal else "")
+                    )
+            except Exception as ta_exc:
+                logger.debug("Technical analysis failed for %s: %s", symbol, ta_exc)
+
+    # ── Phase 3: Hedge fund trading intelligence cycle ──────────
+    if hedge_fund:
+        try:
+            cycle_result = await hedge_fund.run_cycle()
+            if cycle_result:
+                import json as _json2
+                trades = cycle_result.get("trades_executed", 0)
+                signals = cycle_result.get("signals_generated", 0)
+                parts.append(
+                    f"Trading cycle: {signals} signals, {trades} trades"
+                )
+                if cycle_result.get("portfolio"):
+                    portfolio = cycle_result["portfolio"]
+                    equity = portfolio.get("equity", "N/A")
+                    parts.append(f"Portfolio equity: ${equity}")
+        except Exception as hf_exc:
+            logger.debug("Hedge fund cycle in market scan failed: %s", hf_exc)
+
+    combined = " | ".join(parts) if parts else "market scan complete"
 
     # Store market intelligence in memory
-    if result.final_result and memory:
+    if combined and memory:
         from backend.models.memory import MemoryEntry, MemoryType
         entry = MemoryEntry(
-            content=f"Market scan: {result.final_result[:300]}",
+            content=f"Market scan: {combined[:500]}",
             memory_type=MemoryType.OBSERVATION,
-            tags=["market", "trading", "proactive"],
+            tags=["market", "trading", "proactive", "technical_analysis"],
             source="market_scanner",
-            confidence=0.75,
+            confidence=0.8,
         )
         memory.store(entry)
 
-    return result.final_result or "market scan complete"
+    return combined[:500]
 
 
 async def miro_predict(

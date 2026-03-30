@@ -359,6 +359,10 @@ Return JSON array: [{{"content": "...", "type": "fact|learning|observation", "ta
                     from backend.models.memory import MemoryEntry, MemoryType
                     stored = 0
                     for e in entries[:5]:
+                        if isinstance(e, str):
+                            e = {"content": e, "type": "fact", "tags": []}
+                        if not isinstance(e, dict):
+                            continue
                         try:
                             mt = MemoryType(e.get("type", "fact"))
                         except ValueError:
@@ -372,8 +376,22 @@ Return JSON array: [{{"content": "...", "type": "fact|learning|observation", "ta
                         ))
                         stored += 1
                     return f"Stored {stored} knowledge entries"
-            except Exception as exc:
-                logger.warning("Failed to parse knowledge entries JSON: %s", exc)
+            except (json.JSONDecodeError, KeyError, TypeError) as exc:
+                logger.warning("Failed to parse knowledge entries JSON: %s — using raw text", exc)
+                # Fallback: store the raw LLM response as a single knowledge entry
+                if result and len(result.strip()) > 20:
+                    try:
+                        from backend.models.memory import MemoryEntry, MemoryType
+                        self._memory.store(MemoryEntry(
+                            content=result.strip()[:2000],
+                            memory_type=MemoryType.LEARNING,
+                            tags=["builder-agent", "raw-expansion"],
+                            source="builder_agent",
+                            confidence=0.6,
+                        ))
+                        return "Stored 1 knowledge entry (raw fallback)"
+                    except Exception as inner_exc:
+                        logger.warning("Raw fallback store failed: %s", inner_exc)
 
         # Offline fallback: log the intent
         if self._self_dev:

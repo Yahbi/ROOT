@@ -33,7 +33,16 @@ async function loadGoals() {
                 '<div class="empty-state" style="padding:12px">No completed or paused goals</div>';
         }
     } else if (gl) {
-        gl.innerHTML = '<div class="empty-state" style="padding:20px">No active goals. Create one above.</div>';
+        gl.innerHTML = `
+            <div style="text-align:center;padding:20px">
+                <div style="color:var(--text-muted);margin-bottom:16px">No active goals. ROOT suggests:</div>
+                <div style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center">
+                    <button class="btn" onclick="createSuggestedGoal('Research and master 10 new trading strategies','trading',3)">Master Trading Strategies</button>
+                    <button class="btn" onclick="createSuggestedGoal('Build knowledge base of 1000 market patterns','research',4)">Build Pattern Library</button>
+                    <button class="btn" onclick="createSuggestedGoal('Achieve 60% prediction accuracy across all models','learning',2)">Prediction Accuracy</button>
+                    <button class="btn" onclick="createSuggestedGoal('Generate first $500 in autonomous revenue','revenue',1)">Revenue Generation</button>
+                </div>
+            </div>`;
     }
 
     // Goal status chart
@@ -101,6 +110,21 @@ async function createGoal() {
     document.getElementById('goal-title').value = '';
     document.getElementById('goal-desc').value = '';
     loadGoals();
+}
+
+async function createSuggestedGoal(title, category, priority) {
+    const btn = event?.target;
+    if (btn) { btn.disabled = true; btn.textContent = 'Creating...'; }
+    try {
+        await api('/api/autonomy/goals', {
+            method: 'POST',
+            body: { title, description: title, priority: priority || 5, category: category || 'general' },
+        });
+        loadGoals();
+    } catch (e) {
+        console.error('createSuggestedGoal failed:', e);
+        if (btn) { btn.disabled = false; btn.textContent = 'Retry'; }
+    }
 }
 
 async function pauseGoal(goalId) {
@@ -281,6 +305,12 @@ async function recordEscalationOutcome(recordId, positive) {
             method: 'POST', body: { positive },
         });
         if (btn) { btn.textContent = 'Recorded'; btn.disabled = true; }
+        // After successful approval, dismiss all approval toasts
+        document.querySelectorAll('.toast--warning').forEach(t => {
+            t.classList.remove('toast--visible');
+            t.classList.add('toast--exit');
+            setTimeout(() => { if (t.parentNode) t.parentNode.removeChild(t); }, 300);
+        });
     } catch (e) {
         if (btn) { btn.textContent = 'Error'; }
         console.error('recordEscalationOutcome failed:', e);

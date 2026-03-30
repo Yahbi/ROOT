@@ -79,6 +79,8 @@ class Brain(BrainRoutingMixin):
         self._agent_network = None  # AgentNetwork — set via late-binding
         self._offline_brain = None  # OfflineBrain — fallback when LLM is down
         self._proactive = None  # ProactiveEngine — for chat priority signaling
+        self._content_ingestion = None  # ContentIngestion — set via late-binding
+        self._model_racing = None  # ModelRacing — set via late-binding
         self._degraded = False  # True when operating in fallback mode
         self._bus = None  # MessageBus — set via set_bus()
         self._conversation: list[dict[str, str]] = []
@@ -128,8 +130,79 @@ class Brain(BrainRoutingMixin):
             if self._proactive:
                 self._proactive.chat_finished()
 
+    async def _preprocess_ingestion(self, user_message: str) -> str:
+        """Detect URLs and file paths in the user message, ingest them, and
+        append ingestion context so the brain has the extracted knowledge.
+
+        Returns the (possibly enriched) message.
+        """
+        if not self._content_ingestion:
+            return user_message
+
+        import re as _re
+        import os as _os
+
+        context_parts: list[str] = []
+
+        # 1. URL detection — extract http:// and https:// URLs
+        urls = _re.findall(r"https?://[^\s<>\"')\]]+", user_message)
+        for url in urls[:3]:  # Cap at 3 URLs per message
+            try:
+                result = await self._content_ingestion.ingest_url(url)
+                if result.success and result.key_points:
+                    points = "\n".join(f"- {p}" for p in result.key_points[:8])
+                    context_parts.append(
+                        f"[Ingested URL: {url}]\n"
+                        f"Key points extracted ({result.facts_extracted} facts, "
+                        f"{result.memories_stored} memories stored):\n{points}"
+                    )
+                    logger.info("Pre-processed URL %s: %d facts ingested", url, result.facts_extracted)
+                elif not result.success:
+                    logger.warning("URL ingestion failed for %s: %s", url, result.error)
+            except Exception as exc:
+                logger.warning("URL pre-processing failed for %s: %s", url, exc)
+
+        # 2. File path detection — look for Windows (C:\...) and Unix (/path/to/...) paths
+        # Windows paths: drive letter followed by :\ and path characters
+        win_paths = _re.findall(r"[A-Za-z]:\\[^\s<>\"']+", user_message)
+        # Unix absolute paths: /word/word patterns (exclude URLs already captured)
+        unix_paths = _re.findall(r"(?<!\w)/(?:[a-zA-Z0-9._-]+/)+[a-zA-Z0-9._-]+", user_message)
+
+        for file_path in (win_paths + unix_paths)[:3]:  # Cap at 3 files per message
+            file_path = file_path.rstrip(".,;:!?)")
+            if not _os.path.isfile(file_path):
+                continue
+            try:
+                result = await self._content_ingestion.ingest_file(file_path)
+                if result.success and result.key_points:
+                    points = "\n".join(f"- {p}" for p in result.key_points[:8])
+                    context_parts.append(
+                        f"[Ingested file: {file_path}]\n"
+                        f"Key points extracted ({result.facts_extracted} facts, "
+                        f"{result.memories_stored} memories stored):\n{points}"
+                    )
+                    logger.info("Pre-processed file %s: %d facts ingested", file_path, result.facts_extracted)
+                elif not result.success:
+                    logger.warning("File ingestion failed for %s: %s", file_path, result.error)
+            except Exception as exc:
+                logger.warning("File pre-processing failed for %s: %s", file_path, exc)
+
+        if context_parts:
+            ingestion_context = "\n\n".join(context_parts)
+            return (
+                user_message
+                + "\n\n---\n## Ingested Content Context\n"
+                + ingestion_context
+                + "\n---"
+            )
+
+        return user_message
+
     async def _chat_inner(self, user_message: str, start_time: float) -> ChatMessage:
         """Inner chat logic, wrapped by chat() for proactive engine priority."""
+        # Pre-process: detect and ingest URLs / file paths in the message
+        user_message = await self._preprocess_ingestion(user_message)
+
         # Check for money/strategy triggers
         money_triggers = (
             "make money", "money", "council", "strategy council",
@@ -329,6 +402,33 @@ class Brain(BrainRoutingMixin):
         else:
             # Direct handling — ROOT handles it with tools
             response_text = await self._direct_handle(user_message, memory_context)
+
+        # Model racing for trading/financial decisions
+        if hasattr(self, '_model_racing') and self._model_racing:
+            trading_keywords = ("trade", "buy", "sell", "invest", "stock", "market", "portfolio")
+            if any(kw in user_message.lower() for kw in trading_keywords):
+                try:
+                    race_result = await self._model_racing.race(
+                        system="You are a trading analysis AI. Be decisive.",
+                        messages=[{"role": "user", "content": user_message}],
+                        timeout=15.0,
+                    )
+                    if race_result and race_result.winner and race_result.winner.response:
+                        response_text = race_result.winner.response
+                        logger.info("Model racing: winner=%s score=%.2f",
+                                   race_result.winner.provider, race_result.winner.score)
+                except Exception as e:
+                    logger.debug("Model racing unavailable: %s", e)
+
+        # Apply response transforms for cleaner output
+        try:
+            from backend.core.response_transforms import ResponseTransforms
+            if "trade" in user_message.lower() or "buy" in user_message.lower() or "sell" in user_message.lower():
+                response_text = ResponseTransforms.trading_mode(response_text)
+            else:
+                response_text = ResponseTransforms.direct_mode(response_text)
+        except Exception:
+            pass  # Transforms are optional enhancement
 
         # 5. Add to conversation history
         self._conversation.append({"role": "user", "content": user_message})

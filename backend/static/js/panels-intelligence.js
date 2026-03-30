@@ -296,6 +296,9 @@ async function loadMiro() {
         }
     }
 
+    // Load AGI intelligence status (non-blocking)
+    loadMiroAGIIntel();
+
     const collabList = collab?.data ?? collab ?? [];
     const collabEl = document.getElementById('miro-council-history');
     if (collabEl) {
@@ -463,5 +466,76 @@ async function recordPrediction() {
         loadPredictions();
     } catch (e) {
         btn.disabled = false; btn.textContent = 'Error — retry';
+    }
+}
+
+// ── AGI Intelligence Status (loaded from MiRo panel) ────────
+async function loadMiroAGIIntel() {
+    const el = document.getElementById('miro-agi-intel');
+    if (!el) return;
+    try {
+        const [agiRaw, researchRaw] = await Promise.all([
+            api('/api/agi/status').catch(() => null),
+            api('/api/autonomous/proactive/stats').catch(() => null),
+        ]);
+        const agi = agiRaw?.data ?? agiRaw;
+        const proactive = researchRaw?.data ?? researchRaw;
+
+        if (!agi || agi.error) {
+            el.innerHTML = '<div style="color:var(--text-muted);font-size:12px;padding:8px">AGI intelligence data unavailable</div>';
+            return;
+        }
+
+        // Outcome effectiveness
+        const registry = agi.outcome_registry || {};
+        const totalOutcomes = registry.total_outcomes || registry.total || 0;
+        const avgQuality = registry.avg_quality || registry.average_quality || 0;
+
+        // Adaptive tuner
+        const tuner = agi.adaptive_tuner || {};
+        const tunerCycles = tuner.total_cycles || tuner.cycles || 0;
+
+        // Conflict detector
+        const conflicts = agi.conflict_detector || {};
+        const conflictCount = conflicts.total_detected || conflicts.total || 0;
+        const conflictResolved = conflicts.total_resolved || conflicts.resolved || 0;
+
+        // Team formation
+        const teams = agi.team_formation || {};
+        const teamsFormed = teams.total_formed || teams.total || 0;
+
+        // Code deployment
+        const codeDeploy = agi.code_deployment || {};
+        const deployCount = codeDeploy.total_deployments || codeDeploy.total || 0;
+
+        // Research actions from proactive
+        const actions = proactive?.actions || [];
+        const researchAction = actions.find(a => a.name === 'research_scan' || a.name === 'continuous_research' || (a.name || '').includes('research'));
+        const researchRuns = researchAction ? researchAction.run_count || 0 : 0;
+        const researchLast = researchAction ? researchAction.last_run || '' : '';
+
+        el.innerHTML = `
+            <div class="grid-3" style="gap:8px;margin-bottom:10px">
+                <div style="padding:8px;background:var(--bg-elevated);border-radius:6px;text-align:center">
+                    <div style="font-size:16px;font-weight:700;color:var(--accent-cyan)">${totalOutcomes}</div>
+                    <div style="font-size:10px;color:var(--text-muted)">Outcomes Tracked</div>
+                </div>
+                <div style="padding:8px;background:var(--bg-elevated);border-radius:6px;text-align:center">
+                    <div style="font-size:16px;font-weight:700;color:var(--accent-green)">${avgQuality ? (avgQuality * 100).toFixed(0) + '%' : 'N/A'}</div>
+                    <div style="font-size:10px;color:var(--text-muted)">Avg Quality</div>
+                </div>
+                <div style="padding:8px;background:var(--bg-elevated);border-radius:6px;text-align:center">
+                    <div style="font-size:16px;font-weight:700;color:var(--accent-purple)">${tunerCycles}</div>
+                    <div style="font-size:10px;color:var(--text-muted)">Tuning Cycles</div>
+                </div>
+            </div>
+            <div style="display:flex;flex-wrap:wrap;gap:12px;font-size:12px;color:var(--text-secondary)">
+                <span>Teams formed: <strong>${teamsFormed}</strong></span>
+                <span>Conflicts: <strong>${conflictCount}</strong> (${conflictResolved} resolved)</span>
+                <span>Deployments: <strong>${deployCount}</strong></span>
+                ${researchRuns > 0 ? `<span>Research scans: <strong>${researchRuns}</strong>${researchLast ? ` (last: ${formatTime(researchLast)})` : ''}</span>` : ''}
+            </div>`;
+    } catch {
+        el.innerHTML = '<div style="color:var(--text-muted);font-size:12px;padding:8px">AGI intelligence unavailable</div>';
     }
 }

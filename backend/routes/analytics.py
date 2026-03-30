@@ -66,12 +66,12 @@ async def agent_activity(
     rows = _query_db(
         DATA_DIR / "learning.db",
         """
-        SELECT DATE(timestamp) as date, agent_id,
+        SELECT DATE(created_at) as date, agent_id,
                COUNT(*) as interactions,
                AVG(result_quality) as avg_quality
-        FROM interactions
-        WHERE timestamp >= ?
-        GROUP BY DATE(timestamp), agent_id
+        FROM agent_outcomes
+        WHERE created_at >= ?
+        GROUP BY DATE(created_at), agent_id
         ORDER BY date, interactions DESC
         """,
         (cutoff,),
@@ -110,13 +110,13 @@ async def portfolio_history(
     rows = _query_db(
         DATA_DIR / "hedge_fund.db",
         """
-        SELECT DATE(timestamp) as date,
+        SELECT DATE(created_at) as date,
                AVG(total_value) as avg_value,
-               SUM(CASE WHEN pnl > 0 THEN pnl ELSE 0 END) as gains,
-               SUM(CASE WHEN pnl < 0 THEN pnl ELSE 0 END) as losses
+               SUM(CASE WHEN daily_pnl > 0 THEN daily_pnl ELSE 0 END) as gains,
+               SUM(CASE WHEN daily_pnl < 0 THEN daily_pnl ELSE 0 END) as losses
         FROM portfolio_snapshots
-        WHERE timestamp >= ?
-        GROUP BY DATE(timestamp)
+        WHERE created_at >= ?
+        GROUP BY DATE(created_at)
         ORDER BY date
         """,
         (cutoff,),

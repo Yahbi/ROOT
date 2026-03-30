@@ -54,7 +54,13 @@ async def list_agents(
     """List all registered agents and their status."""
     registry = request.app.state.registry
     agents = registry.list_agents()
-    items = [a.model_dump() for a in agents]
+    items = []
+    for a in agents:
+        d = a.model_dump()
+        # Inject health status so the dashboard can show online/offline
+        connector = registry.get_connector(a.id)
+        d["health"] = {"status": "online"} if connector else {"status": "internal"}
+        items.append(d)
     items = items[offset: offset + limit]
     return APIResponse.ok(items)
 
@@ -66,7 +72,10 @@ async def get_agent(agent_id: str, request: Request):
     agent = registry.get(agent_id)
     if not agent:
         raise HTTPException(404, "Agent not found")
-    return agent.model_dump()
+    d = agent.model_dump()
+    connector = registry.get_connector(agent_id)
+    d["health"] = {"status": "online"} if connector else {"status": "internal"}
+    return d
 
 
 @router.get("/{agent_id}/health")

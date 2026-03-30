@@ -41,6 +41,7 @@ class InternalAgentConnector:
         self._plugins = plugins
         self._registry = registry
         self._collab = collab
+        self._skill_executor = None
 
     def set_collab(self, collab: Any) -> None:
         """Wire in the AgentCollaboration instance after construction."""
@@ -114,6 +115,24 @@ class InternalAgentConnector:
 
     async def send_task(self, task: str) -> dict[str, Any]:
         """Execute a task using the LLM with specialized prompt and tools."""
+        # Try skill executor for structured execution
+        if hasattr(self, '_skill_executor') and self._skill_executor:
+            try:
+                task_lower = task.lower()
+                matching = [s for s in self._skill_executor.list_executable()
+                           if any(kw in task_lower for kw in s.split('-'))]
+                if matching:
+                    result = await self._skill_executor.execute(matching[0], task)
+                    if result and result.success and result.output:
+                        logger.info("Skill executor handled task via '%s'", matching[0])
+                        return {
+                            "agent": self._agent_id, "result": result.output,
+                            "messages_exchanged": 0, "tools_executed": 0,
+                            "tools_used": [f"skill:{matching[0]}"],
+                        }
+            except Exception as e:
+                logger.debug("Skill executor unavailable: %s", e)
+
         system = self._build_system()
         messages = [{"role": "user", "content": task}]
         tool_defs = self._get_filtered_tools()

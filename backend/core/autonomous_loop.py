@@ -69,6 +69,7 @@ class AutonomousLoop:
         ecosystem=None,
         prediction_ledger=None,
         experience_memory=None,
+        outcome_evaluator=None,
     ) -> None:
         self._memory = memory
         self._skills = skills
@@ -84,6 +85,7 @@ class AutonomousLoop:
         self._ecosystem = ecosystem
         self._prediction_ledger = prediction_ledger
         self._experience_memory = experience_memory
+        self._outcome_evaluator = outcome_evaluator
 
         self._experiments: list[Experiment] = []
         self._cycle_count = 0
@@ -421,6 +423,19 @@ class AutonomousLoop:
             return self._learning.get_experiment_weight(area)
         return 0.5  # neutral default
 
+    async def _evaluate_outcome(self, intent: str, result: str) -> bool:
+        """Evaluate outcome quality using OutcomeEvaluator or fallback heuristic."""
+        if self._outcome_evaluator:
+            score = await self._outcome_evaluator.evaluate(intent=intent, result=result)
+            return score.success
+        # Fallback: still better than len > 20
+        if not result or len(result.strip()) < 10:
+            return False
+        error_words = ("error", "failed", "exception", "timeout", "unavailable")
+        if any(w in result.lower() for w in error_words):
+            return False
+        return len(result.strip()) > 30
+
     async def _run_experiment(self, exp: Experiment) -> Optional[Experiment]:
         """Execute a single experiment and record outcome for future learning."""
         running = Experiment(
@@ -453,7 +468,7 @@ class AutonomousLoop:
                     ),
                 )
                 outcome_text = result.final_result or ""
-                success = bool(outcome_text and len(outcome_text) > 20)
+                success = await self._evaluate_outcome(exp.hypothesis, outcome_text)
 
             elif exp.area == "skills" and self._self_dev:
                 # Let self-dev engine propose the improvement
@@ -486,7 +501,7 @@ class AutonomousLoop:
                     ),
                 )
                 outcome_text = result.final_result or ""
-                success = bool(outcome_text and len(outcome_text) > 20)
+                success = await self._evaluate_outcome(exp.hypothesis, outcome_text)
 
             elif exp.area == "goals" and self._goal_engine:
                 # Decompose stalled goals into tasks
@@ -509,7 +524,7 @@ class AutonomousLoop:
                     ),
                 )
                 outcome_text = result.final_result or ""
-                success = bool(outcome_text and len(outcome_text) > 20)
+                success = await self._evaluate_outcome(exp.hypothesis, outcome_text)
 
             elif exp.area == "strategy" and self._collab:
                 result = await self._collab.delegate(
@@ -521,7 +536,7 @@ class AutonomousLoop:
                     ),
                 )
                 outcome_text = result.final_result or ""
-                success = bool(outcome_text and len(outcome_text) > 20)
+                success = await self._evaluate_outcome(exp.hypothesis, outcome_text)
 
             elif exp.area == "tools" and self._collab:
                 # Discover tool usage patterns and suggest new tools
@@ -535,7 +550,7 @@ class AutonomousLoop:
                     ),
                 )
                 outcome_text = result.final_result or ""
-                success = bool(outcome_text and len(outcome_text) > 20)
+                success = await self._evaluate_outcome(exp.hypothesis, outcome_text)
 
             else:
                 success = False

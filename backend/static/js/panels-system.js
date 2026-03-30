@@ -61,6 +61,11 @@ async function loadDashboard() {
     loadDashboardPatterns();
     loadDashboardApprovals();
     loadActivityTimeline();
+    loadDashboardAGIStatus();
+    loadActivityFeed();
+    loadPerpetualStatus();
+    loadSwarmStatus();
+    loadResearchFeed();
 
     // Load digest + providers in parallel
     const [digestData, provData] = await Promise.all([
@@ -779,6 +784,186 @@ async function loadActivityTimeline() {
     }
 }
 
+// ── Live Activity Feed ─────────────────────────────────────
+async function loadActivityFeed() {
+    const el = document.getElementById('activity-feed-list');
+    if (!el) return;
+
+    const [outcomes, directives, proactive] = await Promise.all([
+        api('/api/agi/outcomes?limit=5').catch(() => ({data:[]})),
+        api('/api/autonomy/directives?limit=5').catch(() => ({data:[]})),
+        api('/api/autonomous/proactive/stats').catch(() => ({})),
+    ]);
+
+    const items = [];
+
+    // Add outcomes
+    const outcomeList = outcomes?.data || outcomes || [];
+    if (Array.isArray(outcomeList)) {
+        for (const o of outcomeList.slice(0, 5)) {
+            items.push({
+                time: o.created_at || '',
+                type: 'outcome',
+                icon: o.quality_score >= 0.5 ? '✅' : '⚠️',
+                text: `[${o.action_type}] ${o.intent?.substring(0, 80) || ''}`,
+                quality: o.quality_score,
+            });
+        }
+    }
+
+    // Add directives
+    const dirList = directives?.data?.directives || directives?.data || [];
+    if (Array.isArray(dirList)) {
+        for (const d of dirList.slice(0, 5)) {
+            items.push({
+                time: d.created_at || '',
+                type: 'directive',
+                icon: d.status === 'completed' ? '⚡' : '🔄',
+                text: `[${d.category}] ${d.title?.substring(0, 80) || ''}`,
+                quality: d.status === 'completed' ? 0.8 : 0.5,
+            });
+        }
+    }
+
+    // Sort by time descending
+    items.sort((a, b) => (b.time || '').localeCompare(a.time || ''));
+
+    if (!items.length) {
+        el.innerHTML = '<div style="color:var(--text-muted);padding:12px">No recent activity — autonomous loops are warming up...</div>';
+        return;
+    }
+
+    el.innerHTML = items.slice(0, 10).map(i => `
+        <div style="display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid var(--border)">
+            <span style="font-size:14px">${i.icon}</span>
+            <div style="flex:1;min-width:0">
+                <div style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${escHtml(i.text)}</div>
+                <div style="color:var(--text-muted);font-size:10px">${i.time ? new Date(i.time).toLocaleString() : ''}</div>
+            </div>
+            <div style="font-size:11px;padding:2px 6px;border-radius:4px;background:${i.quality >= 0.7 ? 'var(--accent-green)' : i.quality >= 0.4 ? 'var(--accent)' : 'var(--accent-red)'};color:#000;font-weight:600">${(i.quality * 100).toFixed(0)}%</div>
+        </div>
+    `).join('');
+}
+
+// ── AGI Status Card ────────────────────────────────────────
+async function loadDashboardAGIStatus() {
+    const el = document.getElementById('dashboard-agi-status');
+    if (!el) return;
+    el.innerHTML = '<div style="color:var(--text-muted);padding:8px">Loading AGI systems...</div>';
+    try {
+        const raw = await api('/api/agi/status');
+        const data = raw?.data ?? raw;
+        if (!data || data.error) {
+            el.innerHTML = '<div style="color:var(--text-muted);padding:12px">AGI systems unavailable</div>';
+            return;
+        }
+
+        const outcomeCount = data.outcome_registry?.total_outcomes || data.outcome_registry?.total || 0;
+        const configParams = data.adaptive_config && !data.adaptive_config.error
+            ? Object.keys(data.adaptive_config).length : 0;
+        const skillCount = data.skill_executor?.total || data.skill_executor?.executable_count || 0;
+        const embeddingCount = data.embedding_service?.cached || data.embedding_service?.total_embeddings || 0;
+
+        const emergencyData = data.emergency_protocol || {};
+        const emergencyActive = emergencyData.active || emergencyData.triggered || false;
+        const emergencyColor = emergencyData.error ? 'var(--text-muted)' :
+            emergencyActive ? 'var(--accent-red)' : 'var(--accent-green)';
+        const emergencyLabel = emergencyData.error ? 'N/A' :
+            emergencyActive ? 'ACTIVE' : 'Clear';
+
+        const planningActive = data.planning_engine?.active || false;
+        const teamStats = data.team_formation || {};
+        const conflictStats = data.conflict_detector || {};
+
+        el.innerHTML = `
+            <div class="grid-3" style="gap:8px;margin-bottom:10px">
+                <div style="padding:8px;background:var(--bg-elevated);border-radius:6px;text-align:center">
+                    <div style="font-size:16px;font-weight:700;color:var(--accent-cyan)">${outcomeCount}</div>
+                    <div style="font-size:10px;color:var(--text-muted)">Outcomes</div>
+                </div>
+                <div style="padding:8px;background:var(--bg-elevated);border-radius:6px;text-align:center">
+                    <div style="font-size:16px;font-weight:700;color:var(--accent-purple)">${configParams}</div>
+                    <div style="font-size:10px;color:var(--text-muted)">Adaptive Params</div>
+                </div>
+                <div style="padding:8px;background:var(--bg-elevated);border-radius:6px;text-align:center">
+                    <div style="font-size:16px;font-weight:700;color:var(--accent-gold)">${skillCount}</div>
+                    <div style="font-size:10px;color:var(--text-muted)">Exec Skills</div>
+                </div>
+            </div>
+            <div class="grid-3" style="gap:8px">
+                <div style="padding:8px;background:var(--bg-elevated);border-radius:6px;text-align:center">
+                    <div style="font-size:16px;font-weight:700;color:var(--accent-blue)">${embeddingCount}</div>
+                    <div style="font-size:10px;color:var(--text-muted)">Embeddings</div>
+                </div>
+                <div style="padding:8px;background:var(--bg-elevated);border-radius:6px;text-align:center">
+                    <div style="font-size:16px;font-weight:700;color:${emergencyColor}">${emergencyLabel}</div>
+                    <div style="font-size:10px;color:var(--text-muted)">Emergency</div>
+                </div>
+                <div style="padding:8px;background:var(--bg-elevated);border-radius:6px;text-align:center">
+                    <div style="font-size:16px;font-weight:700;color:${planningActive ? 'var(--accent-green)' : 'var(--text-muted)'}">${planningActive ? 'Online' : 'Idle'}</div>
+                    <div style="font-size:10px;color:var(--text-muted)">Planner</div>
+                </div>
+            </div>
+            ${teamStats && !teamStats.error ? `<div style="font-size:11px;color:var(--text-muted);margin-top:8px">Teams: ${teamStats.total_formed || teamStats.total || 0} formed &middot; Conflicts: ${conflictStats.total_detected || conflictStats.total || 0} detected</div>` : ''}`;
+    } catch {
+        el.innerHTML = '<div style="color:var(--text-muted);padding:12px">AGI status unavailable</div>';
+    }
+}
+
+// ── Perpetual Intelligence + Swarm + Research ──────────────
+async function loadPerpetualStatus() {
+    const el = document.getElementById('perpetual-content');
+    if (!el) return;
+    const data = await api('/api/perpetual/status').catch(() => null);
+    if (!data?.data) { el.innerHTML = '<div style="color:var(--text-muted)">Initializing...</div>'; return; }
+    const p = data.data.perpetual || {};
+    const s = data.data.swarm || {};
+    el.innerHTML = `
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px">
+            <div class="stat-card"><div class="stat-value" style="color:var(--accent)">${p.cycles || 0}</div><div class="stat-label">Cycles</div></div>
+            <div class="stat-card"><div class="stat-value" style="color:var(--accent-green)">${p.research_findings || 0}</div><div class="stat-label">Research</div></div>
+            <div class="stat-card"><div class="stat-value" style="color:var(--accent-blue)">${p.analysis_insights || 0}</div><div class="stat-label">Analysis</div></div>
+            <div class="stat-card"><div class="stat-value" style="color:var(--accent-purple)">${p.trades_evaluated || 0}</div><div class="stat-label">Trades</div></div>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:8px">
+            <div class="stat-card"><div class="stat-value" style="color:var(--accent-gold)">${p.code_reviews || 0}</div><div class="stat-label">Code Reviews</div></div>
+            <div class="stat-card"><div class="stat-value" style="color:var(--accent-cyan)">${p.vision_plans || 0}</div><div class="stat-label">Vision Plans</div></div>
+            <div class="stat-card"><div class="stat-value" style="color:var(--accent-red)">${p.running ? 'ACTIVE' : 'OFF'}</div><div class="stat-label">Status</div></div>
+        </div>`;
+}
+
+async function loadSwarmStatus() {
+    const el = document.getElementById('swarm-content');
+    if (!el) return;
+    const data = await api('/api/perpetual/swarm/status').catch(() => null);
+    if (!data?.data || data.data.error) { el.innerHTML = '<div style="color:var(--text-muted)">Initializing...</div>'; return; }
+    const s = data.data;
+    el.innerHTML = `
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px">
+            <div class="stat-card"><div class="stat-value" style="color:var(--accent)">${s.total_dispatches || 0}</div><div class="stat-label">Tasks Dispatched</div></div>
+            <div class="stat-card"><div class="stat-value" style="color:var(--accent-green)">${s.divisions_activated || 0}</div><div class="stat-label">Divisions Active</div></div>
+            <div class="stat-card"><div class="stat-value" style="color:var(--accent-purple)">${s.cross_pollinations || 0}</div><div class="stat-label">Cross-Pollinations</div></div>
+        </div>`;
+}
+
+async function loadResearchFeed() {
+    const el = document.getElementById('research-feed-content');
+    if (!el) return;
+    const data = await api('/api/perpetual/research').catch(() => null);
+    if (!data?.data || !data.data.length) { el.innerHTML = '<div style="color:var(--text-muted)">Gathering intelligence...</div>'; return; }
+    el.innerHTML = data.data.slice(0, 10).map(r => `
+        <div style="padding:8px 0;border-bottom:1px solid var(--border)">
+            <div style="display:flex;justify-content:space-between;align-items:start">
+                <div style="flex:1;min-width:0">
+                    <div style="font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${escHtml(r.content)}</div>
+                    <div style="font-size:10px;color:var(--text-muted);margin-top:2px">${r.tags?.join(', ') || ''}</div>
+                </div>
+                <span style="font-size:10px;padding:2px 6px;border-radius:3px;background:var(--accent-green);color:#000;font-weight:600;white-space:nowrap">${(r.confidence * 100).toFixed(0)}%</span>
+            </div>
+        </div>
+    `).join('');
+}
+
 // ── Settings Import/Export ───────────────────────────────────
 async function exportSettings() {
     try {
@@ -992,10 +1177,22 @@ async function approveSandboxRequest(approvalId) {
     await api('/api/sandbox/approve/' + approvalId, { method: 'POST' });
     loadSandbox();
     pushActivity('Approval', 'Request approved: ' + approvalId.slice(0, 12), 'sandbox', 'guardian');
+    // After successful approval, dismiss all approval toasts
+    document.querySelectorAll('.toast--warning').forEach(t => {
+        t.classList.remove('toast--visible');
+        t.classList.add('toast--exit');
+        setTimeout(() => { if (t.parentNode) t.parentNode.removeChild(t); }, 300);
+    });
 }
 
 async function rejectSandboxRequest(approvalId) {
     await api('/api/sandbox/reject/' + approvalId, { method: 'POST' });
     loadSandbox();
     pushActivity('Rejection', 'Request rejected: ' + approvalId.slice(0, 12), 'sandbox', 'guardian');
+    // After successful rejection, dismiss all approval toasts
+    document.querySelectorAll('.toast--warning').forEach(t => {
+        t.classList.remove('toast--visible');
+        t.classList.add('toast--exit');
+        setTimeout(() => { if (t.parentNode) t.parentNode.removeChild(t); }, 300);
+    });
 }
