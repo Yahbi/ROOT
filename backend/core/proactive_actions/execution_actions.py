@@ -3,9 +3,21 @@
 from __future__ import annotations
 
 import logging
+import uuid
 from typing import Any
 
 logger = logging.getLogger("root.proactive.execution")
+
+# Scalp-specific symbols — leveraged ETFs with amplified intraday moves
+_SCALP_SYMBOLS = ["TQQQ", "SQQQ", "SOXL", "SOXS", "UPRO", "SPXU"]
+
+# Scalp strategy generators to run each cycle
+_SCALP_STRATEGIES = [
+    "scalp_ema_3_8", "scalp_ema_5_13",
+    "rsi_quickflip_5", "rsi_quickflip_3",
+    "ema_ribbon_3_5_8", "ema_ribbon_5_8_13",
+    "mean_reversion_fast", "mean_reversion_snap",
+]
 
 
 async def evolve_agents(*, self_dev: Any = None) -> str:
@@ -242,3 +254,219 @@ async def validate_strategies(*, strategy_validator: Any = None) -> str:
         )
 
     return summary
+
+
+async def deploy_promoted_strategies(
+    *,
+    strategy_validator: Any = None,
+    hedge_fund: Any = None,
+    escalation: Any = None,
+    notification_engine: Any = None,
+) -> str:
+    """Bridge: read promoted strategies from validator → create Signals → feed to hedge fund."""
+    if not strategy_validator or not hedge_fund:
+        return "requires strategy_validator + hedge_fund"
+
+    from backend.core.hedge_fund import Signal
+
+    promoted = strategy_validator.get_promoted(limit=10)
+    if not promoted:
+        return "no promoted strategies to deploy"
+
+    # Escalation gate
+    if escalation:
+        decision = escalation.should_auto_execute(
+            "deploy_promoted_strategies", risk_level="critical",
+        )
+        if not decision.should_auto_execute:
+            return f"Escalation blocked: {decision.reason}"
+        escalation.record_decision(
+            "deploy_promoted_strategies",
+            f"Deploying {len(promoted)} promoted strategies",
+            auto_executed=True,
+        )
+
+    portfolio = await hedge_fund.get_portfolio()
+    portfolio_value = portfolio.get("total_value", 100000)
+
+    deployed = 0
+    blocked = 0
+    for strat in promoted:
+        symbol = strat.get("symbol", "")
+        if not symbol or symbol == "SIM":
+            continue
+
+        # Determine direction from strategy name
+        name = strat.get("strategy_name", "")
+        direction = "short" if any(k in name for k in ("short", "breakdown", "rsi_short")) else "long"
+
+        # Confidence from Sharpe ratio (capped 0.5–0.95)
+        sharpe = strat.get("sharpe_ratio", 0) or 0
+        confidence = min(0.95, max(0.5, 0.5 + sharpe * 0.15))
+
+        signal = Signal(
+            id=f"promoted_{uuid.uuid4().hex[:8]}",
+            symbol=symbol,
+            direction=direction,
+            confidence=confidence,
+            source="strategy_validator",
+            reasoning=(
+                f"Promoted strategy '{name}' — "
+                f"Sharpe {sharpe:.2f}, "
+                f"WR {strat.get('win_rate', 0):.0f}%, "
+                f"return {strat.get('total_return_pct', 0):.1f}%"
+            ),
+            timeframe="swing",
+        )
+
+        ok, reason = hedge_fund.check_risk(signal, portfolio_value)
+        if not ok:
+            blocked += 1
+            continue
+
+        trade = await hedge_fund.execute_signal(signal, portfolio_value)
+        if trade and trade.get("status") == "executed":
+            deployed += 1
+        else:
+            blocked += 1
+
+    # Notify on deployments
+    if notification_engine and deployed > 0:
+        try:
+            await notification_engine.send(
+                title="Strategy Deployment",
+                body=f"Deployed {deployed}/{len(promoted)} promoted strategies to live trading",
+                level="high",
+                source="deploy_promoted_strategies",
+            )
+        except Exception as exc:
+            logger.warning("Deploy notification failed: %s", exc)
+
+    return (
+        f"Strategy deployment: {deployed} deployed, {blocked} blocked "
+        f"(from {len(promoted)} promoted)"
+    )
+
+
+async def scalp_trade_cycle(
+    *,
+    hedge_fund: Any = None,
+    escalation: Any = None,
+    notification_engine: Any = None,
+) -> str:
+    """Fast scalp cycle: fetch fresh OHLCV for leveraged ETFs → run scalp generators → trade."""
+    if not hedge_fund:
+        return "requires hedge_fund engine"
+
+    from backend.core.hedge_fund import Signal
+    from backend.core.strategy_validator import (
+        fetch_ohlcv, STRATEGY_GENERATORS,
+    )
+
+    # Escalation gate
+    if escalation:
+        decision = escalation.should_auto_execute(
+            "scalp_trade_cycle", risk_level="critical",
+        )
+        if not decision.should_auto_execute:
+            return f"Escalation blocked: {decision.reason}"
+        escalation.record_decision(
+            "scalp_trade_cycle",
+            "Fast scalp cycle on leveraged ETFs",
+            auto_executed=True,
+        )
+
+    portfolio = await hedge_fund.get_portfolio()
+    portfolio_value = portfolio.get("total_value", 100000)
+
+    signals_found = 0
+    executed = 0
+    blocked = 0
+
+    for symbol in _SCALP_SYMBOLS:
+        # Short lookback — 30 days is enough for scalp signals
+        ohlcv = fetch_ohlcv(symbol, days=30)
+        if len(ohlcv) < 10:
+            continue
+
+        last_bar = ohlcv[-1]
+        last_price = last_bar["close"]
+
+        for strat_name in _SCALP_STRATEGIES:
+            generator = STRATEGY_GENERATORS.get(strat_name)
+            if not generator:
+                continue
+
+            try:
+                raw_signals = generator(ohlcv)
+            except Exception:
+                continue
+
+            if not raw_signals:
+                continue
+
+            # Only act on the most recent signal (last bar)
+            last_signal = raw_signals[-1]
+            last_date = last_signal.get("date", "")
+
+            # Signal must be from the latest bar to be actionable
+            if last_date != last_bar["date"]:
+                continue
+
+            action = last_signal.get("action", "")
+            if action not in ("buy", "sell"):
+                continue
+
+            signals_found += 1
+            direction = "long" if action == "buy" else "short"
+
+            # Tight stop-loss / take-profit for scalps (leveraged → 2% SL, 3% TP)
+            sl_pct = 0.02
+            tp_pct = 0.03
+            if direction == "long":
+                stop_loss = last_price * (1 - sl_pct)
+                take_profit = last_price * (1 + tp_pct)
+            else:
+                stop_loss = last_price * (1 + sl_pct)
+                take_profit = last_price * (1 - tp_pct)
+
+            signal = Signal(
+                id=f"scalp_{uuid.uuid4().hex[:8]}",
+                symbol=symbol,
+                direction=direction,
+                confidence=0.70,
+                source="scalp_engine",
+                reasoning=f"Scalp {strat_name} on {symbol} — {action} at ${last_price:.2f}",
+                timeframe="scalp",
+                entry_price=last_price,
+                stop_loss=round(stop_loss, 2),
+                take_profit=round(take_profit, 2),
+            )
+
+            ok, reason = hedge_fund.check_risk(signal, portfolio_value)
+            if not ok:
+                blocked += 1
+                continue
+
+            trade = await hedge_fund.execute_signal(signal, portfolio_value)
+            if trade and trade.get("status") == "executed":
+                executed += 1
+            else:
+                blocked += 1
+
+    # Notify if trades executed
+    if notification_engine and executed > 0:
+        try:
+            await notification_engine.send(
+                title="Scalp Trades Executed",
+                body=f"{executed} scalp trades on leveraged ETFs ({signals_found} signals found)",
+                level="high",
+                source="scalp_trade_cycle",
+            )
+        except Exception as exc:
+            logger.warning("Scalp notification failed: %s", exc)
+
+    return (
+        f"Scalp cycle: {signals_found} signals, {executed} executed, "
+        f"{blocked} blocked across {len(_SCALP_SYMBOLS)} symbols"
+    )

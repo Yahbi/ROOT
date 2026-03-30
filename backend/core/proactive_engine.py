@@ -54,6 +54,8 @@ from backend.core.proactive_actions import (
     auto_recover_goals,
     auto_remediate_revenue,
     validate_strategies,
+    deploy_promoted_strategies,
+    scalp_trade_cycle,
     scan_polymarkets,
     polymarket_trade_cycle,
     monitor_polymarket_positions,
@@ -480,6 +482,31 @@ class ProactiveEngine:
                     strategy_validator=self._strategy_validator,
                 ),
                 risk_level="medium",
+            ),
+            # ── Deploy Promoted Strategies (validator → hedge fund bridge) ──
+            ProactiveAction(
+                name="deploy_promoted",
+                description="Convert promoted strategies into live trading signals for hedge fund execution",
+                interval_seconds=PROACTIVE_INTERVALS.get("deploy_promoted", 3600),
+                handler=lambda: deploy_promoted_strategies(
+                    strategy_validator=self._strategy_validator,
+                    hedge_fund=self._hedge_fund,
+                    escalation=self._escalation,
+                    notification_engine=self._notifications,
+                ),
+                risk_level="critical",
+            ),
+            # ── Scalp Trade Cycle (fast leveraged ETF scalping) ──
+            ProactiveAction(
+                name="scalp_trade_cycle",
+                description="Fast 90s scalp cycle on leveraged ETFs (TQQQ, SQQQ, SOXL, SOXS) using EMA/RSI strategies",
+                interval_seconds=PROACTIVE_INTERVALS.get("scalp_trade_cycle", 90),
+                handler=lambda: scalp_trade_cycle(
+                    hedge_fund=self._hedge_fund,
+                    escalation=self._escalation,
+                    notification_engine=self._notifications,
+                ),
+                risk_level="critical",
             ),
             # ── Polymarket: Market Scanner ──
             ProactiveAction(

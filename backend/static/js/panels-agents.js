@@ -440,20 +440,30 @@ async function loadCivilization() {
     if (codeEl) {
         const proposals = codeProposals?.data ?? codeProposals?.proposals ?? (Array.isArray(codeProposals) ? codeProposals : []);
         if (proposals.length) {
-            codeEl.innerHTML = proposals.map(p => {
-                const approved = p.status === 'approved';
+            const pendingIds = proposals.filter(p => p.status === 'pending_approval' || (p.status !== 'approved' && p.status !== 'rejected' && p.status !== 'deployed')).map(p => p.id);
+            const approveAllBtn = pendingIds.length > 1
+                ? `<div style="margin-bottom:8px"><button class="btn-sm" style="color:var(--accent-green);border:1px solid var(--accent-green);padding:4px 12px" onclick="approveAllCodeProposals()">Approve All (${pendingIds.length})</button></div>`
+                : '';
+            codeEl.innerHTML = approveAllBtn + proposals.map(p => {
+                const approved = p.status === 'approved' || p.status === 'deployed';
                 const rejected = p.status === 'rejected';
                 const pending = !approved && !rejected;
+                const filePath = p.file ? `<span style="font-size:11px;color:var(--text-muted);font-family:monospace">${escHtml(p.file)}</span>` : '';
+                const scopeBadge = p.scope ? `<span style="font-size:10px;color:var(--text-muted);text-transform:uppercase">[${escHtml(p.scope)}]</span>` : '';
+                const changePreview = p.proposed_change ? `<details style="margin-top:4px"><summary style="font-size:11px;color:var(--accent);cursor:pointer">View proposed change</summary><pre style="font-size:11px;background:var(--bg-secondary);padding:6px;border-radius:4px;overflow-x:auto;max-height:200px;margin-top:4px">${escHtml(p.proposed_change.slice(0, 500))}</pre></details>` : '';
                 return `<div style="padding:8px 0;border-bottom:1px solid var(--border)">
                     <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
                         <span style="background:${approved ? 'var(--accent-green)' : rejected ? 'var(--accent-red)' : 'var(--accent-orange)'}22;color:${approved ? 'var(--accent-green)' : rejected ? 'var(--accent-red)' : 'var(--accent-orange)'};padding:2px 8px;border-radius:10px;font-size:11px">${escHtml(p.status || 'pending')}</span>
                         <span style="font-size:13px;font-weight:500">${escHtml(p.title || p.description || p.id || '')}</span>
+                        ${scopeBadge}
                         ${pending ? `<div style="margin-left:auto;display:flex;gap:4px">
                             <button class="btn-sm" style="color:var(--accent-green)" onclick="approveCodeProposal('${escHtml(p.id || '')}')">Approve</button>
                             <button class="btn-sm" style="color:var(--accent-red)" onclick="rejectCodeProposal('${escHtml(p.id || '')}')">Reject</button>
                         </div>` : ''}
                     </div>
-                    <div style="font-size:12px;color:var(--text-secondary)">${escHtml((p.description || p.rationale || '').slice(0, 200))}</div>
+                    ${filePath}
+                    <div style="font-size:12px;color:var(--text-secondary);margin-top:2px">${escHtml((p.description || p.rationale || '').slice(0, 300))}</div>
+                    ${changePreview}
                 </div>`;
             }).join('');
         } else {
@@ -469,6 +479,28 @@ async function startExperiment(experimentId) {
         await api(`/api/civilization/experiments/${experimentId}/start`, { method: 'POST' });
         if (btn) { btn.textContent = 'Started'; }
         setTimeout(() => loadCivilization(), 1000);
+    } catch (e) {
+        if (btn) { btn.textContent = 'Error'; btn.disabled = false; }
+    }
+}
+
+async function approveAllCodeProposals() {
+    const btn = event?.target;
+    if (btn) { btn.disabled = true; btn.textContent = 'Approving all...'; }
+    try {
+        const res = await api('/api/civilization/code-proposals?limit=50');
+        const proposals = res?.proposals ?? res?.data ?? [];
+        const pending = proposals.filter(p => p.status === 'pending_approval' || (p.status !== 'approved' && p.status !== 'rejected' && p.status !== 'deployed'));
+        let approved = 0;
+        for (const p of pending) {
+            try {
+                await api(`/api/civilization/code-proposals/${p.id}/approve`, { method: 'POST' });
+                approved++;
+            } catch (_) { /* skip failed */ }
+        }
+        if (btn) { btn.textContent = `Approved ${approved}`; btn.style.color = 'var(--accent-green)'; }
+        pushActivity('Bulk approved', `${approved} code proposals`, 'civilization', 'coder');
+        setTimeout(() => loadCivilization(), 800);
     } catch (e) {
         if (btn) { btn.textContent = 'Error'; btn.disabled = false; }
     }

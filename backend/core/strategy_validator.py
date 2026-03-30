@@ -23,6 +23,7 @@ import asyncio
 import json
 import logging
 import math
+import os
 import sqlite3
 import uuid
 from dataclasses import asdict, dataclass, field
@@ -46,6 +47,16 @@ PROMOTION_THRESHOLDS = {
     "min_trades": 10,             # Minimum trade count for statistical significance
     "min_profit_factor": 1.2,     # Gross profit / gross loss
     "min_monte_carlo_p5": 0.95,   # p5 final capital must be >= 95% of initial (no ruin)
+}
+
+# Relaxed thresholds for paper trading — lets more strategies through for live testing
+PAPER_TRADING_THRESHOLDS = {
+    "min_sharpe": 0.5,
+    "min_win_rate": 40.0,
+    "max_drawdown": 35.0,
+    "min_trades": 6,
+    "min_profit_factor": 1.05,
+    "min_monte_carlo_p5": 0.90,
 }
 
 _CREATE_SQL = """
@@ -636,6 +647,193 @@ def generate_volatility_breakout_signals(
     return signals
 
 
+# ── FAST-COMPOUNDING STRATEGIES (leveraged ETF focus) ──────
+
+# Leveraged ETFs targeted by fast strategies
+LEVERAGED_SYMBOLS = ["TQQQ", "SQQQ", "SOXL", "SOXS", "UPRO", "SPXU"]
+
+
+def generate_scalp_ma_signals(
+    ohlcv: list[dict], fast_period: int = 3, slow_period: int = 8,
+) -> list[dict[str, Any]]:
+    """Ultra-fast MA crossover for leveraged ETFs. 3/8 EMA scalp."""
+    if len(ohlcv) < slow_period + 2:
+        return []
+
+    closes = [bar["close"] for bar in ohlcv]
+    signals: list[dict[str, Any]] = []
+    position_open = False
+
+    # Use EMA for faster response
+    def ema(data: list[float], period: int) -> list[float]:
+        k = 2.0 / (period + 1)
+        result = [data[0]]
+        for val in data[1:]:
+            result.append(val * k + result[-1] * (1 - k))
+        return result
+
+    fast_ema = ema(closes, fast_period)
+    slow_ema = ema(closes, slow_period)
+
+    for i in range(slow_period, len(closes)):
+        if fast_ema[i] > slow_ema[i] and fast_ema[i - 1] <= slow_ema[i - 1] and not position_open:
+            signals.append({
+                "date": ohlcv[i]["date"], "symbol": "SIM",
+                "action": "buy", "price": closes[i], "quantity": 100,
+            })
+            position_open = True
+        elif fast_ema[i] < slow_ema[i] and fast_ema[i - 1] >= slow_ema[i - 1] and position_open:
+            signals.append({
+                "date": ohlcv[i]["date"], "symbol": "SIM",
+                "action": "sell", "price": closes[i], "quantity": 100,
+            })
+            position_open = False
+
+    if position_open and ohlcv:
+        signals.append({
+            "date": ohlcv[-1]["date"], "symbol": "SIM",
+            "action": "sell", "price": closes[-1], "quantity": 100,
+        })
+    return signals
+
+
+def generate_rsi_quickflip_signals(
+    ohlcv: list[dict], period: int = 5,
+    oversold: float = 25.0, overbought: float = 75.0,
+) -> list[dict[str, Any]]:
+    """Ultra-short RSI on 5-bar window. Quick entries/exits for volatile instruments."""
+    if len(ohlcv) < period + 2:
+        return []
+
+    closes = [bar["close"] for bar in ohlcv]
+    signals: list[dict[str, Any]] = []
+    position_open = False
+
+    for i in range(period + 1, len(closes)):
+        gains, losses = [], []
+        for j in range(i - period, i):
+            change = closes[j + 1] - closes[j] if j + 1 < len(closes) else 0
+            if change > 0:
+                gains.append(change)
+            else:
+                losses.append(abs(change))
+
+        avg_gain = sum(gains) / period if gains else 0.001
+        avg_loss = sum(losses) / period if losses else 0.001
+        rs = avg_gain / max(avg_loss, 0.001)
+        rsi = 100 - (100 / (1 + rs))
+
+        if rsi < oversold and not position_open:
+            signals.append({
+                "date": ohlcv[i]["date"], "symbol": "SIM",
+                "action": "buy", "price": closes[i], "quantity": 100,
+            })
+            position_open = True
+        elif rsi > overbought and position_open:
+            signals.append({
+                "date": ohlcv[i]["date"], "symbol": "SIM",
+                "action": "sell", "price": closes[i], "quantity": 100,
+            })
+            position_open = False
+
+    if position_open and ohlcv:
+        signals.append({
+            "date": ohlcv[-1]["date"], "symbol": "SIM",
+            "action": "sell", "price": closes[-1], "quantity": 100,
+        })
+    return signals
+
+
+def generate_ema_ribbon_signals(
+    ohlcv: list[dict], periods: tuple[int, ...] = (5, 8, 13),
+) -> list[dict[str, Any]]:
+    """EMA ribbon: buy when all EMAs aligned bullish, sell when bearish crossover."""
+    max_period = max(periods)
+    if len(ohlcv) < max_period + 2:
+        return []
+
+    closes = [bar["close"] for bar in ohlcv]
+    signals: list[dict[str, Any]] = []
+    position_open = False
+
+    def ema(data: list[float], period: int) -> list[float]:
+        k = 2.0 / (period + 1)
+        result = [data[0]]
+        for val in data[1:]:
+            result.append(val * k + result[-1] * (1 - k))
+        return result
+
+    emas = [ema(closes, p) for p in periods]
+
+    for i in range(max_period, len(closes)):
+        # Bullish: each shorter EMA > next longer EMA
+        bullish = all(emas[j][i] > emas[j + 1][i] for j in range(len(emas) - 1))
+        prev_bullish = all(emas[j][i - 1] > emas[j + 1][i - 1] for j in range(len(emas) - 1))
+
+        if bullish and not prev_bullish and not position_open:
+            signals.append({
+                "date": ohlcv[i]["date"], "symbol": "SIM",
+                "action": "buy", "price": closes[i], "quantity": 100,
+            })
+            position_open = True
+        elif not bullish and prev_bullish and position_open:
+            signals.append({
+                "date": ohlcv[i]["date"], "symbol": "SIM",
+                "action": "sell", "price": closes[i], "quantity": 100,
+            })
+            position_open = False
+
+    if position_open and ohlcv:
+        signals.append({
+            "date": ohlcv[-1]["date"], "symbol": "SIM",
+            "action": "sell", "price": closes[-1], "quantity": 100,
+        })
+    return signals
+
+
+def generate_mean_reversion_fast_signals(
+    ohlcv: list[dict], period: int = 10, z_threshold: float = 1.5,
+) -> list[dict[str, Any]]:
+    """Fast mean reversion: 10-bar Bollinger with tight 1.5z for quick snap-backs."""
+    if len(ohlcv) < period + 2:
+        return []
+
+    closes = [bar["close"] for bar in ohlcv]
+    signals: list[dict[str, Any]] = []
+    position_open = False
+
+    for i in range(period, len(closes)):
+        window = closes[i - period:i]
+        mean = sum(window) / period
+        std = (sum((x - mean) ** 2 for x in window) / period) ** 0.5
+
+        if std < 1e-8:
+            continue
+
+        z_score = (closes[i] - mean) / std
+
+        if z_score < -z_threshold and not position_open:
+            signals.append({
+                "date": ohlcv[i]["date"], "symbol": "SIM",
+                "action": "buy", "price": closes[i], "quantity": 100,
+            })
+            position_open = True
+        elif z_score > 0 and position_open:
+            # Exit at mean (z=0) — don't wait for opposite extreme
+            signals.append({
+                "date": ohlcv[i]["date"], "symbol": "SIM",
+                "action": "sell", "price": closes[i], "quantity": 100,
+            })
+            position_open = False
+
+    if position_open and ohlcv:
+        signals.append({
+            "date": ohlcv[-1]["date"], "symbol": "SIM",
+            "action": "sell", "price": closes[-1], "quantity": 100,
+        })
+    return signals
+
+
 # Strategy registry: name → generator function
 STRATEGY_GENERATORS = {
     # Long strategies
@@ -660,6 +858,15 @@ STRATEGY_GENERATORS = {
     "gap_fade_tight": lambda ohlcv: generate_gap_fade_signals(ohlcv, 0.01),
     "volatility_breakout": lambda ohlcv: generate_volatility_breakout_signals(ohlcv, 14, 1.5),
     "volatility_breakout_tight": lambda ohlcv: generate_volatility_breakout_signals(ohlcv, 10, 1.0),
+    # Fast-compounding strategies (leveraged ETF focus)
+    "scalp_ema_3_8": lambda ohlcv: generate_scalp_ma_signals(ohlcv, 3, 8),
+    "scalp_ema_5_13": lambda ohlcv: generate_scalp_ma_signals(ohlcv, 5, 13),
+    "rsi_quickflip_5": lambda ohlcv: generate_rsi_quickflip_signals(ohlcv, 5, 25, 75),
+    "rsi_quickflip_3": lambda ohlcv: generate_rsi_quickflip_signals(ohlcv, 3, 20, 80),
+    "ema_ribbon_5_8_13": lambda ohlcv: generate_ema_ribbon_signals(ohlcv, (5, 8, 13)),
+    "ema_ribbon_3_5_8": lambda ohlcv: generate_ema_ribbon_signals(ohlcv, (3, 5, 8)),
+    "mean_reversion_fast": lambda ohlcv: generate_mean_reversion_fast_signals(ohlcv, 10, 1.5),
+    "mean_reversion_snap": lambda ohlcv: generate_mean_reversion_fast_signals(ohlcv, 5, 1.2),
 }
 
 # Symbols to test — expanded universe with short-friendly targets + leveraged ETFs
@@ -689,6 +896,8 @@ class StrategyValidator:
         self._conn: Optional[sqlite3.Connection] = None
         self._running = False
         self._notification_engine = None  # Set via main.py
+        # Use relaxed thresholds for paper trading (env override)
+        self._paper_mode = os.getenv("ROOT_PAPER_TRADING", "true").lower() in ("true", "1", "yes")
 
     def start(self) -> None:
         self._conn = sqlite3.connect(str(_DB_PATH))
@@ -818,8 +1027,8 @@ class StrategyValidator:
         # 3. Run Monte Carlo
         mc = self._backtester.monte_carlo(bt_result, simulations=500)
 
-        # 4. Evaluate against thresholds
-        thresholds = PROMOTION_THRESHOLDS
+        # 4. Evaluate against thresholds (relaxed in paper mode)
+        thresholds = PAPER_TRADING_THRESHOLDS if self._paper_mode else PROMOTION_THRESHOLDS
         promoted = (
             bt_result.sharpe_ratio >= thresholds["min_sharpe"]
             and bt_result.win_rate >= thresholds["min_win_rate"]

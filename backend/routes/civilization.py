@@ -249,7 +249,9 @@ async def list_code_proposals(request: Request, status: Optional[str] = None, li
         "count": len(proposals),
         "proposals": [
             {"id": p.id, "title": p.title, "scope": p.scope.value,
-             "status": p.status.value, "file": p.file_path}
+             "status": p.status.value, "file": p.file_path,
+             "description": p.description, "proposed_change": p.proposed_change,
+             "agent_id": p.agent_id, "created_at": p.created_at}
             for p in proposals
         ],
     }

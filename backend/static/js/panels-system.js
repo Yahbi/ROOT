@@ -56,25 +56,27 @@ async function loadDashboard() {
         }
     }
 
-    // Load daily digest
-    try {
-        const digestData = await api('/api/conversations/digest/latest?digest_type=daily');
-        const digestCard = document.getElementById('digest-card');
-        const digestEl = document.getElementById('digest-content');
-        if (digestCard && digestEl && digestData?.digest) {
-            digestCard.style.display = '';
-            digestEl.textContent = digestData.digest.content || '';
-        }
-    } catch {}
-
-    // Load dashboard extras (non-blocking)
+    // Load dashboard extras (non-blocking, fire-and-forget)
     loadDashboardDigests();
     loadDashboardPatterns();
     loadDashboardApprovals();
     loadActivityTimeline();
 
-    // Load provider status
-    const provData = await api('/api/dashboard/providers');
+    // Load digest + providers in parallel
+    const [digestData, provData] = await Promise.all([
+        api('/api/conversations/digest/latest?digest_type=daily').catch(() => null),
+        api('/api/dashboard/providers').catch(() => null),
+    ]);
+
+    // Render daily digest
+    const digestCard = document.getElementById('digest-card');
+    const digestEl = document.getElementById('digest-content');
+    if (digestCard && digestEl && digestData?.digest) {
+        digestCard.style.display = '';
+        digestEl.textContent = digestData.digest.content || '';
+    }
+
+    // Render provider status
     const provEl = document.getElementById('dashboard-providers');
     if (provEl && provData) {
         const providers = provData.providers || {};

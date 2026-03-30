@@ -39,6 +39,8 @@ from backend.core.proactive_actions.execution_actions import (
     assess_goals,
     track_goals,
     validate_strategies,
+    deploy_promoted_strategies,
+    scalp_trade_cycle,
 )
 
 from backend.core.proactive_actions.experiment_actions import (
@@ -87,6 +89,8 @@ __all__ = [
     "assess_goals",
     "track_goals",
     "validate_strategies",
+    "deploy_promoted_strategies",
+    "scalp_trade_cycle",
     # experiment_actions
     "experiment_proposer",
     "seed_revenue_products",
