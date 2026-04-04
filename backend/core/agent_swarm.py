@@ -386,6 +386,7 @@ class AgentSwarm:
                         f"Insight: {summary_a[:200]}. "
                         f"Connection: {response_b[:200]}"
                     ),
+                    memory_type=MemoryType.LEARNING,
                     source="agent_swarm",
                     confidence=0.65,
                     tags=["swarm", "cross_pollination", div_a.lower().replace(" ", "_"),

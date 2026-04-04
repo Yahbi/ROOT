@@ -151,6 +151,9 @@ const NeuralGalaxy = (() => {
         isInitialized = true;
         _fetchAndBuild();
         _animate();
+        // Force resize after everything renders to fix dimension issues
+        setTimeout(_onResize, 300);
+        setTimeout(_onResize, 1000);
     }
 
     function destroy() {
