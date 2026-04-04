@@ -741,12 +741,30 @@ class ProactiveEngine:
 
             # Publish to bus
             if self._bus and result:
+                # Map action names to the agent that executed them
+                _action_agents = {
+                    "health_monitor": "guardian", "market_scanner": "swarm",
+                    "auto_trade_cycle": "swarm", "scalp_trade_cycle": "swarm",
+                    "miro_prediction": "miro", "miro_continuous": "miro",
+                    "miro_world_intelligence": "miro", "miro_daily_briefing": "miro",
+                    "data_intelligence": "openclaw", "skill_discovery": "builder",
+                    "agent_evolution": "builder", "code_scanner": "coder",
+                    "self_rewrite": "coder", "goal_tracker": "analyst",
+                    "goal_assessment": "analyst", "business_discovery": "researcher",
+                    "ecosystem_scanner": "researcher", "experiment_proposer": "analyst",
+                    "experiment_runner": "analyst", "strategy_validator": "swarm",
+                    "knowledge_consolidation": "researcher",
+                }
+                from_agent = _action_agents.get(action.name, "root")
+                to_agent = "astra"  # all results report to ASTRA
                 msg = self._bus.create_message(
                     topic="system.proactive",
                     sender="proactive_engine",
                     payload={
                         "action": action.name,
                         "result": str(result)[:1000],
+                        "from_agent": from_agent,
+                        "to_agent": to_agent,
                     },
                 )
                 await self._bus.publish(msg)

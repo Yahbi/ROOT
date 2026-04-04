@@ -66,9 +66,15 @@ const ws = {
             this.connected = true;
             this.reconnectDelay = 1000;
             console.log('WebSocket connected');
-            // Subscribe to all major topics
+            // Subscribe to ALL topics for full Neural Galaxy + dashboard coverage
             this.conn.send(JSON.stringify({
-                subscribe: ['system.*', 'agent.*', 'collab.*', 'network.*']
+                subscribe: [
+                    'system.*', 'agent.*', 'collab.*', 'network.*',
+                    'memory.*', 'goal.*', 'trade.*', 'prediction.*',
+                    'experiment.*', 'directive.*', 'cost.*', 'skill.*',
+                    'sandbox.*', 'experience.*', 'approval.*', 'revenue.*',
+                    'plugin.*', 'intelligence.*', 'swarm.*', 'research.*'
+                ]
             }));
             this._updateStatus(true);
         };

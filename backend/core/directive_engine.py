@@ -727,6 +727,8 @@ class DirectiveEngine:
                         "title": directive.title,
                         "category": directive.category,
                         "result": result_text[:500],
+                        "from_agent": "directive_engine",
+                        "to_agent": directive.assigned_agents[0] if directive.assigned_agents else "astra",
                     },
                 )
                 await self._bus.publish(msg)
