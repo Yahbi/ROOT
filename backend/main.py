@@ -109,6 +109,7 @@ from backend.routes import scenarios as scenarios_routes
 from backend.routes import councils as councils_routes
 from backend.routes import agi as agi_routes
 from backend.routes import perpetual as perpetual_routes
+from backend.routes import a2a as a2a_routes
 
 logging.basicConfig(
     level=logging.INFO,
@@ -1407,6 +1408,25 @@ _fastapi_app.include_router(scenarios_routes.router)
 _fastapi_app.include_router(councils_routes.router)
 _fastapi_app.include_router(agi_routes.router)
 _fastapi_app.include_router(perpetual_routes.router)
+_fastapi_app.include_router(a2a_routes.router)
+
+
+# ── MCP Server ────────────────────────────────────────────────────
+# Exposes all FastAPI routes as MCP tools so any MCP client
+# (Claude Desktop, VS Code Copilot, Cursor, etc.) can discover
+# and invoke ROOT's capabilities.
+try:
+    from fastapi_mcp import FastApiMCP
+
+    _mcp = FastApiMCP(
+        _fastapi_app,
+        name="ROOT Intelligence Civilization",
+        description="ASTRA-ROOT: 162+ AI agents, memory, trading, autonomous loops, and more.",
+    )
+    _mcp.mount()
+    logger.info("MCP server: mounted (all API routes exposed as MCP tools)")
+except ImportError:
+    logger.info("MCP server: disabled (fastapi-mcp not installed)")
 
 
 # Health check
