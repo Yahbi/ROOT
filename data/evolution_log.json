@@ -1,35 +1,5 @@
 [
   {
-    "id": "evo_f6ce5ae949f3",
-    "action_type": "skill_created",
-    "description": "Created skill: general/auto-general \u2014 Auto-generated skill for general",
-    "details": {
-      "skill_path": "/Users/yohan/Desktop/ROOT/data/skills/general/auto-general/SKILL.md",
-      "tags": [
-        "auto-generated",
-        "builder-agent",
-        "general"
-      ]
-    },
-    "impact_score": 0.5,
-    "timestamp": "2026-03-21T19:58:15.140075+00:00"
-  },
-  {
-    "id": "evo_7ce3e8f5eb03",
-    "action_type": "skill_created",
-    "description": "Created skill: general/auto-general \u2014 Auto-generated skill for general",
-    "details": {
-      "skill_path": "/Users/yohan/Desktop/ROOT/data/skills/general/auto-general/SKILL.md",
-      "tags": [
-        "auto-generated",
-        "builder-agent",
-        "general"
-      ]
-    },
-    "impact_score": 0.5,
-    "timestamp": "2026-03-21T20:19:00.968415+00:00"
-  },
-  {
     "id": "evo_89d1390df843",
     "action_type": "skill_created",
     "description": "Created skill: general/auto-general \u2014 Auto-generated skill for general",
@@ -6014,5 +5984,27 @@
     },
     "impact_score": 0.0,
     "timestamp": "2026-03-30T21:47:22.868499+00:00"
+  },
+  {
+    "id": "evo_73f8bf467630",
+    "action_type": "code_proposed",
+    "description": "Proposed improvement in knowledge: Initial knowledge bootstrap from AI folder",
+    "details": {
+      "area": "knowledge",
+      "rationale": "Seeded 57 core knowledge entries."
+    },
+    "impact_score": 0.0,
+    "timestamp": "2026-04-07T18:45:47.171526+00:00"
+  },
+  {
+    "id": "evo_fe2f818b2a4b",
+    "action_type": "code_proposed",
+    "description": "Proposed improvement in knowledge: Expand observation knowledge: Actively collect more observation entries",
+    "details": {
+      "area": "knowledge",
+      "rationale": "Identified by Builder Agent during improvement cycle"
+    },
+    "impact_score": 0.0,
+    "timestamp": "2026-04-07T18:45:49.360017+00:00"
   }
 ]
