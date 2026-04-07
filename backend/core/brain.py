@@ -274,6 +274,7 @@ class Brain(BrainRoutingMixin):
 
         # 1. Fast keyword routing — skip ASTRA LLM call for ~70% of requests
         fast_route, fast_subtasks = self._force_delegation_if_needed(user_message)
+        astra_conn = None
 
         if fast_subtasks:
             # Keywords matched — run memory search in parallel (don't wait for ASTRA)
@@ -572,6 +573,7 @@ class Brain(BrainRoutingMixin):
         """Inner stream logic, wrapped by chat_stream() for deadlock prevention."""
         # 1. Fast keyword routing — skip ASTRA LLM call when possible
         fast_route, fast_subtasks = self._force_delegation_if_needed(user_message)
+        astra_conn = None
 
         if fast_subtasks:
             yield {"event": "thinking", "data": {"stage": "fast_routing"}}
