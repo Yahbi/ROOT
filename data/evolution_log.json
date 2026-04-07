@@ -1,20 +1,5 @@
 [
   {
-    "id": "evo_da2c497681d7",
-    "action_type": "skill_created",
-    "description": "Created skill: general/auto-general \u2014 Auto-generated skill for general",
-    "details": {
-      "skill_path": "/Users/yohan/Desktop/ROOT/data/skills/general/auto-general/SKILL.md",
-      "tags": [
-        "auto-generated",
-        "builder-agent",
-        "general"
-      ]
-    },
-    "impact_score": 0.5,
-    "timestamp": "2026-03-21T22:26:13.728420+00:00"
-  },
-  {
     "id": "evo_909a8d92ec74",
     "action_type": "skill_created",
     "description": "Created skill: general/auto-general \u2014 Auto-generated skill for general",
@@ -5986,5 +5971,16 @@
     },
     "impact_score": 0.0,
     "timestamp": "2026-04-07T19:05:54.738771+00:00"
+  },
+  {
+    "id": "evo_28cecfa89fc5",
+    "action_type": "code_proposed",
+    "description": "Proposed improvement in knowledge: Expand preference knowledge: Actively collect more preference entries",
+    "details": {
+      "area": "knowledge",
+      "rationale": "Identified by Builder Agent during improvement cycle"
+    },
+    "impact_score": 0.0,
+    "timestamp": "2026-04-07T19:10:56.123056+00:00"
   }
 ]
