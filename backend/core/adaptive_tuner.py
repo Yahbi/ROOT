@@ -197,9 +197,8 @@ class AdaptiveTuner:
             logger.warning("AdaptiveTuner loop already running")
             return
         self._running = True
-        self._task = asyncio.current_task() or asyncio.ensure_future(self._loop(interval))
-        if asyncio.current_task() is not None:
-            await self._loop(interval)
+        self._task = asyncio.current_task()
+        await self._loop(interval)
 
     async def _loop(self, interval: int) -> None:
         logger.info("AdaptiveTuner loop started (interval=%ds)", interval)

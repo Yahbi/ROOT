@@ -439,7 +439,8 @@ class Brain(BrainRoutingMixin):
         self._persist_messages(user_message, response_text, memories)
 
         # 7. Learn from interaction (background — don't block response)
-        asyncio.create_task(self._extract_learnings(user_message, response_text))
+        task = asyncio.create_task(self._extract_learnings(user_message, response_text))
+        task.add_done_callback(lambda t: t.exception() if not t.cancelled() else None)
 
         # 7b. Track interaction outcome for adaptive learning
         elapsed = round(time.monotonic() - start_time, 2)
