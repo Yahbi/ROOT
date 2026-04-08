@@ -1,4 +1,4 @@
-"""Strategy Council — 15 strategic intelligence agents."""
+"""Strategy Council — 20 strategic intelligence agents."""
 
 from __future__ import annotations
 
@@ -186,5 +186,70 @@ STRATEGY_COUNCIL: list[AgentProfile] = [
             _cap("decision_making", "Advise on value-aligned decision-making"),
             _cap("web_search", "Search for contemporary ethical discourse"),
         ],
+    ),
+    AgentProfile(
+        id="geopolitical_analyst", name="Geopolitical Analyst",
+        role="Geopolitical Analysis", tier=2, connector_type="internal",
+        description="Analyzes geopolitical events, power shifts, and regional dynamics for strategic positioning",
+        capabilities=[
+            _cap("research", "Research geopolitical events, alliances, and tensions"),
+            _cap("web_search", "Track news on trade policy, sanctions, and regional conflicts"),
+            _cap("risk_assessment", "Assess geopolitical risk exposure for business and investments"),
+            _cap("forecasting", "Project geopolitical trend trajectories and flashpoints"),
+            _cap("data_analysis", "Analyze political stability indices and risk ratings"),
+        ],
+        metadata={"priority": 2},
+    ),
+    AgentProfile(
+        id="regulatory_tracker", name="Regulatory Tracker",
+        role="Regulatory Intelligence", tier=2, connector_type="internal",
+        description="Monitors regulatory changes, compliance requirements, and legislative developments",
+        capabilities=[
+            _cap("web_search", "Search for new regulations, rulings, and policy announcements"),
+            _cap("research", "Analyze regulatory impact on operations and strategy"),
+            _cap("risk_assessment", "Quantify compliance risk from regulatory shifts"),
+            _cap("summarization", "Produce regulatory change briefings and action plans"),
+            _cap("trend_analysis", "Track regulatory direction across jurisdictions"),
+        ],
+        metadata={"priority": 2},
+    ),
+    AgentProfile(
+        id="macro_trend_forecaster", name="Macro Trend Forecaster",
+        role="Macro Forecasting", tier=2, connector_type="internal",
+        description="Forecasts macro-level trends in technology, economy, and society over 3-10 year horizons",
+        capabilities=[
+            _cap("forecasting", "Build long-horizon macro trend forecasts"),
+            _cap("trend_analysis", "Identify megatrends and structural shifts"),
+            _cap("research", "Research cross-domain macro indicators"),
+            _cap("data_analysis", "Analyze historical trend data for pattern extrapolation"),
+            _cap("scenario_simulation", "Model multiple macro futures and their implications"),
+        ],
+        metadata={"priority": 2},
+    ),
+    AgentProfile(
+        id="scenario_planner", name="Scenario Planner",
+        role="Scenario Planning", tier=1, connector_type="internal",
+        description="Develops structured scenario plans for strategic uncertainty and disruption preparedness",
+        capabilities=[
+            _cap("scenario_simulation", "Create structured plausible future scenarios"),
+            _cap("strategic_planning", "Develop adaptive strategies for each scenario"),
+            _cap("risk_assessment", "Identify strategic risks unique to each scenario"),
+            _cap("decision_making", "Build decision triggers for scenario transitions"),
+            _cap("research", "Research historical precedents for analogous scenarios"),
+        ],
+        metadata={"priority": 1},
+    ),
+    AgentProfile(
+        id="stakeholder_mapper", name="Stakeholder Mapper",
+        role="Stakeholder Intelligence", tier=2, connector_type="internal",
+        description="Maps stakeholder ecosystems, influence networks, and relationship dynamics",
+        capabilities=[
+            _cap("research", "Research stakeholder backgrounds, interests, and positions"),
+            _cap("web_search", "Search for stakeholder activity, partnerships, and statements"),
+            _cap("data_collection", "Build structured stakeholder maps and influence graphs"),
+            _cap("risk_assessment", "Assess stakeholder risk and alignment gaps"),
+            _cap("strategic_planning", "Design stakeholder engagement and influence strategies"),
+        ],
+        metadata={"priority": 2},
     ),
 ]

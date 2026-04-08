@@ -1,4 +1,4 @@
-"""Research Division — 20 intelligence-gathering agents."""
+"""Research Division — 25 intelligence-gathering agents."""
 
 from __future__ import annotations
 

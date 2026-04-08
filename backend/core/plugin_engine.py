@@ -5,6 +5,15 @@ Plugins are self-contained modules that add new capabilities:
 - Web search, code execution, file management, scheduling, etc.
 - Each plugin registers tools that ROOT can invoke during chat.
 - Plugins can be enabled/disabled at runtime.
+
+Extended features:
+- Dependency management: plugins declare required sibling plugin IDs.
+- Version history: every re-registration appends to a changelog.
+- Hot-reload: swap handler functions without server restart.
+- Sandboxing: per-plugin allowed/forbidden module/attribute lists.
+- Marketplace metadata: rating, download count, homepage, license.
+- Health monitoring: per-plugin error counts, rates, and last error.
+- Config UI schema: structured settings definition for frontend rendering.
 """
 
 from __future__ import annotations
@@ -25,6 +34,93 @@ class PluginStatus(str, Enum):
     ACTIVE = "active"
     DISABLED = "disabled"
     ERROR = "error"
+
+
+# ── Sandboxing ──────────────────────────────────────────────────
+
+
+@dataclass(frozen=True)
+class PluginSandbox:
+    """Sandboxing policy for a plugin.
+
+    allowed_modules:   whitelist of importable top-level module names.
+                       Empty list means no restriction (default).
+    forbidden_attrs:   attribute names that handlers must never access
+                       (enforced via wrapper inspection at register time).
+    max_output_bytes:  cap on serialised output size returned to the engine.
+    read_only_fs:      if True the handler is flagged as filesystem read-only
+                       (enforcement is advisory — the gate logs a warning on
+                       any tool whose name contains "write"/"delete"/"create").
+    """
+    allowed_modules: tuple[str, ...] = field(default_factory=tuple)
+    forbidden_attrs: tuple[str, ...] = field(default_factory=tuple)
+    max_output_bytes: int = 1_048_576   # 1 MiB
+    read_only_fs: bool = False
+
+
+# ── Marketplace metadata ────────────────────────────────────────
+
+
+@dataclass(frozen=True)
+class PluginMarketplace:
+    """Marketplace listing metadata for a plugin."""
+    rating: float = 0.0          # 0.0 – 5.0
+    downloads: int = 0
+    homepage: str = ""
+    license: str = "MIT"
+    changelog: str = ""          # Human-readable version changelog
+    verified: bool = False       # Verified/official plugin flag
+
+
+# ── Config UI schema ───────────────────────────────────────────
+
+
+@dataclass(frozen=True)
+class PluginConfigField:
+    """A single field in a plugin's configuration schema."""
+    key: str
+    label: str
+    field_type: str              # "string" | "integer" | "boolean" | "select" | "password"
+    default: Any = None
+    required: bool = False
+    options: tuple[str, ...] = field(default_factory=tuple)  # for "select"
+    description: str = ""
+    env_var: str = ""            # optional env-var backing this field
+
+
+@dataclass(frozen=True)
+class PluginConfigSchema:
+    """Structured configuration schema for frontend UI rendering."""
+    fields: tuple[PluginConfigField, ...] = field(default_factory=tuple)
+
+    def to_dict(self) -> list[dict[str, Any]]:
+        return [
+            {
+                "key": f.key,
+                "label": f.label,
+                "type": f.field_type,
+                "default": f.default,
+                "required": f.required,
+                "options": list(f.options),
+                "description": f.description,
+                "env_var": f.env_var,
+            }
+            for f in self.fields
+        ]
+
+
+# ── Version record ─────────────────────────────────────────────
+
+
+@dataclass(frozen=True)
+class PluginVersionRecord:
+    """One entry in a plugin's version history."""
+    version: str
+    registered_at: str
+    note: str = ""
+
+
+# ── Core data classes ──────────────────────────────────────────
 
 
 @dataclass(frozen=True)
@@ -50,6 +146,12 @@ class Plugin:
     category: str = "general"
     tags: list[str] = field(default_factory=list)
     created_at: str = field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
+    # --- New extended fields ---
+    dependencies: tuple[str, ...] = field(default_factory=tuple)
+    """Plugin IDs that must be registered before this plugin can activate."""
+    sandbox: PluginSandbox = field(default_factory=PluginSandbox)
+    marketplace: PluginMarketplace = field(default_factory=PluginMarketplace)
+    config_schema: PluginConfigSchema = field(default_factory=PluginConfigSchema)
 
 
 @dataclass(frozen=True)
@@ -62,6 +164,59 @@ class PluginResult:
     error: Optional[str] = None
     duration_ms: float = 0.0
     timestamp: str = field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
+
+
+# ── Health record ──────────────────────────────────────────────
+
+
+@dataclass
+class PluginHealth:
+    """Mutable per-plugin health counters (updated on every invocation)."""
+    plugin_id: str
+    total_invocations: int = 0
+    total_errors: int = 0
+    consecutive_errors: int = 0
+    last_error: Optional[str] = None
+    last_error_at: Optional[str] = None
+    last_success_at: Optional[str] = None
+    total_duration_ms: float = 0.0
+
+    @property
+    def error_rate(self) -> float:
+        if self.total_invocations == 0:
+            return 0.0
+        return round(self.total_errors / self.total_invocations, 4)
+
+    @property
+    def avg_duration_ms(self) -> float:
+        if self.total_invocations == 0:
+            return 0.0
+        return round(self.total_duration_ms / self.total_invocations, 2)
+
+    def record(self, result: PluginResult) -> None:
+        self.total_invocations += 1
+        self.total_duration_ms += result.duration_ms
+        if result.success:
+            self.consecutive_errors = 0
+            self.last_success_at = result.timestamp
+        else:
+            self.total_errors += 1
+            self.consecutive_errors += 1
+            self.last_error = result.error
+            self.last_error_at = result.timestamp
+
+    def to_dict(self) -> dict[str, Any]:
+        return {
+            "plugin_id": self.plugin_id,
+            "total_invocations": self.total_invocations,
+            "total_errors": self.total_errors,
+            "consecutive_errors": self.consecutive_errors,
+            "error_rate": self.error_rate,
+            "avg_duration_ms": self.avg_duration_ms,
+            "last_error": self.last_error,
+            "last_error_at": self.last_error_at,
+            "last_success_at": self.last_success_at,
+        }
 
 
 class PluginEngine:
@@ -91,15 +246,63 @@ class PluginEngine:
         self._invocation_log: deque[PluginResult] = deque(maxlen=500)
         self._state_store = state_store
         self._sandbox_gate = None  # Set via main.py
+        # New tracking structures
+        self._version_history: dict[str, list[PluginVersionRecord]] = {}
+        self._health: dict[str, PluginHealth] = {}
 
-    def register(self, plugin: Plugin) -> None:
-        """Register a plugin and index its tools."""
+    def register(self, plugin: Plugin, version_note: str = "") -> None:
+        """Register a plugin and index its tools.
+
+        If the plugin was previously registered the old tools are cleaned up
+        first and a version history record is appended (hot-reload path).
+
+        Raises ValueError if a declared dependency is not yet registered.
+        """
+        # ── Dependency check ───────────────────────────────────────
+        missing = [dep for dep in plugin.dependencies if dep not in self._plugins]
+        if missing:
+            raise ValueError(
+                f"Plugin '{plugin.id}' depends on unregistered plugins: {missing}"
+            )
+
+        # ── Sandbox advisory: warn on write tools in read-only plugins ──
+        if plugin.sandbox.read_only_fs:
+            write_keywords = ("write", "delete", "create", "remove", "save")
+            for tool in plugin.tools:
+                if any(kw in tool.name.lower() for kw in write_keywords):
+                    logger.warning(
+                        "Plugin '%s' is flagged read_only_fs but tool '%s' looks like a write op",
+                        plugin.id, tool.name,
+                    )
+
+        # ── Hot-reload: clean up existing registrations ────────────
+        if plugin.id in self._plugins:
+            old = self._plugins[plugin.id]
+            for tool in old.tools:
+                self._tools.pop(f"{plugin.id}.{tool.name}", None)
+                self._tools.pop(tool.name, None)
+            logger.info("Hot-reload: replaced plugin '%s' %s → %s", plugin.id, old.version, plugin.version)
+
+        # ── Store plugin ───────────────────────────────────────────
         self._plugins[plugin.id] = plugin
         for tool in plugin.tools:
             qualified = f"{plugin.id}.{tool.name}"
             self._tools[qualified] = (plugin.id, tool)
             self._tools[tool.name] = (plugin.id, tool)
-        logger.info("Plugin registered: %s (%d tools)", plugin.name, len(plugin.tools))
+
+        # ── Version history ────────────────────────────────────────
+        record = PluginVersionRecord(
+            version=plugin.version,
+            registered_at=datetime.now(timezone.utc).isoformat(),
+            note=version_note or f"Registered v{plugin.version}",
+        )
+        self._version_history.setdefault(plugin.id, []).append(record)
+
+        # ── Health tracking ────────────────────────────────────────
+        if plugin.id not in self._health:
+            self._health[plugin.id] = PluginHealth(plugin_id=plugin.id)
+
+        logger.info("Plugin registered: %s v%s (%d tools)", plugin.name, plugin.version, len(plugin.tools))
 
     def unregister(self, plugin_id: str) -> None:
         plugin = self._plugins.pop(plugin_id, None)

@@ -818,13 +818,58 @@ class ProactiveEngine:
             )[:5],
         }
 
+    # ── Resource monitor ─────────────────────────────────────────
+
+    async def _resource_monitor(self) -> None:
+        """Periodically check system CPU/memory and set _high_load flag.
+
+        When high load is detected, low-priority actions defer their
+        next run to avoid competing with critical operations.
+        Runs every 30 s — very lightweight.
+        """
+        while self._running:
+            try:
+                cpu_pct, mem_pct = _get_system_load()
+                was_high = self._high_load
+                self._high_load = (
+                    cpu_pct >= _THROTTLE_CPU_PCT or mem_pct >= _THROTTLE_MEM_PCT
+                )
+                if self._high_load and not was_high:
+                    logger.warning(
+                        "Proactive engine: HIGH LOAD detected (cpu=%.1f%% mem=%.1f%%) — "
+                        "throttling low-priority behaviors",
+                        cpu_pct, mem_pct,
+                    )
+                elif not self._high_load and was_high:
+                    logger.info("Proactive engine: load normalized — throttle lifted")
+            except Exception as exc:
+                logger.debug("Resource monitor error (non-fatal): %s", exc)
+            await asyncio.sleep(30)
+
     # ── Loop runner ───────────────────────────────────────────────
 
+    def _dependencies_met(self, action: ProactiveAction) -> bool:
+        """Return True if all depends_on actions have run successfully at least once."""
+        for dep_name in action.depends_on:
+            if dep_name not in self._completed_actions:
+                return False
+        return True
+
     async def _run_loop(self, action: ProactiveAction) -> None:
-        """Run a proactive action on its interval."""
+        """Run a proactive action on its interval.
+
+        Enhanced behavior (v1.1):
+        - Priority-aware stagger: critical actions start sooner
+        - Resource throttling: low-priority actions defer when system is under load
+        - Dependency checking: skips run if depends_on actions haven't completed yet
+        - Adaptive interval: uses effective_interval (base × backoff_multiplier)
+        """
         action_name = action.name
-        # Stagger start over 5 minutes to avoid thundering herd on Ollama
-        await asyncio.sleep(abs(hash(action_name)) % 300 + 30)
+        # Stagger start over 5 minutes to avoid thundering herd on Ollama.
+        # Higher-priority actions get shorter stagger offsets so they stabilise faster.
+        priority_factor = max(0, PRIORITY_LOW - action.priority)  # 3 for critical, 0 for low
+        max_stagger = max(30, 300 - priority_factor * 60)
+        await asyncio.sleep(abs(hash(action_name)) % max_stagger + 10)
 
         while self._running:
             # Re-fetch the current action object under the lock (enable/disable replaces it)
@@ -834,6 +879,31 @@ class ProactiveEngine:
                 break
             if not current_action.enabled:
                 break
+
+            # ── Resource throttling ──────────────────────────────
+            # Low-priority (PRIORITY_LOW) actions defer a full interval when system is busy
+            if self._high_load and current_action.priority >= PRIORITY_LOW:
+                logger.debug(
+                    "Proactive '%s' deferred (high load, priority=%d)",
+                    action_name, current_action.priority,
+                )
+                await asyncio.sleep(current_action.effective_interval)
+                continue
+
+            # ── Dependency check ─────────────────────────────────
+            if not self._dependencies_met(current_action):
+                missing = [
+                    d for d in current_action.depends_on
+                    if d not in self._completed_actions
+                ]
+                logger.debug(
+                    "Proactive '%s' waiting for dependencies: %s",
+                    action_name, missing,
+                )
+                # Poll every 60 s rather than the full interval
+                await asyncio.sleep(min(60, current_action.effective_interval))
+                continue
+
             # Wait if user chat is in progress — user gets LLM priority
             await self._chat_active.wait()
             try:
@@ -842,8 +912,10 @@ class ProactiveEngine:
                     await self._execute_action(current_action)
             except Exception as exc:
                 current_action.error_count += 1
+                current_action.record_failure()
                 logger.error("Proactive action '%s' failed: %s", action_name, exc)
-            await asyncio.sleep(current_action.interval_seconds)
+            # Use effective_interval which includes adaptive backoff
+            await asyncio.sleep(current_action.effective_interval)
 
     # Actions that are purely internal — always run, never gated
     _INTERNAL_ACTIONS: frozenset[str] = frozenset({
@@ -888,11 +960,18 @@ class ProactiveEngine:
                 return "rejected by approval chain"
 
         logger.info("Proactive: running '%s'", action.name)
+        _start_ms = time.monotonic() * 1000
         try:
             result = await action.handler()
+            _elapsed_ms = time.monotonic() * 1000 - _start_ms
             action.run_count += 1
             action.last_run = datetime.now(timezone.utc).isoformat()
             action.last_result = str(result)[:500] if result else "completed"
+
+            # Update performance metrics and adaptive scheduling
+            action.record_success(_elapsed_ms, action.last_result)
+            # Mark as completed for dependency tracking
+            self._completed_actions.add(action.name)
 
             # Publish to bus
             if self._bus and result:
@@ -974,6 +1053,7 @@ class ProactiveEngine:
             return action.last_result
         except Exception as exc:
             action.error_count += 1
+            action.record_failure()
             # Record failed outcome for closed-loop learning
             if hasattr(self, '_outcome_registry') and self._outcome_registry:
                 try:
