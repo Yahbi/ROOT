@@ -488,6 +488,25 @@ CORE_KNOWLEDGE: list[tuple[str, MemoryType, list[str], str]] = [
     ),
 ]
 
+# ── Extended knowledge corpora (500+ entries across all domains) ──
+try:
+    from backend.core.knowledge_corpus_ai import KNOWLEDGE_AI_TRADING
+    CORE_KNOWLEDGE.extend(KNOWLEDGE_AI_TRADING)
+except ImportError:
+    pass
+
+try:
+    from backend.core.knowledge_corpus_engineering import KNOWLEDGE_ENGINEERING
+    CORE_KNOWLEDGE.extend(KNOWLEDGE_ENGINEERING)
+except ImportError:
+    pass
+
+try:
+    from backend.core.knowledge_corpus_science import KNOWLEDGE_SCIENCE
+    CORE_KNOWLEDGE.extend(KNOWLEDGE_SCIENCE)
+except ImportError:
+    pass
+
 
 def bootstrap_memory(memory: MemoryEngine) -> int:
     """Seed the memory database with all AI folder knowledge. Returns count of new entries."""
