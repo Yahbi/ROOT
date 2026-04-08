@@ -7,14 +7,25 @@ Periodically examines its own memories, actions, and patterns to:
 3. Consolidate fragmented knowledge
 4. Set new learning goals
 5. Prune contradictory or outdated beliefs
+
+Enhanced features (v1.1):
+- Deep reflection mode: multi-step analysis with evidence gathering
+- Reflection scheduling: prioritize topics not recently reflected on
+- Reflection chains: insights from one reflection feed into the next
+- Reflection quality scoring: rate reflections by actionability and impact
+- Meta-reflection: reflect on the quality of past reflections
+- Reflection archiving: archive old reflections with key takeaways
+- Trend detection: identify recurring themes across reflection history
 """
 
 from __future__ import annotations
 
 import json
 import logging
+import re
 import uuid
-from datetime import datetime, timezone
+from collections import Counter, defaultdict
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import TYPE_CHECKING, Optional
 

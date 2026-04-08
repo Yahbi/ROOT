@@ -1555,9 +1555,12 @@ class HedgeFundEngine:
     # ── Position Monitoring ─────────────────────────────────────
 
     async def monitor_positions(self) -> dict[str, int]:
-        """Check all open positions for stop-loss / take-profit hits."""
+        """Check all open positions for stop-loss / take-profit / trailing-stop hits."""
         trades = self.conn.execute("SELECT * FROM trades WHERE status = 'open'").fetchall()
-        summary = {"checked": 0, "stopped_out": 0, "take_profit_hit": 0, "still_open": 0}
+        summary = {
+            "checked": 0, "stopped_out": 0, "take_profit_hit": 0,
+            "trailing_stopped": 0, "still_open": 0,
+        }
         if not trades:
             return summary
 
@@ -1579,11 +1582,25 @@ class HedgeFundEngine:
                 summary["still_open"] += 1
                 continue
 
-            entry = trade["entry_price"]
+            entry = float(trade["entry_price"])
             direction = trade["direction"]
             pnl = (current_price - entry) if direction == "long" else (entry - current_price)
             pnl_pct = (pnl / entry * 100) if entry > 0 else 0.0
             self._update_trade_price(trade["id"], current_price, pnl * trade["quantity"], pnl_pct)
+
+            # Update trailing stop first — may trigger exit
+            trailing_result = self.update_trailing_stops(trade["id"], current_price)
+            if trailing_result == "stopped_out":
+                self.record_trade_outcome(trade["id"], current_price)
+                await self.write_trade_journal(
+                    trade["id"], current_price,
+                    exit_reason="Trailing stop triggered",
+                    market_regime="trending",
+                    tags=["trailing_stop"],
+                )
+                logger.info("Trailing stop triggered: %s @ %.2f", trade["symbol"], current_price)
+                summary["trailing_stopped"] += 1
+                continue
 
             stop = trade["stop_loss"]
             tp = trade["take_profit"]
@@ -1594,10 +1611,20 @@ class HedgeFundEngine:
 
             if hit_stop:
                 self.record_trade_outcome(trade["id"], current_price)
+                await self.write_trade_journal(
+                    trade["id"], current_price,
+                    exit_reason="Fixed stop-loss triggered",
+                    tags=["stop_loss"],
+                )
                 logger.info("Position stopped out: %s @ %.2f", trade["symbol"], current_price)
                 summary["stopped_out"] += 1
             elif hit_tp:
                 self.record_trade_outcome(trade["id"], current_price)
+                await self.write_trade_journal(
+                    trade["id"], current_price,
+                    exit_reason="Take-profit target reached",
+                    tags=["take_profit"],
+                )
                 logger.info("Take profit hit: %s @ %.2f", trade["symbol"], current_price)
                 summary["take_profit_hit"] += 1
             else:
@@ -1616,7 +1643,8 @@ class HedgeFundEngine:
         """Return formatted summary of all open positions with current P&L."""
         rows = self.conn.execute(
             "SELECT id, symbol, direction, quantity, entry_price, current_price, "
-            "pnl, pnl_pct, stop_loss, take_profit, opened_at "
+            "pnl, pnl_pct, stop_loss, take_profit, trailing_stop, sector, "
+            "atr_at_entry, entry_reason, opened_at "
             "FROM trades WHERE status = 'open' ORDER BY opened_at DESC"
         ).fetchall()
         return [

@@ -5,12 +5,22 @@ Levels:
 - CRITICAL / HIGH: send immediately
 - MEDIUM: batch into digest (30 min)
 - LOW: log only (no push)
+
+Features:
+- Notification batching: group multiple notifications within a configurable time window
+- Notification templates: reusable templates with variable substitution
+- Notification scheduling: quiet hours support (defer during configured window)
+- Notification channels: email, webhook, SMS interface stubs + per-channel routing
+- Priority escalation: unacknowledged HIGH/CRITICAL alerts re-sent at louder level
+- History with search: search by keyword, level, source, and date range
+- Per-type preferences: route notification types to specific channels
 """
 
 from __future__ import annotations
 
 import asyncio
 import logging
+import re
 import smtplib
 import uuid
 from collections import deque
@@ -22,19 +32,104 @@ from typing import Any, Callable, Optional
 
 logger = logging.getLogger("root.notifications")
 
+# ── Constants ────────────────────────────────────────────────────────────────
+
+LEVELS = ("low", "medium", "high", "critical")
+LEVEL_ORDER = {level: i for i, level in enumerate(LEVELS)}
+
+# Built-in templates: name -> (title_template, body_template)
+_BUILTIN_TEMPLATES: dict[str, tuple[str, str]] = {
+    "trade_executed": (
+        "Trade Executed: {symbol}",
+        "Action: {action}\nQty: {qty} @ ${price}\nPortfolio impact: {impact}",
+    ),
+    "trade_failed": (
+        "Trade Failed: {symbol}",
+        "Reason: {reason}\nAttempted: {action} {qty} shares",
+    ),
+    "system_health": (
+        "System Health: {status}",
+        "Component: {component}\nDetails: {details}",
+    ),
+    "goal_achieved": (
+        "Goal Achieved: {goal_name}",
+        "Completed in {duration}\nOutcome: {outcome}",
+    ),
+    "goal_stalled": (
+        "Goal Stalled: {goal_name}",
+        "Last progress: {last_progress}\nSuggested action: {action}",
+    ),
+    "revenue_update": (
+        "Revenue Update: {stream}",
+        "Amount: ${amount}\nTotal this month: ${monthly_total}\nTarget: ${target}",
+    ),
+    "approval_required": (
+        "Approval Required: {action}",
+        "Source: {source}\nReason: {reason}\nRisk: {risk}",
+    ),
+    "experiment_result": (
+        "Experiment {status}: {name}",
+        "Hypothesis: {hypothesis}\nResult: {result}\nAction: {next_action}",
+    ),
+    "alert_generic": (
+        "Alert: {title}",
+        "{message}",
+    ),
+    "digest_summary": (
+        "ROOT Digest ({count} items)",
+        "{items}",
+    ),
+}
+
+
+# ── Dataclasses ──────────────────────────────────────────────────────────────
+
 
 @dataclass
 class Notification:
-    """Notification record with read tracking."""
+    """Notification record with read tracking and escalation state."""
     title: str
     body: str
     level: str  # "critical", "high", "medium", "low"
     source: str = "root"
+    notification_type: str = "generic"  # Used for per-type channel routing
     sent: bool = False
     channel: str = ""
     read: bool = False
+    acknowledged: bool = False  # Explicit ack (for escalation)
+    escalation_count: int = 0   # How many times escalated
     id: str = field(default_factory=lambda: uuid.uuid4().hex[:12])
     created_at: str = field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
+
+
+@dataclass
+class NotificationTemplate:
+    """Reusable notification template with variable placeholders."""
+    name: str
+    title_template: str
+    body_template: str
+    default_level: str = "high"
+    default_type: str = "generic"
+
+    def render(self, variables: dict[str, Any]) -> tuple[str, str]:
+        """Render title and body with variable substitution."""
+        title = self.title_template.format_map(_SafeFormatMap(variables))
+        body = self.body_template.format_map(_SafeFormatMap(variables))
+        return title, body
+
+
+class _SafeFormatMap(dict):
+    """dict subclass that returns '{key}' for missing keys instead of raising KeyError."""
+    def __missing__(self, key: str) -> str:
+        return f"{{{key}}}"
+
+
+@dataclass
+class ChannelPreference:
+    """Per-notification-type channel routing preference."""
+    notification_type: str
+    channels: list[str]  # e.g. ["telegram"], ["discord"], ["telegram", "email"]
+    min_level: str = "low"  # Minimum level to apply this preference
 
 
 class NotificationEngine:
