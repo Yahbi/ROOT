@@ -1,0 +1,152 @@
+[
+  {
+    "content": "Cap rate (capitalization rate) is calculated as Net Operating Income divided by purchase price. Typical cap rates range from 4-8% depending on market and property class, with Class A properties in gateway cities at 4-5% and Class C properties in secondary markets at 7-8%. A higher cap rate implies higher risk and higher potential return.",
+    "type": "fact",
+    "tags": ["real_estate", "valuation", "cap_rate"],
+    "source": "real_estate_knowledge"
+  },
+  {
+    "content": "Cash-on-cash return measures annual pre-tax cash flow divided by total cash invested (down payment + closing costs + rehab). A good cash-on-cash return is 8-12% for residential rentals. This metric is more useful than cap rate for leveraged investments because it accounts for financing costs.",
+    "type": "fact",
+    "tags": ["real_estate", "valuation", "cash_flow"],
+    "source": "real_estate_knowledge"
+  },
+  {
+    "content": "Gross Rent Multiplier (GRM) equals purchase price divided by annual gross rent. A GRM of 8-12 is generally considered favorable for residential investment properties. GRM is a quick screening tool but does not account for operating expenses, vacancy, or capital expenditures.",
+    "type": "fact",
+    "tags": ["real_estate", "valuation", "grm"],
+    "source": "real_estate_knowledge"
+  },
+  {
+    "content": "The 1% rule states that monthly rent should be at least 1% of the purchase price to achieve positive cash flow. A property purchased for $200,000 should rent for at least $2,000/month. This is a rough screening heuristic and does not replace full underwriting with actual expense ratios.",
+    "type": "skill",
+    "tags": ["real_estate", "screening", "rental"],
+    "source": "real_estate_knowledge"
+  },
+  {
+    "content": "Debt Service Coverage Ratio (DSCR) is calculated as NOI divided by annual debt service (principal + interest). Commercial lenders typically require DSCR > 1.25, meaning NOI exceeds debt payments by 25%. DSCR below 1.0 means the property cannot cover its mortgage from operating income alone.",
+    "type": "fact",
+    "tags": ["real_estate", "financing", "dscr", "commercial"],
+    "source": "real_estate_knowledge"
+  },
+  {
+    "content": "Pro forma analysis projects future property performance using assumptions about rent growth (typically 2-3% annually), vacancy rate (5-10% for residential, 10-15% for commercial), operating expense ratio (35-50% of gross income), and capital expenditure reserves (5-10% of gross income). Always stress-test with pessimistic assumptions.",
+    "type": "skill",
+    "tags": ["real_estate", "analysis", "pro_forma"],
+    "source": "real_estate_knowledge"
+  },
+  {
+    "content": "Comparable analysis (comps) uses price per square foot adjusted for condition, location, age, and amenities to estimate property value. Adjustments typically range from 1-5% per factor. Use at least 3-5 comps sold within the last 6 months and within 1 mile radius for accuracy.",
+    "type": "skill",
+    "tags": ["real_estate", "valuation", "comps"],
+    "source": "real_estate_knowledge"
+  },
+  {
+    "content": "Rent comps determine achievable rental rates by analyzing comparable units within a 1-mile radius. Key adjustment factors include unit size (price per sqft), number of bedrooms/bathrooms, condition/finishes, amenities (in-unit laundry, parking, AC), and lease terms. Rentometer, Zillow, and Craigslist are common sources.",
+    "type": "skill",
+    "tags": ["real_estate", "rental", "market_analysis"],
+    "source": "real_estate_knowledge"
+  },
+  {
+    "content": "Real estate market cycles have four phases: Recovery (high vacancy, no new construction, flat rents), Expansion (decreasing vacancy, rising rents, new construction begins), Hypersupply (overbuilding, rising vacancy, rent growth slowing), and Recession (high vacancy, falling rents, negative absorption). Full cycles typically last 10-18 years.",
+    "type": "fact",
+    "tags": ["real_estate", "market_cycles", "macro"],
+    "source": "real_estate_knowledge"
+  },
+  {
+    "content": "The BRRRR strategy stands for Buy, Rehab, Rent, Refinance, Repeat. The investor purchases a distressed property below market value (typically 70-75% of ARV), rehabilitates it, rents it out, then does a cash-out refinance at the new appraised value (typically 75% LTV) to recover most or all of the initial investment for the next deal.",
+    "type": "skill",
+    "tags": ["real_estate", "strategy", "brrrr", "value_add"],
+    "source": "real_estate_knowledge"
+  },
+  {
+    "content": "A 1031 exchange (IRS Section 1031) allows investors to defer capital gains taxes by reinvesting proceeds from a sold property into a like-kind replacement property. The investor has 45 days to identify up to 3 replacement properties and 180 days to close. A qualified intermediary must hold the funds; the investor cannot touch the proceeds.",
+    "type": "fact",
+    "tags": ["real_estate", "tax", "1031_exchange"],
+    "source": "real_estate_knowledge"
+  },
+  {
+    "content": "Real estate syndication uses a GP/LP structure where the General Partner (GP/sponsor) manages the deal and Limited Partners (LPs) provide capital. Typical structure includes a 7-8% preferred return to LPs before any profit split, then a 70/30 or 80/20 split (LP/GP) above the preferred return. The GP promote (carried interest) is typically 20-30%.",
+    "type": "fact",
+    "tags": ["real_estate", "syndication", "partnership"],
+    "source": "real_estate_knowledge"
+  },
+  {
+    "content": "Net Operating Income (NOI) equals gross rental income minus vacancy loss minus operating expenses. Operating expenses include property taxes, insurance, maintenance, management fees (8-10% of gross rent), and reserves but explicitly exclude debt service and income taxes. NOI is the foundation metric for commercial property valuation.",
+    "type": "fact",
+    "tags": ["real_estate", "financials", "noi"],
+    "source": "real_estate_knowledge"
+  },
+  {
+    "content": "The 50% rule estimates that operating expenses (excluding mortgage) will consume approximately 50% of gross rental income over time. This includes taxes, insurance, vacancy, repairs, capital expenditures, and management. Use this as a quick screening tool: if rent is $2,000/month, expect ~$1,000/month in expenses before debt service.",
+    "type": "skill",
+    "tags": ["real_estate", "screening", "expenses"],
+    "source": "real_estate_knowledge"
+  },
+  {
+    "content": "After Repair Value (ARV) is the estimated market value of a property after renovations are complete. The 70% rule for flipping states: Maximum purchase price = (ARV x 0.70) - Repair costs. For a property with $300,000 ARV and $50,000 in repairs, the maximum purchase price should be $160,000.",
+    "type": "skill",
+    "tags": ["real_estate", "flipping", "arv"],
+    "source": "real_estate_knowledge"
+  },
+  {
+    "content": "Depreciation allows real estate investors to deduct the cost of the building (not land) over 27.5 years for residential or 39 years for commercial property. A $275,000 building generates $10,000/year in depreciation deductions. Cost segregation studies can accelerate depreciation by reclassifying components to 5, 7, or 15-year schedules.",
+    "type": "fact",
+    "tags": ["real_estate", "tax", "depreciation"],
+    "source": "real_estate_knowledge"
+  },
+  {
+    "content": "Loan-to-Value (LTV) ratio is the mortgage amount divided by the appraised property value. Conventional investment property loans typically require 20-25% down (75-80% LTV). Commercial loans often max at 70-75% LTV. Lower LTV means lower risk for the lender and typically results in better interest rates.",
+    "type": "fact",
+    "tags": ["real_estate", "financing", "ltv"],
+    "source": "real_estate_knowledge"
+  },
+  {
+    "content": "Internal Rate of Return (IRR) measures the annualized return on a real estate investment accounting for the timing of all cash flows. A good IRR target for value-add multifamily is 15-20%, for core/core-plus it is 8-12%. IRR can be manipulated by shortening hold periods and using higher leverage, so always evaluate alongside equity multiple.",
+    "type": "fact",
+    "tags": ["real_estate", "valuation", "irr"],
+    "source": "real_estate_knowledge"
+  },
+  {
+    "content": "Equity multiple is the total cash distributions divided by total equity invested. An equity multiple of 2.0x means the investor doubled their money. For a 5-year hold, a 2.0x equity multiple corresponds to roughly 15% IRR. Always evaluate equity multiple alongside IRR since IRR alone can be gamed with short hold periods.",
+    "type": "fact",
+    "tags": ["real_estate", "valuation", "equity_multiple"],
+    "source": "real_estate_knowledge"
+  },
+  {
+    "content": "Value-add real estate strategy involves purchasing properties below their potential value, making improvements (renovations, better management, amenity additions), increasing rents, and selling or refinancing at a higher valuation. Typical value-add targets include 15-25% rent increases through unit renovations costing $5,000-$15,000 per unit in multifamily.",
+    "type": "skill",
+    "tags": ["real_estate", "strategy", "value_add"],
+    "source": "real_estate_knowledge"
+  },
+  {
+    "content": "Cap rate compression occurs when cap rates decrease over time, increasing property values even without NOI growth. If NOI is $100,000 and cap rates compress from 7% to 6%, property value increases from $1.43M to $1.67M, a 17% gain. Cap rate compression typically occurs in improving markets with strong demand and limited supply.",
+    "type": "learning",
+    "tags": ["real_estate", "valuation", "market"],
+    "source": "real_estate_knowledge"
+  },
+  {
+    "content": "Real estate due diligence typically takes 30-60 days and includes property inspection, environmental assessment (Phase I ESA), title search, survey, rent roll verification, expense audit, lease review, zoning confirmation, and insurance quotes. Skipping any step can result in costly surprises post-closing.",
+    "type": "skill",
+    "tags": ["real_estate", "due_diligence", "process"],
+    "source": "real_estate_knowledge"
+  },
+  {
+    "content": "Vacancy rate measures the percentage of units unoccupied over a period. Physical vacancy is actual empty units; economic vacancy includes concessions, bad debt, and loss-to-lease. National average apartment vacancy is 5-7%. Markets below 4% vacancy typically see strong rent growth; above 8% indicates oversupply.",
+    "type": "fact",
+    "tags": ["real_estate", "vacancy", "market_analysis"],
+    "source": "real_estate_knowledge"
+  },
+  {
+    "content": "House hacking involves purchasing a multi-unit property (duplex, triplex, fourplex), living in one unit, and renting out the others. FHA loans allow as little as 3.5% down on 1-4 unit properties if owner-occupied. Rental income from other units can cover 75-100% of the mortgage, dramatically reducing housing costs while building equity.",
+    "type": "skill",
+    "tags": ["real_estate", "strategy", "house_hacking"],
+    "source": "real_estate_knowledge"
+  },
+  {
+    "content": "Real estate investment trusts (REITs) must distribute at least 90% of taxable income as dividends and derive 75% of income from real estate. Publicly traded REITs offer liquidity but trade at premiums/discounts to NAV. Private REITs are illiquid but may offer higher yields (6-10%). REIT dividends are taxed as ordinary income, not at the qualified dividend rate.",
+    "type": "fact",
+    "tags": ["real_estate", "reit", "investment"],
+    "source": "real_estate_knowledge"
+  }
+]

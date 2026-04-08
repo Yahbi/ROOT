@@ -1,0 +1,152 @@
+[
+  {
+    "content": "The Augmented Dickey-Fuller (ADF) test has null hypothesis H0: unit root (non-stationary). If p-value < 0.05, reject H0 and conclude stationarity. The test regression is delta_y_t = alpha + beta*t + gamma*y_{t-1} + sum(delta_i*delta_y_{t-i}) + epsilon_t.",
+    "type": "fact",
+    "tags": ["stationarity", "adf_test", "unit_root"],
+    "source": "data_science"
+  },
+  {
+    "content": "The KPSS test has null hypothesis H0: the series is stationary (opposite of ADF). Using both tests together resolves ambiguity: if ADF rejects and KPSS does not reject, the series is stationary; if both reject, the series is difference-stationary with a structural break.",
+    "type": "skill",
+    "tags": ["kpss", "stationarity", "hypothesis_testing"],
+    "source": "data_science"
+  },
+  {
+    "content": "Differencing removes trends: first difference d=1 removes linear trend, second difference d=2 removes quadratic trend or acceleration. Seasonal differencing at lag s removes seasonal patterns. Over-differencing introduces unnecessary MA terms and should be avoided.",
+    "type": "skill",
+    "tags": ["differencing", "trend_removal", "integration"],
+    "source": "data_science"
+  },
+  {
+    "content": "ARIMA(p,d,q) model selection uses AIC = -2*log(L) + 2*k and BIC = -2*log(L) + k*log(n). BIC penalizes complexity more and tends to select simpler models. The ACF (MA order q) and PACF (AR order p) plots guide initial parameter choices before AIC/BIC grid search.",
+    "type": "skill",
+    "tags": ["arima", "model_selection", "aic_bic"],
+    "source": "data_science"
+  },
+  {
+    "content": "SARIMA(p,d,q)(P,D,Q,s) extends ARIMA with seasonal components at period s. For monthly data with yearly seasonality, s=12. The seasonal AR(P) and MA(Q) terms capture patterns repeating every s periods. Total parameters to search: p*d*q*P*D*Q can be large, so auto_arima uses stepwise search.",
+    "type": "skill",
+    "tags": ["sarima", "seasonal", "auto_arima"],
+    "source": "data_science"
+  },
+  {
+    "content": "Facebook Prophet decomposes time series as y(t) = g(t) + s(t) + h(t) + epsilon, where g(t) is piecewise linear or logistic growth trend, s(t) is Fourier series seasonality, and h(t) is holiday effects. It handles missing data, outliers, and changepoints automatically.",
+    "type": "skill",
+    "tags": ["prophet", "decomposition", "changepoint"],
+    "source": "data_science"
+  },
+  {
+    "content": "Triple exponential smoothing (Holt-Winters) models level, trend, and seasonality with three smoothing parameters alpha, beta, gamma in [0,1]. Additive seasonality: y_t = L + T + S + e; multiplicative: y_t = (L + T) * S * e. Multiplicative is appropriate when seasonal amplitude grows with level.",
+    "type": "skill",
+    "tags": ["holt_winters", "exponential_smoothing", "seasonality"],
+    "source": "data_science"
+  },
+  {
+    "content": "GARCH(1,1) models time-varying volatility as sigma_t^2 = omega + alpha*epsilon_{t-1}^2 + beta*sigma_{t-1}^2, where alpha + beta < 1 for stationarity. Typical equity values: alpha ~ 0.05-0.10, beta ~ 0.85-0.95. The unconditional variance is omega / (1 - alpha - beta).",
+    "type": "skill",
+    "tags": ["garch", "volatility_modeling", "heteroskedasticity"],
+    "source": "data_science"
+  },
+  {
+    "content": "Regime switching models (Hamilton 1989) assume the time series alternates between K hidden states governed by a Markov chain. A 2-regime model for stock returns typically identifies bull (high mean, low volatility) and bear (low/negative mean, high volatility) regimes.",
+    "type": "fact",
+    "tags": ["regime_switching", "markov_switching", "hidden_states"],
+    "source": "data_science"
+  },
+  {
+    "content": "Engle-Granger cointegration tests if two non-stationary I(1) series share a long-run equilibrium. Step 1: regress Y on X, get residuals. Step 2: ADF test on residuals. If residuals are stationary, the series are cointegrated. Johansen test extends this to multivariate systems using eigenvalue decomposition.",
+    "type": "skill",
+    "tags": ["cointegration", "engle_granger", "johansen"],
+    "source": "data_science"
+  },
+  {
+    "content": "Granger causality tests whether past values of X improve prediction of Y beyond Y's own past. The F-test compares restricted (Y lags only) vs unrestricted (Y + X lags) models. Granger causality is predictive, not true causality; both series may be driven by an unobserved third variable.",
+    "type": "fact",
+    "tags": ["granger_causality", "predictive", "f_test"],
+    "source": "data_science"
+  },
+  {
+    "content": "Spectral analysis using FFT decomposes a time series into frequency components. The periodogram I(f) = |sum(x_t * exp(-2*pi*i*f*t))|^2 / n estimates the power spectral density. Peaks in the periodogram reveal dominant cycles; for financial data, look for weekly (5-day), monthly (21-day), and quarterly (63-day) cycles.",
+    "type": "skill",
+    "tags": ["spectral_analysis", "fft", "periodogram"],
+    "source": "data_science"
+  },
+  {
+    "content": "CUSUM (cumulative sum) change point detection tracks S_t = sum_{i=1}^{t}(x_i - mu_0). A change point is signaled when |S_t| exceeds threshold h. Bayesian online change point detection (Adams & MacKay 2007) computes the posterior over run lengths, adapting to multiple change points in real time.",
+    "type": "skill",
+    "tags": ["change_point", "cusum", "bayesian_online"],
+    "source": "data_science"
+  },
+  {
+    "content": "The Box-Jenkins methodology follows: (1) identify model order via ACF/PACF, (2) estimate parameters via MLE, (3) diagnostic checking via Ljung-Box test on residuals Q = n*(n+2)*sum(r_k^2/(n-k)) ~ chi-squared(m-p-q). If residuals are not white noise, revise the model.",
+    "type": "skill",
+    "tags": ["box_jenkins", "ljung_box", "diagnostics"],
+    "source": "data_science"
+  },
+  {
+    "content": "Vector Autoregression (VAR) models multiple time series jointly: Y_t = c + A_1*Y_{t-1} + ... + A_p*Y_{t-p} + e_t. VAR captures cross-variable dynamics and is used for impulse response analysis and forecast error variance decomposition across correlated series.",
+    "type": "skill",
+    "tags": ["var", "vector_autoregression", "impulse_response"],
+    "source": "data_science"
+  },
+  {
+    "content": "The Kalman filter provides optimal state estimation for linear Gaussian state-space models. Predict: x_{t|t-1} = F*x_{t-1|t-1}, P_{t|t-1} = F*P*F^T + Q. Update: K = P_{t|t-1}*H^T*(H*P*H^T + R)^(-1), x_{t|t} = x_{t|t-1} + K*(y_t - H*x_{t|t-1}). It handles missing data and time-varying parameters naturally.",
+    "type": "skill",
+    "tags": ["kalman_filter", "state_space", "optimal_estimation"],
+    "source": "data_science"
+  },
+  {
+    "content": "Wavelet decomposition separates a time series into time-frequency components at multiple scales. Unlike FFT which loses time information, wavelets (Daubechies, Morlet) preserve both time and frequency localization, making them ideal for detecting transient patterns in financial data.",
+    "type": "fact",
+    "tags": ["wavelet", "multiresolution", "time_frequency"],
+    "source": "data_science"
+  },
+  {
+    "content": "The Hurst exponent H characterizes long-range dependence in time series. H = 0.5 indicates random walk, H > 0.5 indicates trending (persistent) behavior, H < 0.5 indicates mean-reverting (anti-persistent) behavior. Estimation methods include R/S analysis and DFA (detrended fluctuation analysis).",
+    "type": "fact",
+    "tags": ["hurst_exponent", "long_memory", "mean_reversion"],
+    "source": "data_science"
+  },
+  {
+    "content": "ARCH effects can be detected using the Engle ARCH-LM test: regress squared residuals on their lags and test joint significance. If p-value < 0.05, heteroskedasticity is present and GARCH modeling is warranted. Most financial return series exhibit strong ARCH effects.",
+    "type": "skill",
+    "tags": ["arch_lm", "heteroskedasticity", "volatility_testing"],
+    "source": "data_science"
+  },
+  {
+    "content": "Exponential GARCH (EGARCH) models asymmetric volatility: log(sigma_t^2) = omega + alpha*(|z_{t-1}| - E|z|) + gamma*z_{t-1} + beta*log(sigma_{t-1}^2). The leverage parameter gamma < 0 captures the effect where negative returns increase volatility more than positive returns of the same magnitude.",
+    "type": "skill",
+    "tags": ["egarch", "asymmetric_volatility", "leverage_effect"],
+    "source": "data_science"
+  },
+  {
+    "content": "Cross-validation for time series must respect temporal ordering. Use expanding window (train on 1..t, test on t+1..t+h) or sliding window (train on t-w..t, test on t+1..t+h). Standard k-fold cross-validation is invalid because it leaks future information into training data.",
+    "type": "learning",
+    "tags": ["cross_validation", "temporal", "expanding_window"],
+    "source": "data_science"
+  },
+  {
+    "content": "The Diebold-Mariano test compares predictive accuracy of two forecasts. The test statistic DM = d_bar / sqrt(var(d)/n) where d_t = L(e1_t) - L(e2_t) is the loss differential. It tests H0: both forecasts have equal accuracy, and is robust to non-normal, non-zero mean, and serially correlated forecast errors.",
+    "type": "skill",
+    "tags": ["diebold_mariano", "forecast_comparison", "hypothesis_test"],
+    "source": "data_science"
+  },
+  {
+    "content": "Seasonal-Trend decomposition using LOESS (STL) separates a time series into trend, seasonal, and remainder components using locally weighted regression. STL is robust to outliers and allows the seasonal component to change over time, unlike classical decomposition.",
+    "type": "skill",
+    "tags": ["stl", "decomposition", "loess"],
+    "source": "data_science"
+  },
+  {
+    "content": "Multivariate GARCH models (DCC-GARCH) capture time-varying correlations between assets. The Dynamic Conditional Correlation model estimates individual GARCH volatilities first, then models the correlation matrix dynamics: Q_t = (1-a-b)*Q_bar + a*z_{t-1}*z_{t-1}^T + b*Q_{t-1}.",
+    "type": "skill",
+    "tags": ["dcc_garch", "dynamic_correlation", "multivariate"],
+    "source": "data_science"
+  },
+  {
+    "content": "Forecast combination (ensemble) often outperforms individual models. Simple averaging of ARIMA, Prophet, and ETS forecasts reduces variance without increasing bias. Optimal combination weights can be estimated via constrained regression on holdout predictions, but equal weights are surprisingly hard to beat.",
+    "type": "learning",
+    "tags": ["forecast_combination", "ensemble", "model_averaging"],
+    "source": "data_science"
+  }
+]

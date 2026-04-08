@@ -1,0 +1,152 @@
+[
+  {
+    "content": "Uniswap V4 introduces singleton contracts and hooks, consolidating all pools into one contract to reduce gas costs by ~99% for pool creation. Hooks are customizable smart contracts that execute at specific pool lifecycle points (beforeSwap, afterSwap, beforeAddLiquidity, etc.), enabling features like dynamic fees, TWAMM (time-weighted AMMs), and limit orders natively within the AMM.",
+    "type": "fact",
+    "tags": ["uniswap_v4", "hooks", "amm_evolution"],
+    "source": "crypto_knowledge"
+  },
+  {
+    "content": "Intent-based trading (UniswapX, 1inch Fusion, CoW Swap) replaces direct on-chain execution with signed off-chain intents. Users sign a message specifying desired outcome (e.g., 'swap 1 ETH for at least 3000 USDC'), and solvers compete to fill orders optimally across all liquidity sources. Dutch auction decay ensures execution: the price starts favorable to the user and deteriorates until a solver fills it.",
+    "type": "fact",
+    "tags": ["intents", "order_flow", "dex_evolution"],
+    "source": "crypto_knowledge"
+  },
+  {
+    "content": "ERC-4626 tokenized vault standard provides a uniform interface for yield-bearing tokens. deposit(assets) mints shares, redeem(shares) returns assets, and convertToAssets(shares) reports value. This composability means any ERC-4626 vault can plug into any protocol expecting the standard, enabling yield aggregators to integrate new strategies without custom adapters.",
+    "type": "fact",
+    "tags": ["erc4626", "vault_standard", "composability"],
+    "source": "crypto_knowledge"
+  },
+  {
+    "content": "Merkle Patricia Tries are Ethereum's core data structure for state storage. Each account's storage is a 256-bit key-value trie where the root hash commits to all stored values. SLOAD costs 2100 gas for cold access (first read in transaction) and 100 gas for warm access (subsequent reads). Storage layout optimization can save thousands of gas per transaction by minimizing cold SLOADs.",
+    "type": "fact",
+    "tags": ["ethereum_storage", "merkle_trie", "gas_costs"],
+    "source": "crypto_knowledge"
+  },
+  {
+    "content": "EIP-1559 introduced a base fee that adjusts dynamically: base_fee_next = base_fee * (1 + 0.125 * (gas_used - target) / target). When blocks are >50% full, base fee increases up to 12.5% per block; when <50% full, it decreases. The base fee is burned (deflationary), while the priority fee (tip) goes to validators. This creates a fee market with more predictable pricing.",
+    "type": "fact",
+    "tags": ["eip1559", "gas_pricing", "fee_market"],
+    "source": "crypto_knowledge"
+  },
+  {
+    "content": "Proto-danksharding (EIP-4844) introduces blob transactions carrying ~128KB of temporary data that expires after ~18 days. Blobs use a separate fee market with target of 3 blobs per block (384KB) and max 6 blobs (768KB). This reduced L2 transaction costs by 10-100x because rollups post data as blobs instead of calldata, while L1 doesn't need to execute or permanently store blob data.",
+    "type": "fact",
+    "tags": ["eip4844", "blobs", "l2_scaling"],
+    "source": "crypto_knowledge"
+  },
+  {
+    "content": "Verkle trees replace Merkle Patricia Tries in Ethereum's roadmap, using polynomial commitments (IPA or KZG) instead of hashes at each node. This reduces proof sizes from ~1KB per account (Merkle) to ~150 bytes (Verkle), enabling stateless clients that can verify state without storing the full trie. This is prerequisite for Ethereum's statelessness vision.",
+    "type": "fact",
+    "tags": ["verkle_trees", "statelessness", "ethereum_roadmap"],
+    "source": "crypto_knowledge"
+  },
+  {
+    "content": "Cross-domain MEV exploits price discrepancies across L1, L2s, and sidechains simultaneously. A searcher might observe a large swap on Arbitrum, frontrun it on Optimism where the same pool exists, and atomically bridge the profit back. Shared sequencers (Espresso, Astria) aim to coordinate ordering across multiple L2s to mitigate cross-domain MEV extraction.",
+    "type": "learning",
+    "tags": ["cross_domain_mev", "shared_sequencers", "l2_coordination"],
+    "source": "crypto_knowledge"
+  },
+  {
+    "content": "Proposer-Builder Separation (PBS) splits block construction into two roles: builders create optimal blocks (maximizing MEV extraction), and proposers (validators) select the highest-bid block via MEV-Boost auction. Over 90% of Ethereum blocks use MEV-Boost. This separates block building skill from staking capital, but creates centralization risk as 3-4 builders produce most blocks.",
+    "type": "fact",
+    "tags": ["pbs", "mev_boost", "block_building"],
+    "source": "crypto_knowledge"
+  },
+  {
+    "content": "Solidity's delegatecall executes another contract's code in the calling contract's storage context. This enables upgradeable proxy patterns (EIP-1967) where the proxy's storage holds state and delegatecalls to an implementation contract for logic. Storage collision is the primary risk: the proxy and implementation must use identical storage layouts or use unstructured storage at random slots.",
+    "type": "learning",
+    "tags": ["delegatecall", "proxy_pattern", "upgradeability"],
+    "source": "crypto_knowledge"
+  },
+  {
+    "content": "Reentrancy attacks exploit external calls that transfer control before state updates complete. The classic pattern: contract sends ETH via call{value:}(), recipient's receive() function calls back into the vulnerable function before balance is decremented. The checks-effects-interactions pattern and OpenZeppelin's ReentrancyGuard (uses a mutex uint256 toggled before/after) are standard defenses.",
+    "type": "learning",
+    "tags": ["reentrancy", "smart_contract_security", "checks_effects_interactions"],
+    "source": "crypto_knowledge"
+  },
+  {
+    "content": "ZK-SNARKs (Succinct Non-interactive Arguments of Knowledge) prove computation correctness without revealing inputs. A prover generates a proof (~200 bytes for Groth16) in O(n*log(n)) time, and a verifier checks it in O(1) constant time (~200K gas on Ethereum). The trusted setup ceremony is a drawback: if the toxic waste (secret randomness) is not destroyed, fake proofs become possible.",
+    "type": "fact",
+    "tags": ["zk_snarks", "groth16", "zero_knowledge"],
+    "source": "crypto_knowledge"
+  },
+  {
+    "content": "ZK-STARKs use hash-based cryptography instead of elliptic curves, making them quantum-resistant and requiring no trusted setup. Tradeoff: STARK proofs are larger (~45KB vs ~200 bytes for SNARKs) and verification costs more gas (~500K vs ~200K). StarkNet uses Cairo language to compile programs into AIR (Algebraic Intermediate Representation) for STARK proving.",
+    "type": "fact",
+    "tags": ["zk_starks", "quantum_resistant", "starknet"],
+    "source": "crypto_knowledge"
+  },
+  {
+    "content": "Sequencer decentralization is the key trust assumption in current L2 rollups. Single sequencers (Arbitrum, Optimism, Base) can censor transactions and extract MEV. Decentralization approaches include based rollups (L1 validators sequence L2 transactions), shared sequencing (multiple L2s share a decentralized sequencer set), and leader rotation among a permissioned sequencer committee.",
+    "type": "learning",
+    "tags": ["sequencer", "l2_decentralization", "censorship_resistance"],
+    "source": "crypto_knowledge"
+  },
+  {
+    "content": "Data availability sampling (DAS) in full danksharding allows nodes to verify data availability by downloading only small random samples. Using 2D Reed-Solomon erasure coding, a node downloading 50% of samples achieves 99.99%+ confidence that full data is available. This enables Ethereum to scale to 16MB+ blobs per block without requiring full nodes to download all data.",
+    "type": "fact",
+    "tags": ["data_availability", "danksharding", "erasure_coding"],
+    "source": "crypto_knowledge"
+  },
+  {
+    "content": "Pendle Finance tokenizes yield by splitting yield-bearing assets into Principal Tokens (PT, redeemable for underlying at maturity) and Yield Tokens (YT, claims all yield until maturity). This creates a fixed-rate market: buying PT at discount provides fixed yield (e.g., buy PT-stETH at 0.95 ETH, redeem for 1 ETH at maturity = 5.26% fixed). Pendle's AMM uses a modified logit curve optimized for time-decaying YT.",
+    "type": "fact",
+    "tags": ["pendle", "yield_tokenization", "fixed_rate"],
+    "source": "crypto_knowledge"
+  },
+  {
+    "content": "Morpho is a peer-to-peer lending optimizer sitting atop Aave/Compound. It matches lenders and borrowers directly when possible, giving both sides the midpoint rate (e.g., if Aave supply is 2% and borrow is 4%, Morpho matches at 3%). Unmatched positions fall through to the underlying pool. This improves capital efficiency without additional smart contract risk beyond the optimizer layer.",
+    "type": "fact",
+    "tags": ["morpho", "p2p_lending", "rate_optimization"],
+    "source": "crypto_knowledge"
+  },
+  {
+    "content": "Maximal extractable value in proof-of-stake follows the supply chain: searchers find MEV opportunities → builders construct optimal blocks → relays validate and forward blocks → proposers (validators) select the highest bid. Searcher bundles are submitted to builders via Flashbots' mev-share or private order flow. The builder with most exclusive order flow wins the most blocks.",
+    "type": "learning",
+    "tags": ["mev_supply_chain", "searchers", "builders"],
+    "source": "crypto_knowledge"
+  },
+  {
+    "content": "GLP/GM token models (GMX) make liquidity providers the counterparty to all leveraged trades on the platform. LPs earn 70% of all trading fees but absorb trader PnL: when traders profit, LP value decreases, and vice versa. Historically, leveraged traders lose money in aggregate (~70% of the time), making LP positions net profitable. GMX V2 introduced isolated GM pools per asset to contain risk.",
+    "type": "learning",
+    "tags": ["gmx", "perp_dex", "lp_counterparty"],
+    "source": "crypto_knowledge"
+  },
+  {
+    "content": "Airdrop farming has evolved from simple interaction-based criteria to Sybil-resistant mechanisms. LayerZero used self-reporting (users who reported Sybil wallets kept tokens, those caught lost everything). Eigen used linear vs quadratic allocation to penalize wallet splitting. Effective airdrop criteria now combine transaction count, unique contract interactions, time-weighted volume, and cross-chain activity.",
+    "type": "learning",
+    "tags": ["airdrops", "sybil_resistance", "token_distribution"],
+    "source": "crypto_knowledge"
+  },
+  {
+    "content": "Blob base fee follows the same EIP-1559 exponential mechanism but with a separate market: blob_base_fee = min_blob_base_fee * e^((excess_blob_gas) / blob_base_fee_update_fraction). With target 3 blobs and max 6 per block, excess blob gas accumulates when blocks carry >3 blobs. During L2 activity spikes, blob fees can spike 100x+ within minutes before settling.",
+    "type": "fact",
+    "tags": ["blob_fee_market", "eip4844", "l2_costs"],
+    "source": "crypto_knowledge"
+  },
+  {
+    "content": "Account abstraction wallets using ERC-4337 define validateUserOp() to implement arbitrary verification logic. This enables passkey authentication (WebAuthn P-256 curve verification on-chain via RIP-7212 precompile at 3450 gas), social recovery with time-delayed guardian changes, and session keys that limit which contracts/functions a dApp can call and for how long.",
+    "type": "skill",
+    "tags": ["erc4337", "smart_wallets", "passkeys"],
+    "source": "crypto_knowledge"
+  },
+  {
+    "content": "Optimistic rollup fraud proofs work by interactive bisection: if a state root is challenged, the proposer and challenger repeatedly bisect the disputed computation until they isolate a single instruction. The L1 contract then re-executes just that instruction to determine the honest party. This reduces L1 verification cost from re-executing the entire block to verifying one opcode.",
+    "type": "fact",
+    "tags": ["fraud_proofs", "bisection", "optimistic_rollups"],
+    "source": "crypto_knowledge"
+  },
+  {
+    "content": "Appchains (application-specific rollups) dedicate an entire L2 to a single protocol, providing guaranteed blockspace, custom gas tokens, and MEV internalization. Frameworks like OP Stack, Arbitrum Orbit, and Polygon CDK let protocols launch appchains with shared bridge security. The tradeoff is liquidity fragmentation: assets bridged to an appchain are isolated from the broader L2 ecosystem.",
+    "type": "fact",
+    "tags": ["appchains", "app_specific_rollups", "modular_blockchain"],
+    "source": "crypto_knowledge"
+  },
+  {
+    "content": "Chainlink CCIP (Cross-Chain Interoperability Protocol) provides a standardized messaging layer across blockchains with three layers of security: the committing DON observes source chain events, the Risk Management Network independently verifies, and the executing DON delivers on the destination. Rate limits and value caps provide defense-in-depth against bridge exploits, learning from the $2B+ lost in bridge hacks.",
+    "type": "fact",
+    "tags": ["ccip", "cross_chain", "oracle_bridge"],
+    "source": "crypto_knowledge"
+  }
+]
