@@ -93,7 +93,7 @@ class TestProposalCreation:
             title="t", description="d", file_path="backend/core/brain.py",
             inefficiency="i", proposed_change="c",
         )
-        all_props = swc.get_proposals()
+        all_props = swc.get_history()
         match = [p for p in all_props if p.id == prop.id]
         assert len(match) == 1
         assert match[0].file_path == "backend/core/brain.py"
@@ -187,7 +187,8 @@ class TestApprovalRejection:
         )
         swc.record_test_result(prop.id, test_passed=True, test_output="ok")
         assert swc.reject(prop.id) is True
-        rejected = swc.get_proposals(status="rejected")
+        history = swc.get_history()
+        rejected = [p for p in history if p.status == ProposalStatus.REJECTED]
         assert any(p.id == prop.id for p in rejected)
 
     def test_approve_nonexistent_returns_false(self, swc: SelfWritingCodeSystem):
@@ -250,7 +251,7 @@ class TestStatsAndQueries:
             inefficiency="i", proposed_change="c",
         )
         swc.record_test_result(p2.id, test_passed=False, test_output="fail")
-        proposed_only = swc.get_proposals(status="proposed")
+        proposed_only = swc.get_proposed()
         assert all(p.status == ProposalStatus.PROPOSED for p in proposed_only)
 
     def test_stats_includes_improvement_avg(self, swc: SelfWritingCodeSystem):

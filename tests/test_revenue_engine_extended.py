@@ -199,7 +199,7 @@ class TestRevenueQueries:
         stats = rev.stats()
         assert stats["total_products"] == 3
         assert "micro_saas" in stats["streams"]
-        assert stats["streams"]["micro_saas"] == 2
+        assert stats["streams"]["micro_saas"]["products"] == 2
         assert "targets" in stats
 
 

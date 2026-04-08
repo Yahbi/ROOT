@@ -522,7 +522,7 @@ function _highlightCode(code, lang) {
     }
 }
 
-function renderMarkdown(text) {
+function _renderMarkdownCore(text) {
     if (!text) return '';
 
     // Detect raw JSON responses — format as code block instead of raw text
@@ -767,7 +767,7 @@ async function _processMessage(msg, file) {
     }
 }
 
-function appendMsg(role, name, content, isThinking = false, agentId = null) {
+function _appendMsgCore(role, name, content, isThinking = false, agentId = null) {
     const container = document.getElementById('chat-scroll');
     const id = `msg-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`;
     const aid = agentId || name.toLowerCase().replace(/[^a-z]/g, '');
@@ -1301,7 +1301,7 @@ function autoResize(el) {
 // ── Conversation History ─────────────────────────────────────
 let _activeChatSession = null;
 
-async function loadConversationSessions() {
+async function _loadConvSessionsCore() {
     const container = document.getElementById('sidebar-conversations');
     if (!container) return;
 
@@ -2171,15 +2171,13 @@ function cancelReply() {
     if (indicator) indicator.style.display = 'none';
 }
 
-// Patch appendMsg to include reply context and threading actions
-const _origAppendMsg = appendMsg;
-// Override appendMsg to add bookmark + reply buttons and thread context
+// Override appendMsg — calls _appendMsgCore and adds reply/bookmark/threading
 function appendMsg(role, name, content, isThinking = false, agentId = null) {
     // Stash current reply target and clear before the original call
     const replyCtx = _replyTarget;
     if (role === 'user' && replyCtx) _replyTarget = null;
 
-    const id = _origAppendMsg(role, name, content, isThinking, agentId);
+    const id = _appendMsgCore(role, name, content, isThinking, agentId);
     const msgEl = document.getElementById(id);
     if (!msgEl) return id;
 
@@ -2238,10 +2236,9 @@ function appendMsg(role, name, content, isThinking = false, agentId = null) {
 // FEATURE: Code Block Execution Preview (JS inline, Python note)
 // ══════════════════════════════════════════════════════════════
 
-// Patch renderMarkdown to add Run button for JS and Python code blocks
-const _origRenderMarkdown = renderMarkdown;
+// Override renderMarkdown — calls _renderMarkdownCore and adds Run buttons
 function renderMarkdown(text) {
-    let html = _origRenderMarkdown(text);
+    let html = _renderMarkdownCore(text);
     // Add run button to code block headers for js/javascript and python
     html = html.replace(
         /(<div class="code-block-hdr">)(<span class="code-lang-tag">(javascript|js|python|py)<\/span>)(.*?)(<button class="code-copy-btn")/g,
@@ -2433,10 +2430,9 @@ function _renderBookmarksSidebar() {
     }).join('');
 }
 
-// Patch loadConversationSessions to add bookmark buttons
-const _origLoadConvSessions = loadConversationSessions;
+// Override loadConversationSessions to add bookmark buttons after loading
 async function loadConversationSessions() {
-    await _origLoadConvSessions();
+    await _loadConvSessionsCore();
     _loadBookmarks();
     // Add bookmark buttons to each conv-item
     const container = document.getElementById('sidebar-conversations');

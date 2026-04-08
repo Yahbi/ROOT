@@ -95,10 +95,10 @@ class TestDirectionValidation:
         )
         assert pid
 
-    def test_neutral_valid(self, ledger: PredictionLedger):
+    def test_hold_valid(self, ledger: PredictionLedger):
         pid = ledger.record_prediction(
-            source="miro", symbol="AAPL", direction="neutral",
-            confidence=0.5, reasoning="unclear",
+            source="miro", symbol="AAPL", direction="hold",
+            confidence=0.5, reasoning="unclear sideways market",
         )
         assert pid
 

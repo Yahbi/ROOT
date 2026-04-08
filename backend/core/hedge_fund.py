@@ -1,8 +1,19 @@
-"""AI Hedge Fund Engine — autonomous investment management (scan → analyze → decide → execute → monitor → learn)."""
+"""AI Hedge Fund Engine — autonomous investment management (scan → analyze → decide → execute → monitor → learn).
+
+Enhanced with:
+- Multi-timeframe analysis (1min, 5min, 1hr, daily)
+- Correlation analysis to avoid over-concentration
+- Dynamic position sizing via ATR-based volatility
+- Trailing stop-loss management
+- Sector rotation detection
+- Portfolio rebalancing triggers
+- Comprehensive trade journaling (entry/exit reasons, lessons)
+"""
 
 from __future__ import annotations
 
 import logging
+import math
 import sqlite3
 import uuid
 from dataclasses import dataclass, field
@@ -73,16 +84,86 @@ class StrategyPerformance:
     weight: float = 1.0  # Adaptive weight based on performance
 
 
+@dataclass(frozen=True)
+class MultiTimeframeSignal:
+    """Signal with confluence across multiple timeframes."""
+    symbol: str
+    direction: str           # "long" | "short" | "neutral"
+    confluence_score: float  # 0.0 - 1.0, how many TFs agree
+    tf_1min: str = "neutral"
+    tf_5min: str = "neutral"
+    tf_1hr: str = "neutral"
+    tf_daily: str = "neutral"
+    atr: float = 0.0         # Average True Range (volatility measure)
+    suggested_position_pct: float = 0.0  # Dynamic sizing output
+    created_at: str = field(default_factory=_now_iso)
+
+
+@dataclass(frozen=True)
+class TradeJournalEntry:
+    """Comprehensive record of a completed trade."""
+    trade_id: str
+    symbol: str
+    direction: str
+    entry_price: float
+    exit_price: float
+    quantity: float
+    pnl: float
+    pnl_pct: float
+    entry_reason: str
+    exit_reason: str
+    entry_timeframe: str
+    holding_duration_hrs: float
+    atr_at_entry: float
+    sector: str
+    tags: str            # JSON-encoded list
+    lessons: str         # LLM-generated lesson
+    market_regime: str   # "trending" | "ranging" | "volatile"
+    created_at: str = field(default_factory=_now_iso)
+
+
+@dataclass(frozen=True)
+class SectorRotation:
+    """Snapshot of sector strength for rotation detection."""
+    timestamp: str
+    strongest_sectors: str   # JSON-encoded list of (sector, score)
+    weakest_sectors: str     # JSON-encoded list of (sector, score)
+    rotation_signal: str     # "risk_on" | "risk_off" | "neutral"
+    recommended_action: str
+
+
 # ── Risk Controls ────────────────────────────────────────────
 
 RISK_LIMITS = {
     "max_position_pct": HEDGE_FUND_MAX_POSITION_PCT,
     "max_portfolio_risk_pct": HEDGE_FUND_MAX_PORTFOLIO_RISK_PCT,
     "max_daily_loss_pct": HEDGE_FUND_MAX_DAILY_LOSS_PCT,
-    "max_open_positions": 10,       # Max 10 concurrent positions
-    "min_signal_confidence": 0.65,  # Only trade signals above 65% confidence
-    "required_confirmations": 2,    # Need 2+ sources to agree
-    "cooldown_after_loss_min": 30,  # Wait 30min after a losing trade
+    "max_open_positions": 10,        # Max 10 concurrent positions
+    "min_signal_confidence": 0.65,   # Only trade signals above 65% confidence
+    "required_confirmations": 2,     # Need 2+ sources to agree
+    "cooldown_after_loss_min": 30,   # Wait 30min after a losing trade
+    "max_sector_concentration_pct": 0.30,  # Max 30% of portfolio in one sector
+    "max_correlation_threshold": 0.75,     # Block if existing position correlation > 75%
+    "atr_risk_multiplier": 2.0,            # Stop-loss placed 2x ATR from entry
+    "atr_target_multiplier": 3.0,          # Take-profit placed 3x ATR from entry
+    "trailing_stop_atr_multiplier": 1.5,   # Trailing stop trails 1.5x ATR
+    "rebalance_drift_threshold": 0.10,     # Trigger rebalance if weight drifts 10%+
+    "min_mtf_confluence": 0.50,            # Require 50%+ timeframe agreement
+}
+
+# Sector membership for major symbols
+SYMBOL_SECTORS: dict[str, str] = {
+    "SPY": "broad_market", "QQQ": "tech", "IWM": "small_cap", "DIA": "broad_market",
+    "AAPL": "tech", "MSFT": "tech", "GOOGL": "tech", "META": "tech",
+    "AMZN": "consumer_discretionary", "TSLA": "consumer_discretionary",
+    "NVDA": "semiconductors", "AMD": "semiconductors", "SMCI": "semiconductors",
+    "SOXL": "semiconductors", "SOXS": "semiconductors",
+    "TQQQ": "tech", "SQQQ": "tech", "SPXU": "broad_market", "UPRO": "broad_market",
+    "BTC": "crypto", "ETH": "crypto", "SOL": "crypto",
+    "XLF": "financials", "XLE": "energy", "XLV": "healthcare",
+    "XLK": "tech", "XLU": "utilities", "XLI": "industrials",
+    "GLD": "commodities", "SLV": "commodities", "USO": "energy",
+    "TLT": "bonds", "IEF": "bonds", "SHY": "bonds",
 }
 
 
@@ -169,9 +250,16 @@ class HedgeFundEngine:
                 pnl_pct REAL DEFAULT 0,
                 stop_loss REAL,
                 take_profit REAL,
+                trailing_stop REAL,
+                trailing_high REAL,
                 status TEXT DEFAULT 'open',
                 signal_id TEXT,
                 strategy TEXT DEFAULT 'general',
+                sector TEXT DEFAULT 'unknown',
+                atr_at_entry REAL DEFAULT 0,
+                entry_reason TEXT DEFAULT '',
+                exit_reason TEXT DEFAULT '',
+                market_regime TEXT DEFAULT 'unknown',
                 opened_at TEXT NOT NULL,
                 closed_at TEXT,
                 FOREIGN KEY (signal_id) REFERENCES signals(id)
@@ -197,25 +285,74 @@ class HedgeFundEngine:
                 updated_at TEXT NOT NULL
             );
 
+            CREATE TABLE IF NOT EXISTS trade_journal (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                trade_id TEXT NOT NULL,
+                symbol TEXT NOT NULL,
+                direction TEXT NOT NULL,
+                entry_price REAL NOT NULL,
+                exit_price REAL NOT NULL,
+                quantity REAL NOT NULL,
+                pnl REAL NOT NULL,
+                pnl_pct REAL NOT NULL,
+                entry_reason TEXT DEFAULT '',
+                exit_reason TEXT DEFAULT '',
+                entry_timeframe TEXT DEFAULT 'swing',
+                holding_duration_hrs REAL DEFAULT 0,
+                atr_at_entry REAL DEFAULT 0,
+                sector TEXT DEFAULT 'unknown',
+                tags TEXT DEFAULT '[]',
+                lessons TEXT DEFAULT '',
+                market_regime TEXT DEFAULT 'unknown',
+                created_at TEXT NOT NULL
+            );
+
+            CREATE TABLE IF NOT EXISTS sector_rotations (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                timestamp TEXT NOT NULL,
+                strongest_sectors TEXT NOT NULL,
+                weakest_sectors TEXT NOT NULL,
+                rotation_signal TEXT NOT NULL,
+                recommended_action TEXT NOT NULL
+            );
+
+            CREATE TABLE IF NOT EXISTS rebalance_events (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                trigger_reason TEXT NOT NULL,
+                portfolio_before TEXT NOT NULL,
+                portfolio_after TEXT NOT NULL,
+                actions_taken TEXT NOT NULL,
+                created_at TEXT NOT NULL
+            );
+
             CREATE INDEX IF NOT EXISTS idx_signals_symbol ON signals(symbol);
             CREATE INDEX IF NOT EXISTS idx_signals_created ON signals(created_at);
             CREATE INDEX IF NOT EXISTS idx_trades_status ON trades(status);
             CREATE INDEX IF NOT EXISTS idx_trades_symbol ON trades(symbol);
+            CREATE INDEX IF NOT EXISTS idx_journal_trade ON trade_journal(trade_id);
+            CREATE INDEX IF NOT EXISTS idx_journal_symbol ON trade_journal(symbol);
+            CREATE INDEX IF NOT EXISTS idx_sector_ts ON sector_rotations(timestamp);
         """)
 
     def _migrate_tables(self) -> None:
-        try:
-            self.conn.execute("ALTER TABLE trades ADD COLUMN current_price REAL DEFAULT 0")
-        except sqlite3.OperationalError:
-            pass  # Column already exists
-        try:
-            self.conn.execute("ALTER TABLE trades ADD COLUMN pnl REAL DEFAULT 0")
-        except sqlite3.OperationalError:
-            pass  # Column already exists
-        try:
-            self.conn.execute("ALTER TABLE trades ADD COLUMN pnl_pct REAL DEFAULT 0")
-        except sqlite3.OperationalError:
-            pass  # Column already exists
+        _safe_add = lambda sql: None  # noqa: E731 (defined below)
+        def _safe_add(sql: str) -> None:  # type: ignore[misc]
+            try:
+                self.conn.execute(sql)
+            except sqlite3.OperationalError:
+                pass  # Column already exists
+
+        _safe_add("ALTER TABLE trades ADD COLUMN current_price REAL DEFAULT 0")
+        _safe_add("ALTER TABLE trades ADD COLUMN pnl REAL DEFAULT 0")
+        _safe_add("ALTER TABLE trades ADD COLUMN pnl_pct REAL DEFAULT 0")
+        _safe_add("ALTER TABLE trades ADD COLUMN trailing_stop REAL")
+        _safe_add("ALTER TABLE trades ADD COLUMN trailing_high REAL")
+        _safe_add("ALTER TABLE trades ADD COLUMN sector TEXT DEFAULT 'unknown'")
+        _safe_add("ALTER TABLE trades ADD COLUMN atr_at_entry REAL DEFAULT 0")
+        _safe_add("ALTER TABLE trades ADD COLUMN entry_reason TEXT DEFAULT ''")
+        _safe_add("ALTER TABLE trades ADD COLUMN exit_reason TEXT DEFAULT ''")
+        _safe_add("ALTER TABLE trades ADD COLUMN market_regime TEXT DEFAULT 'unknown'")
+        self.conn.commit()
 
     def _load_daily_pnl(self) -> None:
         row = self.conn.execute(

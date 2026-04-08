@@ -12,12 +12,20 @@ Proactive behaviors:
 5. Skill evolution — create new skills from successful patterns
 6. Memory consolidation — prune, strengthen, and organize knowledge
 7. Goal tracking — monitor progress toward Yohan's stated goals
+
+Enhanced features (v1.1):
+- Intelligent scheduling: behaviors that consistently fail back off automatically
+- Priority queue: critical behaviors run first when system is under load
+- Behavior dependencies: behaviors only run after their dependencies complete
+- Performance metrics: execution time, success rate, and value score tracking
+- Resource throttling: reduces frequency when system resources are constrained
 """
 
 from __future__ import annotations
 
 import asyncio
 import logging
+import time
 from datetime import datetime, timezone
 from typing import Any, Optional
 
@@ -63,9 +71,42 @@ from backend.core.proactive_actions import (
 
 logger = logging.getLogger("root.proactive")
 
+# ── Priority levels (lower number = higher priority) ──────────────
+PRIORITY_CRITICAL = 0   # Must run; never skipped under load
+PRIORITY_HIGH = 1       # Run unless system severely overloaded
+PRIORITY_NORMAL = 2     # Standard behaviors (default)
+PRIORITY_LOW = 3        # Can skip / defer when under load
+
+# ── Adaptive scheduling constants ─────────────────────────────────
+_MAX_BACKOFF_MULTIPLIER = 8   # At most 8× the base interval
+_BACKOFF_ERROR_THRESHOLD = 3  # Consecutive errors before backoff kicks in
+_BACKOFF_STEP = 2.0           # Exponential base
+_SUCCESS_RECOVERY_STEP = 0.5  # Reduce backoff multiplier by this per success
+
+# ── Throttle thresholds ───────────────────────────────────────────
+_THROTTLE_CPU_PCT = 85.0      # CPU % above which low-priority actions yield
+_THROTTLE_MEM_PCT = 90.0      # Memory % above which low-priority actions yield
+
+
+def _get_system_load() -> tuple[float, float]:
+    """Return (cpu_percent, memory_percent). Falls back gracefully if psutil absent."""
+    try:
+        import psutil  # type: ignore[import]
+        return psutil.cpu_percent(interval=0.1), psutil.virtual_memory().percent
+    except Exception:
+        return 0.0, 0.0
+
 
 class ProactiveAction:
-    """Represents a proactive action ROOT can take."""
+    """Represents a proactive action ROOT can take.
+
+    Enhanced fields (v1.1 — all optional/defaulted for backward compatibility):
+    - priority: int (0=critical, 1=high, 2=normal, 3=low)
+    - depends_on: list of action names that must have run at least once first
+    - _backoff_multiplier: internal adaptive scheduling factor
+    - _consecutive_errors: internal consecutive-error counter
+    - Performance metrics: last_exec_time_ms, total_exec_time_ms, avg_exec_time_ms
+    """
 
     def __init__(
         self,
@@ -75,6 +116,8 @@ class ProactiveAction:
         handler,
         enabled: bool = True,
         risk_level: str = "low",
+        priority: int = PRIORITY_NORMAL,
+        depends_on: Optional[list[str]] = None,
     ) -> None:
         self.name = name
         self.description = description
@@ -82,10 +125,57 @@ class ProactiveAction:
         self.handler = handler
         self.enabled = enabled
         self.risk_level = risk_level
+        self.priority = priority
+        self.depends_on: list[str] = depends_on or []
+
+        # Core counters (persisted via StateStore)
         self.last_run: Optional[str] = None
         self.run_count = 0
         self.error_count = 0
         self.last_result: Optional[str] = None
+
+        # Performance metrics (in-memory; rebuilt from run history)
+        self.last_exec_time_ms: float = 0.0
+        self.total_exec_time_ms: float = 0.0
+        self.avg_exec_time_ms: float = 0.0
+        self.value_score: float = 0.5  # 0.0–1.0; updated by outcome length heuristic
+
+        # Adaptive scheduling state (in-memory)
+        self._backoff_multiplier: float = 1.0
+        self._consecutive_errors: int = 0
+
+    @property
+    def effective_interval(self) -> int:
+        """Current effective interval after adaptive backoff is applied."""
+        return int(self.interval_seconds * self._backoff_multiplier)
+
+    def record_success(self, exec_time_ms: float, result_text: str) -> None:
+        """Update metrics after a successful execution."""
+        self.last_exec_time_ms = exec_time_ms
+        self.total_exec_time_ms += exec_time_ms
+        self.avg_exec_time_ms = self.total_exec_time_ms / max(self.run_count, 1)
+        # Simple value heuristic: longer results carry more information
+        result_len = len(result_text) if result_text else 0
+        self.value_score = min(1.0, 0.3 + result_len / 1000.0)
+        # Adaptive scheduling: reduce backoff on success
+        self._consecutive_errors = 0
+        if self._backoff_multiplier > 1.0:
+            self._backoff_multiplier = max(
+                1.0, self._backoff_multiplier - _SUCCESS_RECOVERY_STEP
+            )
+
+    def record_failure(self) -> None:
+        """Update adaptive backoff state after a failure."""
+        self._consecutive_errors += 1
+        if self._consecutive_errors >= _BACKOFF_ERROR_THRESHOLD:
+            self._backoff_multiplier = min(
+                _MAX_BACKOFF_MULTIPLIER,
+                self._backoff_multiplier * _BACKOFF_STEP,
+            )
+            logger.info(
+                "Proactive '%s': backoff × %.1f (consecutive errors: %d)",
+                self.name, self._backoff_multiplier, self._consecutive_errors,
+            )
 
 
 class ProactiveEngine:
@@ -157,6 +247,11 @@ class ProactiveEngine:
         # When user chat is active, background actions wait
         self._chat_active = asyncio.Event()
         self._chat_active.set()  # Not chatting → background can proceed
+
+        # Resource throttle state — set by periodic _resource_monitor task
+        self._high_load: bool = False
+        # Track which actions have completed at least one successful run (for deps)
+        self._completed_actions: set[str] = set()
 
         self._register_default_actions()
 
@@ -572,6 +667,9 @@ class ProactiveEngine:
                         action.error_count = state["error_count"]
                         action.last_run = state["last_run"]
                         action.last_result = state["last_result"]
+                        # Restore completed set from persisted state
+                        if state.get("last_run"):
+                            self._completed_actions.add(name)
                 if saved:
                     logger.info("Proactive engine: restored state for %d actions", len(saved))
 
@@ -579,6 +677,12 @@ class ProactiveEngine:
 
             actions_snapshot = list(self._actions.values())
 
+        # Start resource monitor (runs every 30 s, very cheap)
+        monitor_task = asyncio.create_task(self._resource_monitor())
+        self._tasks.append(monitor_task)
+
+        # Sort by priority so higher-priority tasks get their loops started first
+        actions_snapshot.sort(key=lambda a: a.priority)
         for action in actions_snapshot:
             if action.enabled:
                 task = asyncio.create_task(self._run_loop(action))
@@ -601,7 +705,7 @@ class ProactiveEngine:
         return await self._execute_action(action)
 
     async def get_actions(self) -> list[dict[str, Any]]:
-        """List all proactive actions with their status."""
+        """List all proactive actions with their status and performance metrics."""
         async with self._actions_lock:
             actions_snapshot = list(self._actions.values())
         return [
@@ -610,11 +714,22 @@ class ProactiveEngine:
                 "description": a.description,
                 "enabled": a.enabled,
                 "interval_seconds": a.interval_seconds,
+                "effective_interval_seconds": a.effective_interval,
                 "risk_level": a.risk_level,
+                "priority": a.priority,
+                "depends_on": a.depends_on,
                 "last_run": a.last_run,
                 "run_count": a.run_count,
                 "error_count": a.error_count,
                 "last_result": (a.last_result or "")[:200],
+                # Performance metrics
+                "last_exec_time_ms": round(a.last_exec_time_ms, 1),
+                "avg_exec_time_ms": round(a.avg_exec_time_ms, 1),
+                "value_score": round(a.value_score, 3),
+                "backoff_multiplier": round(a._backoff_multiplier, 2),
+                "success_rate": round(
+                    (a.run_count - a.error_count) / max(a.run_count, 1), 3
+                ),
             }
             for a in actions_snapshot
         ]
@@ -624,14 +739,28 @@ class ProactiveEngine:
             action = self._actions.get(action_name)
             if not action:
                 return False
-            self._actions[action_name] = ProactiveAction(
+            new_action = ProactiveAction(
                 name=action.name,
                 description=action.description,
                 interval_seconds=action.interval_seconds,
                 handler=action.handler,
                 enabled=True,
                 risk_level=action.risk_level,
+                priority=action.priority,
+                depends_on=list(action.depends_on),
             )
+            # Carry over persisted counters and metrics
+            new_action.run_count = action.run_count
+            new_action.error_count = action.error_count
+            new_action.last_run = action.last_run
+            new_action.last_result = action.last_result
+            new_action.last_exec_time_ms = action.last_exec_time_ms
+            new_action.total_exec_time_ms = action.total_exec_time_ms
+            new_action.avg_exec_time_ms = action.avg_exec_time_ms
+            new_action.value_score = action.value_score
+            new_action._backoff_multiplier = action._backoff_multiplier
+            new_action._consecutive_errors = action._consecutive_errors
+            self._actions[action_name] = new_action
             return True
 
     async def disable(self, action_name: str) -> bool:
@@ -639,14 +768,28 @@ class ProactiveEngine:
             action = self._actions.get(action_name)
             if not action:
                 return False
-            self._actions[action_name] = ProactiveAction(
+            new_action = ProactiveAction(
                 name=action.name,
                 description=action.description,
                 interval_seconds=action.interval_seconds,
                 handler=action.handler,
                 enabled=False,
                 risk_level=action.risk_level,
+                priority=action.priority,
+                depends_on=list(action.depends_on),
             )
+            # Carry over persisted counters and metrics
+            new_action.run_count = action.run_count
+            new_action.error_count = action.error_count
+            new_action.last_run = action.last_run
+            new_action.last_result = action.last_result
+            new_action.last_exec_time_ms = action.last_exec_time_ms
+            new_action.total_exec_time_ms = action.total_exec_time_ms
+            new_action.avg_exec_time_ms = action.avg_exec_time_ms
+            new_action.value_score = action.value_score
+            new_action._backoff_multiplier = action._backoff_multiplier
+            new_action._consecutive_errors = action._consecutive_errors
+            self._actions[action_name] = new_action
             return True
 
     async def stats(self) -> dict[str, Any]:
@@ -654,6 +797,7 @@ class ProactiveEngine:
             actions_snapshot = list(self._actions.values())
         total_runs = sum(a.run_count for a in actions_snapshot)
         total_errors = sum(a.error_count for a in actions_snapshot)
+        throttled = [a.name for a in actions_snapshot if a._backoff_multiplier > 1.0]
         return {
             "running": self._running,
             "total_actions": len(actions_snapshot),
@@ -661,6 +805,17 @@ class ProactiveEngine:
             "total_runs": total_runs,
             "total_errors": total_errors,
             "success_rate": (total_runs - total_errors) / max(total_runs, 1),
+            # New v1.1 fields
+            "high_load": self._high_load,
+            "throttled_actions": throttled,
+            "avg_exec_time_ms": round(
+                sum(a.avg_exec_time_ms for a in actions_snapshot) / max(len(actions_snapshot), 1), 1
+            ),
+            "top_value_actions": sorted(
+                [{"name": a.name, "value_score": round(a.value_score, 3)} for a in actions_snapshot],
+                key=lambda x: x["value_score"],
+                reverse=True,
+            )[:5],
         }
 
     # ── Loop runner ───────────────────────────────────────────────
