@@ -197,7 +197,24 @@ class MemoryEngine:
         return " ".join(f'"{w}"' if not w.isalnum() else w for w in words)
 
     def search(self, query: MemoryQuery) -> list[MemoryEntry]:
-        """Full-text search across memories with filters."""
+        """Search memories using FTS5, optionally enhanced with vector similarity.
+
+        When ``query.hybrid`` is True and a vector store is available, runs
+        hybrid search (FTS5 + vector with Reciprocal Rank Fusion).  Otherwise
+        falls back to FTS5-only keyword search.
+        """
+        use_hybrid = (
+            query.hybrid
+            and self._vector_store is not None
+            and self._embedder is not None
+        )
+        if use_hybrid:
+            return self.hybrid_search(query)
+
+        return self._fts_search(query)
+
+    def _fts_search(self, query: MemoryQuery) -> list[MemoryEntry]:
+        """Pure FTS5 keyword search (original search implementation)."""
         safe_query = self._sanitize_fts_query(query.query)
         if safe_query:
             sql = """
@@ -393,64 +410,128 @@ class MemoryEngine:
         Returns memories ranked by cosine similarity to the query embedding.
         Falls back to empty list if vector store is not configured.
         """
-        if self._vector_store is None or self._embedder is None:
-            logger.debug("Semantic search unavailable: no vector store configured")
-            return []
-
-        try:
-            query_vector = self._embedder.embed(query)
-            results = self._vector_store.search(query_vector, top_k=top_k)
-        except Exception as exc:
-            logger.error("Semantic search failed: %s", exc)
-            return []
-
+        results = self._vector_search(query, top_k=top_k)
         # Fetch full MemoryEntry for each result
         entries: list[MemoryEntry] = []
-        for result in results:
-            entry = self.recall(result.id)
+        for result_id, _score in results:
+            entry = self.recall(result_id)
             if entry is not None:
                 entries.append(entry)
         return entries
 
-    def hybrid_search(self, query: str, top_k: int = 10) -> list[MemoryEntry]:
-        """Combine FTS5 + vector similarity using Reciprocal Rank Fusion.
+    def _vector_search(
+        self, query: str, top_k: int = 10
+    ) -> list[tuple[str, float]]:
+        """Embed the query and search the vector store for similar entries.
 
-        Runs both FTS5 search and vector search, then merges results via RRF
-        for higher-quality retrieval. Falls back to FTS5-only if vector store
-        is not configured.
+        Returns a list of (memory_id, similarity_score) tuples sorted by
+        descending similarity.  Returns an empty list if the vector store
+        or embedder is not available.
         """
-        # FTS5 search
-        fts_query = MemoryQuery(query=query, limit=top_k * 2)
-        fts_entries = self.search(fts_query)
-        fts_results = [
-            {"id": e.id, "content": e.content, "confidence": e.confidence}
-            for e in fts_entries
-        ]
-
-        # If no vector store, return FTS-only results
         if self._vector_store is None or self._embedder is None:
-            return fts_entries[:top_k]
+            logger.debug("Vector search unavailable: no vector store configured")
+            return []
 
         try:
-            query_vector = self._embedder.embed(query)
-            merged = self._vector_store.hybrid_search(
-                query_text=query,
-                query_vector=query_vector,
-                fts_results=fts_results,
-                top_k=top_k,
+            # Support both sync (TextEmbedder) and async (EmbeddingService)
+            if hasattr(self._embedder, "embed_sync"):
+                query_vector = self._embedder.embed_sync(query)
+            else:
+                query_vector = self._embedder.embed(query)
+
+            results = self._vector_store.search(
+                query_vector, top_k=top_k, threshold=0.1
             )
         except Exception as exc:
-            logger.error("Hybrid search vector component failed: %s", exc)
-            return fts_entries[:top_k]
+            logger.error("Vector search failed: %s", exc)
+            return []
 
-        # Fetch full MemoryEntry for each merged result
-        entries: list[MemoryEntry] = []
-        seen: set[str] = set()
-        for result in merged:
-            if result.id in seen:
-                continue
-            seen.add(result.id)
-            entry = self.recall(result.id)
-            if entry is not None:
-                entries.append(entry)
-        return entries
+        return [(r.id, r.score) for r in results]
+
+    def hybrid_search(self, query: MemoryQuery) -> list[MemoryEntry]:
+        """Combine FTS5 keyword search + vector similarity via Reciprocal Rank Fusion.
+
+        Runs both retrieval paths independently, then merges results using
+        RRF: ``score(d) = sum(1 / (k + rank_i))`` where *k* = 60 (the
+        standard RRF constant) and *rank_i* is the 1-based rank of document
+        *d* in retrieval list *i*.
+
+        Falls back to FTS5-only if the vector store is not available.
+        """
+        # ── 1. FTS5 keyword search ─────────────────────────────────
+        fts_only_query = query.model_copy(update={"hybrid": False})
+        fts_entries = self._fts_search(fts_only_query)
+
+        # ── 2. Vector similarity search ────────────────────────────
+        vector_results = self._vector_search(
+            query.query, top_k=query.limit * 2
+        )
+
+        # If vector search returned nothing, just return FTS results
+        if not vector_results:
+            return fts_entries[: query.limit]
+
+        # ── 3. Reciprocal Rank Fusion (RRF) ────────────────────────
+        k = 60  # Standard RRF constant
+
+        rrf_scores: dict[str, float] = {}
+
+        # FTS5 rank contribution (1-based ranks)
+        for rank, entry in enumerate(fts_entries, start=1):
+            rrf_scores[entry.id] = rrf_scores.get(entry.id, 0.0) + 1.0 / (
+                k + rank
+            )
+
+        # Vector rank contribution (1-based ranks)
+        for rank, (mem_id, _sim) in enumerate(vector_results, start=1):
+            rrf_scores[mem_id] = rrf_scores.get(mem_id, 0.0) + 1.0 / (
+                k + rank
+            )
+
+        # ── 4. Build deduplicated entry map ────────────────────────
+        entry_map: dict[str, MemoryEntry] = {e.id: e for e in fts_entries}
+
+        # For IDs found only in vector results, fetch the full entry
+        for mem_id, _sim in vector_results:
+            if mem_id not in entry_map:
+                entry = self.recall(mem_id)
+                if entry is not None:
+                    # Apply same filters the FTS path would apply
+                    if entry.confidence < query.min_confidence:
+                        rrf_scores.pop(mem_id, None)
+                        continue
+                    if entry.superseded_by is not None:
+                        rrf_scores.pop(mem_id, None)
+                        continue
+                    if (
+                        query.memory_type
+                        and entry.memory_type != query.memory_type
+                    ):
+                        rrf_scores.pop(mem_id, None)
+                        continue
+                    entry_map[mem_id] = entry
+                else:
+                    # Entry no longer exists in the DB — skip
+                    rrf_scores.pop(mem_id, None)
+
+        # ── 5. Sort by RRF score and return top-k ──────────────────
+        sorted_ids = sorted(
+            rrf_scores, key=lambda mid: rrf_scores[mid], reverse=True
+        )
+
+        results: list[MemoryEntry] = []
+        for mem_id in sorted_ids:
+            if mem_id in entry_map:
+                results.append(entry_map[mem_id])
+            if len(results) >= query.limit:
+                break
+
+        logger.debug(
+            "Hybrid search '%s': %d FTS + %d vector → %d merged (RRF k=%d)",
+            query.query[:50],
+            len(fts_entries),
+            len(vector_results),
+            len(results),
+            k,
+        )
+        return results

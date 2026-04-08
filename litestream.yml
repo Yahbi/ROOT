@@ -1,0 +1,167 @@
+# Litestream configuration for ROOT SQLite database replication
+# Docs: https://litestream.io/reference/config/
+#
+# Local file-based replicas for now. Migrate to S3/GCS when ready:
+#   replicas:
+#     - type: s3
+#       bucket: root-backups
+#       path: memory
+#       region: us-east-1
+#       retention: 720h
+
+dbs:
+  - path: /home/user/ROOT/data/adaptive_config.db
+    replicas:
+      - type: file
+        path: /home/user/ROOT/backups/litestream/adaptive_config
+        retention: 720h
+
+  - path: /home/user/ROOT/data/agent_network.db
+    replicas:
+      - type: file
+        path: /home/user/ROOT/backups/litestream/agent_network
+        retention: 720h
+
+  - path: /home/user/ROOT/data/backtests.db
+    replicas:
+      - type: file
+        path: /home/user/ROOT/backups/litestream/backtests
+        retention: 720h
+
+  - path: /home/user/ROOT/data/conversations.db
+    replicas:
+      - type: file
+        path: /home/user/ROOT/backups/litestream/conversations
+        retention: 720h
+
+  - path: /home/user/ROOT/data/costs.db
+    replicas:
+      - type: file
+        path: /home/user/ROOT/backups/litestream/costs
+        retention: 720h
+
+  - path: /home/user/ROOT/data/councils.db
+    replicas:
+      - type: file
+        path: /home/user/ROOT/backups/litestream/councils
+        retention: 720h
+
+  - path: /home/user/ROOT/data/digests.db
+    replicas:
+      - type: file
+        path: /home/user/ROOT/backups/litestream/digests
+        retention: 720h
+
+  - path: /home/user/ROOT/data/directives.db
+    replicas:
+      - type: file
+        path: /home/user/ROOT/backups/litestream/directives
+        retention: 720h
+
+  - path: /home/user/ROOT/data/ecosystem.db
+    replicas:
+      - type: file
+        path: /home/user/ROOT/backups/litestream/ecosystem
+        retention: 720h
+
+  - path: /home/user/ROOT/data/embedding_cache.db
+    replicas:
+      - type: file
+        path: /home/user/ROOT/backups/litestream/embedding_cache
+        retention: 720h
+
+  - path: /home/user/ROOT/data/escalation.db
+    replicas:
+      - type: file
+        path: /home/user/ROOT/backups/litestream/escalation
+        retention: 720h
+
+  - path: /home/user/ROOT/data/experience.db
+    replicas:
+      - type: file
+        path: /home/user/ROOT/backups/litestream/experience
+        retention: 720h
+
+  - path: /home/user/ROOT/data/experiments.db
+    replicas:
+      - type: file
+        path: /home/user/ROOT/backups/litestream/experiments
+        retention: 720h
+
+  - path: /home/user/ROOT/data/goals.db
+    replicas:
+      - type: file
+        path: /home/user/ROOT/backups/litestream/goals
+        retention: 720h
+
+  - path: /home/user/ROOT/data/hedge_fund.db
+    replicas:
+      - type: file
+        path: /home/user/ROOT/backups/litestream/hedge_fund
+        retention: 720h
+
+  - path: /home/user/ROOT/data/learning.db
+    replicas:
+      - type: file
+        path: /home/user/ROOT/backups/litestream/learning
+        retention: 720h
+
+  - path: /home/user/ROOT/data/memory.db
+    replicas:
+      - type: file
+        path: /home/user/ROOT/backups/litestream/memory
+        retention: 720h
+
+  - path: /home/user/ROOT/data/outcomes.db
+    replicas:
+      - type: file
+        path: /home/user/ROOT/backups/litestream/outcomes
+        retention: 720h
+
+  - path: /home/user/ROOT/data/predictions.db
+    replicas:
+      - type: file
+        path: /home/user/ROOT/backups/litestream/predictions
+        retention: 720h
+
+  - path: /home/user/ROOT/data/revenue.db
+    replicas:
+      - type: file
+        path: /home/user/ROOT/backups/litestream/revenue
+        retention: 720h
+
+  - path: /home/user/ROOT/data/self_code.db
+    replicas:
+      - type: file
+        path: /home/user/ROOT/backups/litestream/self_code
+        retention: 720h
+
+  - path: /home/user/ROOT/data/state.db
+    replicas:
+      - type: file
+        path: /home/user/ROOT/backups/litestream/state
+        retention: 720h
+
+  - path: /home/user/ROOT/data/strategy_validation.db
+    replicas:
+      - type: file
+        path: /home/user/ROOT/backups/litestream/strategy_validation
+        retention: 720h
+
+  - path: /home/user/ROOT/data/task_queue.db
+    replicas:
+      - type: file
+        path: /home/user/ROOT/backups/litestream/task_queue
+        retention: 720h
+
+  - path: /home/user/ROOT/data/user_patterns.db
+    replicas:
+      - type: file
+        path: /home/user/ROOT/backups/litestream/user_patterns
+        retention: 720h
+
+  - path: /home/user/ROOT/data/vectors.db
+    replicas:
+      - type: file
+        path: /home/user/ROOT/backups/litestream/vectors
+        retention: 720h

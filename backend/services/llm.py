@@ -49,18 +49,48 @@ class LLMService:
         self._economic_router = economic_router
         self.provider = "anthropic"
 
+    @staticmethod
+    def _build_system_with_cache(system: str) -> list[dict]:
+        """Build a system parameter with Anthropic prompt caching enabled.
+
+        Wraps the system string in a content block with cache_control set to
+        'ephemeral', which tells Anthropic to cache the system prompt across
+        requests.  Cached input tokens cost ~90% less.
+
+        Returns a list of content blocks suitable for the ``system`` kwarg.
+        """
+        if not system:
+            return []
+        return [
+            {
+                "type": "text",
+                "text": system,
+                "cache_control": {"type": "ephemeral"},
+            }
+        ]
+
     def _track_usage(self, response, model: str, model_tier: str, method: str = "complete") -> None:
         """Record token usage from an Anthropic response."""
         if not self._cost_tracker or not hasattr(response, "usage"):
             return
         try:
+            usage = response.usage
+            cache_read = getattr(usage, "cache_read_input_tokens", 0) or 0
+            cache_creation = getattr(usage, "cache_creation_input_tokens", 0) or 0
+            if cache_read > 0:
+                logger.debug(
+                    "Anthropic prompt cache: %d tokens read from cache, %d created (model=%s)",
+                    cache_read, cache_creation, model,
+                )
             self._cost_tracker.record(
                 provider="anthropic",
                 model=model,
-                input_tokens=response.usage.input_tokens,
-                output_tokens=response.usage.output_tokens,
+                input_tokens=usage.input_tokens,
+                output_tokens=usage.output_tokens,
                 model_tier=model_tier,
                 method=method,
+                cache_read_tokens=cache_read,
+                cache_creation_tokens=cache_creation,
             )
         except Exception as exc:
             logger.debug("Cost tracking failed: %s", exc)
@@ -98,7 +128,9 @@ class LLMService:
             "temperature": temperature,
         }
         if system:
-            kwargs["system"] = system
+            # Use cache_control blocks for prompt caching (90% savings on cached input)
+            cached_system = self._build_system_with_cache(system)
+            kwargs["system"] = cached_system if cached_system else system
         if tools:
             kwargs["tools"] = tools
 
@@ -145,12 +177,14 @@ class LLMService:
     ) -> tuple[str, list[dict[str, Any]]]:
         """Complete with tool use. Returns (text, tool_calls)."""
         model = MODEL_TIERS.get(model_tier, DEFAULT_MODEL)
+        # Use cache_control blocks for prompt caching on system prompt
+        system_param = self._build_system_with_cache(system) if system else system
         for attempt in range(MAX_RETRIES):
             try:
                 response = await self._client.messages.create(
                     model=model,
                     max_tokens=max_tokens,
-                    system=system,
+                    system=system_param if system_param else system,
                     messages=messages,
                     tools=tools,
                 )
@@ -198,7 +232,8 @@ class LLMService:
             "temperature": temperature,
         }
         if system:
-            kwargs["system"] = system
+            cached_system = self._build_system_with_cache(system)
+            kwargs["system"] = cached_system if cached_system else system
 
         try:
             async with self._client.messages.stream(**kwargs) as stream:

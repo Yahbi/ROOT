@@ -485,12 +485,31 @@ const NeuralGalaxy = (() => {
         });
     }
 
-    function _fireSignal(srcId, tgtId, color) {
+    // ── Signal Statistics ───────────────────────────────────────
+    let _realSignalCount = 0;
+    let _organicSignalCount = 0;
+    const _recentRealEvents = []; // Last 20 real agent communications
+    const MAX_RECENT_EVENTS = 20;
+
+    function _fireSignal(srcId, tgtId, color, isReal = false) {
         const sM = nodeObjects.get(srcId), tM = nodeObjects.get(tgtId);
         if (!sM || !tM) return;
         const sP = sM.position.clone(), tP = tM.position.clone();
         const d = sP.distanceTo(tP);
         if (d < 2) return;
+
+        // Track signal counts
+        if (isReal) {
+            _realSignalCount++;
+            _recentRealEvents.unshift({
+                from: srcId, to: tgtId,
+                time: new Date().toLocaleTimeString(),
+                color: color || 0xFFD700,
+            });
+            if (_recentRealEvents.length > MAX_RECENT_EVENTS) _recentRealEvents.pop();
+        } else {
+            _organicSignalCount++;
+        }
 
         // Find the matching edge to light up
         const edge = _findEdge(srcId, tgtId);
@@ -505,18 +524,24 @@ const NeuralGalaxy = (() => {
         const curve = new THREE.QuadraticBezierCurve3(sP, cp, tP);
 
         const c = color || 0xFFD700;
-        const geo = new THREE.SphereGeometry(0.7, 8, 8);
+        // Real signals are larger and brighter than organic background signals
+        const radius = isReal ? 1.2 : 0.5;
+        const opacity = isReal ? 1.0 : 0.4;
+        const trailRadius = isReal ? 4.0 : 1.8;
+        const trailOpacity = isReal ? 0.18 : 0.04;
+
+        const geo = new THREE.SphereGeometry(radius, 8, 8);
         const mat = new THREE.MeshBasicMaterial({
-            color: c, transparent: true, opacity: 0.9,
+            color: c, transparent: true, opacity: opacity,
             blending: THREE.AdditiveBlending, depthWrite: false,
         });
         const sig = new THREE.Mesh(geo, mat);
         sig.position.copy(sP);
 
-        // Trail
-        const tGeo = new THREE.SphereGeometry(2.5, 6, 6);
+        // Trail — real signals have bigger, brighter trails
+        const tGeo = new THREE.SphereGeometry(trailRadius, 6, 6);
         const tMat = new THREE.MeshBasicMaterial({
-            color: c, transparent: true, opacity: 0.08,
+            color: c, transparent: true, opacity: trailOpacity,
             blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.BackSide,
         });
         sig.add(new THREE.Mesh(tGeo, tMat));
@@ -527,9 +552,9 @@ const NeuralGalaxy = (() => {
 
         neuralSignals.push({
             mesh: sig, curve, progress: 0,
-            speed: 0.5 + Math.random() * 0.6,  // faster travel for denser signal flow
-            edge,                  // linked dendrite line (may be null)
-            srcId, tgtId, color: c,
+            speed: isReal ? 0.8 + Math.random() * 0.4 : 0.5 + Math.random() * 0.6,
+            edge,
+            srcId, tgtId, color: c, isReal,
         });
     }
 
@@ -1145,10 +1170,20 @@ const NeuralGalaxy = (() => {
     function fireSignal(srcId, tgtId, color) {
         if (!isInitialized) return;
         const c = color || (agentColorMap.get(srcId)) || 0xFFD700;
-        _fireSignal(srcId, tgtId, c);
+        _fireSignal(srcId, tgtId, c, true); // Mark as REAL signal from WebSocket
     }
 
-    return { init, destroy, pulseAgent, pulseEdge, fireSignal, _boostActivity, deselect: _deselect, refresh: _fetchAndBuild };
+    /** Get live signal statistics for the dashboard */
+    function getSignalStats() {
+        return {
+            realSignals: _realSignalCount,
+            organicSignals: _organicSignalCount,
+            activeSignals: neuralSignals.length,
+            recentEvents: _recentRealEvents,
+        };
+    }
+
+    return { init, destroy, pulseAgent, pulseEdge, fireSignal, getSignalStats, _boostActivity, deselect: _deselect, refresh: _fetchAndBuild };
 })();
 
 // Global cleanup function for use when switching away from the neural panel

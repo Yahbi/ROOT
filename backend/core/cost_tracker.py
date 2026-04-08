@@ -12,7 +12,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Optional
 
-from backend.config import ROOT_DIR
+from backend.config import LLM_DAILY_BUDGET, LLM_MONTHLY_BUDGET, ROOT_DIR
 
 logger = logging.getLogger("root.cost_tracker")
 
@@ -20,12 +20,14 @@ COST_DB = ROOT_DIR / "data" / "costs.db"
 
 # ── Pricing per 1M tokens (as of 2025) ─────────────────────────────
 # Update these when model prices change.
+# Anthropic cache pricing: cache_read = 10% of input price (90% savings),
+# cache_creation = 125% of input price (25% write premium).
 
 _PRICING: dict[str, dict[str, float]] = {
     # Anthropic
-    "claude-haiku-4-5-20241022": {"input": 1.00, "output": 5.00},
-    "claude-sonnet-4-20250514": {"input": 3.00, "output": 15.00},
-    "claude-opus-4-20250514": {"input": 15.00, "output": 75.00},
+    "claude-haiku-4-5-20241022": {"input": 1.00, "output": 5.00, "cache_read": 0.10, "cache_write": 1.25},
+    "claude-sonnet-4-20250514": {"input": 3.00, "output": 15.00, "cache_read": 0.30, "cache_write": 3.75},
+    "claude-opus-4-20250514": {"input": 15.00, "output": 75.00, "cache_read": 1.50, "cache_write": 18.75},
     # OpenAI
     "gpt-4o-mini": {"input": 0.15, "output": 0.60},
     "gpt-4o": {"input": 2.50, "output": 10.00},
@@ -43,13 +45,39 @@ def _now_iso() -> str:
     return datetime.now(timezone.utc).isoformat()
 
 
-def compute_cost(model: str, input_tokens: int, output_tokens: int) -> float:
-    """Compute USD cost for a single LLM call."""
+def compute_cost(
+    model: str,
+    input_tokens: int,
+    output_tokens: int,
+    cache_read_tokens: int = 0,
+    cache_creation_tokens: int = 0,
+) -> float:
+    """Compute USD cost for a single LLM call.
+
+    When *cache_read_tokens* or *cache_creation_tokens* are supplied
+    (Anthropic prompt caching), the cached portion is billed at the
+    discounted rate (90% savings for reads, 25% premium for writes)
+    and subtracted from regular input billing.
+    """
     pricing = _PRICING.get(model, _DEFAULT_PRICING)
-    return (
-        input_tokens * pricing["input"] / 1_000_000
-        + output_tokens * pricing["output"] / 1_000_000
-    )
+
+    # Regular input tokens (exclude tokens already counted as cache read/write)
+    regular_input = max(input_tokens - cache_read_tokens - cache_creation_tokens, 0)
+    cost = regular_input * pricing["input"] / 1_000_000
+
+    # Cache read tokens (90% cheaper than regular input)
+    if cache_read_tokens > 0:
+        cache_read_price = pricing.get("cache_read", pricing["input"] * 0.1)
+        cost += cache_read_tokens * cache_read_price / 1_000_000
+
+    # Cache creation tokens (25% premium over regular input)
+    if cache_creation_tokens > 0:
+        cache_write_price = pricing.get("cache_write", pricing["input"] * 1.25)
+        cost += cache_creation_tokens * cache_write_price / 1_000_000
+
+    # Output tokens
+    cost += output_tokens * pricing["output"] / 1_000_000
+    return cost
 
 
 class CostTracker:

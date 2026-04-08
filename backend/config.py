@@ -138,6 +138,10 @@ PROACTIVE_INTERVALS = {
     "miro_daily_briefing": int(os.getenv("ROOT_MIRO_BRIEFING_INTERVAL", "86400")),
 }
 
+# LLM Cost Budget (empty/0 = unlimited)
+LLM_DAILY_BUDGET = float(os.getenv("ROOT_DAILY_BUDGET", "0"))
+LLM_MONTHLY_BUDGET = float(os.getenv("ROOT_MONTHLY_BUDGET", "0"))
+
 # Financial thresholds
 SURVIVAL_BUDGET = float(os.getenv("ROOT_SURVIVAL_BUDGET", "400.0"))
 HEDGE_FUND_MAX_POSITION_PCT = float(os.getenv("ROOT_MAX_POSITION_PCT", "0.05"))
