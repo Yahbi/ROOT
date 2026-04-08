@@ -1,46 +1,5 @@
 [
   {
-    "id": "evo_026241f198c6",
-    "action_type": "skill_created",
-    "description": "Created skill: general/auto-general \u2014 Auto-generated skill for general",
-    "details": {
-      "skill_path": "/Users/yohan/Desktop/ROOT/data/skills/general/auto-general/SKILL.md",
-      "tags": [
-        "auto-generated",
-        "builder-agent",
-        "general"
-      ]
-    },
-    "impact_score": 0.5,
-    "timestamp": "2026-03-22T03:04:24.584472+00:00"
-  },
-  {
-    "id": "evo_b15a6b394e62",
-    "action_type": "code_proposed",
-    "description": "Proposed improvement in self_rewrite: Based on the provided analysis and the requested functionality, here is the response in the specified format:\n\n{\"name\": \"proposals_propose_direction\", \"parameters\":\n {\"agent_id\": \"algorithm_researcher\",\n  \"category\": \"engineering\",\n  \"estimated_impact\": \"$500/month revenue from improved trading with",
-    "details": {
-      "area": "self_rewrite",
-      "rationale": "Autonomous self-improvement proposal from Analyst + Coder pipeline"
-    },
-    "impact_score": 0.0,
-    "timestamp": "2026-03-22T03:07:37.150609+00:00"
-  },
-  {
-    "id": "evo_026d2fef0f92",
-    "action_type": "skill_created",
-    "description": "Created skill: general/auto-general \u2014 Auto-generated skill for general",
-    "details": {
-      "skill_path": "/Users/yohan/Desktop/ROOT/data/skills/general/auto-general/SKILL.md",
-      "tags": [
-        "auto-generated",
-        "builder-agent",
-        "general"
-      ]
-    },
-    "impact_score": 0.5,
-    "timestamp": "2026-03-22T03:25:29.581161+00:00"
-  },
-  {
     "id": "evo_b798379fd5f1",
     "action_type": "skill_created",
     "description": "Created skill: general/auto-general \u2014 Auto-generated skill for general",
@@ -5934,5 +5893,38 @@
     },
     "impact_score": 0.0,
     "timestamp": "2026-04-08T14:37:13.162214+00:00"
+  },
+  {
+    "id": "evo_679354ac3c84",
+    "action_type": "code_proposed",
+    "description": "Proposed improvement in memory_preference: Actively collect more preference entries",
+    "details": {
+      "area": "memory_preference",
+      "rationale": "Proactive agent evolution \u2014 gap: Low preference memories (1)"
+    },
+    "impact_score": 0.0,
+    "timestamp": "2026-04-08T15:26:52.400413+00:00"
+  },
+  {
+    "id": "evo_fd4ccf207cb1",
+    "action_type": "code_proposed",
+    "description": "Proposed improvement in memory_reflection: Actively collect more reflection entries",
+    "details": {
+      "area": "memory_reflection",
+      "rationale": "Proactive agent evolution \u2014 gap: Low reflection memories (0)"
+    },
+    "impact_score": 0.0,
+    "timestamp": "2026-04-08T15:26:52.406367+00:00"
+  },
+  {
+    "id": "evo_11e636b6f1c2",
+    "action_type": "code_proposed",
+    "description": "Proposed improvement in memory_error: Actively collect more error entries",
+    "details": {
+      "area": "memory_error",
+      "rationale": "Proactive agent evolution \u2014 gap: Low error memories (0)"
+    },
+    "impact_score": 0.0,
+    "timestamp": "2026-04-08T15:26:52.410688+00:00"
   }
 ]
