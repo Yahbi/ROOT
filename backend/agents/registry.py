@@ -93,6 +93,55 @@ class AgentRegistry:
             if any(c.name == capability_name for c in a.capabilities)
         ]
 
+    def match_by_keywords(self, query: str, top_k: int = 5) -> list[tuple[AgentProfile, float]]:
+        """Match a query to agents by scoring keyword overlap against capabilities, role, and description.
+
+        Returns a list of (AgentProfile, score) tuples sorted by score descending.
+        Score is the fraction of query words that matched agent text (0.0–1.0).
+        Only agents with a connector (core agents) are returned unless no match found.
+        """
+        query_words = set(query.lower().split())
+        # Strip common stop words to avoid noise
+        _STOP = {"the", "a", "an", "is", "are", "was", "were", "be", "been",
+                 "being", "have", "has", "had", "do", "does", "did", "will",
+                 "would", "could", "should", "may", "might", "shall", "can",
+                 "to", "of", "in", "for", "on", "with", "at", "by", "from",
+                 "and", "or", "but", "not", "no", "so", "yet", "both",
+                 "i", "me", "my", "you", "your", "it", "its", "we", "our"}
+        query_words -= _STOP
+        if not query_words:
+            return []
+
+        scored: list[tuple[AgentProfile, float]] = []
+        for agent in self._agents.values():
+            # Build a bag-of-words from the agent's text fields
+            agent_words = set()
+            agent_words.update(agent.role.lower().split())
+            agent_words.update(agent.description.lower().split())
+            for cap in agent.capabilities:
+                agent_words.update(cap.name.lower().replace("_", " ").split())
+                agent_words.update(cap.description.lower().split())
+            agent_words -= _STOP
+
+            if not agent_words:
+                continue
+
+            overlap = len(query_words & agent_words)
+            if overlap == 0:
+                continue
+
+            # Score: Jaccard-like but weighted toward the query side
+            score = overlap / len(query_words)
+            scored.append((agent, round(score, 4)))
+
+        # Sort by score descending, then by tier (lower tier = higher authority)
+        scored.sort(key=lambda x: (-x[1], x[0].tier))
+
+        # Prefer agents with connectors (core agents), fall back to all if needed
+        with_connector = [(a, s) for a, s in scored if a.id in self._connectors]
+        result = with_connector if with_connector else scored
+        return result[:top_k]
+
     def agent_count(self) -> int:
         """Total number of registered agents."""
         return len(self._agents)

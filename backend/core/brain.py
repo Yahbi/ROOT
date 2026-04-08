@@ -85,10 +85,80 @@ class Brain(BrainRoutingMixin):
         self._bus = None  # MessageBus — set via set_bus()
         self._conversation: list[dict[str, str]] = []
         self._interaction_count = 0
+        # Conversation context window — number of past turns to include in prompts.
+        # Each turn = 2 messages (user + assistant), so 20 turns = 40 messages.
+        self._context_window_turns: int = 20
 
     def set_bus(self, bus) -> None:
         """Late-bind message bus for publishing agent findings."""
         self._bus = bus
+
+    def set_context_window(self, turns: int) -> None:
+        """Adjust how many past conversation turns are included in prompts."""
+        self._context_window_turns = max(1, turns)
+
+    def _get_conversation_window(self) -> list[dict[str, str]]:
+        """Return the last N turns of conversation history for prompt injection.
+
+        Uses self._context_window_turns (default 20 turns = 40 messages).
+        Clamps to the available history.
+        """
+        max_msgs = self._context_window_turns * 2  # each turn = user + assistant
+        return self._conversation[-max_msgs:] if self._conversation else []
+
+    async def score_response_quality(self, user_message: str, response: str) -> float:
+        """Self-evaluate the quality of a response on a 0.0–1.0 scale.
+
+        Uses the fast LLM to score the response across four criteria:
+        relevance, completeness, accuracy confidence, and actionability.
+        Returns the average score.  Falls back to 0.5 on any error.
+        """
+        if not self._llm or not response:
+            return 0.5
+        # Skip trivial responses (greetings, very short replies)
+        if len(response) < 80:
+            return 0.8  # short greeting-style responses are fine
+
+        scoring_prompt = (
+            "You are a quality evaluator for an AI assistant. "
+            "Score the response below on four criteria, each from 0.0 to 1.0:\n"
+            "1. relevance     — does it directly answer the user's question?\n"
+            "2. completeness  — does it cover all aspects the user asked about?\n"
+            "3. accuracy      — does it appear factually correct / well-reasoned?\n"
+            "4. actionability — does it give Yohan something concrete to act on?\n\n"
+            "Return ONLY a JSON object: "
+            '{"relevance":0.9,"completeness":0.8,"accuracy":0.85,"actionability":0.7}\n'
+            "No other text."
+        )
+        eval_prompt = (
+            f"USER QUESTION:\n{user_message[:400]}\n\n"
+            f"RESPONSE:\n{response[:1500]}\n\n"
+            "Score the response on the four criteria."
+        )
+        try:
+            result = await self._llm.complete(
+                system=scoring_prompt,
+                messages=[{"role": "user", "content": eval_prompt}],
+                model_tier="fast",
+                temperature=0.1,
+                max_tokens=80,
+            )
+            text = result.strip()
+            if "```" in text:
+                start = text.index("```") + 3
+                if text[start:start + 4] == "json":
+                    start += 4
+                end = text.index("```", start)
+                text = text[start:end].strip()
+            scores = json.loads(text)
+            vals = [float(scores.get(k, 0.5))
+                    for k in ("relevance", "completeness", "accuracy", "actionability")]
+            avg = round(sum(vals) / len(vals), 3)
+            logger.debug("[brain] Response quality score=%.3f for '%s'", avg, user_message[:50])
+            return avg
+        except Exception as exc:
+            logger.debug("[brain] Quality scoring failed: %s", exc)
+            return 0.5
 
     def _build_routing_agents_desc(self) -> str:
         """Build agent descriptions for ASTRA routing, including top civilization agents per division."""
@@ -525,8 +595,21 @@ class Brain(BrainRoutingMixin):
 
         total_msgs = sum(f.messages_exchanged for f in agent_findings)
         reasoning = route_decision.get("reasoning", "")
-        logger.info("Chat complete in %.1fs — route=%s, agents=%s, msgs=%d, tools=%d",
-                     elapsed, route, agents_used, total_msgs, total_tools)
+        routing_explanation = route_decision.get("routing_explanation", "")
+        routing_confidence = float(route_decision.get("confidence", 1.0))
+
+        # 9. Self-evaluate response quality (background — non-blocking)
+        quality_score = 0.0
+        if route != "direct":  # skip trivial greeting-path quality checks
+            try:
+                quality_score = await self.score_response_quality(user_message, response_text)
+            except Exception as qe:
+                logger.debug("[brain] Quality scoring error (non-critical): %s", qe)
+
+        logger.info(
+            "Chat complete in %.1fs — route=%s, agents=%s, msgs=%d, tools=%d, quality=%.2f",
+            elapsed, route, agents_used, total_msgs, total_tools, quality_score,
+        )
 
         return ChatMessage(
             role="assistant",
@@ -540,6 +623,9 @@ class Brain(BrainRoutingMixin):
             total_messages_exchanged=total_msgs,
             total_tools_executed=total_tools,
             routing_reasoning=reasoning,
+            routing_explanation=routing_explanation,
+            routing_confidence=routing_confidence,
+            response_quality_score=quality_score,
         )
 
     async def chat_stream(self, user_message: str):
@@ -703,7 +789,8 @@ class Brain(BrainRoutingMixin):
             # Direct handling — stream tokens from LLM
             if hasattr(self._llm, "stream"):
                 system = self._build_system_prompt(user_message, memory_context)
-                window = self._conversation[-50:] + [{"role": "user", "content": user_message}]
+                # Use configurable context window instead of hard-coded -50
+                window = self._get_conversation_window() + [{"role": "user", "content": user_message}]
                 response_text = ""
                 async for chunk in self._llm.stream(
                     messages=window,
@@ -768,6 +855,8 @@ class Brain(BrainRoutingMixin):
 
         # Yield final complete response
         reasoning = route_decision.get("reasoning", "")
+        routing_explanation = route_decision.get("routing_explanation", "")
+        routing_confidence = float(route_decision.get("confidence", 1.0))
         final = ChatMessage(
             role="assistant",
             content=response_text,
@@ -780,6 +869,8 @@ class Brain(BrainRoutingMixin):
             total_messages_exchanged=total_msgs,
             total_tools_executed=total_tools,
             routing_reasoning=reasoning,
+            routing_explanation=routing_explanation,
+            routing_confidence=routing_confidence,
         )
         yield {"event": "done", "data": final.model_dump()}
 
@@ -995,8 +1086,84 @@ class Brain(BrainRoutingMixin):
             logger.debug("Spawn exploration failed (non-critical): %s", e)
             return []
 
-    def _build_system_prompt(self, user_message: str, memory_context: str) -> str:
-        """Build the full system prompt with memories, skills, tools, and directives."""
+    # ── Agent-specific system prompt fragments ───────────────────
+
+    _AGENT_PROMPT_OVERRIDES: dict[str, str] = {
+        "researcher": (
+            "## Active Role: Researcher\n"
+            "You are operating as ROOT's Researcher agent. Your mission:\n"
+            "- Search the web exhaustively using web_search with varied queries\n"
+            "- Fetch full page content via fetch_url for key sources\n"
+            "- Cross-reference multiple sources before stating facts\n"
+            "- Return findings with source URLs, dates, and confidence levels\n"
+            "- NEVER fabricate numbers — verify everything\n"
+        ),
+        "coder": (
+            "## Active Role: Coder\n"
+            "You are operating as ROOT's Coder agent. Your mission:\n"
+            "- Write clean, correct, production-ready code\n"
+            "- Follow best practices for the language/framework in use\n"
+            "- Include docstrings, type hints (Python), and error handling\n"
+            "- Run code via shell_exec when verification is possible\n"
+            "- Explain non-obvious decisions inline\n"
+        ),
+        "analyst": (
+            "## Active Role: Analyst\n"
+            "You are operating as ROOT's Analyst agent. Your mission:\n"
+            "- Use the calculate tool for all numeric computations\n"
+            "- Present data with context: what does the number mean?\n"
+            "- Include risk assessment and confidence intervals\n"
+            "- Produce structured output: summary → data → analysis → recommendation\n"
+            "- Back every claim with evidence from tool results\n"
+        ),
+        "writer": (
+            "## Active Role: Writer\n"
+            "You are operating as ROOT's Writer agent. Your mission:\n"
+            "- Produce polished, professional prose tailored to the audience\n"
+            "- Match tone to context (formal for proposals, casual for socials)\n"
+            "- Structure content clearly with headers, bullets, and transitions\n"
+            "- Optimize for the delivery medium (email, blog, pitch deck, etc.)\n"
+        ),
+        "swarm": (
+            "## Active Role: Trading Swarm\n"
+            "You are operating as ROOT's Trading Swarm agent. Your mission:\n"
+            "- Analyze market signals using available trading tools\n"
+            "- Generate actionable buy/sell signals with entry/exit levels\n"
+            "- Always include risk management: stop-loss, position size, max drawdown\n"
+            "- State confidence level for every signal\n"
+            "- NEVER recommend trades without risk parameters\n"
+        ),
+        "guardian": (
+            "## Active Role: Guardian\n"
+            "You are operating as ROOT's Guardian agent. Your mission:\n"
+            "- Run health and security checks using available tools\n"
+            "- Report ALL anomalies, even minor ones\n"
+            "- Flag high-severity issues prominently\n"
+            "- Suggest remediation steps for every issue found\n"
+        ),
+        "miro": (
+            "## Active Role: MiRo (Potentiality Engine)\n"
+            "You are operating as ROOT's MiRo agent. Your mission:\n"
+            "- Explore multiple scenarios and assign probability estimates\n"
+            "- Use council debate format: present bull/bear/neutral perspectives\n"
+            "- State confidence levels as explicit percentages\n"
+            "- Identify black-swan risks and tail scenarios\n"
+            "- Log predictions with deadlines for later calibration\n"
+        ),
+    }
+
+    def _build_system_prompt(
+        self, user_message: str, memory_context: str,
+        active_agent_id: Optional[str] = None,
+    ) -> str:
+        """Build the full system prompt with memories, skills, tools, and directives.
+
+        Args:
+            user_message:    The current user query (used for skill search).
+            memory_context:  Formatted relevant memories to inject.
+            active_agent_id: If set, inject an agent-specific role section that
+                             sharpens the LLM's persona for that agent's domain.
+        """
         skill_context = ""
         if self._skills:
             relevant_skills = self._skills.search(user_message, limit=3)
@@ -1006,7 +1173,28 @@ class Brain(BrainRoutingMixin):
         tool_defs = self._plugins.list_tools() if self._plugins else []
 
         now = datetime.now(timezone.utc)
-        system = SYSTEM_PROMPT + f"\n\n## Current Date & Time\nToday is {now.strftime('%A, %B %d, %Y')} (UTC: {now.strftime('%H:%M')}). Use this for all date-aware responses."
+        system = SYSTEM_PROMPT + (
+            f"\n\n## Current Date & Time\n"
+            f"Today is {now.strftime('%A, %B %d, %Y')} "
+            f"(UTC: {now.strftime('%H:%M')}). Use this for all date-aware responses."
+        )
+
+        # Agent-specific role override — sharpens persona for the active agent
+        if active_agent_id:
+            override = self._AGENT_PROMPT_OVERRIDES.get(active_agent_id)
+            if override:
+                system += f"\n\n{override}"
+            else:
+                # For civilization agents: inject role from registry
+                agent_profile = self._registry.get(active_agent_id)
+                if agent_profile:
+                    system += (
+                        f"\n\n## Active Role: {agent_profile.name}\n"
+                        f"You are operating as the {agent_profile.role} agent.\n"
+                        f"{agent_profile.description}\n"
+                        "Use your specialist expertise to handle this task with precision."
+                    )
+
         if memory_context:
             system += f"\n\n## Relevant Memories\n{memory_context}"
         if skill_context:
@@ -1088,10 +1276,23 @@ class Brain(BrainRoutingMixin):
             logger.warning("Result processing failed: %s — using raw result", e)
             return finding.result
 
-    async def _direct_handle(self, user_message: str, memory_context: str) -> str:
-        """ROOT handles the request directly when no agent delegation needed."""
-        system = self._build_system_prompt(user_message, memory_context)
-        window = self._conversation[-10:] + [{"role": "user", "content": user_message}]
+    async def _direct_handle(
+        self, user_message: str, memory_context: str,
+        active_agent_id: Optional[str] = None,
+    ) -> str:
+        """ROOT handles the request directly when no agent delegation needed.
+
+        Args:
+            user_message:    The current user query.
+            memory_context:  Pre-fetched relevant memories.
+            active_agent_id: When set, the system prompt is composed for that
+                             agent's specialty (e.g. "coder", "researcher").
+        """
+        system = self._build_system_prompt(
+            user_message, memory_context, active_agent_id=active_agent_id
+        )
+        # Use conversation context window (last N turns) instead of hard-coded -10
+        window = self._get_conversation_window() + [{"role": "user", "content": user_message}]
         # Use default model for substantive queries, fast only for short/simple ones
         is_simple = len(user_message.split()) <= 8
         tier = "fast" if is_simple else "default"
