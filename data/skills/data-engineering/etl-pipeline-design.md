@@ -1,139 +1,193 @@
 ---
 name: ETL Pipeline Design
-description: Design, build, and operate Extract-Transform-Load pipelines for reliable data movement
-category: data-engineering
-difficulty: intermediate
+description: Design reliable, scalable Extract-Transform-Load pipelines for data warehouse ingestion
 version: "1.0.0"
 author: ROOT
-tags: [data-engineering, etl, pipeline, data-integration, airflow, spark]
+tags: [data-engineering, ETL, pipeline, data-warehouse, dbt, airflow]
 platforms: [all]
+difficulty: intermediate
 ---
 
 # ETL Pipeline Design
 
-Build robust, scalable, and maintainable pipelines that move and transform data reliably across systems.
+Build reliable data pipelines that move data from source systems to analytical
+destinations with proper error handling, monitoring, and lineage tracking.
 
-## Core ETL Concepts
+## ETL vs. ELT
 
-### Extract Phase
-- **Full extraction**: Read entire source dataset — simple but expensive; use for small tables or initial loads
-- **Incremental extraction**: Pull only new/changed records using watermark columns (`updated_at`, sequence IDs, CDC logs)
-- **Delta extraction**: Compare source and destination checksums or row hashes for change detection
-- Source types: RDBMS, REST APIs, file systems (S3, GCS, SFTP), message queues, SaaS platforms
-
-### Transform Phase
-- **Cleaning**: Null handling, deduplication, type coercion, encoding normalization (UTF-8)
-- **Standardization**: Date formats (ISO 8601), phone/address normalization, currency unification
-- **Enrichment**: Joining reference data, geocoding addresses, currency conversion, classification tagging
-- **Aggregation**: Pre-compute metrics (daily totals, rolling averages) for downstream query performance
-- **Validation**: Schema enforcement, referential integrity checks, business rule assertions
-
-### Load Phase
-- **Full load**: Truncate-and-insert — simple, deterministic, costly for large tables
-- **Incremental load**: INSERT only new rows using unique keys; risk of duplicates without upsert
-- **Upsert (Merge)**: INSERT on new key, UPDATE on existing — gold standard for most pipelines
-- **Append-only**: For event streams where history matters; partition by date for query efficiency
-
-## Pipeline Architecture Patterns
-
-### Lambda Architecture
 ```
-Raw Events ──┬── Speed Layer (stream) ──► Serving Layer
-             └── Batch Layer (Spark)  ──► Serving Layer
+ETL (Traditional):  Extract → Transform → Load
+  - Transform before loading
+  - Good for: limited destination compute, sensitive data masking in transit
+
+ELT (Modern):       Extract → Load → Transform
+  - Load raw data first, transform in warehouse
+  - Preferred for cloud data warehouses (BigQuery, Snowflake), dbt workflows
 ```
-- Speed layer provides low-latency approximate results
-- Batch layer periodically reconciles for accuracy
-- Complexity: two codepaths to maintain; prefer Kappa when stream-only is feasible
 
-### Kappa Architecture
-```
-Raw Events ── Stream Processor (Flink/Kafka Streams) ── Serving Layer
-```
-- Single codebase handles both real-time and historical reprocessing
-- Reprocess by replaying from Kafka topic beginning
-- Simpler to operate; requires a replayable log (Kafka with sufficient retention)
+## Extract Layer
 
-### Medallion Architecture (Delta Lake / Databricks)
-| Layer | Alias | Contents |
-|-------|-------|----------|
-| Bronze | Raw | Unmodified source data, landed as-is |
-| Silver | Cleansed | Deduplicated, typed, validated |
-| Gold | Aggregated | Business-ready aggregates, metrics, dimensions |
-
-## Orchestration with Apache Airflow
-
-### DAG Design Principles
 ```python
-from airflow import DAG
-from airflow.operators.python import PythonOperator
-from datetime import datetime, timedelta
+from typing import Iterator
+import pandas as pd
 
-default_args = {
-    "owner": "data-engineering",
-    "retries": 3,
-    "retry_delay": timedelta(minutes=5),
-    "retry_exponential_backoff": True,
-    "email_on_failure": True,
-}
+class DataExtractor:
+    def extract_from_postgres(self, connection_string: str, query: str,
+                               chunk_size: int = 10000) -> Iterator[pd.DataFrame]:
+        """Extract data in chunks to handle large datasets."""
+        engine = create_engine(connection_string)
+        for chunk in pd.read_sql(query, engine, chunksize=chunk_size):
+            yield chunk
 
-with DAG(
-    dag_id="orders_etl",
-    schedule_interval="0 3 * * *",   # 3 AM daily
-    start_date=datetime(2024, 1, 1),
-    catchup=False,                    # Avoid backfill surprise
-    max_active_runs=1,                # Prevent concurrent executions
-    default_args=default_args,
-) as dag:
-    extract = PythonOperator(task_id="extract", python_callable=extract_orders)
-    transform = PythonOperator(task_id="transform", python_callable=transform_orders)
-    load = PythonOperator(task_id="load", python_callable=load_orders)
-    extract >> transform >> load
+    def extract_from_api(self, base_url: str, endpoint: str,
+                          date_from: str, date_to: str) -> list:
+        """Extract from REST API with pagination handling."""
+        records = []
+        page = 1
+        while True:
+            response = requests.get(
+                f"{base_url}/{endpoint}",
+                params={"from": date_from, "to": date_to, "page": page, "limit": 100},
+                headers={"Authorization": f"Bearer {API_KEY}"}
+            )
+            data = response.json()
+            records.extend(data["items"])
+            if not data.get("has_more"):
+                break
+            page += 1
+        return records
 ```
 
-### Idempotency Requirements
-- Every pipeline run with the same inputs must produce identical outputs
-- Use logical date as partition key, not `datetime.now()`
-- Clear target partition before writing: delete `WHERE date = {{ ds }}`
-- Store run metadata (rows processed, hash of source) for reconciliation
+## Transform Layer
 
-## Data Quality Checks
-
-### In-Pipeline Assertions
 ```python
-def validate_transform(df):
-    assert df["user_id"].notna().all(), "Null user_ids found"
-    assert (df["amount"] >= 0).all(), "Negative amounts found"
-    assert df["order_date"].between("2020-01-01", "2030-12-31").all(), "Dates out of range"
-    assert df.duplicated("order_id").sum() == 0, "Duplicate order_ids"
-    return df
+class DataTransformer:
+    def clean_and_validate(self, df: pd.DataFrame, schema: dict) -> tuple:
+        """Clean data and validate against schema."""
+        issues = {"missing": [], "type_errors": [], "duplicates": 0}
+
+        for col, config in schema.items():
+            if col not in df.columns:
+                issues["missing"].append(col)
+                continue
+
+            try:
+                df[col] = df[col].astype(config["type"])
+            except (ValueError, TypeError):
+                issues["type_errors"].append(col)
+
+            if "default" in config:
+                df[col] = df[col].fillna(config["default"])
+
+        before = len(df)
+        df = df.drop_duplicates(subset=schema.get("unique_keys", df.columns.tolist()))
+        issues["duplicates"] = before - len(df)
+
+        return df, issues
 ```
 
-### Row Count Reconciliation
-- Source count vs target count (allow 0% variance for deterministic pipelines)
-- For incremental: compare today's extracted row count to 7-day average ± 2 standard deviations
-- Alert on anomalies rather than failing — sometimes source data is genuinely sparse
+## dbt Transformation
 
-## Performance Optimization
+```sql
+-- models/staging/stg_orders.sql
+{{ config(
+    materialized='incremental',
+    unique_key='order_id',
+    on_schema_change='append_new_columns'
+) }}
 
-| Technique | When to Use | Impact |
-|-----------|------------|--------|
-| Partition pruning | Date-range queries on large tables | 10-100x read speedup |
-| Columnar storage (Parquet) | Analytical workloads | 3-10x compression + faster reads |
-| Broadcast joins | One table < 1 GB | Eliminates shuffle in Spark |
-| Incremental over full | Source > 1M rows | Linear vs constant time |
-| Parallelism tuning | Spark shuffle partitions | Match to cluster core count |
+WITH source AS (
+    SELECT * FROM {{ source('raw', 'orders') }}
+    {% if is_incremental() %}
+    WHERE updated_at > (SELECT MAX(updated_at) FROM {{ this }})
+    {% endif %}
+),
 
-## Error Handling & Recovery
+cleaned AS (
+    SELECT
+        order_id,
+        customer_id,
+        TRIM(LOWER(status)) AS status,
+        CAST(total_amount AS NUMERIC) AS total_amount_usd,
+        CAST(created_at AS TIMESTAMP) AS created_at,
+        CAST(updated_at AS TIMESTAMP) AS updated_at
+    FROM source
+    WHERE order_id IS NOT NULL
+      AND total_amount > 0
+),
 
-- **Dead letter queue**: Failed records written to separate table for investigation
-- **Partial failure handling**: Process in chunks; commit successfully transformed chunks
-- **Checkpoint resumption**: Save last successful watermark — restart from checkpoint, not zero
-- **Retry with backoff**: Transient network errors should retry; schema errors should alert immediately
+deduped AS (
+    SELECT *
+    FROM cleaned
+    QUALIFY ROW_NUMBER() OVER (PARTITION BY order_id ORDER BY updated_at DESC) = 1
+)
 
-## Monitoring Checklist
+SELECT * FROM deduped
+```
 
-- [ ] Pipeline duration tracked and alerted if > 2x median
-- [ ] Row count reconciliation with source
-- [ ] Data freshness check: last successful run timestamp < SLA threshold
-- [ ] Failed DAG runs trigger PagerDuty/Slack alert
-- [ ] Cost tracking: compute cost per pipeline run
+## Error Handling and Retry
+
+```python
+import time
+from functools import wraps
+
+def with_retry(max_attempts: int = 3, backoff_factor: float = 2.0):
+    def decorator(func):
+        @wraps(func)
+        def wrapper(*args, **kwargs):
+            last_error = None
+            for attempt in range(max_attempts):
+                try:
+                    return func(*args, **kwargs)
+                except (ConnectionError, TimeoutError) as e:
+                    last_error = e
+                    wait = backoff_factor ** attempt
+                    print(f"Attempt {attempt+1} failed: {e}. Retrying in {wait}s...")
+                    time.sleep(wait)
+                except Exception as e:
+                    raise e  # Non-retryable — fail immediately
+            raise last_error
+        return wrapper
+    return decorator
+```
+
+## Monitoring
+
+```python
+class PipelineMonitor:
+    def __init__(self, pipeline_name: str):
+        self.pipeline_name = pipeline_name
+        self.start_time = datetime.now()
+        self.metrics = {}
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        duration = (datetime.now() - self.start_time).seconds
+        success = exc_type is None
+        self.log_run(success=success, duration_seconds=duration,
+                     error=str(exc_val) if exc_val else None, metrics=self.metrics)
+        if not success:
+            alert_on_failure(pipeline=self.pipeline_name, error=str(exc_val))
+
+# Usage:
+with PipelineMonitor("orders_etl") as monitor:
+    df = extract_orders()
+    monitor.metrics["rows_extracted"] = len(df)
+    df = transform_orders(df)
+    load_to_warehouse(df)
+    monitor.metrics["rows_loaded"] = len(df)
+```
+
+## Pipeline Checklist
+
+- [ ] Idempotent: running twice does not duplicate data
+- [ ] Incremental: only processes new/changed records
+- [ ] Retry logic on transient failures
+- [ ] Data quality checks at source and destination
+- [ ] Schema evolution handled (new columns do not break pipeline)
+- [ ] Monitoring and alerting on failures
+- [ ] Lineage tracking (what data came from where)
+- [ ] Rollback capability for bad data loads
+- [ ] Documented SLAs (when pipeline must complete)

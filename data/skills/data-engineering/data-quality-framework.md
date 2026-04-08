@@ -1,183 +1,242 @@
 ---
 name: Data Quality Framework
-description: Establish dimensions, rules, validation pipelines, and metrics for data quality management
-category: data-engineering
-difficulty: intermediate
+description: Implement comprehensive data quality checks, validation rules, and monitoring for data pipelines
 version: "1.0.0"
 author: ROOT
-tags: [data-engineering, data-quality, validation, great-expectations, dbt-tests, observability]
+tags: [data-engineering, data-quality, validation, great-expectations, testing]
 platforms: [all]
+difficulty: intermediate
 ---
 
 # Data Quality Framework
 
-Systematically measure, monitor, and improve the trustworthiness of data across the organization.
+Bad data is worse than no data. Enforce quality gates at every stage of your pipeline
+to prevent corrupt or incomplete data from reaching analytics and ML models.
 
-## The Six Dimensions of Data Quality
+## Data Quality Dimensions
 
-| Dimension | Definition | Example Issue | Measurement |
-|-----------|-----------|---------------|-------------|
-| **Completeness** | Required fields are populated | `email` is null for 15% of users | `COUNT(col IS NULL) / COUNT(*)` |
-| **Accuracy** | Values reflect reality | Zip code doesn't match city | Cross-reference with authoritative source |
-| **Consistency** | Same entity has same values across systems | CRM customer ID ≠ DWH customer ID | Join-based reconciliation |
-| **Timeliness** | Data is current for its use case | Daily sales data arrives 2 days late | `MAX(updated_at)` vs SLA threshold |
-| **Uniqueness** | No unintended duplicates | Same order appears twice in orders table | `COUNT(*) - COUNT(DISTINCT id)` |
-| **Validity** | Values conform to defined rules | Date of birth is in the future | Rule-based assertion on column values |
+| Dimension | Definition | Example Issue |
+|-----------|-----------|---------------|
+| Completeness | No missing required values | customer_id is NULL |
+| Accuracy | Values are correct | negative revenue |
+| Consistency | Same value across systems | user count differs by 10% |
+| Timeliness | Data arrives on schedule | pipeline 3 hours late |
+| Uniqueness | No duplicates | same order_id twice |
+| Validity | Values within allowed range/format | invalid email format |
+| Referential Integrity | Foreign keys exist in parent table | order has non-existent customer_id |
 
-## Rule Classification
+## Great Expectations Implementation
 
-### Criticality Levels
-- **P0 — Block**: Pipeline stops, alert immediately. Example: primary key uniqueness, non-null foreign keys
-- **P1 — Warn**: Pipeline continues, ticket created. Example: referential integrity gaps < 1%
-- **P2 — Monitor**: Dashboard metric, weekly review. Example: address format inconsistencies
-
-### Rule Categories
-```yaml
-# Example rule definitions
-rules:
-  - id: orders.pk_unique
-    dimension: uniqueness
-    sql: SELECT COUNT(*) - COUNT(DISTINCT order_id) AS duplicates FROM orders
-    threshold: 0
-    criticality: P0
-
-  - id: users.email_completeness
-    dimension: completeness
-    sql: SELECT COUNT(*) FILTER (WHERE email IS NULL) * 1.0 / COUNT(*) AS null_rate FROM users
-    threshold: 0.02   # max 2% null
-    criticality: P1
-
-  - id: orders.amount_validity
-    dimension: validity
-    sql: SELECT COUNT(*) FILTER (WHERE amount < 0) AS negative_amounts FROM orders
-    threshold: 0
-    criticality: P0
-```
-
-## Implementation with Great Expectations
-
-### Expectation Suite Setup
 ```python
 import great_expectations as gx
 
-context = gx.get_context()
-suite = context.add_expectation_suite("orders_suite")
+def build_expectation_suite(df, suite_name: str):
+    context = gx.get_context()
+    suite = context.add_expectation_suite(suite_name)
+    validator = context.get_validator(
+        batch_request=..., expectation_suite_name=suite_name
+    )
 
-validator = context.get_validator(
-    datasource_name="postgres_dwh",
-    data_asset_name="orders",
-    expectation_suite_name="orders_suite",
-)
+    # Completeness
+    validator.expect_column_values_to_not_be_null("order_id")
+    validator.expect_column_values_to_not_be_null("customer_id")
 
-# Completeness
-validator.expect_column_values_to_not_be_null("order_id")
-validator.expect_column_values_to_not_be_null("user_id")
+    # Uniqueness
+    validator.expect_column_values_to_be_unique("order_id")
 
-# Validity
-validator.expect_column_values_to_be_between("amount", min_value=0, max_value=1_000_000)
-validator.expect_column_values_to_match_strftime_format("order_date", "%Y-%m-%d")
+    # Validity
+    validator.expect_column_values_to_be_between("total_amount", min_value=0, max_value=100000)
+    validator.expect_column_values_to_match_regex(
+        "email", r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
+    )
 
-# Uniqueness
-validator.expect_column_values_to_be_unique("order_id")
+    # Volume check — detect pipeline failures
+    validator.expect_table_row_count_to_be_between(min_value=100, max_value=1000000)
 
-# Set membership
-validator.expect_column_values_to_be_in_set("status", ["pending", "paid", "refunded", "cancelled"])
+    # Freshness
+    validator.expect_column_max_to_be_between(
+        "created_at",
+        min_value=str(datetime.now() - timedelta(hours=25)),
+        max_value=str(datetime.now())
+    )
 
-validator.save_expectation_suite(discard_failed_expectations=False)
+    validator.save_expectation_suite()
+    return suite
+
+def run_quality_checks(df: pd.DataFrame, suite_name: str) -> dict:
+    results = context.run_validation_operator(
+        "action_list_operator",
+        assets_to_validate=[batch],
+        expectation_suite_name=suite_name
+    )
+    return {
+        "success": results["success"],
+        "statistics": results["run_results"]["statistics"],
+        "failed_expectations": [r for r in results["results"] if not r["success"]]
+    }
 ```
 
-### Checkpoint Integration (Airflow)
+## Custom Validation Rules
+
 ```python
-from great_expectations.checkpoint import Checkpoint
+class DataQualityChecker:
+    def __init__(self, df: pd.DataFrame):
+        self.df = df
+        self.errors = []
+        self.warnings = []
 
-checkpoint = Checkpoint(
-    name="orders_checkpoint",
-    config_version=1.0,
-    template_name=None,
-    run_name_template="%Y%m%d_%H%M%S",
-    expectation_suite_name="orders_suite",
-    action_list=[
-        {"name": "store_validation_result", "action": {"class_name": "StoreValidationResultAction"}},
-        {"name": "send_slack_notification", "action": {"class_name": "SlackNotificationAction",
-                                                        "slack_webhook": "https://hooks.slack.com/..."}},
-    ],
-)
-result = checkpoint.run()
-if not result.success:
-    raise AirflowFailException("Data quality checks failed")
+    def check_completeness(self, required_columns: list, max_null_rate: float = 0.01):
+        for col in required_columns:
+            null_rate = self.df[col].isnull().mean()
+            if null_rate > max_null_rate:
+                self.errors.append({
+                    "rule": "completeness",
+                    "column": col,
+                    "null_rate": null_rate,
+                    "threshold": max_null_rate
+                })
+        return self
+
+    def check_uniqueness(self, key_columns: list):
+        dup_rate = self.df.duplicated(subset=key_columns).mean()
+        if dup_rate > 0:
+            self.errors.append({
+                "rule": "uniqueness",
+                "columns": key_columns,
+                "duplicate_rate": dup_rate
+            })
+        return self
+
+    def check_referential_integrity(self, column: str, valid_values: set):
+        invalid_mask = ~self.df[column].isin(valid_values)
+        if invalid_mask.any():
+            self.errors.append({
+                "rule": "referential_integrity",
+                "column": column,
+                "invalid_count": invalid_mask.sum(),
+                "examples": self.df[column][invalid_mask].head(5).tolist()
+            })
+        return self
+
+    def check_distribution(self, column: str, expected_mean: float, tolerance: float = 0.2):
+        actual_mean = self.df[column].mean()
+        deviation = abs(actual_mean - expected_mean) / expected_mean
+        if deviation > tolerance:
+            self.warnings.append({
+                "rule": "distribution",
+                "column": column,
+                "expected_mean": expected_mean,
+                "actual_mean": actual_mean,
+                "deviation_pct": deviation * 100
+            })
+        return self
+
+    def validate(self) -> dict:
+        return {
+            "passed": len(self.errors) == 0,
+            "errors": self.errors,
+            "warnings": self.warnings,
+            "row_count": len(self.df)
+        }
 ```
 
-## dbt Tests
+## Schema Validation
 
-### Built-in Tests (schema.yml)
-```yaml
-models:
-  - name: orders
-    columns:
-      - name: order_id
-        tests:
-          - unique
-          - not_null
-      - name: status
-        tests:
-          - accepted_values:
-              values: ["pending", "paid", "refunded", "cancelled"]
-      - name: user_id
-        tests:
-          - relationships:
-              to: ref('users')
-              field: user_id
+```python
+from pydantic import BaseModel, validator, Field
+from typing import Optional
+
+class OrderRecord(BaseModel):
+    order_id: str = Field(..., min_length=1)
+    customer_id: str = Field(..., min_length=1)
+    total_amount: float = Field(..., ge=0, le=1_000_000)
+    status: str = Field(..., regex="^(pending|completed|cancelled|refunded)$")
+    created_at: datetime
+    email: Optional[str] = None
+
+    @validator("email")
+    def validate_email(cls, v):
+        if v and "@" not in v:
+            raise ValueError("Invalid email format")
+        return v
+
+def validate_batch(records: list) -> dict:
+    valid, invalid = [], []
+    for record in records:
+        try:
+            valid.append(OrderRecord(**record).dict())
+        except Exception as e:
+            invalid.append({"record": record, "error": str(e)})
+    return {"valid": valid, "invalid": invalid, "invalid_rate": len(invalid) / len(records)}
 ```
 
-### Custom Generic Test
-```sql
--- tests/generic/assert_non_negative.sql
-{% test assert_non_negative(model, column_name) %}
-SELECT {{ column_name }}
-FROM {{ model }}
-WHERE {{ column_name }} < 0
-{% endtest %}
+## Anomaly Detection in Data Quality
+
+```python
+def detect_volume_anomalies(daily_counts: list, today_count: int, z_threshold: float = 3.0) -> dict:
+    """Alert if today's row count is unusually high or low."""
+    if len(daily_counts) < 7:
+        return {"anomaly": False, "reason": "insufficient_history"}
+
+    mean = sum(daily_counts) / len(daily_counts)
+    std = pd.Series(daily_counts).std()
+    z_score = (today_count - mean) / std if std > 0 else 0
+
+    if abs(z_score) > z_threshold:
+        return {
+            "anomaly": True,
+            "z_score": z_score,
+            "today": today_count,
+            "historical_mean": mean,
+            "direction": "spike" if z_score > 0 else "drop",
+            "severity": "critical" if abs(z_score) > 5 else "high"
+        }
+    return {"anomaly": False, "z_score": z_score}
 ```
 
-## Data Quality Scoring
+## Quality Gate Integration
 
-### Overall DQ Score Formula
+```python
+def pipeline_with_quality_gates(source_query: str, destination_table: str):
+    """ETL pipeline with quality checks at each stage."""
+    # Extract
+    df = extract_data(source_query)
+
+    # Gate 1: Source completeness
+    quality_check = DataQualityChecker(df)
+    result = (quality_check
+              .check_completeness(["order_id", "customer_id", "total_amount"])
+              .check_uniqueness(["order_id"])
+              .validate())
+
+    if not result["passed"]:
+        raise PipelineQualityError(f"Source quality check failed: {result['errors']}")
+
+    # Transform
+    df = transform(df)
+
+    # Gate 2: Post-transform validation
+    post_result = validate_batch(df.to_dict("records"))
+    if post_result["invalid_rate"] > 0.01:  # > 1% invalid records
+        raise PipelineQualityError(f"Transform produced too many invalid records: {post_result['invalid_rate']:.2%}")
+
+    # Load
+    rows_loaded = load_to_warehouse(df, destination_table)
+
+    # Gate 3: Volume check
+    anomaly = detect_volume_anomalies(get_historical_counts(), rows_loaded)
+    if anomaly.get("anomaly"):
+        alert_data_team(f"Volume anomaly detected: {anomaly}")
+
+    return {"rows_loaded": rows_loaded, "quality_warnings": result["warnings"]}
 ```
-DQ Score = Σ (dimension_score × dimension_weight)
 
-Weights (example):
-  Completeness  25%
-  Uniqueness    25%
-  Validity      20%
-  Consistency   15%
-  Timeliness    10%
-  Accuracy       5%
-```
+## Quality Score Dashboard
 
-### Tracking Over Time
-- Store validation results in a `dq_results` table: `(table, rule_id, run_date, passed, failed_count, score)`
-- Build trend dashboards: score per table per day, dimension breakdown, worst-offending tables
-- Set minimum acceptable score per table (e.g., critical tables must score > 95%)
-
-## Data Quality SLAs
-
-| Asset | Completeness SLA | Freshness SLA | Owner |
-|-------|-----------------|---------------|-------|
-| `orders` | > 99% | < 4 hours | Data Engineering |
-| `users` | > 98% | < 24 hours | Backend team |
-| `revenue_summary` | 100% | < 1 hour | Finance |
-
-## Incident Response for DQ Issues
-
-1. **Detect**: Automated rule failure triggers alert
-2. **Assess**: How many records affected? Which downstream consumers?
-3. **Contain**: Mark affected records with `is_quarantined = true`; notify downstream teams
-4. **Root Cause**: Was it upstream source, pipeline transformation, or schema change?
-5. **Remediate**: Fix or backfill affected data; re-run validation
-6. **Prevent**: Add the missed rule to the expectation suite; document in data catalog
-
-## Metadata & Lineage
-
-- Tag every table in the data catalog with its DQ score and last validated timestamp
-- Document upstream sources and downstream consumers for impact analysis
-- When a quality issue is detected, auto-generate impact report: which dashboards/reports are affected
+Track per pipeline, per day:
+- Null rate per column
+- Duplicate rate
+- Schema violations per batch
+- Volume vs. expectation (actual/expected ratio)
+- Freshness: hours since latest record timestamp
+- Overall quality score = weighted average of all checks

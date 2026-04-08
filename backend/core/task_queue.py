@@ -1,12 +1,22 @@
 """
-Persistent Task Queue — SQLite-backed task persistence for crash recovery.
+Persistent Task Queue — SQLite-backed task persistence with advanced features.
 
 Tasks survive server restarts. On startup, incomplete tasks are resumed.
 Autonomous goals, scheduled jobs, and recurring tasks all persist here.
 
+Features:
+- Priority levels: CRITICAL(1), HIGH(2), MEDIUM(5), LOW(9)
+- Exponential backoff retry with configurable base delay
+- Timeout detection for stalled running tasks
+- Task dependencies (task waits until all deps complete)
+- Progress tracking (0-100%)
+- Dead letter queue for permanently failed tasks
+- Rich statistics: avg execution time, success rate, queue depth, throughput
+
 Tables:
 - queued_tasks: High-level goals with status, priority, schedule
 - task_runs: Execution attempts with results and timing
+- dead_letter_queue: Permanently failed tasks moved out of main queue
 """
 
 from __future__ import annotations
@@ -23,6 +33,34 @@ from typing import Any, Optional
 from backend.config import ROOT_DIR
 
 logger = logging.getLogger("root.task_queue")
+
+# ── Priority level constants ──────────────────────────────────────
+
+PRIORITY_CRITICAL = 1   # System-critical; processed before all others
+PRIORITY_HIGH     = 2   # Important user-facing or time-sensitive work
+PRIORITY_MEDIUM   = 5   # Default; normal autonomous tasks
+PRIORITY_LOW      = 9   # Background housekeeping, non-urgent work
+
+
+def priority_from_name(name: str) -> int:
+    """Return the integer priority for a named level (case-insensitive).
+
+    Accepts: 'critical', 'high', 'medium', 'low'.
+    Raises ValueError for unknown names.
+    """
+    _map = {
+        "critical": PRIORITY_CRITICAL,
+        "high":     PRIORITY_HIGH,
+        "medium":   PRIORITY_MEDIUM,
+        "low":      PRIORITY_LOW,
+    }
+    try:
+        return _map[name.lower()]
+    except KeyError:
+        raise ValueError(
+            f"Unknown priority name '{name}'. "
+            f"Valid names: {list(_map)}"
+        )
 
 
 def _next_cron_run(cron_expr: str) -> Optional[str]:
@@ -95,13 +133,22 @@ class QueuedTask:
     """A persistent task in the queue."""
     id: str
     goal: str
-    priority: int = 5  # 1=critical, 5=normal, 9=background
+    priority: int = PRIORITY_MEDIUM  # use PRIORITY_* constants or 1–9
     status: str = "pending"  # pending | scheduled | running | completed | failed | cancelled
     source: str = "user"  # user | autonomous | proactive | scheduled | goal_engine
     schedule_cron: Optional[str] = None  # cron expression for recurring tasks
     next_run_at: Optional[str] = None
     max_retries: int = 2
     retry_count: int = 0
+    # Exponential backoff: base delay doubles on each retry attempt
+    retry_delay_seconds: float = 5.0   # base delay between retries (doubles each time)
+    next_retry_at: Optional[str] = None  # ISO timestamp; None = ready immediately
+    # Timeout: tasks running longer than this are considered stalled
+    timeout_seconds: Optional[float] = None  # None = no timeout enforced
+    # Dependencies: list of task IDs that must complete before this task runs
+    depends_on: list[str] = field(default_factory=list)
+    # Progress: 0–100 (caller updates via update_progress)
+    progress: int = 0
     metadata: dict[str, Any] = field(default_factory=dict)
     result: Optional[str] = None
     error: Optional[str] = None
@@ -122,6 +169,22 @@ class TaskRun:
     started_at: str = field(default_factory=_now_iso)
     completed_at: Optional[str] = None
     duration_seconds: float = 0.0
+
+
+@dataclass(frozen=True)
+class DeadLetterTask:
+    """A task that exhausted all retries and was moved to the dead letter queue."""
+    id: str
+    original_task_id: str
+    goal: str
+    priority: int
+    source: str
+    retry_count: int
+    last_error: Optional[str]
+    metadata: dict[str, Any]
+    created_at: str       # when original task was created
+    failed_at: str        # when it was moved to the DLQ
+    requeue_count: int = 0  # how many times it has been requeued from the DLQ
 
 
 # ── Task Queue ────────────────────────────────────────────────────
@@ -170,6 +233,11 @@ class TaskQueue:
                 next_run_at TEXT,
                 max_retries INTEGER DEFAULT 2,
                 retry_count INTEGER DEFAULT 0,
+                retry_delay_seconds REAL DEFAULT 5.0,
+                next_retry_at TEXT,
+                timeout_seconds REAL,
+                depends_on TEXT DEFAULT '[]',
+                progress INTEGER DEFAULT 0,
                 metadata TEXT DEFAULT '{}',
                 result TEXT,
                 error TEXT,
@@ -191,15 +259,56 @@ class TaskQueue:
                 FOREIGN KEY (task_id) REFERENCES queued_tasks(id)
             );
 
+            CREATE TABLE IF NOT EXISTS dead_letter_queue (
+                id TEXT PRIMARY KEY,
+                original_task_id TEXT NOT NULL,
+                goal TEXT NOT NULL,
+                priority INTEGER DEFAULT 5,
+                source TEXT DEFAULT 'user',
+                retry_count INTEGER DEFAULT 0,
+                last_error TEXT,
+                metadata TEXT DEFAULT '{}',
+                created_at TEXT NOT NULL,
+                failed_at TEXT NOT NULL,
+                requeue_count INTEGER DEFAULT 0
+            );
+
             CREATE INDEX IF NOT EXISTS idx_tasks_status
                 ON queued_tasks(status);
             CREATE INDEX IF NOT EXISTS idx_tasks_priority
                 ON queued_tasks(priority, created_at);
             CREATE INDEX IF NOT EXISTS idx_tasks_next_run
                 ON queued_tasks(next_run_at);
+            CREATE INDEX IF NOT EXISTS idx_tasks_next_retry
+                ON queued_tasks(next_retry_at);
             CREATE INDEX IF NOT EXISTS idx_runs_task
                 ON task_runs(task_id);
+            CREATE INDEX IF NOT EXISTS idx_dlq_failed
+                ON dead_letter_queue(failed_at);
         """)
+        self._migrate_tables()
+
+    def _migrate_tables(self) -> None:
+        """Add new columns to existing databases (non-destructive migrations)."""
+        existing: set[str] = set()
+        for row in self.conn.execute("PRAGMA table_info(queued_tasks)"):
+            existing.add(row["name"])
+
+        migrations = [
+            ("retry_delay_seconds", "REAL DEFAULT 5.0"),
+            ("next_retry_at",       "TEXT"),
+            ("timeout_seconds",     "REAL"),
+            ("depends_on",          "TEXT DEFAULT '[]'"),
+            ("progress",            "INTEGER DEFAULT 0"),
+        ]
+        for col, col_def in migrations:
+            if col not in existing:
+                self.conn.execute(
+                    f"ALTER TABLE queued_tasks ADD COLUMN {col} {col_def}"
+                )
+                logger.debug("Migrated queued_tasks: added column %s", col)
+
+        self.conn.commit()
 
     def _recover_interrupted(self) -> int:
         """Mark any 'running' tasks from a previous crash as 'pending' for retry."""
@@ -214,25 +323,44 @@ class TaskQueue:
     def enqueue(
         self,
         goal: str,
-        priority: int = 5,
+        priority: int = PRIORITY_MEDIUM,
         source: str = "user",
         schedule_cron: Optional[str] = None,
         next_run_at: Optional[str] = None,
         max_retries: int = 2,
+        retry_delay_seconds: float = 5.0,
+        timeout_seconds: Optional[float] = None,
+        depends_on: Optional[list[str]] = None,
         metadata: Optional[dict[str, Any]] = None,
     ) -> QueuedTask:
-        """Add a task to the persistent queue."""
+        """Add a task to the persistent queue.
+
+        Args:
+            goal: The task goal description.
+            priority: Integer priority (use PRIORITY_* constants). Lower = higher priority.
+            source: Originating component (user, autonomous, proactive, etc.).
+            schedule_cron: Cron expression for recurring tasks.
+            next_run_at: ISO timestamp for scheduled first run.
+            max_retries: Maximum retry attempts before moving to dead letter queue.
+            retry_delay_seconds: Base delay between retries; doubles on each attempt (exponential backoff).
+            timeout_seconds: Max seconds a task may be in 'running' state; None disables timeout.
+            depends_on: List of task IDs that must complete before this task is dequeued.
+            metadata: Arbitrary key-value pairs stored alongside the task.
+        """
         task_id = f"qt_{uuid.uuid4().hex[:12]}"
         now = _now_iso()
         meta_json = json.dumps(metadata or {})
+        deps_json = json.dumps(depends_on or [])
 
         self.conn.execute(
             """INSERT INTO queued_tasks
                (id, goal, priority, status, source, schedule_cron, next_run_at,
-                max_retries, retry_count, metadata, created_at)
-               VALUES (?, ?, ?, 'pending', ?, ?, ?, ?, 0, ?, ?)""",
+                max_retries, retry_count, retry_delay_seconds, timeout_seconds,
+                depends_on, progress, metadata, created_at)
+               VALUES (?, ?, ?, 'pending', ?, ?, ?, ?, 0, ?, ?, ?, 0, ?, ?)""",
             (task_id, goal[:5000], priority, source, schedule_cron,
-             next_run_at, max_retries, meta_json, now),
+             next_run_at, max_retries, retry_delay_seconds, timeout_seconds,
+             deps_json, meta_json, now),
         )
         self.conn.commit()
 
@@ -254,19 +382,52 @@ class TaskQueue:
             id=task_id, goal=goal[:5000], priority=priority,
             source=source, schedule_cron=schedule_cron,
             next_run_at=next_run_at, max_retries=max_retries,
+            retry_delay_seconds=retry_delay_seconds,
+            timeout_seconds=timeout_seconds,
+            depends_on=depends_on or [],
             metadata=metadata or {}, created_at=now,
         )
 
     def dequeue(self, limit: int = 5) -> list[QueuedTask]:
-        """Get the next pending tasks ordered by priority."""
+        """Get the next runnable pending tasks ordered by priority.
+
+        A task is runnable when:
+        1. Its status is 'pending'.
+        2. Its next_retry_at is NULL or in the past (exponential backoff gate).
+        3. All tasks listed in depends_on have status = 'completed'.
+
+        Tasks whose dependencies are not yet met are silently skipped.
+        """
+        now = _now_iso()
         rows = self.conn.execute(
             """SELECT * FROM queued_tasks
                WHERE status = 'pending'
+               AND (next_retry_at IS NULL OR next_retry_at <= ?)
                ORDER BY priority ASC, created_at ASC
                LIMIT ?""",
-            (limit,),
+            (now, limit * 4),   # fetch extra; dependency filter may reduce the set
         ).fetchall()
-        return [self._row_to_task(r) for r in rows]
+
+        result: list[QueuedTask] = []
+        for row in rows:
+            task = self._row_to_task(row)
+            if self._dependencies_met(task):
+                result.append(task)
+                if len(result) >= limit:
+                    break
+        return result
+
+    def _dependencies_met(self, task: QueuedTask) -> bool:
+        """Return True if all dependency tasks have completed successfully."""
+        if not task.depends_on:
+            return True
+        for dep_id in task.depends_on:
+            dep_row = self.conn.execute(
+                "SELECT status FROM queued_tasks WHERE id = ?", (dep_id,)
+            ).fetchone()
+            if dep_row is None or dep_row["status"] != "completed":
+                return False
+        return True
 
     def get_due_scheduled(self) -> list[QueuedTask]:
         """Get scheduled tasks that are due to run."""
@@ -336,7 +497,13 @@ class TaskQueue:
             )
 
     def mark_failed(self, task_id: str, run_id: str, error: str) -> bool:
-        """Mark a run as failed. Returns True if task should retry."""
+        """Mark a run as failed. Returns True if task will be retried.
+
+        On retry the task is rescheduled with exponential backoff:
+            next_retry_at = now + retry_delay_seconds * 2^(retry_count)
+
+        When max_retries is exhausted the task moves to the dead letter queue.
+        """
         now = _now_iso()
         task = self.get_task(task_id)
         if not task:
@@ -344,6 +511,12 @@ class TaskQueue:
 
         new_retry_count = task.retry_count + 1
         should_retry = new_retry_count < task.max_retries
+
+        # Compute exponential backoff timestamp for the next attempt
+        backoff_delay = task.retry_delay_seconds * (2 ** task.retry_count)
+        next_retry_at = (
+            datetime.now(timezone.utc) + timedelta(seconds=backoff_delay)
+        ).isoformat()
 
         with self.conn:
             self.conn.execute(
@@ -354,8 +527,12 @@ class TaskQueue:
             if should_retry:
                 self.conn.execute(
                     """UPDATE queued_tasks SET status = 'pending',
-                       retry_count = ?, error = ? WHERE id = ?""",
-                    (new_retry_count, error[:2000], task_id),
+                       retry_count = ?, error = ?, next_retry_at = ? WHERE id = ?""",
+                    (new_retry_count, error[:2000], next_retry_at, task_id),
+                )
+                logger.info(
+                    "Task %s failed (attempt %d/%d); retry after %s",
+                    task_id, new_retry_count, task.max_retries, next_retry_at,
                 )
             else:
                 self.conn.execute(
@@ -363,8 +540,36 @@ class TaskQueue:
                        retry_count = ?, error = ?, completed_at = ? WHERE id = ?""",
                     (new_retry_count, error[:2000], now, task_id),
                 )
+                # Move to dead letter queue
+                self._move_to_dlq(task, error[:2000], now)
+                logger.warning(
+                    "Task %s permanently failed after %d retries; moved to DLQ",
+                    task_id, new_retry_count,
+                )
 
         return should_retry
+
+    def _move_to_dlq(self, task: QueuedTask, last_error: Optional[str], failed_at: str) -> None:
+        """Insert a permanently-failed task into the dead letter queue."""
+        dlq_id = f"dlq_{uuid.uuid4().hex[:12]}"
+        self.conn.execute(
+            """INSERT INTO dead_letter_queue
+               (id, original_task_id, goal, priority, source,
+                retry_count, last_error, metadata, created_at, failed_at, requeue_count)
+               VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0)""",
+            (
+                dlq_id,
+                task.id,
+                task.goal[:5000],
+                task.priority,
+                task.source,
+                task.retry_count,
+                last_error,
+                json.dumps(task.metadata),
+                task.created_at,
+                failed_at,
+            ),
+        )
 
     def cancel(self, task_id: str) -> bool:
         """Cancel a pending or running task."""

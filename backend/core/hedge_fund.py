@@ -1043,7 +1043,7 @@ class HedgeFundEngine:
 
     # ── Trade Journaling ──────────────────────────────────────
 
-    async def _generate_trade_lesson(self, trade_row: sqlite3.Row, pnl_pct: float) -> str:
+    async def _generate_trade_lesson(self, trade_row: dict, pnl_pct: float) -> str:
         """Ask LLM to summarize the key lesson from a completed trade."""
         if not self._llm:
             outcome = "winning" if pnl_pct > 0 else "losing"
@@ -1084,11 +1084,12 @@ class HedgeFundEngine:
         """
         import json as _json
 
-        row = self.conn.execute(
+        _raw = self.conn.execute(
             "SELECT * FROM trades WHERE id = ?", (trade_id,)
         ).fetchone()
-        if not row:
+        if not _raw:
             return None
+        row = dict(_raw)
 
         entry_price = float(row["entry_price"])
         direction = row["direction"]
@@ -1116,7 +1117,7 @@ class HedgeFundEngine:
             exit_reason=exit_reason or row.get("exit_reason", "") or "",
             entry_timeframe=row.get("strategy", "swing"),
             holding_duration_hrs=round(holding_hrs, 2),
-            atr_at_entry=float(row.get("atr_at_entry", 0) or 0),
+            atr_at_entry=float(row.get("atr_at_entry") or 0),
             sector=sector,
             tags=_json.dumps(tags or []),
             lessons=lesson,
@@ -1655,12 +1656,14 @@ class HedgeFundEngine:
     # ── Autonomous Run ─────────────────────────────────────────
 
     async def run_cycle(self) -> dict[str, Any]:
-        """Run one full hedge fund cycle: scan → analyze → decide → execute."""
+        """Run one full hedge fund cycle: scan → rotate → rebalance → execute."""
         results: dict[str, Any] = {
             "signals_generated": 0,
             "signals_passed_risk": 0,
             "trades_executed": 0,
             "trades_blocked": 0,
+            "sector_rotation": None,
+            "rebalance_triggered": False,
         }
 
         # 1. Scan markets
@@ -1671,6 +1674,28 @@ class HedgeFundEngine:
         portfolio = await self.get_portfolio()
         portfolio_value = portfolio.get("total_value", 100000)
 
+        # 2a. Detect sector rotation using live prices from scan
+        try:
+            import asyncio as _aio
+            price_text = await _aio.to_thread(self._fetch_live_prices)
+            rotation = self.detect_sector_rotation(price_text)
+            results["sector_rotation"] = {
+                "signal": rotation.rotation_signal,
+                "action": rotation.recommended_action,
+            }
+            logger.info("Sector rotation: %s — %s", rotation.rotation_signal, rotation.recommended_action)
+        except Exception as rot_err:
+            logger.warning("Sector rotation detection failed: %s", rot_err)
+
+        # 2b. Check rebalance triggers
+        try:
+            rebalance = await self.check_rebalance_triggers(portfolio)
+            results["rebalance_triggered"] = rebalance["needs_rebalance"]
+            if rebalance["needs_rebalance"]:
+                results["rebalance_triggers"] = rebalance["triggers"]
+        except Exception as reb_err:
+            logger.warning("Rebalance check failed: %s", reb_err)
+
         # 3. Filter through risk controls and execute
         import json as _json
         for signal in sorted(signals, key=lambda s: s.confidence, reverse=True):
@@ -1678,6 +1703,23 @@ class HedgeFundEngine:
             direction = signal.direction
             confidence = signal.confidence
             signal_context = ""
+
+            # MTF confluence filter — block signals with low timeframe agreement
+            try:
+                mtf = await self.get_multi_timeframe_signal(symbol)
+                if mtf.confluence_score < RISK_LIMITS["min_mtf_confluence"]:
+                    logger.info(
+                        "MTF filter blocked %s %s: confluence=%.0f%% < %.0f%%",
+                        direction, symbol, mtf.confluence_score * 100,
+                        RISK_LIMITS["min_mtf_confluence"] * 100,
+                    )
+                    results["trades_blocked"] += 1
+                    continue
+                # Boost confidence if MTF agrees with signal direction
+                if mtf.direction == direction and mtf.confluence_score > 0.75:
+                    confidence = min(0.95, confidence * 1.05)
+            except Exception as mtf_err:
+                logger.debug("MTF filter skipped for %s: %s", symbol, mtf_err)
 
             # Get technical analysis from market data service
             if hasattr(self, '_market_data') and self._market_data:
@@ -1817,6 +1859,20 @@ class HedgeFundEngine:
         """Get learned strategy weights."""
         rows = self.conn.execute(
             "SELECT * FROM strategy_weights ORDER BY weight DESC"
+        ).fetchall()
+        return [dict(r) for r in rows]
+
+    def get_sector_rotation_history(self, limit: int = 20) -> list[dict]:
+        """Get recent sector rotation snapshots."""
+        rows = self.conn.execute(
+            "SELECT * FROM sector_rotations ORDER BY timestamp DESC LIMIT ?", (limit,)
+        ).fetchall()
+        return [dict(r) for r in rows]
+
+    def get_rebalance_events(self, limit: int = 20) -> list[dict]:
+        """Get recent rebalance trigger events."""
+        rows = self.conn.execute(
+            "SELECT * FROM rebalance_events ORDER BY created_at DESC LIMIT ?", (limit,)
         ).fetchall()
         return [dict(r) for r in rows]
 

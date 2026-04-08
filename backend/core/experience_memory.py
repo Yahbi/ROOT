@@ -917,14 +917,20 @@ class ExperienceMemory:
             (source_domain, min_confidence, target_domain, max_transfer * 2),
         ).fetchall()
 
-        # Check which have NOT already been transferred to target
+        # Check which source titles have NOT already been transferred to target.
+        # Stored adapted titles have the "[From <source>] " prefix, so we strip
+        # it to compare against the original source title.
         already_transferred: set[str] = set()
         existing = self.conn.execute(
-            "SELECT source_domain, title FROM experiences WHERE domain = ? AND source_domain = ?",
+            "SELECT title FROM experiences WHERE domain = ? AND source_domain = ?",
             (target_domain, source_domain),
         ).fetchall()
+        prefix = f"[from {source_domain}] "
         for row in existing:
-            already_transferred.add(row["title"].lower())
+            stored_title = row["title"].lower()
+            if stored_title.startswith(prefix):
+                stored_title = stored_title[len(prefix):]
+            already_transferred.add(stored_title)
 
         created: list[Experience] = []
         for row in candidates:

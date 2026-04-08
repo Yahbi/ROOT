@@ -166,3 +166,102 @@ async def get_risk_limits():
     """Get current risk control settings."""
     from backend.core.hedge_fund import RISK_LIMITS
     return RISK_LIMITS
+
+
+# ── Multi-Timeframe Analysis ─────────────────────────────────
+
+@router.get("/mtf/{symbol}")
+async def get_mtf_signal(symbol: str, request: Request):
+    """Get multi-timeframe confluence signal for a symbol."""
+    hf = request.app.state.hedge_fund
+    result = await hf.get_multi_timeframe_signal(symbol.upper())
+    return {
+        "symbol": result.symbol,
+        "direction": result.direction,
+        "confluence_score": result.confluence_score,
+        "timeframes": {
+            "1min": result.tf_1min,
+            "5min": result.tf_5min,
+            "1hr": result.tf_1hr,
+            "daily": result.tf_daily,
+        },
+        "atr": result.atr,
+        "suggested_position_pct": result.suggested_position_pct,
+        "created_at": result.created_at,
+    }
+
+
+# ── Sector Rotation ──────────────────────────────────────────
+
+@router.get("/sector-rotation")
+async def get_sector_rotation(request: Request, limit: int = Query(default=20, ge=1, le=100)):
+    """Get recent sector rotation history."""
+    hf = request.app.state.hedge_fund
+    return hf.get_sector_rotation_history(limit=limit)
+
+
+@router.get("/sector-concentration")
+async def get_sector_concentration(request: Request):
+    """Get current sector concentration of open positions."""
+    hf = request.app.state.hedge_fund
+    return hf.get_sector_concentration()
+
+
+# ── Portfolio Rebalancing ────────────────────────────────────
+
+@router.get("/rebalance-events")
+async def get_rebalance_events(request: Request, limit: int = Query(default=20, ge=1, le=100)):
+    """Get recent portfolio rebalancing trigger events."""
+    hf = request.app.state.hedge_fund
+    return hf.get_rebalance_events(limit=limit)
+
+
+@router.post("/rebalance/check")
+async def check_rebalance(request: Request):
+    """Evaluate current portfolio for rebalancing needs."""
+    hf = request.app.state.hedge_fund
+    portfolio = await hf.get_portfolio()
+    return await hf.check_rebalance_triggers(portfolio)
+
+
+# ── Trade Journal ────────────────────────────────────────────
+
+@router.get("/journal")
+async def get_trade_journal(
+    request: Request,
+    symbol: str = Query(default=""),
+    limit: int = Query(default=50, ge=1, le=500),
+):
+    """Get trade journal entries with entry/exit reasons and lessons."""
+    hf = request.app.state.hedge_fund
+    return hf.get_trade_journal(symbol=symbol.upper() if symbol else "", limit=limit)
+
+
+@router.get("/journal/summary")
+async def get_journal_summary(request: Request):
+    """Get aggregated trade journal stats: win rate, sector P&L, avg hold time."""
+    hf = request.app.state.hedge_fund
+    return hf.get_journal_summary()
+
+
+@router.post("/journal/{trade_id}")
+async def write_journal_entry(trade_id: str, request: Request):
+    """Manually write a journal entry for a closed trade."""
+    hf = request.app.state.hedge_fund
+    body = await request.json()
+    entry = await hf.write_trade_journal(
+        trade_id=trade_id,
+        exit_price=float(body.get("exit_price", 0)),
+        exit_reason=body.get("exit_reason", ""),
+        market_regime=body.get("market_regime", "unknown"),
+        tags=body.get("tags", []),
+    )
+    if not entry:
+        from fastapi import HTTPException
+        raise HTTPException(status_code=404, detail="Trade not found")
+    return {
+        "trade_id": entry.trade_id, "symbol": entry.symbol,
+        "pnl": entry.pnl, "pnl_pct": entry.pnl_pct,
+        "lessons": entry.lessons, "sector": entry.sector,
+        "holding_duration_hrs": entry.holding_duration_hrs,
+    }
