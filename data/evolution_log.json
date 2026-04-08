@@ -1,95 +1,5 @@
 [
   {
-    "id": "evo_110da881edef",
-    "action_type": "skill_created",
-    "description": "Created skill: general/auto-general \u2014 Auto-generated skill for general",
-    "details": {
-      "skill_path": "/Users/yohan/Desktop/ROOT/data/skills/general/auto-general/SKILL.md",
-      "tags": [
-        "auto-generated",
-        "builder-agent",
-        "general"
-      ]
-    },
-    "impact_score": 0.5,
-    "timestamp": "2026-03-22T00:35:29.825963+00:00"
-  },
-  {
-    "id": "evo_cea0df36985f",
-    "action_type": "skill_created",
-    "description": "Created skill: general/auto-general \u2014 Auto-generated skill for general",
-    "details": {
-      "skill_path": "/Users/yohan/Desktop/ROOT/data/skills/general/auto-general/SKILL.md",
-      "tags": [
-        "auto-generated",
-        "builder-agent",
-        "general"
-      ]
-    },
-    "impact_score": 0.5,
-    "timestamp": "2026-03-22T00:56:38.821426+00:00"
-  },
-  {
-    "id": "evo_91468e27abb6",
-    "action_type": "skill_created",
-    "description": "Created skill: general/auto-general \u2014 Auto-generated skill for general",
-    "details": {
-      "skill_path": "/Users/yohan/Desktop/ROOT/data/skills/general/auto-general/SKILL.md",
-      "tags": [
-        "auto-generated",
-        "builder-agent",
-        "general"
-      ]
-    },
-    "impact_score": 0.5,
-    "timestamp": "2026-03-22T01:18:14.365233+00:00"
-  },
-  {
-    "id": "evo_2b91f9f677b9",
-    "action_type": "skill_created",
-    "description": "Created skill: general/auto-general \u2014 Auto-generated skill for general",
-    "details": {
-      "skill_path": "/Users/yohan/Desktop/ROOT/data/skills/general/auto-general/SKILL.md",
-      "tags": [
-        "auto-generated",
-        "builder-agent",
-        "general"
-      ]
-    },
-    "impact_score": 0.5,
-    "timestamp": "2026-03-22T01:38:54.489561+00:00"
-  },
-  {
-    "id": "evo_d135d43e0403",
-    "action_type": "skill_created",
-    "description": "Created skill: general/auto-general \u2014 Auto-generated skill for general",
-    "details": {
-      "skill_path": "/Users/yohan/Desktop/ROOT/data/skills/general/auto-general/SKILL.md",
-      "tags": [
-        "auto-generated",
-        "builder-agent",
-        "general"
-      ]
-    },
-    "impact_score": 0.5,
-    "timestamp": "2026-03-22T01:59:40.054135+00:00"
-  },
-  {
-    "id": "evo_dfb99d09fb00",
-    "action_type": "skill_created",
-    "description": "Created skill: general/auto-general \u2014 Auto-generated skill for general",
-    "details": {
-      "skill_path": "/Users/yohan/Desktop/ROOT/data/skills/general/auto-general/SKILL.md",
-      "tags": [
-        "auto-generated",
-        "builder-agent",
-        "general"
-      ]
-    },
-    "impact_score": 0.5,
-    "timestamp": "2026-03-22T02:21:02.785995+00:00"
-  },
-  {
     "id": "evo_06669ed1dd28",
     "action_type": "skill_created",
     "description": "Created skill: general/auto-general \u2014 Auto-generated skill for general",
@@ -5962,5 +5872,71 @@
     },
     "impact_score": 0.0,
     "timestamp": "2026-04-08T00:29:33.089974+00:00"
+  },
+  {
+    "id": "evo_cc2052dec39d",
+    "action_type": "code_proposed",
+    "description": "Proposed improvement in skills: Analyze existing patterns and create a reusable skill for {'area': 'memory_preference', 'description': 'Low preference memories (1)', 'suggestion': 'Actively collect more preference entries'}",
+    "details": {
+      "area": "skills",
+      "rationale": "Creating a skill for '{'area': 'memory_preference', 'description': 'Low preference memories (1)', 'suggestion': 'Actively collect more preference entries'}' closes the capability gap"
+    },
+    "impact_score": 0.0,
+    "timestamp": "2026-04-08T00:31:32.913232+00:00"
+  },
+  {
+    "id": "evo_3af02459c009",
+    "action_type": "code_proposed",
+    "description": "Proposed improvement in skills: Analyze existing patterns and create a reusable skill for {'area': 'memory_skill', 'description': 'Low skill memories (1)', 'suggestion': 'Actively collect more skill entries'}",
+    "details": {
+      "area": "skills",
+      "rationale": "Creating a skill for '{'area': 'memory_skill', 'description': 'Low skill memories (1)', 'suggestion': 'Actively collect more skill entries'}' closes the capability gap"
+    },
+    "impact_score": 0.0,
+    "timestamp": "2026-04-08T00:31:32.924442+00:00"
+  },
+  {
+    "id": "evo_56df5a61f54b",
+    "action_type": "code_proposed",
+    "description": "Proposed improvement in skills: Analyze existing patterns and create a reusable skill for {'area': 'memory_reflection', 'description': 'Low reflection memories (0)', 'suggestion': 'Actively collect more reflection entries'}",
+    "details": {
+      "area": "skills",
+      "rationale": "Creating a skill for '{'area': 'memory_reflection', 'description': 'Low reflection memories (0)', 'suggestion': 'Actively collect more reflection entries'}' closes the capability gap"
+    },
+    "impact_score": 0.0,
+    "timestamp": "2026-04-08T00:31:32.934306+00:00"
+  },
+  {
+    "id": "evo_676d223c55db",
+    "action_type": "code_proposed",
+    "description": "Proposed improvement in memory_preference: Actively collect more preference entries",
+    "details": {
+      "area": "memory_preference",
+      "rationale": "Proactive agent evolution \u2014 gap: Low preference memories (1)"
+    },
+    "impact_score": 0.0,
+    "timestamp": "2026-04-08T00:33:13.679354+00:00"
+  },
+  {
+    "id": "evo_b66710fc3873",
+    "action_type": "code_proposed",
+    "description": "Proposed improvement in memory_skill: Actively collect more skill entries",
+    "details": {
+      "area": "memory_skill",
+      "rationale": "Proactive agent evolution \u2014 gap: Low skill memories (1)"
+    },
+    "impact_score": 0.0,
+    "timestamp": "2026-04-08T00:33:13.687134+00:00"
+  },
+  {
+    "id": "evo_397cba70d7d5",
+    "action_type": "code_proposed",
+    "description": "Proposed improvement in memory_reflection: Actively collect more reflection entries",
+    "details": {
+      "area": "memory_reflection",
+      "rationale": "Proactive agent evolution \u2014 gap: Low reflection memories (0)"
+    },
+    "impact_score": 0.0,
+    "timestamp": "2026-04-08T00:33:13.692516+00:00"
   }
 ]
