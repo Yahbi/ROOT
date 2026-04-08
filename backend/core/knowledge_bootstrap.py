@@ -488,24 +488,34 @@ CORE_KNOWLEDGE: list[tuple[str, MemoryType, list[str], str]] = [
     ),
 ]
 
-# ── Extended knowledge corpora (500+ entries across all domains) ──
-try:
-    from backend.core.knowledge_corpus_ai import KNOWLEDGE_AI_TRADING
-    CORE_KNOWLEDGE.extend(KNOWLEDGE_AI_TRADING)
-except ImportError:
-    pass
+# ── Extended knowledge corpora from JSON files ──────────────────
+import json as _json
+from pathlib import Path as _Path
 
-try:
-    from backend.core.knowledge_corpus_engineering import KNOWLEDGE_ENGINEERING
-    CORE_KNOWLEDGE.extend(KNOWLEDGE_ENGINEERING)
-except ImportError:
-    pass
+_KNOWLEDGE_DIR = _Path(__file__).parent.parent.parent / "data" / "knowledge"
 
-try:
-    from backend.core.knowledge_corpus_science import KNOWLEDGE_SCIENCE
-    CORE_KNOWLEDGE.extend(KNOWLEDGE_SCIENCE)
-except ImportError:
-    pass
+def _load_json_corpus(directory: _Path) -> list[tuple[str, MemoryType, list[str], str]]:
+    """Load all JSON knowledge files from data/knowledge/ directory."""
+    entries: list[tuple[str, MemoryType, list[str], str]] = []
+    if not directory.is_dir():
+        return entries
+    type_map = {t.value: t for t in MemoryType}
+    for json_file in sorted(directory.glob("*.json")):
+        try:
+            data = _json.loads(json_file.read_text())
+            for item in data:
+                mem_type = type_map.get(item.get("type", "fact"), MemoryType.FACT)
+                entries.append((
+                    item["content"],
+                    mem_type,
+                    item.get("tags", []),
+                    item.get("source", "knowledge_corpus"),
+                ))
+        except Exception as exc:
+            logger.warning("Failed to load knowledge file %s: %s", json_file.name, exc)
+    return entries
+
+CORE_KNOWLEDGE.extend(_load_json_corpus(_KNOWLEDGE_DIR))
 
 
 def bootstrap_memory(memory: MemoryEngine) -> int:
