@@ -5,6 +5,7 @@ from unittest.mock import AsyncMock, MagicMock, patch
 import pytest
 
 from backend.services.llm_ollama import OllamaLLMService, _convert_tools_to_openai
+from backend.config import OLLAMA_DEFAULT_MODEL, OLLAMA_FAST_MODEL
 
 
 # ===========================================================================
@@ -94,19 +95,19 @@ class TestResolveModel:
         svc = self._make_service()
         svc._available_models = []
         model = svc._resolve_model("default")
-        assert model == "llama3.1:8b"
+        assert model == OLLAMA_DEFAULT_MODEL
 
     def test_resolve_fast_tier(self):
         svc = self._make_service()
         svc._available_models = []
         model = svc._resolve_model("fast")
-        assert model == "llama3.2:3b"
+        assert model == OLLAMA_FAST_MODEL
 
     def test_resolve_unknown_tier_falls_back_to_default(self):
         svc = self._make_service()
         svc._available_models = []
         model = svc._resolve_model("nonexistent")
-        assert model == "llama3.1:8b"
+        assert model == OLLAMA_DEFAULT_MODEL
 
     def test_resolve_model_available(self):
         svc = self._make_service()

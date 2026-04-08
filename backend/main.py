@@ -1423,8 +1423,8 @@ try:
         name="ROOT Intelligence Civilization",
         description="ASTRA-ROOT: 162+ AI agents, memory, trading, autonomous loops, and more.",
     )
-    _mcp.mount()
-    logger.info("MCP server: mounted (all API routes exposed as MCP tools)")
+    _mcp.mount_sse()
+    logger.info("MCP server: mounted at /mcp (SSE transport, all API routes exposed as MCP tools)")
 except ImportError:
     logger.info("MCP server: disabled (fastapi-mcp not installed)")
 
