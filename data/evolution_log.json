@@ -1,31 +1,5 @@
 [
   {
-    "id": "evo_35d04c69de5f",
-    "action_type": "skill_created",
-    "description": "Created skill: general/auto-general \u2014 Auto-generated skill for general",
-    "details": {
-      "skill_path": "/Users/yohan/Desktop/ROOT/data/skills/general/auto-general/SKILL.md",
-      "tags": [
-        "auto-generated",
-        "builder-agent",
-        "general"
-      ]
-    },
-    "impact_score": 0.5,
-    "timestamp": "2026-03-22T00:14:18.664204+00:00"
-  },
-  {
-    "id": "evo_059554c7f064",
-    "action_type": "code_proposed",
-    "description": "Proposed improvement in knowledge: Expand 'error' memories (only 3 entries)",
-    "details": {
-      "area": "knowledge",
-      "rationale": "Identified by Builder Agent during improvement cycle"
-    },
-    "impact_score": 0.0,
-    "timestamp": "2026-03-22T00:19:24.767558+00:00"
-  },
-  {
     "id": "evo_110da881edef",
     "action_type": "skill_created",
     "description": "Created skill: general/auto-general \u2014 Auto-generated skill for general",
@@ -5966,5 +5940,27 @@
     },
     "impact_score": 0.0,
     "timestamp": "2026-04-07T19:26:00.186216+00:00"
+  },
+  {
+    "id": "evo_53bf2bebf681",
+    "action_type": "code_proposed",
+    "description": "Proposed improvement in knowledge: Expand preference knowledge: Actively collect more preference entries",
+    "details": {
+      "area": "knowledge",
+      "rationale": "Identified by Builder Agent during improvement cycle"
+    },
+    "impact_score": 0.0,
+    "timestamp": "2026-04-08T00:27:53.200193+00:00"
+  },
+  {
+    "id": "evo_d6d2caeb5b06",
+    "action_type": "code_proposed",
+    "description": "Proposed improvement in knowledge: Expand preference knowledge: Actively collect more preference entries",
+    "details": {
+      "area": "knowledge",
+      "rationale": "Identified by Builder Agent during improvement cycle"
+    },
+    "impact_score": 0.0,
+    "timestamp": "2026-04-08T00:29:33.089974+00:00"
   }
 ]
