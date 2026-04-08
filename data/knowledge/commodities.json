@@ -1,0 +1,152 @@
+[
+  {
+    "content": "Gold has a long-term correlation of -0.40 to -0.60 with the US Dollar Index (DXY) and +0.30 to +0.50 with CPI inflation. During periods of real interest rates below -1%, gold historically appreciates 15-25% annually. Central banks collectively hold ~36,000 tonnes of gold reserves.",
+    "type": "fact",
+    "tags": ["gold", "inflation_hedge", "correlation", "real_rates"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "OPEC+ controls approximately 40% of global crude oil production (~40 million barrels/day out of ~100 million total). A production cut of 1 million barrels/day typically increases WTI crude prices by $5-$15/barrel over 2-3 months, depending on demand elasticity and strategic reserve releases.",
+    "type": "fact",
+    "tags": ["oil", "OPEC", "supply_demand", "production_cuts"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Copper is called 'Dr. Copper' because its price is a leading indicator of global economic health. Copper demand is ~70% industrial (construction 30%, electronics 25%, transport 15%). When copper prices rise >15% in a quarter, global GDP growth acceleration follows within 3-6 months with ~75% historical accuracy.",
+    "type": "learning",
+    "tags": ["copper", "economic_indicator", "industrial_metals", "GDP"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Contango occurs when futures price > spot price, common in storage-cost commodities like oil. The contango spread in WTI can reach $5-$10/barrel across 6 months during oversupply. Backwardation (spot > futures) signals immediate scarcity and is bullish for near-term prices, occurring ~30% of the time in oil markets.",
+    "type": "fact",
+    "tags": ["contango", "backwardation", "futures", "term_structure"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Roll yield is the profit/loss from rolling expiring futures contracts to the next month. In contango, roll yield is negative (buy higher-priced next month). In backwardation, roll yield is positive. USO (oil ETF) lost ~40% to negative roll yield over 5 years during persistent contango from 2015-2020.",
+    "type": "learning",
+    "tags": ["roll_yield", "futures", "contango", "ETF_decay"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Natural gas has extreme seasonality: prices typically rise 20-40% from October to January as winter heating demand peaks (US consumption ~90 Bcf/day in winter vs ~60 Bcf/day in summer). The EIA weekly storage report (Thursday 10:30 AM EST) moves Henry Hub prices 2-5% on surprise draws/injections.",
+    "type": "fact",
+    "tags": ["natural_gas", "seasonality", "winter", "storage_report"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Agricultural commodities follow planting and harvest cycles. Corn and soybean prices typically peak in June-July during pollination risk and trough in October-November at harvest. The USDA WASDE report (monthly) provides supply/demand estimates that move grain prices 3-8% on surprise revisions to yield or acreage.",
+    "type": "learning",
+    "tags": ["agriculture", "seasonality", "planting", "WASDE", "grain"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "The gold/silver ratio averages 60-80 historically but can spike to 100+ during crises (it hit 125 in March 2020). When the ratio exceeds 80, mean-reversion traders go long silver/short gold. Silver is more volatile (~1.5x gold's daily range) due to its dual industrial/precious metal nature with ~50% industrial demand.",
+    "type": "fact",
+    "tags": ["gold_silver_ratio", "precious_metals", "mean_reversion", "silver"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Industrial metals (copper, aluminum, zinc, nickel) are traded primarily on the London Metal Exchange (LME) with standardized 25-tonne contracts. Aluminum is the most traded by volume (~60 million tonnes/year). China consumes ~50% of global industrial metals, making Chinese PMI and construction starts critical demand indicators.",
+    "type": "fact",
+    "tags": ["industrial_metals", "LME", "aluminum", "china_demand"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Soft commodities include coffee, cocoa, sugar, cotton, and orange juice, traded on ICE and CME. Arabica coffee prices can swing 30-50% in a year based on Brazilian frost risk (Brazil produces ~35% of global coffee). Cocoa prices spiked 200%+ in 2024 due to West African crop failures (Ivory Coast + Ghana = 60% of supply).",
+    "type": "fact",
+    "tags": ["soft_commodities", "coffee", "cocoa", "weather_risk"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Commodity supercycles last 15-25 years, driven by structural demand shifts. The last supercycle (2000-2011) was driven by China's industrialization, with the CRB index rising ~170%. Key supercycle indicators: sustained demand growth >3% annually, capex underinvestment >5 years, inventory-to-consumption ratios at multi-decade lows.",
+    "type": "learning",
+    "tags": ["supercycle", "structural_demand", "CRB_index", "long_term"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "WTI crude oil futures (CL) trade on CME with 1,000 barrel contracts ($1 move = $1,000 per contract). Brent-WTI spread reflects Atlantic Basin vs Gulf Coast supply dynamics, typically $2-$5/barrel with Brent premium. The spread widens when US production surges or Mideast geopolitical risk increases.",
+    "type": "fact",
+    "tags": ["oil", "WTI", "Brent", "futures_contract", "spread"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Gold futures (GC) on CME are 100 troy oz contracts ($1 move = $100 per contract). Margin requirement is typically $8,000-$12,000 (5-7% of contract value). Gold ETFs (GLD, IAU) hold physical gold in vaults; GLD holds ~900 tonnes, making it the 7th largest gold holder globally, bigger than most central banks.",
+    "type": "fact",
+    "tags": ["gold", "futures", "GLD", "margin", "ETF"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Crude oil inventory data is released weekly: API on Tuesday (4:30 PM EST, unofficial) and EIA on Wednesday (10:30 AM EST, official). A draw of >5 million barrels vs expectations typically moves WTI 2-4%. The strategic petroleum reserve (SPR) holds ~370 million barrels (down from 727M peak in 2010).",
+    "type": "fact",
+    "tags": ["oil", "inventory", "EIA", "API", "SPR"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Platinum/palladium are primarily industrial precious metals. Palladium demand is ~80% automotive catalytic converters (gasoline engines). The EV transition threatens palladium demand long-term as EVs need zero catalytic converters. Platinum is pivoting toward hydrogen fuel cell catalyst demand (~5-10g per fuel cell stack).",
+    "type": "learning",
+    "tags": ["platinum", "palladium", "automotive", "EV_transition", "hydrogen"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Commodity ETFs use three structures: physical-backed (GLD, SLV — hold metal), futures-based (USO, UNG — roll futures monthly), and equity-based (GDX, XLE — hold mining/energy stocks). Futures-based ETFs suffer roll yield decay of 5-15% annually in contango. Physical-backed ETFs track spot price with ~0.25-0.40% annual expense ratio.",
+    "type": "skill",
+    "tags": ["commodity_ETF", "structure", "roll_yield", "physical_backed"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Lithium carbonate prices swung from $6,000/tonne (2020) to $80,000/tonne (2022) back to $12,000/tonne (2024) due to EV demand boom then oversupply. Global lithium demand is projected to grow 25-30% annually through 2030. The lithium triangle (Chile, Argentina, Bolivia) holds ~55% of global reserves.",
+    "type": "fact",
+    "tags": ["lithium", "EV_demand", "supply_demand", "price_volatility"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Heating degree days (HDD) and cooling degree days (CDD) drive natural gas and electricity demand. HDD = max(0, 65°F - avg daily temp). US Northeast winter with 10% above-normal HDDs can increase gas demand by 5-8 Bcf/day, often causing 10-20% price spikes in Henry Hub spot prices.",
+    "type": "skill",
+    "tags": ["natural_gas", "weather", "HDD", "CDD", "demand"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Iron ore is priced off the 62% Fe benchmark (Platts IODEX) delivered to Qingdao, China. Prices ranged $80-$220/tonne from 2020-2024. China's steel production (~1 billion tonnes/year, 54% of global output) is the dominant price driver. Port stockpiles above 140 million tonnes signal bearish oversupply.",
+    "type": "fact",
+    "tags": ["iron_ore", "steel", "china", "benchmark_pricing"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Commodity trading advisors (CTAs) manage ~$400 billion using systematic trend-following strategies. CTAs typically use 20/50/200-day moving average crossovers and breakout systems. When CTA positioning in crude oil exceeds +3 standard deviations net long, a mean-reversion selloff of 10-15% occurs within 4-6 weeks ~65% of the time.",
+    "type": "learning",
+    "tags": ["CTA", "trend_following", "positioning", "systematic"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Uranium (U3O8) has a unique market structure: ~80% of demand is contracted long-term (10-15 year utility contracts) and ~20% trades on spot. Spot prices ranged $20-$50/lb from 2016-2022 then surged to $100+/lb in 2024. Global consumption is ~180 million lbs/year vs production of ~140 million lbs/year (deficit covered by inventories).",
+    "type": "fact",
+    "tags": ["uranium", "nuclear", "supply_deficit", "contract_market"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "The Bloomberg Commodity Index (BCOM) weights: energy ~30%, grains ~23%, precious metals ~19%, industrial metals ~16%, softs ~7%, livestock ~5%. BCOM uses a production-weighted methodology capped at 33% per sector. S&P GSCI is more energy-heavy at ~55% weighting, making it more volatile.",
+    "type": "fact",
+    "tags": ["commodity_index", "BCOM", "GSCI", "weighting"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Seasonal spread trades in commodities exploit calendar patterns: buy July natural gas / sell January (summer injection vs winter withdrawal), or buy July soybean / sell November (old crop vs new crop). These spreads have lower margin requirements (50-75% less than outright positions) and more predictable patterns.",
+    "type": "skill",
+    "tags": ["seasonal_spread", "calendar_trade", "margin_efficiency"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Copper mine supply takes 5-10 years from discovery to first production due to permitting, construction, and infrastructure. Current global copper reserves are ~880 million tonnes with annual production ~22 million tonnes. The energy transition (EVs need 3-4x more copper than ICE vehicles, plus grid buildout) may create a 5-10 million tonne annual deficit by 2030.",
+    "type": "learning",
+    "tags": ["copper", "supply_constraints", "energy_transition", "mining"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Commodity options use Black-76 model (not Black-Scholes) because futures, not spot, are the underlying. Call option on WTI at $80 strike with 30-day expiry, 30% implied vol, costs approximately $2.50/barrel ($2,500 per contract). At-the-money straddle premium in crude oil roughly equals daily_range * sqrt(DTE) * 0.4.",
+    "type": "skill",
+    "tags": ["commodity_options", "Black_76", "pricing", "straddle"],
+    "source": "trading_knowledge"
+  }
+]

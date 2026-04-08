@@ -1,0 +1,152 @@
+[
+  {
+    "content": "Pre-seed rounds raise $50K-$500K at $1M-$5M pre-money valuation, typically from angel investors or pre-seed funds. The round funds 3-6 months of runway for MVP development. Founders typically give up 10-20% equity. SAFE notes are the preferred instrument, avoiding valuation negotiations at this early stage.",
+    "type": "fact",
+    "tags": ["pre_seed", "valuation", "angel_investors", "equity_dilution"],
+    "source": "business_knowledge"
+  },
+  {
+    "content": "Seed rounds raise $500K-$2M at $5M-$15M pre-money valuation. Investors expect a working MVP, early user traction (100-1000 users), and a clear path to product-market fit. Seed-stage startups have a ~10% probability of reaching Series A. The median time from seed to Series A is 18-24 months.",
+    "type": "fact",
+    "tags": ["seed_round", "valuation", "traction", "survival_rate"],
+    "source": "business_knowledge"
+  },
+  {
+    "content": "Series A rounds raise $2M-$15M at $15M-$60M pre-money valuation. Typical Series A metrics: $1M+ ARR, 3x year-over-year growth, <2% monthly revenue churn, LTV/CAC >3, and a repeatable go-to-market channel. Institutional VCs (Sequoia, a16z, Benchmark) lead most Series A rounds with 20-30% ownership targets.",
+    "type": "fact",
+    "tags": ["series_A", "metrics", "ARR", "institutional_VC"],
+    "source": "business_knowledge"
+  },
+  {
+    "content": "DCF valuation for startups uses revenue multiples (not earnings, since most are unprofitable). SaaS companies valued at 10-30x ARR for high-growth (>100% YoY), 5-10x for moderate growth (50-100% YoY). Comparable company analysis uses EV/Revenue of public peers discounted 30-50% for illiquidity. Scorecard method adjusts average pre-money by team/market/product factors.",
+    "type": "skill",
+    "tags": ["valuation_methods", "DCF", "revenue_multiples", "comparables"],
+    "source": "business_knowledge"
+  },
+  {
+    "content": "Term sheet key terms: liquidation preference (1x non-participating is standard; 2x or participating preferred is investor-friendly), anti-dilution (broad-based weighted average is standard; full ratchet is aggressive), board seats (typically 2 founders + 1 investor at seed, 2+2+1 at Series A), and protective provisions (veto rights on sale, new rounds, debt).",
+    "type": "learning",
+    "tags": ["term_sheet", "liquidation_preference", "anti_dilution", "board_seats"],
+    "source": "business_knowledge"
+  },
+  {
+    "content": "Cap table management tracks ownership across rounds. Example: founders start with 100%. After seed ($2M at $8M pre-money = 20% dilution) and Series A ($10M at $40M pre-money = 20% dilution), founders own 100% * 0.80 * 0.80 = 64%. Option pool (10-20%) further dilutes founders. Cap table tools: Carta, Pulley, AngelList Stack.",
+    "type": "skill",
+    "tags": ["cap_table", "dilution_math", "ownership", "option_pool"],
+    "source": "business_knowledge"
+  },
+  {
+    "content": "SAFE (Simple Agreement for Future Equity) converts to equity at the next priced round. Key terms: valuation cap (max price for conversion) and discount (typically 15-25%). Example: SAFE with $10M cap and 20% discount. If Series A prices at $20M pre-money, SAFE converts at $10M (cap wins). If Series A at $11M, SAFE converts at $8.8M (discount wins).",
+    "type": "fact",
+    "tags": ["SAFE", "convertible", "valuation_cap", "discount"],
+    "source": "business_knowledge"
+  },
+  {
+    "content": "Convertible notes are debt instruments that convert to equity. Key terms: principal amount, interest rate (4-8% annually), maturity (18-24 months), valuation cap, and discount. Unlike SAFEs, convertible notes accrue interest that converts to additional shares. A $500K note at 6% for 2 years converts $560K worth of equity at the cap/discount price.",
+    "type": "fact",
+    "tags": ["convertible_note", "interest", "maturity", "debt_conversion"],
+    "source": "business_knowledge"
+  },
+  {
+    "content": "Dilution formula: new ownership = old ownership * (pre-money / post-money). If you own 25% and a $5M round at $20M pre-money ($25M post) occurs: 25% * (20/25) = 20%. Over 4 rounds with 20% dilution each, founder ownership = starting% * 0.8^4 = starting% * 0.41. A founder starting at 50% ends at ~20% after 4 rounds of 20% dilution.",
+    "type": "skill",
+    "tags": ["dilution", "formula", "ownership_calculation", "fundraising"],
+    "source": "business_knowledge"
+  },
+  {
+    "content": "VC returns follow a power law: ~65% of investments return <1x, ~25% return 1-5x, ~10% return >5x, and ~1-2% return >50x. These top 1-2% of investments generate 90%+ of total fund returns. A $100M fund needs 1-2 investments returning $100M+ each (10-50x) to achieve target 3x net fund returns.",
+    "type": "learning",
+    "tags": ["power_law", "VC_returns", "fund_economics", "outliers"],
+    "source": "business_knowledge"
+  },
+  {
+    "content": "The J-curve describes VC fund cash flows: years 1-4 are negative (capital deployed + management fees with no exits), years 5-8 break even as early exits occur, years 8-12 generate positive returns as winners scale and exit. Management fee is typically 2% of committed capital annually; carried interest is 20% of profits above a preferred return (usually 8%).",
+    "type": "learning",
+    "tags": ["J_curve", "fund_lifecycle", "management_fee", "carry"],
+    "source": "business_knowledge"
+  },
+  {
+    "content": "DPI (Distributions to Paid-In) = total distributions / total capital called. TVPI (Total Value to Paid-In) = (distributions + remaining value) / capital called. IRR (Internal Rate of Return) is the annualized time-weighted return. Top quartile VC funds: DPI >2.0x, TVPI >2.5x, IRR >20% net. Median fund: DPI ~1.3x, TVPI ~1.6x, IRR ~12%.",
+    "type": "fact",
+    "tags": ["DPI", "TVPI", "IRR", "fund_metrics", "performance"],
+    "source": "business_knowledge"
+  },
+  {
+    "content": "Pro-rata rights allow existing investors to maintain their ownership percentage in future rounds by investing proportionally. If an investor owns 15% and a $20M Series B occurs, pro-rata right = 15% * $20M = $3M investment to maintain 15%. Super pro-rata means investing more than proportional share. Pro-rata rights are highly valued in top-performing companies.",
+    "type": "learning",
+    "tags": ["pro_rata", "follow_on", "ownership_maintenance", "investor_rights"],
+    "source": "business_knowledge"
+  },
+  {
+    "content": "Vesting schedules for founder equity: standard is 4-year vesting with 1-year cliff (25% vests at 12 months, then monthly/quarterly thereafter). If a co-founder leaves at month 18, they keep 25% + 6/36 of remaining 75% = 37.5% of their shares. Single-trigger acceleration vests all shares on acquisition; double-trigger requires acquisition + termination.",
+    "type": "fact",
+    "tags": ["vesting", "cliff", "acceleration", "founder_equity"],
+    "source": "business_knowledge"
+  },
+  {
+    "content": "Employee stock option pool is typically 10-15% at seed, expanded to 15-20% at Series A (created from pre-money, diluting existing shareholders). Options have a strike price = 409A fair market value (typically 25-35% of preferred share price). ISOs have $100K annual exercise limit and favorable tax treatment; NSOs are taxed as ordinary income at exercise.",
+    "type": "fact",
+    "tags": ["option_pool", "409A", "ISO", "NSO", "employee_equity"],
+    "source": "business_knowledge"
+  },
+  {
+    "content": "Down round mechanics: if Series B prices below Series A, anti-dilution protections activate. Broad-based weighted average: new conversion price = old price * (old shares + new money/old price) / (old shares + new shares issued). Full ratchet: conversion price drops to the new lower price, massively diluting founders. Broad-based is founder-friendly; full ratchet is investor-friendly.",
+    "type": "skill",
+    "tags": ["down_round", "anti_dilution", "weighted_average", "full_ratchet"],
+    "source": "business_knowledge"
+  },
+  {
+    "content": "Venture debt provides $2M-$20M non-dilutive capital (from Silicon Valley Bank, Western Technology, Hercules) alongside equity rounds. Terms: 3-year term, interest-only period (6-12 months), then amortization, rates at prime+2-5%, plus warrants for 0.5-2% equity coverage. Best used to extend runway 3-6 months between equity rounds.",
+    "type": "learning",
+    "tags": ["venture_debt", "non_dilutive", "warrants", "runway_extension"],
+    "source": "business_knowledge"
+  },
+  {
+    "content": "Secondary transactions allow early shareholders (founders, employees, early investors) to sell shares before an IPO. Typical secondary discount: 10-30% below latest primary round price due to illiquidity. Secondary markets (Forge, EquityZen, Nasdaq Private Market) facilitate $50B+ annually. Companies often have ROFR (Right of First Refusal) on secondary transfers.",
+    "type": "fact",
+    "tags": ["secondary", "liquidity", "ROFR", "private_market"],
+    "source": "business_knowledge"
+  },
+  {
+    "content": "Due diligence checklist for VCs: TAM/SAM/SOM analysis (TAM >$1B preferred), competitive moat assessment, unit economics deep-dive (gross margin >60% for SaaS), reference calls (5-10 customer interviews), technical audit (code quality, architecture scalability), legal review (IP ownership, litigation), and background checks on founders.",
+    "type": "skill",
+    "tags": ["due_diligence", "TAM", "unit_economics", "investor_process"],
+    "source": "business_knowledge"
+  },
+  {
+    "content": "Exit strategies: IPO (median time to IPO is 8-10 years from founding, requires $100M+ revenue), M&A (accounts for 90%+ of VC exits, median acquisition at 3-5x revenue for SaaS), and SPAC (peaked in 2021 at $160B, now largely defunct). Strategic acquirers pay 30-50% premium over financial buyers due to synergy value.",
+    "type": "learning",
+    "tags": ["exit_strategy", "IPO", "M&A", "SPAC", "acquisition_multiples"],
+    "source": "business_knowledge"
+  },
+  {
+    "content": "Information rights in VC term sheets typically include: monthly financial statements (income, balance sheet, cash flow), annual audited financials, annual budget/business plan, board meeting attendance, and quarterly KPI dashboards. Major investor rights (usually >5% ownership): board observer seat, inspection rights, and ROFR on secondary sales.",
+    "type": "fact",
+    "tags": ["information_rights", "investor_rights", "reporting", "governance"],
+    "source": "business_knowledge"
+  },
+  {
+    "content": "Drag-along rights allow majority shareholders (>50-67%) to force minority shareholders to join a sale transaction at the same terms. Tag-along rights allow minority shareholders to join a transaction initiated by majority shareholders on proportional terms. Both protect against scenarios where one group of shareholders is disadvantaged in an exit.",
+    "type": "learning",
+    "tags": ["drag_along", "tag_along", "minority_rights", "exit_protection"],
+    "source": "business_knowledge"
+  },
+  {
+    "content": "Fund structure: VC fund is a limited partnership. GPs (general partners) manage the fund and invest 1-5% of capital ($1-5M in a $100M fund). LPs (limited partners) include endowments, pension funds, family offices, and fund-of-funds. Fund life is 10 years + 2-year extensions. Investment period is years 1-5; harvest period is years 6-12.",
+    "type": "fact",
+    "tags": ["fund_structure", "GP", "LP", "limited_partnership"],
+    "source": "business_knowledge"
+  },
+  {
+    "content": "Pay-to-play provisions require existing investors to participate in future rounds (pro-rata or specified minimum) or lose preferential rights (preferred converts to common). This prevents passive investors from free-riding on new investors' capital. Common in down rounds to ensure all investors share the risk. Failure to participate can result in 10:1 reverse conversion ratio.",
+    "type": "learning",
+    "tags": ["pay_to_play", "participation", "preferred_stock", "investor_protection"],
+    "source": "business_knowledge"
+  },
+  {
+    "content": "Bridge round (extension round) provides $500K-$3M between major rounds, typically at a 10-20% discount to the next round's expected valuation or as convertible notes with 1.5-2x cap relative to last round. Bridge rounds signal the company needs more time to hit milestones. If >50% of bridge capital comes from new investors, it is a positive signal.",
+    "type": "fact",
+    "tags": ["bridge_round", "extension", "convertible_note", "runway"],
+    "source": "business_knowledge"
+  }
+]

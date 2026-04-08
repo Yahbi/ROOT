@@ -1,0 +1,152 @@
+[
+  {
+    "content": "EUR/USD is the most traded currency pair globally, accounting for approximately 24% of daily forex volume (~$7.5 trillion total daily). A single pip in EUR/USD equals $10 per standard lot (100,000 units) and $0.10 per micro lot (1,000 units).",
+    "type": "fact",
+    "tags": ["forex", "EUR/USD", "pip_value", "liquidity"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "GBP/USD (Cable) has a pip value of $10 per standard lot and average daily range of 100-150 pips. It is heavily influenced by Bank of England rate decisions and UK GDP data, with spreads typically 1-2 pips during London session hours (08:00-16:00 GMT).",
+    "type": "fact",
+    "tags": ["forex", "GBP/USD", "volatility", "spread"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "USD/JPY pip value is approximately $6.50-$7.50 per standard lot (varies with exchange rate, calculated as 0.01/rate * 100,000). The pair is heavily correlated with US-Japan interest rate differential and US 10-year Treasury yields, with a correlation coefficient often exceeding 0.85.",
+    "type": "fact",
+    "tags": ["forex", "USD/JPY", "pip_calculation", "correlation"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Standard lot = 100,000 base currency units, mini lot = 10,000, micro lot = 1,000, nano lot = 100. At 50:1 leverage, a standard lot EUR/USD requires $2,000 margin. At 30:1 (EU ESMA regulation), the same position requires $3,333.33 margin.",
+    "type": "fact",
+    "tags": ["forex", "lot_sizes", "leverage", "margin"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Carry trade profit = (interest rate of long currency - interest rate of short currency) * position size / 365 * days held, plus/minus exchange rate movement. Historically, AUD/JPY and NZD/JPY were popular carry pairs when Australia/NZ rates were 4-5% and Japan was near 0%.",
+    "type": "learning",
+    "tags": ["forex", "carry_trade", "interest_rate_differential", "strategy"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Central bank divergence drives multi-month forex trends. When the Fed tightens while the ECB holds, EUR/USD typically declines 500-1500 pips over 6-12 months. The interest rate differential between two economies explains roughly 60-70% of long-term currency pair movement.",
+    "type": "learning",
+    "tags": ["forex", "central_bank", "monetary_policy", "divergence"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Support and resistance in FX markets are strongest at round numbers (1.1000, 1.1500 in EUR/USD) and previous swing highs/lows. Institutional order clusters often sit at these psychological levels with 50-100 pip stop-loss zones behind them, creating liquidity pools that market makers target.",
+    "type": "skill",
+    "tags": ["forex", "support_resistance", "price_levels", "institutional_orders"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "The Asian session (Tokyo, 00:00-09:00 GMT) has the lowest volatility with 30-50 pip average ranges in EUR/USD. London session (08:00-16:00 GMT) generates ~35% of daily volume. NY session (13:00-22:00 GMT) sees the highest volatility during London/NY overlap (13:00-16:00 GMT).",
+    "type": "fact",
+    "tags": ["forex", "trading_sessions", "volatility", "volume"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Swap rates (rollover) are charged at 5 PM EST daily (triple rollover on Wednesday for weekend settlement). Long USD/JPY earns positive swap when US rates > Japan rates. Swap = (contract size * (interest rate differential + broker markup) / 365). Some brokers charge 2-3x the interbank swap spread.",
+    "type": "fact",
+    "tags": ["forex", "swap_rates", "rollover", "carry_cost"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "EUR/GBP correlation with EUR/USD is typically +0.70 to +0.85, while GBP/USD has a -0.40 to -0.60 correlation with USD/JPY. Trading both EUR/USD long and GBP/USD long simultaneously doubles effective GBP exposure, creating hidden concentration risk in a USD-weakness thesis.",
+    "type": "learning",
+    "tags": ["forex", "correlation", "EUR/GBP", "risk_management"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "JPY, CHF, and USD are the three primary safe-haven currencies. During risk-off events (VIX >25), JPY typically appreciates 2-5% against high-beta currencies (AUD, NZD, ZAR) within days. The CHF/JPY cross often flatlines during crises as both appreciate simultaneously.",
+    "type": "fact",
+    "tags": ["forex", "safe_haven", "JPY", "CHF", "risk_off"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Non-Farm Payrolls (NFP) is released first Friday of each month at 8:30 AM EST. A deviation of >50K from consensus typically moves EUR/USD 50-100 pips within 5 minutes. The unemployment rate, average hourly earnings (+0.3% MoM expected), and participation rate provide secondary directional signals.",
+    "type": "fact",
+    "tags": ["forex", "NFP", "economic_data", "USD", "volatility"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Pip value formula for pairs where USD is the quote currency: pip value = 0.0001 * lot size (e.g., 0.0001 * 100,000 = $10). For pairs where USD is the base: pip value = 0.0001 * lot size / current exchange rate. For JPY pairs: pip value = 0.01 * lot size / current rate.",
+    "type": "skill",
+    "tags": ["forex", "pip_calculation", "formula", "position_sizing"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "The London Fix at 4:00 PM GMT triggers significant order flow as institutional portfolios rebalance. EUR/USD often reverses its intraday direction within 30 minutes of the fix. Month-end and quarter-end fixes see 3-5x normal fix-related volume, creating predictable 20-40 pip moves.",
+    "type": "learning",
+    "tags": ["forex", "london_fix", "institutional", "order_flow"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Margin call triggers when equity falls below maintenance margin (typically 50% of initial margin for US brokers, 100% for EU). At 50:1 leverage, a 2% adverse move wipes out 100% of margin. Position sizing rule: risk no more than 1-2% of account per trade, calculated as (account * risk%) / (stop_loss_pips * pip_value).",
+    "type": "skill",
+    "tags": ["forex", "margin", "risk_management", "position_sizing"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "The Dollar Index (DXY) weights: EUR 57.6%, JPY 13.6%, GBP 11.9%, CAD 9.1%, SEK 4.2%, CHF 3.6%. DXY above 100 signals broad USD strength. A rising DXY typically pressures commodity prices (gold, oil) due to inverse correlation averaging -0.60 to -0.80 over the past 20 years.",
+    "type": "fact",
+    "tags": ["forex", "DXY", "dollar_index", "weights", "correlation"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Fibonacci retracement levels in FX (23.6%, 38.2%, 50%, 61.8%, 78.6%) are widely used by institutional traders. The 61.8% retracement of a strong trend move in EUR/USD produces a >60% bounce probability when aligned with a prior swing high/low in backtests across 20 years of data.",
+    "type": "skill",
+    "tags": ["forex", "fibonacci", "technical_analysis", "retracement"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Triangular arbitrage exploits pricing inefficiencies across three pairs. Example: EUR/USD * USD/JPY should equal EUR/JPY. If EUR/USD=1.1000, USD/JPY=150.00, then EUR/JPY should be 165.00. Any deviation >2-3 pips is exploitable but typically lasts <100 milliseconds in modern markets.",
+    "type": "learning",
+    "tags": ["forex", "arbitrage", "triangular", "cross_rates"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "FOMC rate decisions (8 per year) create average 80-120 pip moves in EUR/USD. The dot plot (Summary of Economic Projections) often matters more than the actual rate change. Forward guidance language shifts like 'patient' to 'data-dependent' can move markets 50+ pips independently of rate action.",
+    "type": "fact",
+    "tags": ["forex", "FOMC", "fed", "rate_decision", "forward_guidance"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Currency options implied volatility spikes 2-3 days before major events (NFP, ECB, FOMC). 1-week EUR/USD implied vol averages 7-8% normally but can reach 12-15% pre-event. Options traders use straddles (buy call+put at same strike) costing ~80-100 pips premium for NFP week.",
+    "type": "learning",
+    "tags": ["forex", "options", "implied_volatility", "straddle", "event_risk"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "COT (Commitment of Traders) report, released every Friday by CFTC, shows positioning of commercial hedgers, large speculators, and small traders. When large speculators reach extreme net long/short (>2 standard deviations from 52-week mean), EUR/USD reversal occurs within 2-4 weeks ~70% of the time.",
+    "type": "skill",
+    "tags": ["forex", "COT", "positioning", "sentiment", "reversal"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Spread costs matter significantly for scalpers: EUR/USD typical spread of 0.5-1.0 pip means a round-trip cost of $5-$10 per standard lot. At 20 trades per day, that is $100-$200 in spread costs alone. Scalping profitability requires >55% win rate with 1:1 risk-reward to overcome spread friction.",
+    "type": "learning",
+    "tags": ["forex", "spread", "scalping", "transaction_costs"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "AUD/USD and NZD/USD are commodity-correlated currencies with +0.75 to +0.85 correlation to copper and iron ore prices respectively. AUD is sensitive to Chinese PMI data because Australia exports ~35% of goods to China. A Chinese PMI below 50 typically weakens AUD/USD by 50-100 pips.",
+    "type": "fact",
+    "tags": ["forex", "AUD", "NZD", "commodity_currencies", "china"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "USD/CAD is inversely correlated with crude oil at approximately -0.70 to -0.85 because Canada is the world's 4th largest oil producer. A $10/barrel move in WTI crude typically corresponds to a 200-400 pip move in USD/CAD over 2-4 weeks.",
+    "type": "fact",
+    "tags": ["forex", "USD/CAD", "oil_correlation", "crude", "canada"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Gap trading in forex occurs primarily at Sunday open when price jumps from Friday close. Gaps >20 pips in EUR/USD fill (return to Friday close) approximately 70-75% of the time within the first 4 hours of Monday trading. Weekend geopolitical events cause the largest gaps at 50-200+ pips.",
+    "type": "skill",
+    "tags": ["forex", "gap_trading", "weekend", "sunday_open", "strategy"],
+    "source": "trading_knowledge"
+  }
+]

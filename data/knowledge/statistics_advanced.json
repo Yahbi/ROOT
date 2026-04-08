@@ -1,0 +1,152 @@
+[
+  {
+    "content": "Maximum Likelihood Estimation (MLE) finds the parameter theta that maximizes L(theta|x) = product of P(xi|theta) for all observations. In practice, maximize the log-likelihood: l(theta) = sum of ln(P(xi|theta)). MLE is asymptotically efficient, achieving the Cramer-Rao lower bound as n approaches infinity.",
+    "type": "fact",
+    "tags": ["mle", "parameter_estimation", "likelihood"],
+    "source": "data_science"
+  },
+  {
+    "content": "The EM algorithm handles latent variables in 2 steps: E-step computes the expected value of the complete-data log-likelihood given observed data and current parameters, M-step maximizes this expected log-likelihood to update parameters. Convergence is guaranteed to a local maximum but not global.",
+    "type": "fact",
+    "tags": ["em_algorithm", "latent_variables", "expectation_maximization"],
+    "source": "data_science"
+  },
+  {
+    "content": "Kernel Density Estimation (KDE) estimates f(x) = (1/nh) * sum of K((x-xi)/h) where K is a kernel function (Gaussian most common) and h is bandwidth. Silverman's rule of thumb: h = 0.9 * min(std, IQR/1.34) * n^(-1/5). Bandwidth selection is more critical than kernel choice.",
+    "type": "fact",
+    "tags": ["kde", "density_estimation", "bandwidth"],
+    "source": "data_science"
+  },
+  {
+    "content": "Bootstrap resampling draws B samples of size n with replacement from the original data to estimate sampling distributions. Use B=1,000 for standard error estimation and B=10,000 for confidence intervals. The BCa (bias-corrected and accelerated) method produces the most accurate confidence intervals.",
+    "type": "skill",
+    "tags": ["bootstrap", "resampling", "confidence_intervals"],
+    "source": "data_science"
+  },
+  {
+    "content": "The jackknife estimator uses leave-one-out resampling: compute the statistic n times, each time omitting one observation. Jackknife bias estimate: bias = (n-1)(theta_jack - theta_full). It's less computationally intensive than bootstrap but less versatile, working best for smooth statistics.",
+    "type": "fact",
+    "tags": ["jackknife", "resampling", "bias_estimation"],
+    "source": "data_science"
+  },
+  {
+    "content": "K-fold cross-validation splits data into k equal folds, trains on k-1 folds and validates on the held-out fold, rotating k times. Standard choice is k=5 or k=10, balancing bias (lower k = higher bias) and variance (higher k = higher variance). Leave-one-out CV (k=n) has low bias but high variance.",
+    "type": "skill",
+    "tags": ["cross_validation", "model_selection", "k_fold"],
+    "source": "data_science"
+  },
+  {
+    "content": "L1 regularization (Lasso) adds lambda*sum(|beta_j|) penalty, producing sparse solutions with exact zeros for feature selection. L2 regularization (Ridge) adds lambda*sum(beta_j^2), shrinking coefficients toward zero without eliminating them. Elastic net combines both: alpha*L1 + (1-alpha)*L2.",
+    "type": "fact",
+    "tags": ["regularization", "lasso", "ridge", "elastic_net"],
+    "source": "data_science"
+  },
+  {
+    "content": "The bias-variance tradeoff decomposes expected prediction error as: E[(y-f_hat)^2] = Bias(f_hat)^2 + Var(f_hat) + sigma^2 (irreducible noise). Simple models have high bias/low variance (underfitting), complex models have low bias/high variance (overfitting). Optimal complexity minimizes total error.",
+    "type": "fact",
+    "tags": ["bias_variance", "model_complexity", "generalization"],
+    "source": "data_science"
+  },
+  {
+    "content": "AIC (Akaike Information Criterion) = 2k - 2ln(L) where k = number of parameters and L = maximum likelihood. BIC (Bayesian Information Criterion) = k*ln(n) - 2ln(L) where n = sample size. BIC penalizes complexity more heavily for n > 7 and is consistent (selects true model as n grows).",
+    "type": "fact",
+    "tags": ["aic", "bic", "model_selection", "information_criteria"],
+    "source": "data_science"
+  },
+  {
+    "content": "Bayesian inference computes the posterior P(theta|data) = P(data|theta)*P(theta)/P(data) via Bayes' theorem. The prior P(theta) encodes pre-existing beliefs, the likelihood P(data|theta) captures evidence. As sample size grows, the posterior concentrates around the MLE regardless of prior choice.",
+    "type": "fact",
+    "tags": ["bayesian", "posterior", "prior", "bayes_theorem"],
+    "source": "data_science"
+  },
+  {
+    "content": "Markov Chain Monte Carlo (MCMC) samples from complex posterior distributions. Metropolis-Hastings accepts proposals with probability min(1, P(theta')/P(theta) * q(theta|theta')/q(theta'|theta)). Typical burn-in is 1,000-10,000 samples; effective sample size should be >400 for reliable inference.",
+    "type": "skill",
+    "tags": ["mcmc", "metropolis_hastings", "bayesian_computation"],
+    "source": "data_science"
+  },
+  {
+    "content": "The Kolmogorov-Smirnov test measures the maximum absolute difference between two empirical CDFs: D = max|F1(x) - F2(x)|. For one-sample tests against a theoretical distribution, critical value is approximately 1.36/sqrt(n) at alpha=0.05. Sensitive to differences in location, scale, and shape.",
+    "type": "fact",
+    "tags": ["ks_test", "distribution_comparison", "nonparametric"],
+    "source": "data_science"
+  },
+  {
+    "content": "Principal Component Analysis (PCA) finds orthogonal directions of maximum variance. The first k components capture sum(lambda_1..k)/sum(all lambda) proportion of total variance. Typically choose k to capture 90-95% of variance. PCA requires centered (and often standardized) data for meaningful results.",
+    "type": "skill",
+    "tags": ["pca", "dimensionality_reduction", "eigenvalues"],
+    "source": "data_science"
+  },
+  {
+    "content": "The Central Limit Theorem states that the sampling distribution of the mean approaches N(mu, sigma^2/n) as sample size n increases, regardless of the population distribution. Convergence is practical for n >= 30 for symmetric distributions, but may require n >= 100+ for highly skewed populations.",
+    "type": "fact",
+    "tags": ["clt", "sampling_distribution", "normal_approximation"],
+    "source": "data_science"
+  },
+  {
+    "content": "Multiple hypothesis testing inflates the family-wise error rate: with m independent tests at alpha=0.05, P(at least one false positive) = 1-(1-0.05)^m = 0.40 for m=10. Bonferroni correction divides alpha by m (conservative). Benjamini-Hochberg controls false discovery rate (FDR), typically more powerful.",
+    "type": "fact",
+    "tags": ["multiple_testing", "bonferroni", "fdr", "benjamini_hochberg"],
+    "source": "data_science"
+  },
+  {
+    "content": "Effect size measures practical significance independent of sample size. Cohen's d for means: (M1-M2)/pooled_SD, with benchmarks of 0.2 (small), 0.5 (medium), 0.8 (large). For correlations: r of 0.1 (small), 0.3 (medium), 0.5 (large). Always report effect sizes alongside p-values.",
+    "type": "fact",
+    "tags": ["effect_size", "cohens_d", "practical_significance"],
+    "source": "data_science"
+  },
+  {
+    "content": "Power analysis determines the minimum sample size to detect a given effect. Power = P(reject H0 | H1 true), standard target is 0.80. For a two-sample t-test with d=0.5 and alpha=0.05, required n per group is approximately 64. Doubling sample size increases power from 0.80 to ~0.94.",
+    "type": "skill",
+    "tags": ["power_analysis", "sample_size", "study_design"],
+    "source": "data_science"
+  },
+  {
+    "content": "Survival analysis models time-to-event data with censoring. The Kaplan-Meier estimator: S(t) = product of (1 - d_i/n_i) for all event times t_i <= t. The Cox proportional hazards model: h(t) = h0(t)*exp(beta*X), where the hazard ratio exp(beta) is constant over time (proportional hazards assumption).",
+    "type": "fact",
+    "tags": ["survival_analysis", "kaplan_meier", "cox_model"],
+    "source": "data_science"
+  },
+  {
+    "content": "The chi-squared test for independence uses the statistic X^2 = sum((O-E)^2/E) with df = (r-1)(c-1) for an r x c contingency table. Expected counts E = row_total * col_total / grand_total. The test requires all expected cell counts >= 5; use Fisher's exact test for small samples.",
+    "type": "fact",
+    "tags": ["chi_squared", "contingency_table", "independence_test"],
+    "source": "data_science"
+  },
+  {
+    "content": "Gaussian Mixture Models (GMM) model data as a weighted sum of K Gaussian components: P(x) = sum(pi_k * N(x|mu_k, Sigma_k)). Fitted via EM algorithm. Use BIC to select K. GMM is a soft clustering method that assigns probabilistic membership, unlike K-means which does hard assignment.",
+    "type": "fact",
+    "tags": ["gmm", "mixture_models", "clustering"],
+    "source": "data_science"
+  },
+  {
+    "content": "Stratified sampling divides the population into homogeneous subgroups (strata) and samples proportionally or optimally from each. It reduces variance of estimates by up to 50-80% compared to simple random sampling when strata differ substantially in the variable of interest.",
+    "type": "skill",
+    "tags": ["stratified_sampling", "survey_design", "variance_reduction"],
+    "source": "data_science"
+  },
+  {
+    "content": "The Fisher information I(theta) = -E[d^2 ln(P(x|theta))/d(theta)^2] measures the amount of information data carries about a parameter. The Cramer-Rao lower bound states Var(theta_hat) >= 1/I(theta), giving the minimum variance any unbiased estimator can achieve.",
+    "type": "fact",
+    "tags": ["fisher_information", "cramer_rao", "efficiency"],
+    "source": "data_science"
+  },
+  {
+    "content": "Robust statistics resist outlier influence. The median has a breakdown point of 50% (up to half the data can be corrupted), while the mean has 0%. Trimmed means (remove top/bottom 5-25%), Winsorized means (cap extreme values), and M-estimators (Huber's with tuning constant k=1.345) provide compromise.",
+    "type": "skill",
+    "tags": ["robust_statistics", "outliers", "breakdown_point"],
+    "source": "data_science"
+  },
+  {
+    "content": "Permutation tests compute exact p-values by enumerating all possible rearrangements of labels. For a two-sample test with n1=n2=10, there are C(20,10)=184,756 permutations. When exhaustive enumeration is impractical, use 10,000+ random permutations for a Monte Carlo approximation with SE < 0.005.",
+    "type": "skill",
+    "tags": ["permutation_test", "nonparametric", "exact_test"],
+    "source": "data_science"
+  },
+  {
+    "content": "Causal inference methods distinguish correlation from causation. Instrumental variables require relevance (correlated with treatment) and exclusion (uncorrelated with outcome except through treatment). Regression discontinuity exploits sharp cutoffs. Difference-in-differences requires parallel trends assumption.",
+    "type": "learning",
+    "tags": ["causal_inference", "instrumental_variables", "regression_discontinuity"],
+    "source": "data_science"
+  }
+]

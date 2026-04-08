@@ -1,0 +1,152 @@
+[
+  {
+    "content": "Graph Convolutional Networks (GCN) use message passing: h_v^(l+1) = sigma(sum over u in N(v) of (W^(l) * h_u^(l)) / sqrt(d_v * d_u)) where d_v and d_u are node degrees. The symmetric normalization prevents exploding/vanishing signals. Typical GCN uses 2-3 layers; deeper networks suffer from over-smoothing.",
+    "type": "fact",
+    "tags": ["gcn", "message_passing", "graph_convolution"],
+    "source": "ml_knowledge"
+  },
+  {
+    "content": "Graph Attention Networks (GAT) compute attention weights between neighbors: alpha_ij = softmax(LeakyReLU(a^T[Wh_i || Wh_j])) where || denotes concatenation and a is a learnable attention vector. Multi-head attention (K=8 heads) improves stability. GAT outperforms GCN by 1-3% on citation benchmarks.",
+    "type": "fact",
+    "tags": ["gat", "graph_attention", "attention_mechanism"],
+    "source": "ml_knowledge"
+  },
+  {
+    "content": "GraphSAGE enables inductive learning by sampling and aggregating: sample K=25 neighbors at hop 1, K=10 at hop 2, then aggregate using mean/LSTM/pool functions. Unlike transductive GCN which requires all nodes at training, GraphSAGE generalizes to unseen nodes, making it practical for evolving graphs with millions of nodes.",
+    "type": "fact",
+    "tags": ["graphsage", "inductive_learning", "sampling"],
+    "source": "ml_knowledge"
+  },
+  {
+    "content": "Graph Isomorphism Network (GIN) is provably the most expressive message-passing GNN, equivalent to the 1-WL graph isomorphism test. Update rule: h_v^(k) = MLP((1+epsilon^(k))*h_v^(k-1) + sum of h_u^(k-1) for u in N(v)) where epsilon is a learnable parameter. GIN achieves state-of-the-art on graph classification benchmarks.",
+    "type": "fact",
+    "tags": ["gin", "graph_isomorphism", "expressiveness"],
+    "source": "ml_knowledge"
+  },
+  {
+    "content": "Node classification predicts labels for unlabeled nodes using graph structure and features. Semi-supervised setting: typically only 5-20% of nodes are labeled. A 2-layer GCN achieves ~81.5% accuracy on Cora (2,708 nodes, 7 classes), ~71% on Citeseer, and ~79% on Pubmed citation networks.",
+    "type": "fact",
+    "tags": ["node_classification", "semi_supervised", "citation_networks"],
+    "source": "ml_knowledge"
+  },
+  {
+    "content": "Link prediction estimates the probability of edges between node pairs. Common approaches: (1) dot product of embeddings z_u^T * z_v, (2) bilinear z_u^T * R * z_v for relation-specific prediction, (3) MLP on concatenated embeddings. Evaluation uses hits@10, MRR (mean reciprocal rank), and AUC-ROC, with negative sampling ratio of 1:5 to 1:50.",
+    "type": "skill",
+    "tags": ["link_prediction", "knowledge_graphs", "evaluation"],
+    "source": "ml_knowledge"
+  },
+  {
+    "content": "Graph classification assigns labels to entire graphs using readout/pooling. Global methods: mean/sum/max pooling over all node embeddings. Hierarchical pooling: DiffPool learns soft cluster assignments reducing graph size by 25% per layer. Set2Set uses an attention-based read-out. Virtual node aggregation adds 1-2% accuracy.",
+    "type": "fact",
+    "tags": ["graph_classification", "pooling", "readout"],
+    "source": "ml_knowledge"
+  },
+  {
+    "content": "Knowledge graph completion uses embedding methods: TransE models relations as translations h + r approx t in embedding space (d=50-200 dimensions). DistMult uses bilinear scoring h^T * diag(r) * t. ComplEx extends to complex-valued embeddings for asymmetric relations. RotatE models relations as rotations, handling composition patterns.",
+    "type": "fact",
+    "tags": ["knowledge_graph", "transe", "embedding", "link_prediction"],
+    "source": "ml_knowledge"
+  },
+  {
+    "content": "Molecular property prediction uses GNNs where atoms are nodes and bonds are edges. SchNet uses continuous-filter convolutions with distance-based features for 3D molecular geometry. DimeNet adds angular information between bonds. GNNs predict molecular properties (solubility, toxicity, binding affinity) with MAE improvements of 10-30% over fingerprint methods.",
+    "type": "skill",
+    "tags": ["molecular_graphs", "drug_discovery", "property_prediction"],
+    "source": "ml_knowledge"
+  },
+  {
+    "content": "Social network analysis with GNNs detects communities (modularity optimization), identifies influential nodes (centrality prediction), and predicts user behavior. Graph-based recommendation systems model user-item interactions as bipartite graphs. PinSage (Pinterest) processes 3 billion nodes using random-walk-based sampling and achieves 40% improvement in engagement.",
+    "type": "fact",
+    "tags": ["social_networks", "community_detection", "recommendation"],
+    "source": "ml_knowledge"
+  },
+  {
+    "content": "Recommendation systems with GNNs model user-item bipartite graphs. LightGCN simplifies GCN by removing feature transformation and nonlinear activation: e_u^(k+1) = sum of e_i^(k)/sqrt(|N_u|*|N_i|). Final embedding averages across K=3 layers. LightGCN improves Recall@20 by 5-16% over matrix factorization on Amazon and Yelp datasets.",
+    "type": "fact",
+    "tags": ["recommendation_systems", "lightgcn", "collaborative_filtering"],
+    "source": "ml_knowledge"
+  },
+  {
+    "content": "Temporal graphs model evolving networks where edges and nodes change over time. TGAT (Temporal Graph Attention) uses time-encoded attention. TGN (Temporal Graph Network) maintains a memory module updated at each interaction. For dynamic link prediction, temporal methods outperform static GNNs by 5-15% average precision on Wikipedia and Reddit datasets.",
+    "type": "fact",
+    "tags": ["temporal_graphs", "dynamic_networks", "tgn"],
+    "source": "ml_knowledge"
+  },
+  {
+    "content": "Over-smoothing occurs when GNN layers > 4-5, causing all node representations to converge to indistinguishable values. Solutions: residual connections (like ResNet), JKNet (jumping knowledge with concatenation/max across layers), DropEdge (randomly remove 20-50% of edges during training), and PairNorm (normalize to maintain distance between node pairs).",
+    "type": "learning",
+    "tags": ["over_smoothing", "deep_gnns", "regularization"],
+    "source": "ml_knowledge"
+  },
+  {
+    "content": "Graph transformers apply self-attention to all node pairs (not just neighbors), capturing long-range dependencies. Graphormer adds centrality encoding, spatial encoding (shortest path distance), and edge encoding. It won the OGB-LSC molecular prediction challenge. Complexity is O(n^2) vs O(n*d_avg) for message-passing GNNs.",
+    "type": "fact",
+    "tags": ["graph_transformer", "graphormer", "self_attention"],
+    "source": "ml_knowledge"
+  },
+  {
+    "content": "Heterogeneous graphs have multiple node and edge types (e.g., paper-author-venue). R-GCN uses relation-specific weight matrices W_r for each edge type with basis decomposition (B=2-5 bases) to reduce parameters. HAN (Heterogeneous Attention Network) uses hierarchical attention: node-level then semantic-level (meta-path based).",
+    "type": "fact",
+    "tags": ["heterogeneous_graphs", "rgcn", "meta_path"],
+    "source": "ml_knowledge"
+  },
+  {
+    "content": "Graph generation creates new valid graphs (molecules, circuits). GraphVAE encodes graphs to latent space and decodes adjacency matrices. GraphRNN generates nodes and edges sequentially using two RNNs. For molecular generation, JUNCTION Tree VAE decomposes molecules into scaffold trees, achieving 100% chemical validity vs 43% for SMILES-based VAE.",
+    "type": "fact",
+    "tags": ["graph_generation", "molecular_design", "vae"],
+    "source": "ml_knowledge"
+  },
+  {
+    "content": "Scalable GNN training for billion-node graphs uses mini-batch methods. ClusterGCN partitions the graph into 1,500 clusters using METIS and trains on subgraph batches. GraphSAINT samples subgraphs via random walk or node/edge sampling. These methods reduce memory from O(N*F*L) full-batch to O(batch_size*F*L), enabling training on graphs with 100M+ nodes.",
+    "type": "skill",
+    "tags": ["scalability", "mini_batch", "large_graphs"],
+    "source": "ml_knowledge"
+  },
+  {
+    "content": "Graph contrastive learning (self-supervised) creates augmented views via node dropping (20%), edge perturbation (20%), attribute masking (20%), or subgraph sampling. GraphCL and GCA maximize agreement between views using NT-Xent loss (temperature tau=0.5). Self-supervised GNNs achieve 90-95% of supervised performance with 0% labels on node classification.",
+    "type": "skill",
+    "tags": ["contrastive_learning", "self_supervised", "augmentation"],
+    "source": "ml_knowledge"
+  },
+  {
+    "content": "Weisfeiler-Leman (WL) hierarchy bounds GNN expressiveness. Standard message-passing GNNs are at most as powerful as 1-WL test, failing on regular graphs and counting substructures. Higher-order GNNs (k-WL) operate on k-tuples of nodes with O(n^k) complexity. Practical alternatives: random node features, subgraph GNNs, and equivariant architectures.",
+    "type": "learning",
+    "tags": ["expressiveness", "weisfeiler_leman", "limitations"],
+    "source": "ml_knowledge"
+  },
+  {
+    "content": "Equivariant GNNs respect geometric symmetries (rotation, translation, reflection). EGNN updates positions: x_i^(l+1) = x_i^(l) + sum of (x_i-x_j)*phi(h_i,h_j,||x_i-x_j||^2). SE(3)-Transformers use equivariant attention for 3D molecular dynamics. These architectures improve force prediction MAE by 30-50% over invariant models on MD17 benchmark.",
+    "type": "fact",
+    "tags": ["equivariant_gnn", "geometric_deep_learning", "3d"],
+    "source": "ml_knowledge"
+  },
+  {
+    "content": "Graph Neural ODE extends neural ODEs to graphs: dH/dt = f(H, A, t) where H is the node feature matrix and A is the adjacency matrix. This enables continuous-depth GNNs with constant memory (adjoint method). Graph Neural ODE mitigates over-smoothing as continuous dynamics can be tuned to avoid convergence.",
+    "type": "fact",
+    "tags": ["graph_neural_ode", "continuous_depth", "differential_equations"],
+    "source": "ml_knowledge"
+  },
+  {
+    "content": "Fraud detection uses GNNs on transaction graphs where users are nodes and transactions are edges. Features include transaction amount, frequency, and time patterns. GraphSAGE with attention aggregation achieves 90-95% AUC for fraud detection. Key challenge: extreme class imbalance (fraud <1% of transactions), requiring focal loss or oversampling.",
+    "type": "skill",
+    "tags": ["fraud_detection", "anomaly_detection", "financial"],
+    "source": "ml_knowledge"
+  },
+  {
+    "content": "Point cloud processing uses GNNs where each point is a node and edges connect k-nearest neighbors (k=20-40). DGCNN uses EdgeConv: h_ij = MLP(h_i || (h_j - h_i)) capturing both local and global features. PointNet++ uses hierarchical set abstraction. These methods achieve 93-94% accuracy on ModelNet40 3D object classification (40 classes, 12,311 shapes).",
+    "type": "fact",
+    "tags": ["point_cloud", "3d_classification", "dgcnn"],
+    "source": "ml_knowledge"
+  },
+  {
+    "content": "GNN explainability methods identify important nodes, edges, and features for predictions. GNNExplainer learns a soft mask maximizing mutual information between subgraph and prediction (typically selecting 10-20 edges). PGExplainer trains a global edge mask predictor. SubgraphX identifies important subgraph patterns using Monte Carlo tree search with Shapley values.",
+    "type": "skill",
+    "tags": ["explainability", "gnnexplainer", "interpretability"],
+    "source": "ml_knowledge"
+  },
+  {
+    "content": "GNN pre-training strategies: (1) node-level: mask 15% of node attributes and predict them (like BERT), (2) edge-level: predict masked edges (link prediction), (3) graph-level: predict graph properties or contrastive learning. Pre-training on 2M unlabeled molecules then fine-tuning improves downstream property prediction ROC-AUC by 5-10% with only 100 labeled examples.",
+    "type": "skill",
+    "tags": ["pre_training", "transfer_learning", "few_shot"],
+    "source": "ml_knowledge"
+  }
+]

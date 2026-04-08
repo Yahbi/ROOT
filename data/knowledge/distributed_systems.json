@@ -1,0 +1,152 @@
+[
+  {
+    "content": "The CAP theorem states a distributed system can guarantee at most 2 of 3 properties simultaneously: Consistency (every read receives the most recent write), Availability (every request receives a non-error response), and Partition tolerance (system operates despite network partitions). Since network partitions are inevitable in distributed systems, the real choice is between CP (consistency during partition, e.g., ZooKeeper) and AP (availability during partition, e.g., Cassandra).",
+    "type": "fact",
+    "tags": ["cap-theorem", "distributed-systems", "consistency"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "PACELC theorem extends CAP: when Partitioned, choose Availability or Consistency; Else (normal operation), choose Latency or Consistency. DynamoDB is PA/EL (available during partition, low latency normally). MongoDB is PC/EC (consistent always, higher latency). This model better captures the latency-consistency tradeoff that dominates 99.99% of the time when no partition exists.",
+    "type": "fact",
+    "tags": ["pacelc", "cap-theorem", "distributed-systems"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Raft consensus protocol elects a leader through randomized election timeouts (150-300ms). The leader replicates log entries to followers; an entry is committed once a majority (N/2 + 1) of nodes acknowledge it. A 5-node Raft cluster tolerates 2 failures. Leader election takes 1-2 round trips (~300-600ms). Raft is used by etcd, CockroachDB, and HashiCorp Consul.",
+    "type": "fact",
+    "tags": ["raft", "consensus", "leader-election"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Raft log replication works in 3 steps: (1) client sends request to leader, (2) leader appends to its log and sends AppendEntries RPC to all followers, (3) once majority acknowledges, leader commits the entry and responds to client. If a follower is behind, the leader sends missing entries. Log matching property ensures if two logs contain an entry with the same index and term, all preceding entries are identical.",
+    "type": "skill",
+    "tags": ["raft", "log-replication", "consensus"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Paxos is the foundational consensus algorithm. Basic Paxos has 3 roles: proposers, acceptors, and learners. It requires 2 round-trips: Prepare phase (proposer sends proposal number, acceptors promise not to accept lower numbers) and Accept phase (proposer sends value, acceptors accept if no higher promise). Multi-Paxos optimizes by electing a stable leader, reducing to 1 round-trip for subsequent proposals.",
+    "type": "fact",
+    "tags": ["paxos", "consensus", "distributed-systems"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Vector clocks track causality in distributed systems. Each node maintains a vector of counters [N1:3, N2:1, N3:5]. On local event, increment own counter. On send, attach vector. On receive, merge by taking max of each element, then increment own. Two events are concurrent if neither vector dominates the other. Dynamo uses vector clocks to detect conflicts; Amazon found 99.94% of requests saw no conflicts in production.",
+    "type": "skill",
+    "tags": ["vector-clocks", "causality", "distributed-systems"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Lamport timestamps provide a partial ordering of events: each process maintains a counter, incremented on every event. On message send, attach timestamp; on receive, set counter = max(local, received) + 1. If event A happened-before event B, then L(A) < L(B), but the converse is not necessarily true. Lamport timestamps use O(1) space per message vs O(N) for vector clocks, but cannot detect concurrency.",
+    "type": "fact",
+    "tags": ["lamport-timestamps", "causality", "ordering"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Gossip protocol (epidemic protocol) spreads information by each node randomly selecting 1-3 peers per round and exchanging state. Information reaches all N nodes in O(log N) rounds. With 1000 nodes and fanout of 3, full propagation takes ~7 rounds (~7 seconds at 1 round/sec). Gossip is used by Cassandra for membership, Consul for health checks, and SWIM for failure detection with 99.9%+ accuracy.",
+    "type": "skill",
+    "tags": ["gossip-protocol", "epidemic", "membership"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Two-phase commit (2PC) ensures atomicity across distributed nodes. Phase 1 (Prepare): coordinator asks all participants to vote commit/abort. Phase 2 (Commit/Abort): if all voted commit, coordinator sends commit; otherwise abort. 2PC is blocking — if coordinator fails after Prepare, participants hold locks indefinitely. Typical timeout is 30-60 seconds. 3PC adds a pre-commit phase to avoid blocking but requires no network partitions.",
+    "type": "fact",
+    "tags": ["two-phase-commit", "distributed-transactions", "atomicity"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Saga pattern manages distributed transactions without 2PC by breaking them into a sequence of local transactions with compensating actions. Choreography: each service publishes events that trigger the next step (decentralized, works well for 3-5 services). Orchestration: a central coordinator directs the saga (better for 5+ services, easier to debug). Compensating actions must be idempotent; Uber processes 1M+ sagas/day using orchestration.",
+    "type": "skill",
+    "tags": ["saga-pattern", "distributed-transactions", "choreography", "orchestration"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "CRDTs (Conflict-free Replicated Data Types) guarantee eventual consistency without coordination. G-Counter: each node maintains its own counter; the merged value is the sum of all nodes. PN-Counter uses two G-Counters (positive and negative). LWW-Register (Last-Writer-Wins) uses timestamps to resolve conflicts — the write with the highest timestamp wins. CRDTs trade memory (O(N) per node for G-Counter) for coordination-free merging.",
+    "type": "fact",
+    "tags": ["crdt", "eventual-consistency", "g-counter", "lww-register"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Consistent hashing maps both keys and nodes to positions on a hash ring (0 to 2^32-1). Each key is assigned to the first node clockwise from its position. Adding/removing a node only redistributes K/N keys on average (where K=total keys, N=nodes), vs rehashing all keys in modular hashing. Virtual nodes (100-200 per physical node) ensure even distribution, reducing load variance from 50%+ to under 5%.",
+    "type": "skill",
+    "tags": ["consistent-hashing", "virtual-nodes", "load-balancing"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "The split-brain problem occurs when a network partition divides a cluster into two or more subclusters, each believing it is the authoritative leader. This can cause data corruption (conflicting writes) and resource conflicts. Solutions include: quorum-based decisions (only the partition with >N/2 nodes operates), fencing tokens (monotonically increasing tokens invalidate stale leaders), and STONITH (Shoot The Other Node In The Head — power-off the minority partition).",
+    "type": "fact",
+    "tags": ["split-brain", "network-partition", "high-availability"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Quorum systems require W + R > N for strong consistency, where W = write quorum, R = read quorum, N = total replicas. Common configurations: N=3, W=2, R=2 (balanced); N=3, W=3, R=1 (fast reads, slow writes); N=3, W=1, R=3 (fast writes, slow reads). Dynamo-style systems let clients choose consistency per-request. With N=5, W=3, R=3, the system tolerates 2 node failures while maintaining consistency.",
+    "type": "skill",
+    "tags": ["quorum", "replication", "consistency"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Sloppy quorums allow writes to succeed even when some designated replicas are unreachable, by temporarily writing to alternative nodes (hinted handoff). When the original node recovers, hints are replayed. DynamoDB uses sloppy quorums to achieve 99.995% write availability. The tradeoff: sloppy quorums provide durability and availability but sacrifice the consistency guarantee of strict quorums (W+R>N no longer ensures consistency).",
+    "type": "fact",
+    "tags": ["sloppy-quorum", "hinted-handoff", "availability"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Merkle trees enable efficient data synchronization between replicas. Each leaf is a hash of a data block; parent nodes hash their children. Two nodes compare root hashes — if equal, data is identical. If different, they traverse the tree to find differing branches, synchronizing only changed data. Cassandra uses Merkle trees for anti-entropy repair; comparing 1B records requires exchanging only ~30 hashes (tree depth = log2(N)).",
+    "type": "skill",
+    "tags": ["merkle-tree", "anti-entropy", "data-synchronization"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "The Byzantine Generals Problem describes consensus when some nodes may be malicious or faulty. Byzantine Fault Tolerance (BFT) requires at least 3f+1 total nodes to tolerate f Byzantine faults. PBFT (Practical BFT) achieves consensus in 3 communication rounds with O(N^2) message complexity. Most internal distributed systems assume crash-fault (not Byzantine) tolerance, requiring only 2f+1 nodes for f failures.",
+    "type": "fact",
+    "tags": ["byzantine-fault-tolerance", "pbft", "consensus"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Lease-based locking provides distributed mutual exclusion with automatic expiration. A node acquires a lease (lock with TTL, typically 10-30 seconds) from a coordinator. The lease auto-expires if not renewed, preventing deadlocks from crashed holders. Fencing tokens (monotonically increasing integers attached to each lease) prevent stale lease holders from corrupting data. Google Chubby and Apache ZooKeeper implement lease-based systems.",
+    "type": "skill",
+    "tags": ["distributed-locking", "lease", "fencing-token"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Event sourcing stores state as an append-only sequence of events rather than current state. To reconstruct state, replay all events from the beginning. With 1M events, full replay takes 10-30 seconds; snapshots every 1000 events reduce this to <100ms. Combined with CQRS (Command Query Responsibility Segregation), event sourcing separates write (command) and read (query) models, allowing 10-100x read optimization through materialized views.",
+    "type": "skill",
+    "tags": ["event-sourcing", "cqrs", "append-only"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Bloom filters provide probabilistic set membership testing with O(1) lookup and zero false negatives. A Bloom filter with m bits and k hash functions for n elements has false positive rate approximately (1 - e^(-kn/m))^k. For 1M elements with 1% false positive rate: m = 9.6M bits (~1.2MB), k = 7 hash functions. Cassandra uses Bloom filters to skip SSTables that definitely do not contain a requested key, reducing disk reads by 90%+.",
+    "type": "fact",
+    "tags": ["bloom-filter", "probabilistic", "data-structure"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "The FLP impossibility result (Fischer, Lynch, Paterson 1985) proves that no deterministic consensus algorithm can guarantee termination in an asynchronous system with even one crash failure. Practical systems work around FLP using randomization (randomized timeouts in Raft), partial synchrony assumptions (eventually synchronous networks), or failure detectors (unreliable but practically effective, like heartbeat-based detection with 1-5 second timeouts).",
+    "type": "fact",
+    "tags": ["flp-impossibility", "consensus", "distributed-systems"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Read-repair detects and fixes stale replicas during normal read operations. When a coordinator reads from R replicas and detects version mismatches, it sends the latest version to stale replicas in the background. Cassandra's read-repair runs on 10% of reads by default (configurable). This probabilistic approach repairs ~90% of inconsistencies within hours without the overhead of full anti-entropy repair, which scans all data.",
+    "type": "skill",
+    "tags": ["read-repair", "consistency", "replication"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Sharding (horizontal partitioning) distributes data across multiple nodes. Hash-based sharding (hash(key) mod N) provides even distribution but makes range queries expensive. Range-based sharding groups contiguous key ranges on the same shard, enabling efficient range queries but risking hotspots. Vitess (YouTube's MySQL sharding layer) manages 100K+ shards. Resharding requires migrating data; consistent hashing minimizes migration to K/N keys per added node.",
+    "type": "skill",
+    "tags": ["sharding", "partitioning", "horizontal-scaling"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "The outbox pattern ensures reliable event publishing in microservices. Instead of directly publishing to a message broker (which risks dual-write failures), write the event to an outbox table in the same database transaction as the business data. A separate process (CDC or polling every 100-500ms) reads the outbox and publishes to the broker. This guarantees at-least-once delivery without distributed transactions.",
+    "type": "skill",
+    "tags": ["outbox-pattern", "event-publishing", "microservices"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Circuit breaker pattern prevents cascade failures in distributed systems. Three states: Closed (requests pass through, failures counted), Open (requests fail-fast for a timeout period, typically 30-60 seconds), Half-Open (one test request allowed to check recovery). Netflix Hystrix used a 50% error rate threshold with a 20-request minimum and 5-second rolling window. Modern implementations (Resilience4j) add slow-call detection: if >50% of calls exceed 2 seconds, open the circuit.",
+    "type": "skill",
+    "tags": ["circuit-breaker", "fault-tolerance", "resilience"],
+    "source": "engineering_knowledge"
+  }
+]
