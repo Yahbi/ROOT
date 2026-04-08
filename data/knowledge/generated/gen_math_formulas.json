@@ -1,0 +1,202 @@
+[
+  {
+    "content": "Compound Interest: A = P(1 + r/n)^(nt). P=principal, r=annual rate, n=compounds per year, t=years. Rule of 72: years to double \u2248 72/rate.",
+    "type": "fact",
+    "tags": [
+      "compound_interest",
+      "formula",
+      "finance"
+    ],
+    "source": "math_knowledge"
+  },
+  {
+    "content": "Present Value: PV = FV / (1 + r)^n. Time value of money. $1 today is worth more than $1 tomorrow. Discount rate r reflects risk and opportunity cost.",
+    "type": "fact",
+    "tags": [
+      "present_value",
+      "formula",
+      "finance"
+    ],
+    "source": "math_knowledge"
+  },
+  {
+    "content": "Black-Scholes Call: C = S\u00b7N(d1) - K\u00b7e^(-rT)\u00b7N(d2). d1 = [ln(S/K) + (r + \u03c3\u00b2/2)T] / (\u03c3\u221aT), d2 = d1 - \u03c3\u221aT. European call option pricing.",
+    "type": "fact",
+    "tags": [
+      "black-scholes_call",
+      "formula",
+      "finance"
+    ],
+    "source": "math_knowledge"
+  },
+  {
+    "content": "Sharpe Ratio: SR = (Rp - Rf) / \u03c3p. Risk-adjusted return. Annualize daily: multiply by \u221a252. Good >1.0, Very good >2.0, Excellent >3.0.",
+    "type": "fact",
+    "tags": [
+      "sharpe_ratio",
+      "formula",
+      "finance"
+    ],
+    "source": "math_knowledge"
+  },
+  {
+    "content": "Kelly Criterion: f* = (bp - q) / b. b=odds, p=win probability, q=1-p. Optimal bet fraction. Use half-Kelly (f*/2) in practice for safety.",
+    "type": "fact",
+    "tags": [
+      "kelly_criterion",
+      "formula",
+      "finance"
+    ],
+    "source": "math_knowledge"
+  },
+  {
+    "content": "Value at Risk: VaR(95%) = \u03bc - 1.645\u03c3. 95th percentile loss. Parametric assumes normal. Historical uses actual distribution. Monte Carlo simulates paths.",
+    "type": "fact",
+    "tags": [
+      "value_at_risk",
+      "formula",
+      "finance"
+    ],
+    "source": "math_knowledge"
+  },
+  {
+    "content": "Bayes Theorem: P(A|B) = P(B|A)\u00b7P(A) / P(B). Updates probability given new evidence. Prior \u00d7 Likelihood / Evidence = Posterior. Foundation of Bayesian inference.",
+    "type": "fact",
+    "tags": [
+      "bayes_theorem",
+      "formula",
+      "statistics"
+    ],
+    "source": "math_knowledge"
+  },
+  {
+    "content": "Normal Distribution: f(x) = (1/\u03c3\u221a2\u03c0)\u00b7e^(-(x-\u03bc)\u00b2/2\u03c3\u00b2). 68% within 1\u03c3, 95% within 2\u03c3, 99.7% within 3\u03c3. Central limit theorem: sum of many \u2192 Normal.",
+    "type": "fact",
+    "tags": [
+      "normal_distribution",
+      "formula",
+      "statistics"
+    ],
+    "source": "math_knowledge"
+  },
+  {
+    "content": "Linear Regression: y = \u03b2\u2080 + \u03b2\u2081x + \u03b5. \u03b2\u2081 = \u03a3(xi-x\u0304)(yi-\u0233) / \u03a3(xi-x\u0304)\u00b2. R\u00b2 = 1 - SS_res/SS_tot. Assumptions: linearity, independence, normality, equal variance.",
+    "type": "fact",
+    "tags": [
+      "linear_regression",
+      "formula",
+      "statistics"
+    ],
+    "source": "math_knowledge"
+  },
+  {
+    "content": "Shannon Entropy: H(X) = -\u03a3 p(x)\u00b7log\u2082(p(x)). Measures information content / uncertainty. Max entropy = uniform distribution. Used in decision trees, compression, coding.",
+    "type": "fact",
+    "tags": [
+      "shannon_entropy",
+      "formula",
+      "information_theory"
+    ],
+    "source": "math_knowledge"
+  },
+  {
+    "content": "Euclidean Distance: d = \u221a(\u03a3(xi - yi)\u00b2). L2 norm. Most common distance metric. Sensitive to scale \u2014 normalize features first. Alternative: Manhattan distance (L1).",
+    "type": "fact",
+    "tags": [
+      "euclidean_distance",
+      "formula",
+      "math"
+    ],
+    "source": "math_knowledge"
+  },
+  {
+    "content": "Cosine Similarity: cos(\u03b8) = (A\u00b7B) / (||A||\u00b7||B||). Measures angle between vectors. Range [-1, 1]. Preferred for text embeddings. Invariant to magnitude, only measures direction.",
+    "type": "fact",
+    "tags": [
+      "cosine_similarity",
+      "formula",
+      "math"
+    ],
+    "source": "math_knowledge"
+  },
+  {
+    "content": "Matrix Multiplication: C_ij = \u03a3_k A_ik \u00b7 B_kj. A(m\u00d7n) \u00d7 B(n\u00d7p) = C(m\u00d7p). O(n\u00b3) naive, O(n^2.37) Strassen. GPU-accelerated for neural networks. Batch = parallel matmuls.",
+    "type": "fact",
+    "tags": [
+      "matrix_multiplication",
+      "formula",
+      "math"
+    ],
+    "source": "math_knowledge"
+  },
+  {
+    "content": "Gradient Descent: \u03b8 = \u03b8 - \u03b1\u00b7\u2207L(\u03b8). \u03b1 = learning rate. Variants: SGD (single sample), mini-batch (32-256), Adam (adaptive moment estimation). Learning rate schedule: cosine annealing.",
+    "type": "fact",
+    "tags": [
+      "gradient_descent",
+      "formula",
+      "optimization"
+    ],
+    "source": "math_knowledge"
+  },
+  {
+    "content": "Softmax: \u03c3(zi) = e^zi / \u03a3_j e^zj. Converts logits to probabilities summing to 1. Temperature T: \u03c3(zi/T) \u2014 high T = uniform, low T = peaked. Used in classification and attention.",
+    "type": "fact",
+    "tags": [
+      "softmax",
+      "formula",
+      "math"
+    ],
+    "source": "math_knowledge"
+  },
+  {
+    "content": "Cross-Entropy Loss: L = -\u03a3 y\u00b7log(\u0177). Binary: L = -[y\u00b7log(\u0177) + (1-y)\u00b7log(1-\u0177)]. Standard loss for classification. Measures divergence between predicted and true distributions.",
+    "type": "fact",
+    "tags": [
+      "cross-entropy_loss",
+      "formula",
+      "math"
+    ],
+    "source": "math_knowledge"
+  },
+  {
+    "content": "Fibonacci Sequence: F(n) = F(n-1) + F(n-2). 0,1,1,2,3,5,8,13,21,34,55,89... Golden ratio \u03c6 = (1+\u221a5)/2 \u2248 1.618. Retracements: 23.6%, 38.2%, 50%, 61.8%, 78.6%.",
+    "type": "fact",
+    "tags": [
+      "fibonacci_sequence",
+      "formula",
+      "math"
+    ],
+    "source": "math_knowledge"
+  },
+  {
+    "content": "Euler's Formula: e^(i\u03c0) + 1 = 0. Links five fundamental constants. General form: e^(ix) = cos(x) + i\u00b7sin(x). Foundation of signal processing, quantum mechanics.",
+    "type": "fact",
+    "tags": [
+      "eulers_formula",
+      "formula",
+      "math"
+    ],
+    "source": "math_knowledge"
+  },
+  {
+    "content": "Binomial Distribution: P(X=k) = C(n,k)\u00b7p^k\u00b7(1-p)^(n-k). n trials, p probability, k successes. Mean=np, Var=np(1-p). Approximates Normal when np>5 and n(1-p)>5.",
+    "type": "fact",
+    "tags": [
+      "binomial_distribution",
+      "formula",
+      "statistics"
+    ],
+    "source": "math_knowledge"
+  },
+  {
+    "content": "Poisson Distribution: P(X=k) = \u03bb^k\u00b7e^(-\u03bb) / k!. Events per time interval, rate \u03bb. Mean=Var=\u03bb. Memoryless. Models: customer arrivals, website hits, defects per unit.",
+    "type": "fact",
+    "tags": [
+      "poisson_distribution",
+      "formula",
+      "statistics"
+    ],
+    "source": "math_knowledge"
+  }
+]

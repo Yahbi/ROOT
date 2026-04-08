@@ -500,7 +500,7 @@ def _load_json_corpus(directory: _Path) -> list[tuple[str, MemoryType, list[str]
     if not directory.is_dir():
         return entries
     type_map = {t.value: t for t in MemoryType}
-    for json_file in sorted(directory.glob("*.json")):
+    for json_file in sorted(directory.rglob("*.json")):
         try:
             data = _json.loads(json_file.read_text())
             for item in data:

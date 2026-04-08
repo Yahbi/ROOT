@@ -1,0 +1,252 @@
+[
+  {
+    "content": "Singleton (creational pattern): Ensure a class has only one instance with global access point. Use module-level instance in Python. Thread-safe with threading.Lock or metaclass approach.",
+    "type": "fact",
+    "tags": [
+      "singleton",
+      "design_pattern",
+      "creational"
+    ],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Factory Method (creational pattern): Define interface for creating objects, let subclasses decide. In Python: classmethod alternative constructors like datetime.fromtimestamp().",
+    "type": "fact",
+    "tags": [
+      "factory_method",
+      "design_pattern",
+      "creational"
+    ],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Abstract Factory (creational pattern): Create families of related objects without specifying concrete classes. Example: UI toolkit creating buttons+menus for Windows vs Mac.",
+    "type": "fact",
+    "tags": [
+      "abstract_factory",
+      "design_pattern",
+      "creational"
+    ],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Builder (creational pattern): Construct complex objects step by step. Separate construction from representation. Python: method chaining with self-returning methods.",
+    "type": "fact",
+    "tags": [
+      "builder",
+      "design_pattern",
+      "creational"
+    ],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Prototype (creational pattern): Create new objects by copying existing ones. Python: copy.deepcopy() or __copy__/__deepcopy__ methods. Useful when object creation is expensive.",
+    "type": "fact",
+    "tags": [
+      "prototype",
+      "design_pattern",
+      "creational"
+    ],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Adapter (structural pattern): Convert interface of a class to another interface clients expect. Wrapper pattern. Python: composition over inheritance for adapting APIs.",
+    "type": "fact",
+    "tags": [
+      "adapter",
+      "design_pattern",
+      "structural"
+    ],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Decorator (structural pattern): Add responsibilities dynamically without modifying original. Python @decorator syntax wraps functions. functools.wraps preserves metadata.",
+    "type": "fact",
+    "tags": [
+      "decorator",
+      "design_pattern",
+      "structural"
+    ],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Facade (structural pattern): Simplified interface to complex subsystem. Example: requests library facades urllib, http.client, ssl. Reduces coupling to subsystem internals.",
+    "type": "fact",
+    "tags": [
+      "facade",
+      "design_pattern",
+      "structural"
+    ],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Proxy (structural pattern): Provide surrogate for another object. Types: virtual (lazy init), protection (access control), remote (RPC), caching proxy. Python: __getattr__ delegation.",
+    "type": "fact",
+    "tags": [
+      "proxy",
+      "design_pattern",
+      "structural"
+    ],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Composite (structural pattern): Tree structure where leaf and composite nodes share interface. Example: file system (files and directories both have size/name). Recursive operations.",
+    "type": "fact",
+    "tags": [
+      "composite",
+      "design_pattern",
+      "structural"
+    ],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Observer (behavioral pattern): One-to-many dependency: when subject changes, all observers notified. Python: callbacks, signals, event emitters, pub/sub. Decouples sender from receivers.",
+    "type": "fact",
+    "tags": [
+      "observer",
+      "design_pattern",
+      "behavioral"
+    ],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Strategy (behavioral pattern): Define family of algorithms, encapsulate each, make interchangeable. Python: pass functions as arguments (first-class functions). Eliminates conditional logic.",
+    "type": "fact",
+    "tags": [
+      "strategy",
+      "design_pattern",
+      "behavioral"
+    ],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Command (behavioral pattern): Encapsulate request as object. Supports undo/redo, queuing, logging. Python: callable objects with __call__. Example: GUI button actions.",
+    "type": "fact",
+    "tags": [
+      "command",
+      "design_pattern",
+      "behavioral"
+    ],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Template Method (behavioral pattern): Define algorithm skeleton, let subclasses override specific steps. Python: abstract base classes with abc.ABC. Hook methods for optional customization.",
+    "type": "fact",
+    "tags": [
+      "template_method",
+      "design_pattern",
+      "behavioral"
+    ],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Iterator (behavioral pattern): Sequential access to elements without exposing underlying structure. Python: __iter__/__next__ protocol, generators with yield. Lazy evaluation saves memory.",
+    "type": "fact",
+    "tags": [
+      "iterator",
+      "design_pattern",
+      "behavioral"
+    ],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "State (behavioral pattern): Object behavior changes based on internal state. Each state is a class with its own behavior. Eliminates large if/elif chains. Finite state machines.",
+    "type": "fact",
+    "tags": [
+      "state",
+      "design_pattern",
+      "behavioral"
+    ],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Chain of Responsibility (behavioral pattern): Pass request along chain of handlers. Each handler decides to process or pass. Example: middleware pipelines, exception handling, logging chains.",
+    "type": "fact",
+    "tags": [
+      "chain_of_responsibility",
+      "design_pattern",
+      "behavioral"
+    ],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Mediator (behavioral pattern): Centralize complex communications between objects. Reduces many-to-many to one-to-many via mediator. Example: chat room, event bus, air traffic control.",
+    "type": "fact",
+    "tags": [
+      "mediator",
+      "design_pattern",
+      "behavioral"
+    ],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Repository (structural pattern): Abstract data storage behind collection-like interface. Methods: get(id), find(criteria), add(entity), remove(entity). Decouples domain from persistence.",
+    "type": "fact",
+    "tags": [
+      "repository",
+      "design_pattern",
+      "structural"
+    ],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Unit of Work (behavioral pattern): Track changes to objects during business transaction, then commit/rollback atomically. Coordinates writes to avoid partial updates. SQLAlchemy Session pattern.",
+    "type": "fact",
+    "tags": [
+      "unit_of_work",
+      "design_pattern",
+      "behavioral"
+    ],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "CQRS (architectural pattern): Separate read (Query) and write (Command) models. Read model denormalized for fast queries. Write model normalized for consistency. Event sourcing complement.",
+    "type": "fact",
+    "tags": [
+      "cqrs",
+      "design_pattern",
+      "architectural"
+    ],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Event Sourcing (architectural pattern): Store state changes as immutable event log instead of current state. Replay events to reconstruct state. Full audit trail, temporal queries, event-driven.",
+    "type": "fact",
+    "tags": [
+      "event_sourcing",
+      "design_pattern",
+      "architectural"
+    ],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Circuit Breaker (behavioral pattern): Prevent cascade failures. States: CLOSED (normal), OPEN (failing, fast-fail), HALF-OPEN (testing recovery). Threshold: 5 failures. Recovery: 30-60s timeout.",
+    "type": "fact",
+    "tags": [
+      "circuit_breaker",
+      "design_pattern",
+      "behavioral"
+    ],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Saga (architectural pattern): Manage distributed transactions via sequence of local transactions with compensating actions. Choreography (events) vs orchestration (coordinator). No distributed locks.",
+    "type": "fact",
+    "tags": [
+      "saga",
+      "design_pattern",
+      "architectural"
+    ],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Strangler Fig (architectural pattern): Incrementally replace legacy system by routing requests to new system piece by piece. Zero downtime migration. Facade routes old\u2192new based on feature flags.",
+    "type": "fact",
+    "tags": [
+      "strangler_fig",
+      "design_pattern",
+      "architectural"
+    ],
+    "source": "engineering_knowledge"
+  }
+]
