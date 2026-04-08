@@ -624,19 +624,239 @@ class TaskQueue:
         ).fetchall()
         return [self._row_to_task(r) for r in rows]
 
-    def stats(self) -> dict[str, Any]:
+    def update_progress(self, task_id: str, progress: int) -> bool:
+        """Set task progress (0–100). Returns False if task not found.
+
+        Progress is clamped to [0, 100]. Useful for long-running tasks
+        to surface partial completion state to callers.
+        """
+        clamped = max(0, min(100, progress))
+        cursor = self.conn.execute(
+            "UPDATE queued_tasks SET progress = ? WHERE id = ? AND status = 'running'",
+            (clamped, task_id),
+        )
+        self.conn.commit()
+        return cursor.rowcount > 0
+
+    def detect_timed_out(self) -> list[QueuedTask]:
+        """Return running tasks that have exceeded their timeout_seconds limit.
+
+        Call from a background loop; then fail each returned task via mark_failed().
+        Only tasks with a non-NULL timeout_seconds are considered.
+        """
+        now = datetime.now(timezone.utc)
         rows = self.conn.execute(
-            """SELECT status, COUNT(*) as cnt FROM queued_tasks GROUP BY status"""
+            """SELECT * FROM queued_tasks
+               WHERE status = 'running'
+               AND timeout_seconds IS NOT NULL
+               AND started_at IS NOT NULL"""
         ).fetchall()
-        by_status = {r["status"]: r["cnt"] for r in rows}
+
+        timed_out: list[QueuedTask] = []
+        for row in rows:
+            try:
+                started = datetime.fromisoformat(row["started_at"])
+                elapsed = (now - started).total_seconds()
+                if elapsed > row["timeout_seconds"]:
+                    timed_out.append(self._row_to_task(row))
+            except (ValueError, TypeError):
+                continue
+        return timed_out
+
+    def stats(self) -> dict[str, Any]:
+        """Return queue statistics: status breakdown, avg execution time, success rate, queue depth.
+
+        Metrics:
+        - total_tasks: all tasks ever enqueued (excluding purged)
+        - by_status: count per status bucket
+        - total_runs: total execution attempts across all tasks
+        - queue_depth: tasks currently pending (ready to run)
+        - running_count: tasks currently executing
+        - avg_execution_seconds: mean duration of completed runs (last 500)
+        - success_rate: fraction of completed tasks vs (completed + failed)
+        - dlq_size: number of tasks in the dead letter queue
+        - priority_breakdown: pending task counts by priority level
+        - backoff_waiting: pending tasks gated by next_retry_at (not yet runnable)
+        - dependency_blocked: pending tasks with unmet dependencies
+        """
+        now = _now_iso()
+
+        # Status counts
+        status_rows = self.conn.execute(
+            "SELECT status, COUNT(*) as cnt FROM queued_tasks GROUP BY status"
+        ).fetchall()
+        by_status: dict[str, int] = {r["status"]: r["cnt"] for r in status_rows}
+
+        total_tasks = sum(by_status.values())
+        queue_depth = by_status.get("pending", 0)
+        running_count = by_status.get("running", 0)
+
+        # Average execution time (completed runs only, cap at 500 for performance)
+        avg_row = self.conn.execute(
+            """SELECT AVG(duration_seconds) as avg_dur
+               FROM (
+                   SELECT duration_seconds FROM task_runs
+                   WHERE status = 'completed' AND duration_seconds > 0
+                   ORDER BY started_at DESC LIMIT 500
+               )"""
+        ).fetchone()
+        avg_exec = round(avg_row["avg_dur"] or 0.0, 3)
+
+        # Success rate: completed / (completed + failed)
+        completed = by_status.get("completed", 0)
+        failed = by_status.get("failed", 0)
+        denom = completed + failed
+        success_rate = round(completed / denom, 4) if denom > 0 else None
+
+        # Dead letter queue size
+        dlq_row = self.conn.execute(
+            "SELECT COUNT(*) as c FROM dead_letter_queue"
+        ).fetchone()
+        dlq_size = dlq_row["c"]
+
+        # Total runs
         total_runs = self.conn.execute(
             "SELECT COUNT(*) as c FROM task_runs"
         ).fetchone()["c"]
-        return {
-            "total_tasks": sum(by_status.values()),
-            "by_status": by_status,
-            "total_runs": total_runs,
+
+        # Priority breakdown for pending tasks
+        priority_rows = self.conn.execute(
+            """SELECT priority, COUNT(*) as cnt FROM queued_tasks
+               WHERE status = 'pending' GROUP BY priority ORDER BY priority"""
+        ).fetchall()
+        priority_labels = {
+            PRIORITY_CRITICAL: "critical",
+            PRIORITY_HIGH:     "high",
+            PRIORITY_MEDIUM:   "medium",
+            PRIORITY_LOW:      "low",
         }
+        priority_breakdown: dict[str, int] = {}
+        for pr in priority_rows:
+            label = priority_labels.get(pr["priority"], str(pr["priority"]))
+            priority_breakdown[label] = pr["cnt"]
+
+        # Backoff-waiting: pending tasks not yet runnable due to next_retry_at
+        backoff_row = self.conn.execute(
+            """SELECT COUNT(*) as c FROM queued_tasks
+               WHERE status = 'pending'
+               AND next_retry_at IS NOT NULL AND next_retry_at > ?""",
+            (now,),
+        ).fetchone()
+        backoff_waiting = backoff_row["c"]
+
+        # Dependency-blocked estimate: pending tasks with non-empty depends_on
+        dep_rows = self.conn.execute(
+            """SELECT depends_on FROM queued_tasks WHERE status = 'pending'"""
+        ).fetchall()
+        dependency_blocked = sum(
+            1 for r in dep_rows
+            if r["depends_on"] and r["depends_on"] not in ("[]", "", None)
+            and not self._all_deps_complete_raw(r["depends_on"])
+        )
+
+        return {
+            "total_tasks":             total_tasks,
+            "by_status":               by_status,
+            "total_runs":              total_runs,
+            "queue_depth":             queue_depth,
+            "running_count":           running_count,
+            "avg_execution_seconds":   avg_exec,
+            "success_rate":            success_rate,
+            "dlq_size":                dlq_size,
+            "priority_breakdown":      priority_breakdown,
+            "backoff_waiting":         backoff_waiting,
+            "dependency_blocked":      dependency_blocked,
+        }
+
+    def _all_deps_complete_raw(self, deps_json: str) -> bool:
+        """Return True if all task IDs in the JSON list have completed. Helper for stats."""
+        try:
+            dep_ids: list[str] = json.loads(deps_json)
+        except (json.JSONDecodeError, TypeError):
+            return True
+        if not dep_ids:
+            return True
+        for dep_id in dep_ids:
+            row = self.conn.execute(
+                "SELECT status FROM queued_tasks WHERE id = ?", (dep_id,)
+            ).fetchone()
+            if row is None or row["status"] != "completed":
+                return False
+        return True
+
+    # ── Dead Letter Queue ─────────────────────────────────────────
+
+    def get_dead_letter(self, limit: int = 50) -> list[DeadLetterTask]:
+        """Return entries from the dead letter queue, newest first."""
+        rows = self.conn.execute(
+            """SELECT * FROM dead_letter_queue ORDER BY failed_at DESC LIMIT ?""",
+            (limit,),
+        ).fetchall()
+        return [self._row_to_dlq(r) for r in rows]
+
+    def requeue_dead(self, dlq_id: str, max_retries: int = 3) -> Optional[QueuedTask]:
+        """Re-enqueue a dead letter task for another execution attempt.
+
+        The original task is retained in the DLQ with requeue_count incremented.
+        A fresh QueuedTask is created with retry_count reset to 0.
+
+        Returns the new QueuedTask or None if dlq_id not found.
+        """
+        row = self.conn.execute(
+            "SELECT * FROM dead_letter_queue WHERE id = ?", (dlq_id,)
+        ).fetchone()
+        if not row:
+            return None
+
+        try:
+            meta: dict[str, Any] = json.loads(row["metadata"] or "{}")
+        except (json.JSONDecodeError, TypeError):
+            meta = {}
+
+        new_task = self.enqueue(
+            goal=row["goal"],
+            priority=row["priority"],
+            source=row["source"],
+            max_retries=max_retries,
+            metadata={**meta, "requeued_from_dlq": dlq_id},
+        )
+
+        self.conn.execute(
+            "UPDATE dead_letter_queue SET requeue_count = requeue_count + 1 WHERE id = ?",
+            (dlq_id,),
+        )
+        self.conn.commit()
+
+        logger.info("DLQ entry %s requeued as task %s", dlq_id, new_task.id)
+        return new_task
+
+    def purge_dead_letter(self, older_than_days: int = 90) -> int:
+        """Delete DLQ entries older than N days. Returns count deleted."""
+        cutoff = (datetime.now(timezone.utc) - timedelta(days=older_than_days)).isoformat()
+        cursor = self.conn.execute(
+            "DELETE FROM dead_letter_queue WHERE failed_at < ?", (cutoff,)
+        )
+        self.conn.commit()
+        return cursor.rowcount
+
+    def _row_to_dlq(self, row: sqlite3.Row) -> DeadLetterTask:
+        try:
+            meta: dict[str, Any] = json.loads(row["metadata"] or "{}")
+        except (json.JSONDecodeError, TypeError):
+            meta = {}
+        return DeadLetterTask(
+            id=row["id"],
+            original_task_id=row["original_task_id"],
+            goal=row["goal"],
+            priority=row["priority"],
+            source=row["source"] or "user",
+            retry_count=row["retry_count"],
+            last_error=row["last_error"],
+            metadata=meta,
+            created_at=row["created_at"],
+            failed_at=row["failed_at"],
+            requeue_count=row["requeue_count"] or 0,
+        )
 
     # ── Scheduling ─────────────────────────────────────────────────
 
@@ -867,11 +1087,20 @@ class TaskQueue:
     # ── Helpers ───────────────────────────────────────────────────
 
     def _row_to_task(self, row: sqlite3.Row) -> QueuedTask:
-        meta = {}
+        meta: dict[str, Any] = {}
         try:
             meta = json.loads(row["metadata"] or "{}")
         except (json.JSONDecodeError, TypeError) as e:
             logger.warning("Failed to parse task metadata: %s", e)
+
+        depends_on: list[str] = []
+        try:
+            raw_deps = row["depends_on"]
+            if raw_deps:
+                depends_on = json.loads(raw_deps)
+        except (json.JSONDecodeError, TypeError):
+            pass
+
         return QueuedTask(
             id=row["id"],
             goal=row["goal"],
@@ -882,6 +1111,11 @@ class TaskQueue:
             next_run_at=row["next_run_at"],
             max_retries=row["max_retries"],
             retry_count=row["retry_count"],
+            retry_delay_seconds=row["retry_delay_seconds"] or 5.0,
+            next_retry_at=row["next_retry_at"],
+            timeout_seconds=row["timeout_seconds"],
+            depends_on=depends_on,
+            progress=row["progress"] or 0,
             metadata=meta,
             result=row["result"],
             error=row["error"],

@@ -864,13 +864,130 @@ STRONGEST MEMORIES (top 20):
         """Persist reflection to disk."""
         Path(REFLECTIONS_DIR).mkdir(parents=True, exist_ok=True)
         ts = datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S")
-        path = Path(REFLECTIONS_DIR) / f"{ts}_{reflection.id}.json"
+        archive_prefix = "archive_" if reflection.archived else ""
+        path = Path(REFLECTIONS_DIR) / f"{archive_prefix}{ts}_{reflection.id}.json"
         path.write_text(json.dumps(reflection.model_dump(), indent=2))
 
-        # Also store as a memory
-        self._memory.store(MemoryEntry(
-            content=f"Reflection: {reflection.insight}",
-            memory_type=MemoryType.REFLECTION,
-            tags=["self-reflection", reflection.trigger.split(":")[0].strip()],
-            source="reflection_engine",
-        ))
+        # Also store as a memory (skip for archived — already stored during archiving)
+        if not reflection.archived:
+            tags = ["self-reflection", reflection.trigger.split(":")[0].strip()]
+            if reflection.topic:
+                tags.append(f"topic:{reflection.topic}")
+            if reflection.depth == "deep":
+                tags.append("deep-reflection")
+            if reflection.chain_depth > 0:
+                tags.append(f"chain-depth:{reflection.chain_depth}")
+            self._memory.store(MemoryEntry(
+                content=f"Reflection: {reflection.insight}",
+                memory_type=MemoryType.REFLECTION,
+                tags=tags,
+                source="reflection_engine",
+            ))
+
+    # ── Scheduling helpers ──────────────────────────────────────
+
+    def _pick_scheduled_topic(self) -> Optional[str]:
+        """Return the topic least recently reflected on, or None if no history."""
+        if not self._topic_last_reflected:
+            return None
+        # Find topic with oldest last-reflected timestamp
+        oldest_topic = min(self._topic_last_reflected, key=lambda t: self._topic_last_reflected[t])
+        oldest_time = self._topic_last_reflected[oldest_topic]
+        # Only suggest it if it's been at least 30 minutes
+        if (datetime.now(timezone.utc) - oldest_time).total_seconds() >= 1800:
+            return oldest_topic
+        return None
+
+    def _score_quality_sync(self, reflection: Reflection) -> Reflection:
+        """Lightweight synchronous quality estimation (no LLM call).
+
+        Scores based on heuristics so every reflection gets a score immediately:
+        - Has action: +0.25
+        - Action is specific (>20 chars): +0.15
+        - Has evidence (deep mode): +0.2
+        - Insight is non-trivial (>50 chars): +0.2
+        - Has a topic assigned: +0.1
+        - Chain depth bonus: min(chain_depth * 0.05, 0.1)
+        Max theoretical: 1.0
+        """
+        score = 0.0
+        if reflection.action:
+            score += 0.25
+            if len(reflection.action) > 20:
+                score += 0.15
+        if reflection.evidence:
+            score += min(0.2, len(reflection.evidence) * 0.05)
+        if reflection.insight and len(reflection.insight) > 50:
+            score += 0.2
+        if reflection.topic:
+            score += 0.1
+        score += min(reflection.chain_depth * 0.05, 0.1)
+        score = min(score, 1.0)
+
+        rationale = (
+            f"Heuristic: action={'yes' if reflection.action else 'no'}, "
+            f"evidence={len(reflection.evidence)}, "
+            f"insight_len={len(reflection.insight)}, "
+            f"topic={'yes' if reflection.topic else 'no'}, "
+            f"chain_depth={reflection.chain_depth}"
+        )
+        return reflection.model_copy(update={
+            "quality_score": round(score, 3),
+            "quality_rationale": rationale,
+        })
+
+    # ── Summary helpers ─────────────────────────────────────────
+
+    def _build_reflection_summary(self, reflections: list[Reflection]) -> str:
+        """Build a text summary of reflections for meta-reflection or archiving."""
+        lines = ["REFLECTION HISTORY SUMMARY\n"]
+        scored = [r for r in reflections if r.quality_score is not None]
+        avg_q = sum(r.quality_score for r in scored) / len(scored) if scored else 0.0  # type: ignore[operator]
+
+        lines.append(f"Total reflections: {len(reflections)}")
+        lines.append(f"Average quality score: {avg_q:.2f}")
+        lines.append(f"Action rate: {sum(1 for r in reflections if r.action) / max(len(reflections), 1):.0%}")
+        lines.append(f"Deep reflections: {sum(1 for r in reflections if r.depth == 'deep')}")
+        lines.append(f"Chained reflections: {sum(1 for r in reflections if r.chain_depth > 0)}")
+        lines.append("")
+
+        topic_counts: Counter = Counter(r.topic or "general" for r in reflections)
+        lines.append("Topics reflected on:")
+        for topic, count in topic_counts.most_common():
+            lines.append(f"  - {topic}: {count}x")
+        lines.append("")
+
+        lines.append("Recent reflections (newest first):")
+        for r in list(reversed(reflections))[:10]:
+            q = f"(q={r.quality_score:.2f})" if r.quality_score is not None else ""
+            lines.append(
+                f"  [{r.created_at[:16]}] [{r.topic or 'general'}] {q} "
+                f"INSIGHT: {r.insight[:120]} | ACTION: {r.action[:80] if r.action else 'none'}"
+            )
+
+        return "\n".join(lines)
+
+    # ── Utility ─────────────────────────────────────────────────
+
+    @staticmethod
+    def _extract_json(text: str) -> str:
+        """Extract JSON from a response, handling markdown code blocks."""
+        text = text.strip()
+        if "```" in text:
+            start = text.index("```") + 3
+            if text[start:start + 4] == "json":
+                start += 4
+            end = text.index("```", start)
+            text = text[start:end].strip()
+        return text
+
+    @staticmethod
+    def _parse_dt(iso_str: str) -> datetime:
+        """Parse ISO datetime string to timezone-aware datetime."""
+        try:
+            dt = datetime.fromisoformat(iso_str)
+            if dt.tzinfo is None:
+                dt = dt.replace(tzinfo=timezone.utc)
+            return dt
+        except ValueError:
+            return datetime.now(timezone.utc)
