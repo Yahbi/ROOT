@@ -1,0 +1,152 @@
+[
+  {
+    "content": "The test pyramid recommends 70% unit tests, 20% integration tests, 10% end-to-end (E2E) tests. Unit tests run in <10ms each (1000+ tests in seconds), integration tests in 100ms-1s, E2E in 5-30s each. Inverting the pyramid (heavy E2E, light unit) leads to slow, flaky CI pipelines. Google's testing ratio: 80% small (unit), 15% medium (integration), 5% large (E2E).",
+    "type": "fact",
+    "tags": ["testing", "test_pyramid", "unit_test", "integration", "E2E"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Property-based testing (Hypothesis in Python, fast-check in JS) generates random inputs to verify properties. Instead of test_add(2,3)==5, define: for all ints a,b: add(a,b)==add(b,a) (commutativity). Hypothesis shrinks failing inputs to the minimal reproduction case. Example: @given(st.lists(st.integers())) def test_sort(lst): assert sorted(sorted(lst)) == sorted(lst). Finds edge cases humans miss (empty lists, MAX_INT, negative zeros).",
+    "type": "skill",
+    "tags": ["testing", "property_based", "Hypothesis", "fast_check", "generative"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Snapshot testing captures output (JSON, HTML, component render) and compares against stored snapshots. Jest snapshot: expect(render(<Button />)).toMatchSnapshot(). First run creates __snapshots__/file.snap. Subsequent runs detect any change. Update with --updateSnapshot flag. Risks: developers blindly updating snapshots without reviewing changes. Best for: serializable output that changes infrequently (API responses, rendered components).",
+    "type": "learning",
+    "tags": ["testing", "snapshot", "Jest", "regression", "component"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Mutation testing modifies source code (mutations: change > to >=, remove return statements, flip booleans) and checks if tests catch the change. Kill rate = mutations detected / total mutations. Target >80% kill rate. Tools: mutmut (Python), Stryker (JS/TS), PIT (Java). A test suite with 100% code coverage but 60% mutation score has significant gaps. Mutation testing is 10-100x slower than regular test runs.",
+    "type": "learning",
+    "tags": ["testing", "mutation", "quality", "coverage_gap", "mutmut"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Contract testing (Pact) verifies API interactions between consumer and provider without requiring both services running simultaneously. Consumer defines expected request/response contracts in Pact files (JSON). Provider verifies contracts against its actual API. This replaces fragile E2E tests for microservices. Pact Broker stores and versions contracts. Supports REST, GraphQL, and message-based interactions.",
+    "type": "skill",
+    "tags": ["testing", "contract", "Pact", "microservices", "API"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Load testing patterns: ramp-up (gradually increase users from 0 to target over 5-10 minutes to find breaking point), spike (sudden jump from normal to 10x load), soak/endurance (steady load for 4-24 hours to detect memory leaks), stress (push beyond capacity until failure). Tools: k6 (JavaScript, modern), Locust (Python), JMeter (Java, GUI-based). Key metrics: p50/p95/p99 latency, throughput (RPS), error rate. Target: p99 < 500ms.",
+    "type": "skill",
+    "tags": ["testing", "load_testing", "k6", "performance", "latency"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Chaos testing (Chaos Engineering) intentionally injects failures to verify system resilience. Netflix Chaos Monkey randomly terminates production instances. Gremlin and LitmusChaos provide controlled failure injection: CPU stress, memory exhaustion, network latency (add 200ms), packet loss (5%), disk failure, DNS failure. Principles: start small, define steady state, hypothesize impact, measure blast radius, automate rollback.",
+    "type": "learning",
+    "tags": ["testing", "chaos", "resilience", "Netflix", "failure_injection"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Fuzz testing feeds random/malformed data to find crashes, hangs, and security vulnerabilities. Coverage-guided fuzzers (AFL++, libFuzzer, go-fuzz) use code coverage feedback to evolve inputs toward unexplored paths. Google OSS-Fuzz has found 10,000+ bugs across 1,000+ open source projects. Fuzz testing excels at finding: buffer overflows, assertion failures, infinite loops, and format string bugs in parsers and deserializers.",
+    "type": "learning",
+    "tags": ["testing", "fuzzing", "AFL", "security", "coverage_guided"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Visual regression testing captures screenshots and compares pixel-by-pixel against baselines. Tools: Percy (BrowserStack), Chromatic (Storybook), BackstopJS (open source). Typical threshold: 0.1% pixel difference tolerance to account for anti-aliasing. Test at multiple viewports (320px, 768px, 1280px, 1920px). Integration with Storybook: each component story becomes a visual test. Percy processes ~1000 snapshots in <5 minutes using cloud rendering.",
+    "type": "skill",
+    "tags": ["testing", "visual_regression", "Percy", "Chromatic", "screenshots"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Accessibility (a11y) testing tools: axe-core (automated WCAG 2.1 checks, catches ~30-40% of issues), Pa11y (CLI/CI integration), Lighthouse (Chrome DevTools, scores 0-100). Automated tests check: color contrast (4.5:1 minimum for normal text per WCAG AA), alt text on images, ARIA labels, keyboard navigation, heading hierarchy. Manual testing still needed: screen reader flows, focus order, cognitive load. jest-axe for component-level a11y in unit tests.",
+    "type": "skill",
+    "tags": ["testing", "accessibility", "WCAG", "axe_core", "a11y"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Test doubles taxonomy: mock (records calls for verification, assert mock.called_with('arg')), stub (returns predetermined responses, no verification), fake (working implementation with shortcuts, e.g., in-memory database), spy (wraps real object, records calls while executing real logic), dummy (passed but never used, satisfies parameter requirements). Use mocks sparingly — over-mocking makes tests brittle and coupled to implementation.",
+    "type": "fact",
+    "tags": ["testing", "mock", "stub", "fake", "spy", "test_doubles"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Test data factories (Factory Boy for Python, FactoryBot for Ruby, Fishery for TypeScript) generate test objects with sensible defaults and overridable attributes. Example: UserFactory.create(name='Alice', role='admin') fills other fields with defaults. Traits group attribute overrides: UserFactory.create(trait='premium'). Sequences ensure unique values: factory.Sequence(lambda n: f'user{n}@test.com'). Factories are 5-10x more maintainable than raw fixtures for large test suites.",
+    "type": "skill",
+    "tags": ["testing", "factory", "test_data", "Factory_Boy", "fixtures"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Flaky test detection: a test is flaky if it passes and fails on the same code without changes. Google reports 1.5% of their tests are flaky, costing ~$50M/year in developer time. Causes: shared mutable state (72%), timing/concurrency (18%), external dependencies (10%). Detection: run test suite 3-5x and flag inconsistent results. Quarantine flaky tests in a separate suite. Tools: BuildPulse, Launchable, or custom CI retry+flag logic.",
+    "type": "learning",
+    "tags": ["testing", "flaky_tests", "reliability", "CI", "quarantine"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Test isolation principles: each test should be independent, order-insensitive, and leave no side effects. Use setUp/tearDown (or fixtures) to create/destroy test state. Database tests: use transactions that rollback after each test (pytest-django's @pytest.mark.django_db), or use a fresh test database. File system tests: use tempfile.mkdtemp(). Time-dependent tests: freeze time with freezegun (Python) or jest.useFakeTimers() (JS).",
+    "type": "skill",
+    "tags": ["testing", "isolation", "fixtures", "cleanup", "independence"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Code coverage metrics: line coverage (% of lines executed), branch coverage (% of if/else paths taken), function coverage (% of functions called), condition coverage (each boolean sub-expression evaluated to true and false). 80% line coverage is a common target; 100% is rarely cost-effective. Branch coverage >70% is more meaningful than line coverage for catching bugs. Coverage tools: coverage.py (Python), Istanbul/c8 (JS), JaCoCo (Java).",
+    "type": "fact",
+    "tags": ["testing", "coverage", "branch", "line", "metrics"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "API testing layers: unit test individual handlers/controllers (mock dependencies), integration test full request-response cycle (TestClient/supertest against real app), contract test consumer expectations (Pact), E2E test multi-service flows (real HTTP calls). For REST APIs, test: status codes (200/201/400/401/404/500), response body schema, pagination, error messages, rate limiting, authentication, and idempotency of PUT/DELETE.",
+    "type": "skill",
+    "tags": ["testing", "API", "REST", "integration", "layers"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Parameterized tests run the same test logic with multiple inputs: @pytest.mark.parametrize('input,expected', [(1,1),(2,4),(3,9)]) in pytest, it.each([[1,1],[2,4],[3,9]]) in Jest, @ParameterizedTest + @CsvSource in JUnit 5. Reduces boilerplate by 60-80% for input-output validation. Combine with property-based testing: parameterize edge cases manually, fuzz the rest with Hypothesis. Use descriptive IDs: pytest.param(0, id='zero_case').",
+    "type": "skill",
+    "tags": ["testing", "parameterized", "pytest", "Jest", "data_driven"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Test-Driven Development (TDD) cycle: Red (write failing test), Green (write minimal code to pass), Refactor (improve code while keeping tests green). Strict TDD: never write production code without a failing test first. Benefits: 40-80% fewer defects (IBM/Microsoft study), better API design (tests drive interface), living documentation. Criticism: slows initial velocity by ~15-25%, but reduces debugging time by 50-80% over project lifetime.",
+    "type": "learning",
+    "tags": ["testing", "TDD", "red_green_refactor", "methodology"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "E2E testing with Playwright/Cypress: Playwright supports Chrome, Firefox, WebKit in parallel; Cypress is Chrome-only but has simpler API. Key patterns: page object model (encapsulate selectors and actions per page), data-testid attributes for stable selectors, API-level setup (skip UI for preconditions), visual comparison. Typical E2E suite: 50-200 critical user journeys, running in <15 minutes via parallelization across 4+ workers.",
+    "type": "skill",
+    "tags": ["testing", "E2E", "Playwright", "Cypress", "page_object"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Test environment management: use Docker Compose for reproducible local test environments (database, cache, message queue). Testcontainers library (Python, Java, JS) programmatically starts Docker containers per test suite: PostgresContainer(), RedisContainer(). Containers start in 2-5 seconds with health checks. Benefits over mocking: tests run against real database queries, real Redis commands, real message broker behavior.",
+    "type": "skill",
+    "tags": ["testing", "testcontainers", "Docker", "environment", "integration"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Behavior-Driven Development (BDD) uses Given-When-Then syntax in .feature files (Gherkin): 'Given a user with balance $100, When they withdraw $30, Then their balance should be $70'. Tools: pytest-bdd (Python), Cucumber (Java/JS/Ruby). BDD bridges business and engineering — product managers write scenarios, engineers implement step definitions. Risk: feature files become stale if not maintained alongside code changes.",
+    "type": "learning",
+    "tags": ["testing", "BDD", "Gherkin", "Cucumber", "given_when_then"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Performance testing metrics and budgets: First Contentful Paint <1.8s, Largest Contentful Paint <2.5s, Total Blocking Time <200ms, Cumulative Layout Shift <0.1, Time to Interactive <3.8s (all for p75). Lighthouse CI enforces budgets in CI pipeline: fail build if bundle size >200KB JS, LCP >2.5s. WebPageTest provides waterfall analysis for identifying bottlenecks (DNS, TTFB, image optimization, render-blocking CSS/JS).",
+    "type": "fact",
+    "tags": ["testing", "performance", "Lighthouse", "web_vitals", "budgets"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Security testing (SAST/DAST): Static Application Security Testing analyzes source code without running it — tools: Semgrep (custom rules), Snyk Code, SonarQube. Dynamic Application Security Testing attacks running applications — tools: OWASP ZAP (open source), Burp Suite (commercial). SAST catches 30-50% of vulnerabilities (SQL injection, XSS, hardcoded secrets); DAST catches 20-30% (auth bypass, SSRF, CORS misconfig). Use both for defense-in-depth.",
+    "type": "learning",
+    "tags": ["testing", "security", "SAST", "DAST", "OWASP"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Test naming conventions improve readability: test_<unit>_<scenario>_<expected_result> (Python) or 'should <expected behavior> when <scenario>' (JS). Examples: test_user_login_with_expired_token_returns_401, 'should return empty array when no items match filter'. Avoid: test1, testLogin, test_it_works. Well-named tests serve as documentation and make failure diagnosis instant without reading test body.",
+    "type": "learning",
+    "tags": ["testing", "naming", "conventions", "readability", "documentation"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "CI test optimization: parallelize across N workers (GitHub Actions: strategy.matrix with 4-8 shards), cache dependencies (pip cache, node_modules), use test impact analysis to run only tests affected by changed files (pytest-testmon, Jest --changedSince). Typical savings: 4x faster with 4 shards, 2x faster with caching, 3-5x faster with test impact analysis. Target: entire CI pipeline <10 minutes for developer productivity.",
+    "type": "skill",
+    "tags": ["testing", "CI", "optimization", "parallelization", "caching"],
+    "source": "engineering_knowledge"
+  }
+]

@@ -1,0 +1,152 @@
+[
+  {
+    "content": "Process management commands: ps aux shows all processes (USER, PID, %CPU, %MEM, COMMAND), top/htop for real-time monitoring. Kill signals: SIGTERM (15) asks process to terminate gracefully, SIGKILL (9) forces immediate termination (cannot be caught), SIGHUP (1) reloads config, SIGSTOP (19) pauses process. Always try SIGTERM before SIGKILL; use kill -9 only as last resort.",
+    "type": "skill",
+    "tags": ["linux", "process", "signals", "kill", "ps"],
+    "source": "infra_knowledge"
+  },
+  {
+    "content": "Disk management: df -h shows filesystem usage (human-readable), du -sh /path shows directory size. LVM (Logical Volume Manager) layers: physical volumes (PV) -> volume groups (VG) -> logical volumes (LV). Extend a filesystem online: lvextend -L +10G /dev/vg/lv && resize2fs /dev/vg/lv (ext4) or xfs_growfs /mount (XFS, cannot shrink).",
+    "type": "skill",
+    "tags": ["linux", "disk", "LVM", "df", "du", "filesystem"],
+    "source": "infra_knowledge"
+  },
+  {
+    "content": "RAID levels: RAID 0 (striping, no redundancy, N*speed, N*capacity), RAID 1 (mirroring, 1 disk fault tolerance, 1x speed read 2x, capacity/2), RAID 5 (striping+parity, 1 disk fault tolerance, (N-1)*capacity, min 3 disks), RAID 10 (mirror+stripe, best performance+redundancy, capacity/2, min 4 disks). RAID 6 tolerates 2 disk failures using double parity.",
+    "type": "fact",
+    "tags": ["linux", "RAID", "storage", "redundancy", "performance"],
+    "source": "infra_knowledge"
+  },
+  {
+    "content": "iptables chains: INPUT (incoming), OUTPUT (outgoing), FORWARD (routed). Default policy should be DROP for INPUT/FORWARD, ACCEPT for OUTPUT. Basic firewall: iptables -P INPUT DROP && iptables -A INPUT -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT && iptables -A INPUT -p tcp --dport 22 -j ACCEPT. nftables replaces iptables in modern kernels (>3.13) with better syntax and performance.",
+    "type": "skill",
+    "tags": ["linux", "iptables", "nftables", "firewall", "security"],
+    "source": "infra_knowledge"
+  },
+  {
+    "content": "Network diagnostics: ss -tuln shows listening TCP/UDP ports (replaced netstat). tcpdump -i eth0 -n port 80 captures HTTP traffic. Key ss flags: -t (TCP), -u (UDP), -l (listening), -n (numeric), -p (process). Example: ss -tlnp | grep :8080 finds which process is listening on port 8080. For deep packet inspection, use Wireshark with capture filters like 'host 10.0.0.1 and port 443'.",
+    "type": "skill",
+    "tags": ["linux", "networking", "ss", "tcpdump", "diagnostics"],
+    "source": "infra_knowledge"
+  },
+  {
+    "content": "Systemd unit file structure: [Unit] (Description, After, Requires), [Service] (Type=simple|forking|oneshot, ExecStart, Restart=on-failure, RestartSec=5s, User, WorkingDirectory), [Install] (WantedBy=multi-user.target). Key commands: systemctl start/stop/restart/status/enable/disable service. Journal: journalctl -u service -f (follow logs), journalctl --since '1 hour ago' -p err (errors in last hour).",
+    "type": "skill",
+    "tags": ["linux", "systemd", "unit_files", "journalctl", "services"],
+    "source": "infra_knowledge"
+  },
+  {
+    "content": "Cron syntax: minute(0-59) hour(0-23) day_of_month(1-31) month(1-12) day_of_week(0-7). Examples: */5 * * * * (every 5 minutes), 0 2 * * 0 (Sundays at 2AM), 0 0 1 * * (1st of every month at midnight). Special strings: @reboot (on startup), @hourly, @daily, @weekly, @monthly. Use crontab -e to edit, crontab -l to list. Cron jobs run in minimal environment — always use full paths.",
+    "type": "skill",
+    "tags": ["linux", "cron", "scheduling", "automation", "syntax"],
+    "source": "infra_knowledge"
+  },
+  {
+    "content": "SSH hardening: disable root login (PermitRootLogin no), disable password auth (PasswordAuthentication no), use key-only auth (PubkeyAuthentication yes), change default port from 22, set MaxAuthTries 3, use AllowUsers/AllowGroups to restrict access, enable fail2ban (default: ban after 5 failures for 10 minutes). SSH key types: Ed25519 (recommended, 256-bit), RSA (4096-bit minimum).",
+    "type": "skill",
+    "tags": ["linux", "SSH", "security", "hardening", "authentication"],
+    "source": "infra_knowledge"
+  },
+  {
+    "content": "File permissions octal: read=4, write=2, execute=1. chmod 755 = rwxr-xr-x (owner full, group/others read+execute). chmod 644 = rw-r--r-- (owner read+write, others read). Special bits: setuid (4000, runs as file owner), setgid (2000, runs as group/inherits group), sticky bit (1000, only owner can delete in directory — used on /tmp). umask 022 means new files get 644, directories 755.",
+    "type": "fact",
+    "tags": ["linux", "permissions", "chmod", "octal", "setuid"],
+    "source": "infra_knowledge"
+  },
+  {
+    "content": "Package management: Debian/Ubuntu uses apt (apt update && apt upgrade && apt install package), Red Hat/CentOS uses yum/dnf (dnf update && dnf install package). apt-cache search keyword finds packages, dpkg -l lists installed. RPM: rpm -qa lists all, rpm -qi package shows info. Pin versions for production: apt-mark hold package prevents auto-upgrade. Snap/Flatpak provide distro-agnostic packaging.",
+    "type": "skill",
+    "tags": ["linux", "apt", "yum", "dnf", "package_management"],
+    "source": "infra_knowledge"
+  },
+  {
+    "content": "Log rotation with logrotate: config at /etc/logrotate.d/. Key directives: daily/weekly/monthly, rotate 7 (keep 7 archives), compress (gzip old logs), missingok, notifempty, create 0644 root root, postrotate (restart service to reopen log). Without rotation, logs can fill disk — /var/log/syslog can grow 1-10GB/day on busy servers. Check with du -sh /var/log/*.",
+    "type": "skill",
+    "tags": ["linux", "logrotate", "log_management", "disk_space"],
+    "source": "infra_knowledge"
+  },
+  {
+    "content": "Swap management: swapon --show lists active swap spaces. Create swap file: fallocate -l 4G /swapfile && chmod 600 /swapfile && mkswap /swapfile && swapon /swapfile. Add to /etc/fstab for persistence. vm.swappiness (0-100, default 60) controls kernel preference for swapping vs reclaiming page cache. Production databases prefer swappiness=10 or vm.swappiness=1 to minimize I/O latency from swapping.",
+    "type": "skill",
+    "tags": ["linux", "swap", "memory", "swappiness", "performance"],
+    "source": "infra_knowledge"
+  },
+  {
+    "content": "The /proc filesystem is a virtual filesystem exposing kernel and process data. /proc/cpuinfo shows CPU details, /proc/meminfo shows memory (MemTotal, MemFree, Buffers, Cached), /proc/[pid]/status shows process memory maps, /proc/loadavg shows 1/5/15-minute load averages. Load average >number_of_CPUs indicates CPU saturation. /proc/sys/vm/ contains tunable memory parameters.",
+    "type": "fact",
+    "tags": ["linux", "proc", "filesystem", "kernel", "monitoring"],
+    "source": "infra_knowledge"
+  },
+  {
+    "content": "systemd-journald stores structured binary logs accessed via journalctl. Key queries: journalctl -b (current boot), journalctl -k (kernel messages), journalctl --disk-usage (storage used), journalctl --vacuum-size=500M (limit to 500MB). Persistent logging requires Storage=persistent in /etc/systemd/journald.conf and directory /var/log/journal/. Default is volatile (memory only, lost on reboot).",
+    "type": "fact",
+    "tags": ["linux", "journald", "logging", "systemd", "persistence"],
+    "source": "infra_knowledge"
+  },
+  {
+    "content": "Performance monitoring stack: vmstat 1 (CPU, memory, I/O per second), iostat -x 1 (disk I/O with utilization %), sar (historical — collected by sysstat package every 10 minutes), perf top (real-time CPU profiling), strace -p PID (system call tracing). The USE method: for each resource check Utilization, Saturation, Errors. High %iowait in top indicates disk bottleneck.",
+    "type": "skill",
+    "tags": ["linux", "performance", "vmstat", "iostat", "monitoring"],
+    "source": "infra_knowledge"
+  },
+  {
+    "content": "Filesystem types: ext4 (default Linux, max 1EB volume, 16TB file, journaling), XFS (high-performance, default RHEL, cannot shrink, excellent for large files), Btrfs (copy-on-write, snapshots, compression, RAID), ZFS (enterprise, checksums, dedup, snapshots, not in mainline kernel). For databases, ext4 or XFS with noatime mount option reduces unnecessary metadata writes by 20-30%.",
+    "type": "fact",
+    "tags": ["linux", "filesystem", "ext4", "XFS", "Btrfs", "ZFS"],
+    "source": "infra_knowledge"
+  },
+  {
+    "content": "User management: useradd -m -s /bin/bash -G sudo username (create user with home dir, bash shell, sudo group). usermod -aG docker username (add to docker group without removing others — the -a flag is critical). /etc/passwd stores user info, /etc/shadow stores hashed passwords (SHA-512 default). Password policy: chage -M 90 -W 14 username sets 90-day max age with 14-day warning.",
+    "type": "skill",
+    "tags": ["linux", "user_management", "useradd", "groups", "security"],
+    "source": "infra_knowledge"
+  },
+  {
+    "content": "Network configuration: ip addr show (list interfaces and IPs), ip route show (routing table), /etc/resolv.conf (DNS servers), /etc/hosts (static hostname resolution). Netplan (Ubuntu 18+) uses YAML at /etc/netplan/. NetworkManager (desktop/RHEL): nmcli con show, nmcli con mod eth0 ipv4.addresses 10.0.0.5/24. DNS resolution order: /etc/nsswitch.conf (files first, then dns).",
+    "type": "skill",
+    "tags": ["linux", "networking", "ip", "DNS", "netplan", "configuration"],
+    "source": "infra_knowledge"
+  },
+  {
+    "content": "Kernel tuning via sysctl: net.core.somaxconn=65535 (max socket backlog for high-traffic servers), net.ipv4.tcp_max_syn_backlog=65535, fs.file-max=2097152 (max open files system-wide), vm.overcommit_memory=1 (needed for Redis), net.ipv4.ip_local_port_range='1024 65535'. Apply permanently in /etc/sysctl.d/99-custom.conf and reload with sysctl --system.",
+    "type": "skill",
+    "tags": ["linux", "sysctl", "kernel_tuning", "performance", "networking"],
+    "source": "infra_knowledge"
+  },
+  {
+    "content": "SELinux (Security-Enhanced Linux) provides mandatory access control beyond traditional Unix permissions. Modes: enforcing (blocks violations), permissive (logs only), disabled. Check: getenforce. Common commands: semanage port -a -t http_port_t -p tcp 8080 (allow httpd on port 8080), restorecon -Rv /path (fix file contexts), audit2allow generates policy from denial logs in /var/log/audit/audit.log.",
+    "type": "fact",
+    "tags": ["linux", "SELinux", "security", "MAC", "policy"],
+    "source": "infra_knowledge"
+  },
+  {
+    "content": "Container fundamentals on Linux: namespaces (PID, network, mount, user, UTS, IPC, cgroup) provide isolation; cgroups v2 limit resources (cpu.max, memory.max, io.max). Docker uses overlay2 filesystem driver. Check container resource usage: systemd-cgtop or cat /sys/fs/cgroup/memory/docker/<id>/memory.usage_in_bytes. ulimit -n 65535 sets max open files per process (default 1024 is too low for production).",
+    "type": "fact",
+    "tags": ["linux", "containers", "namespaces", "cgroups", "docker"],
+    "source": "infra_knowledge"
+  },
+  {
+    "content": "Backup strategies: rsync -avz --delete source/ dest/ (incremental sync with compression), tar -czf backup.tar.gz /path (compressed archive), dd if=/dev/sda of=disk.img bs=4M (full disk image). Rsync over SSH: rsync -avz -e ssh /local/ user@remote:/backup/. Incremental backups with --link-dest save space by hardlinking unchanged files. Test restores monthly — untested backups are not backups.",
+    "type": "skill",
+    "tags": ["linux", "backup", "rsync", "tar", "disaster_recovery"],
+    "source": "infra_knowledge"
+  },
+  {
+    "content": "Troubleshooting boot failures: GRUB menu (hold Shift during boot) -> select recovery mode -> network/root shell. Common fixes: fsck /dev/sda1 (check filesystem), update-grub (rebuild GRUB config), mount -o remount,rw / (remount root read-write), check /etc/fstab for bad entries (comment out and reboot). Systemd boot: systemd-analyze blame shows service startup times; systemd-analyze critical-chain shows the critical boot path.",
+    "type": "skill",
+    "tags": ["linux", "boot", "GRUB", "troubleshooting", "recovery"],
+    "source": "infra_knowledge"
+  },
+  {
+    "content": "Disk I/O scheduling: Linux offers 3 schedulers — mq-deadline (default, good for HDDs, 500ms write deadline), bfq (fair queuing, good for desktop responsiveness), none/noop (FIFO, best for SSDs/NVMe since the device handles scheduling). Check current: cat /sys/block/sda/queue/scheduler. Change: echo mq-deadline > /sys/block/sda/queue/scheduler. NVMe drives should always use 'none'.",
+    "type": "fact",
+    "tags": ["linux", "IO_scheduler", "SSD", "NVMe", "performance"],
+    "source": "infra_knowledge"
+  },
+  {
+    "content": "Systemd timers replace cron with better logging and dependency management. Create a .timer unit file with OnCalendar=*-*-* 02:00:00 (daily at 2AM) or OnBootSec=5min/OnUnitActiveSec=1h (relative timing). Advantages over cron: journalctl -u mytimer.service shows execution logs, Persistent=true runs missed timers after downtime, and timers can depend on network/mount targets. List active: systemctl list-timers.",
+    "type": "learning",
+    "tags": ["linux", "systemd_timers", "cron_replacement", "scheduling"],
+    "source": "infra_knowledge"
+  }
+]

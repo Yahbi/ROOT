@@ -142,5 +142,11 @@
     "type": "fact",
     "tags": ["regex", "flags", "modifiers", "Python", "best_practices"],
     "source": "engineering_knowledge"
+  },
+  {
+    "content": "Whitespace and string trimming patterns: ^\\s+|\\s+$ matches leading/trailing whitespace (used by trim()). Normalize multiple spaces to single: replace /\\s{2,}/g with ' '. Match blank lines: ^\\s*$ with multiline flag. Extract quoted strings: (?:\"([^\"]*)\"|'([^']*)'). Match non-ASCII characters: [^\\x00-\\x7F]. These 5 patterns handle 80% of text normalization tasks in data cleaning pipelines.",
+    "type": "skill",
+    "tags": ["regex", "whitespace", "trimming", "text_normalization", "cleaning"],
+    "source": "engineering_knowledge"
   }
 ]

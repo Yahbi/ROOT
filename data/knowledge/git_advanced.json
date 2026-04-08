@@ -1,0 +1,152 @@
+[
+  {
+    "content": "Rebase vs merge: git rebase replays commits onto a new base, producing linear history (no merge commits). git merge preserves topology with a merge commit. Use rebase for feature branches before merging to main (cleaner log), use merge for shared/public branches. Golden rule: never rebase commits that have been pushed to a shared branch, as it rewrites history and forces other developers to reconcile.",
+    "type": "learning",
+    "tags": ["git", "rebase", "merge", "linear_history", "workflow"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Cherry-pick applies a specific commit to the current branch: git cherry-pick <SHA>. For multiple commits: git cherry-pick A..B (exclusive of A) or git cherry-pick A^..B (inclusive). Use -n flag to stage changes without committing (useful for combining multiple cherry-picks). Cherry-pick creates a new commit with a different SHA but same diff. Conflicts require manual resolution then git cherry-pick --continue.",
+    "type": "skill",
+    "tags": ["git", "cherry_pick", "selective_commit", "hotfix"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Interactive rebase (git rebase -i HEAD~5) opens editor with 5 most recent commits. Commands: pick (keep), reword (change message), squash (merge into previous, combine messages), fixup (merge into previous, discard message), edit (pause for amending), drop (remove commit). Squashing 10 WIP commits into 1 clean commit before merging keeps main branch history readable. Use autosquash with commit messages starting 'fixup!' or 'squash!'.",
+    "type": "skill",
+    "tags": ["git", "interactive_rebase", "squash", "fixup", "history_cleanup"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Git bisect automates binary search for bug-introducing commits: git bisect start, git bisect bad (current is broken), git bisect good <SHA> (last known good commit). Git checks out middle commit; mark good/bad until the culprit is found. For N commits, bisect needs at most log2(N) steps — 1000 commits requires only ~10 tests. Automate with: git bisect run ./test_script.sh.",
+    "type": "skill",
+    "tags": ["git", "bisect", "debugging", "binary_search", "automation"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Git reflog records every HEAD movement for 90 days (configurable via gc.reflogExpire). Recover lost commits after accidental reset: git reflog shows history, then git checkout <SHA> or git branch recovery <SHA>. Reflog entries format: HEAD@{0} (current), HEAD@{1} (previous). Even commits removed by git reset --hard are recoverable via reflog until garbage collection runs (git gc, default 2 weeks for unreachable objects).",
+    "type": "skill",
+    "tags": ["git", "reflog", "recovery", "lost_commits", "safety"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Git worktrees allow checking out multiple branches simultaneously in separate directories: git worktree add ../feature-branch feature-branch. Each worktree has its own working directory and index but shares the same .git repository. Maximum practical worktrees: limited by disk space. Benefits: no stashing needed, parallel builds, review PR while coding on another branch. Clean up with git worktree remove <path>.",
+    "type": "skill",
+    "tags": ["git", "worktree", "parallel_work", "branches"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Submodules embed a specific commit of one repo inside another: git submodule add <url> <path>. Submodules pin to exact SHAs and must be explicitly updated (git submodule update --remote). Subtrees (git subtree add --prefix=vendor/lib <url> main) merge another repo's history into yours — simpler workflow but larger repo. Submodules suit large independent projects; subtrees suit small vendored libraries.",
+    "type": "learning",
+    "tags": ["git", "submodule", "subtree", "dependency", "monorepo"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Git hooks are scripts triggered by events. Client-side: pre-commit (lint/format), prepare-commit-msg (template), commit-msg (validate message format), pre-push (run tests). Server-side: pre-receive (enforce branch policies), update (per-branch checks), post-receive (deploy/notify). Hooks live in .git/hooks/ (not versioned) or use a framework like Husky (npm) or pre-commit (Python) to share hooks via config files in the repo.",
+    "type": "fact",
+    "tags": ["git", "hooks", "pre_commit", "automation", "CI"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Git stash saves uncommitted changes to a stack: git stash (save all), git stash push -m 'description' -p (interactive, select hunks). Retrieve: git stash pop (apply + remove), git stash apply (apply + keep). List: git stash list. Show diff: git stash show -p stash@{0}. Stash includes staged and unstaged tracked files by default; add -u for untracked, -a for all (including ignored). Stashes are stored as commits in refs/stash.",
+    "type": "skill",
+    "tags": ["git", "stash", "save", "pop", "workflow"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Git blame and log for forensics: git blame -L 50,70 file.py shows who last modified lines 50-70. git log -p --follow file.py shows full patch history including renames. git log -S 'function_name' (pickaxe) finds commits that added/removed a string. git log -G 'regex' finds commits where the diff matches a regex. git shortlog -sn counts commits per author. git log --all --oneline --graph shows branch topology.",
+    "type": "skill",
+    "tags": ["git", "blame", "log", "forensics", "history"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Merge strategies: recursive (default for 2-branch merge, handles renames), ours (keep current branch entirely, discard theirs — useful for marking a branch as merged without taking changes), theirs (not a strategy, but -X theirs auto-resolves conflicts favoring incoming), octopus (merges >2 branches simultaneously), subtree (merge repo as subdirectory). Specify with: git merge -s ours branch_name.",
+    "type": "fact",
+    "tags": ["git", "merge_strategy", "ours", "theirs", "recursive"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Signed commits use GPG or SSH keys to verify author identity: git commit -S signs with GPG, git config commit.gpgsign true enables by default. Verify with git log --show-signature. GitHub shows 'Verified' badge on signed commits. SSH signing (git 2.34+): git config gpg.format ssh && git config user.signingkey ~/.ssh/id_ed25519.pub. Organizations can require signed commits via branch protection rules.",
+    "type": "fact",
+    "tags": ["git", "signed_commits", "GPG", "SSH", "verification"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Sparse checkout allows cloning only specific directories from a large repo: git sparse-checkout init --cone, then git sparse-checkout set src/module-a tests/module-a. Combined with partial clone (git clone --filter=blob:none --sparse <url>), this reduces clone size from GBs to MBs for monorepos. Git 2.25+ required. Treeless clone (--filter=tree:0) is even more aggressive, fetching trees on demand.",
+    "type": "skill",
+    "tags": ["git", "sparse_checkout", "partial_clone", "monorepo", "performance"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Git rerere (reuse recorded resolution) automatically applies previously resolved merge conflicts: git config rerere.enabled true. When you resolve a conflict, rerere records the resolution. Next time the same conflict occurs (e.g., during rebase), it is applied automatically. Stored in .git/rr-cache/. Particularly useful for long-lived feature branches that frequently rebase onto main.",
+    "type": "learning",
+    "tags": ["git", "rerere", "conflict_resolution", "automation"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Git filter-repo (replacement for filter-branch) rewrites history efficiently: remove large files (git filter-repo --strip-blobs-bigger-than 10M), remove sensitive data (git filter-repo --path-regex '^.env$' --invert-paths), rename directories across all history. filter-repo is 10-100x faster than filter-branch. After rewriting, all SHAs change — every collaborator must re-clone. Always back up before rewriting shared history.",
+    "type": "skill",
+    "tags": ["git", "filter_repo", "history_rewrite", "sensitive_data", "large_files"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Git LFS (Large File Storage) tracks large files (images, binaries, datasets) as pointers in the repo while storing actual content on a separate server. Setup: git lfs install && git lfs track '*.psd'. The .gitattributes file records tracked patterns. LFS reduces clone size since only the current version of large files is downloaded. GitHub LFS: 1GB free storage, 1GB/month bandwidth; GitLab: 5GB free.",
+    "type": "fact",
+    "tags": ["git", "LFS", "large_files", "binary", "storage"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Git diff options: git diff (unstaged changes), git diff --staged (staged changes), git diff branch1..branch2 (between branches), git diff --stat (file-level summary), git diff --word-diff (inline word changes), git diff --name-only (just filenames). For reviewing PRs: git diff main...feature shows only what the feature branch changed, excluding main's subsequent commits. The three-dot syntax uses the merge base.",
+    "type": "skill",
+    "tags": ["git", "diff", "comparison", "review", "three_dot"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Conventional commits format: <type>(<scope>): <subject>. Types: feat (new feature, bumps minor), fix (bug fix, bumps patch), docs, style, refactor, perf, test, chore, ci. Breaking changes: add ! after type (feat!:) or BREAKING CHANGE in footer (bumps major). Tools like semantic-release auto-generate changelogs and version bumps from commit messages. Enforce with commitlint + Husky pre-commit hook.",
+    "type": "learning",
+    "tags": ["git", "conventional_commits", "semantic_release", "changelog"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Git config levels: system (/etc/gitconfig), global (~/.gitconfig), local (.git/config), worktree (.git/config.worktree). Local overrides global overrides system. Useful aliases: git config --global alias.lg 'log --oneline --graph --all --decorate', alias.co checkout, alias.st status. Conditional includes: [includeIf \"gitdir:~/work/\"] path = ~/.gitconfig-work for per-directory email/signing key configuration.",
+    "type": "skill",
+    "tags": ["git", "config", "aliases", "conditional_includes", "setup"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Branch protection rules (GitHub/GitLab): require pull request reviews (min 1-2 approvals), require status checks to pass (CI must be green), require linear history (no merge commits), require signed commits, restrict force pushes, require up-to-date branches before merging. CODEOWNERS file auto-assigns reviewers: *.py @backend-team, /docs/ @docs-team. Enforce on main/release branches at minimum.",
+    "type": "learning",
+    "tags": ["git", "branch_protection", "CODEOWNERS", "CI", "governance"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Git gc (garbage collection) removes unreachable objects and compresses packfiles. Runs automatically after ~6700 loose objects accumulate. Manual: git gc --aggressive (recompute deltas, slower but smaller repo) or git gc --prune=now (immediately remove unreachable objects). git count-objects -vH shows loose objects and pack sizes. Large repos benefit from git repack -adf --depth=300 --window=300 for optimal compression.",
+    "type": "fact",
+    "tags": ["git", "gc", "garbage_collection", "repack", "optimization"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Git notes add metadata to commits without changing SHA: git notes add -m 'Reviewed by Alice' <SHA>. Notes are stored in refs/notes/commits and pushed separately: git push origin refs/notes/*. Use cases: code review annotations, CI build results, deployment timestamps. Notes can be shown in log: git log --show-notes. Multiple namespaces: git notes --ref=reviews add -m 'LGTM'. Notes are not fetched by default — configure fetch refspec.",
+    "type": "learning",
+    "tags": ["git", "notes", "metadata", "annotations", "workflow"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Git maintenance (2.29+) automates repository optimization: git maintenance start schedules hourly commit-graph updates, daily prefetch of remote refs, and weekly gc/pack. commit-graph file accelerates traversal by pre-computing reachability (50-80% faster log/merge-base on large repos). Enable incrementally: git config core.commitGraph true && git commit-graph write --reachable.",
+    "type": "fact",
+    "tags": ["git", "maintenance", "commit_graph", "performance", "optimization"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Git workflows compared: GitFlow (develop/release/hotfix branches, complex, suited for versioned releases), GitHub Flow (single main branch + feature branches + PRs, simple, suited for continuous deployment), Trunk-Based (short-lived branches <2 days, feature flags, suited for high-velocity teams). Google and Meta use trunk-based development with >50,000 commits/day to a single main branch using feature flags.",
+    "type": "learning",
+    "tags": ["git", "workflow", "GitFlow", "GitHub_Flow", "trunk_based"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Resolving complex merge conflicts: git checkout --ours file (take current branch version), git checkout --theirs file (take incoming version), git merge-tool (opens configured diff tool). For binary files, --ours/--theirs is the only option. Merge conflict markers: <<<<<<< HEAD (current), ======= (separator), >>>>>>> branch (incoming). Use git diff --check before committing to catch leftover conflict markers. git merge --abort cancels the merge entirely.",
+    "type": "skill",
+    "tags": ["git", "merge_conflict", "resolution", "ours_theirs", "tools"],
+    "source": "engineering_knowledge"
+  }
+]
