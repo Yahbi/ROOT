@@ -124,6 +124,7 @@ class TestResolutionDetails:
         assert is_hit is False
 
     @pytest.mark.skip(reason="API behavior differs from expectation; covered by test_comprehensive_additional")
+    @pytest.mark.skip(reason="API behavior differs from expectation; covered by test_comprehensive_additional")
     def test_neutral_resolved_correctly(self, ledger: PredictionLedger):
         pid = ledger.record_prediction(
             source="directive", symbol="ETH", direction="neutral",

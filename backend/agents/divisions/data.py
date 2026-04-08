@@ -1,4 +1,4 @@
-"""Data & Memory Division — 15 data and knowledge infrastructure agents."""
+"""Data & Memory Division — 20 data and knowledge infrastructure agents."""
 
 from __future__ import annotations
 
@@ -176,5 +176,70 @@ DATA_DIVISION: list[AgentProfile] = [
             _cap("statistical_analysis", "Apply filtering and detection algorithms"),
             _cap("data_analysis", "Analyze signal strength and frequency"),
         ],
+    ),
+    AgentProfile(
+        id="feature_engineer", name="Feature Engineer",
+        role="Feature Engineering", tier=2, connector_type="internal",
+        description="Designs and constructs predictive features from raw data for model training",
+        capabilities=[
+            _cap("data_pipeline", "Build feature extraction and transformation pipelines"),
+            _cap("statistical_analysis", "Compute statistical features and aggregations"),
+            _cap("pattern_recognition", "Identify high-signal raw attributes for modeling"),
+            _cap("data_quality", "Validate feature distributions and null handling"),
+            _cap("optimization", "Reduce feature dimensionality and redundancy"),
+        ],
+        metadata={"priority": 2},
+    ),
+    AgentProfile(
+        id="anomaly_detector", name="Anomaly Detector",
+        role="Anomaly Detection", tier=2, connector_type="internal",
+        description="Identifies anomalous patterns, outliers, and unexpected events in data streams",
+        capabilities=[
+            _cap("signal_detection", "Detect point, contextual, and collective anomalies"),
+            _cap("statistical_analysis", "Apply statistical outlier detection methods"),
+            _cap("pattern_recognition", "Distinguish anomalies from natural variation"),
+            _cap("data_analysis", "Investigate root causes of detected anomalies"),
+            _cap("automation", "Automate anomaly alerting and escalation workflows"),
+        ],
+        metadata={"priority": 2},
+    ),
+    AgentProfile(
+        id="data_lineage_tracker", name="Data Lineage Tracker",
+        role="Data Lineage", tier=2, connector_type="internal",
+        description="Tracks data lineage, provenance, and transformation history across pipelines",
+        capabilities=[
+            _cap("data_pipeline", "Instrument pipelines to capture lineage metadata"),
+            _cap("documentation", "Document data flow graphs and transformation logic"),
+            _cap("data_quality", "Validate lineage completeness and accuracy"),
+            _cap("monitoring", "Alert on lineage breaks and undocumented transformations"),
+            _cap("indexing", "Index lineage records for fast provenance queries"),
+        ],
+        metadata={"priority": 2},
+    ),
+    AgentProfile(
+        id="quality_scorer", name="Quality Scorer",
+        role="Quality Scoring", tier=2, connector_type="internal",
+        description="Assigns automated quality scores to datasets, models, and pipeline outputs",
+        capabilities=[
+            _cap("data_quality", "Compute multi-dimensional quality scores for datasets"),
+            _cap("statistical_analysis", "Measure completeness, accuracy, and consistency"),
+            _cap("benchmark_analysis", "Compare quality scores against defined thresholds"),
+            _cap("automation", "Automate scoring runs on data ingestion"),
+            _cap("insight_extraction", "Produce quality reports with remediation recommendations"),
+        ],
+        metadata={"priority": 2},
+    ),
+    AgentProfile(
+        id="etl_orchestrator", name="ETL Orchestrator",
+        role="ETL Orchestration", tier=2, connector_type="internal",
+        description="Orchestrates complex ETL workflows, manages dependencies, and ensures reliable data delivery",
+        capabilities=[
+            _cap("data_pipeline", "Orchestrate multi-step ETL/ELT job graphs"),
+            _cap("automation", "Schedule, retry, and monitor ETL job execution"),
+            _cap("monitoring", "Track pipeline SLAs, data freshness, and throughput"),
+            _cap("data_quality", "Enforce data quality gates between pipeline stages"),
+            _cap("scripting", "Write DAG definitions and pipeline configuration files"),
+        ],
+        metadata={"priority": 2},
     ),
 ]

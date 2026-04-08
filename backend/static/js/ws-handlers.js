@@ -1,6 +1,16 @@
 /* ROOT — Extended WebSocket Handlers + Toast Notifications
    Extends the ws object in root.js with additional topic subscriptions
-   and provides domain-specific event routing. */
+   and provides domain-specific event routing.
+
+   Enhanced features (v1.1):
+   - Reconnection with exponential backoff (1s → 2s → 4s → 8s, max 30s)
+   - Connection state management (connecting / connected / disconnected / error)
+   - Offline message queue (flushed on reconnect)
+   - Heartbeat (ping every 30s, stale-connection detection via pong timeout)
+   - Event deduplication (skip duplicate messages within 1s)
+   - Subscription management (subscribe / unsubscribe per topic)
+   - Visual connection status indicator with state-aware animation
+*/
 
 // ── Extended Topics ─────────────────────────────────────────
 const WS_TOPICS = [
@@ -41,6 +51,214 @@ const TOAST_TOPICS = new Set([
     'intelligence', 'swarm'
 ]);
 
+// ── Connection State Machine ────────────────────────────────
+// States: 'connecting' | 'connected' | 'disconnected' | 'error'
+const WsState = Object.freeze({
+    CONNECTING:   'connecting',
+    CONNECTED:    'connected',
+    DISCONNECTED: 'disconnected',
+    ERROR:        'error',
+});
+
+let _wsCurrentState = WsState.DISCONNECTED;
+
+function _setWsState(newState) {
+    if (_wsCurrentState === newState) return;
+    const prev = _wsCurrentState;
+    _wsCurrentState = newState;
+    _updateConnectionIndicator(newState);
+    // Notify any registered state-change listeners
+    _wsStateListeners.forEach(fn => { try { fn(newState, prev); } catch (e) { console.warn('[ws] state listener error', e); } });
+}
+
+const _wsStateListeners = [];
+
+/**
+ * Register a callback that fires whenever the WS connection state changes.
+ * @param {function(newState: string, prevState: string): void} fn
+ */
+function onWsStateChange(fn) {
+    _wsStateListeners.push(fn);
+}
+
+/** Read-only view of the current connection state. */
+function getWsState() { return _wsCurrentState; }
+
+// ── Visual Connection Status Indicator ─────────────────────
+// Updates #global-status and #mode-text with state-aware classes + text.
+// States map to CSS classes: connected / connecting / disconnected / error
+
+const _STATE_TEXT = {
+    [WsState.CONNECTING]:   'Connecting…',
+    [WsState.CONNECTED]:    'Live',
+    [WsState.DISCONNECTED]: 'Reconnecting…',
+    [WsState.ERROR]:        'Error',
+};
+
+function _updateConnectionIndicator(state) {
+    const dot  = document.getElementById('global-status');
+    const text = document.getElementById('mode-text');
+
+    if (dot) {
+        // Remove all state classes then apply the current one.
+        dot.classList.remove('offline', 'connecting', 'error');
+        if (state === WsState.CONNECTED) {
+            // Default class (green pulse) — no extra class needed.
+        } else if (state === WsState.CONNECTING) {
+            dot.classList.add('connecting');
+        } else if (state === WsState.ERROR) {
+            dot.classList.add('offline', 'error');
+        } else {
+            // disconnected
+            dot.classList.add('offline');
+        }
+    }
+
+    if (text) {
+        text.textContent = _STATE_TEXT[state] || state;
+    }
+}
+
+// ── Offline Message Queue ───────────────────────────────────
+// Messages sent while disconnected are queued and flushed on reconnect.
+const _offlineQueue = [];
+const OFFLINE_QUEUE_MAX = 100;
+
+/**
+ * Send a message through the WebSocket.
+ * If disconnected the payload is queued and sent when the connection is restored.
+ * @param {object|string} payload
+ */
+function wsSend(payload) {
+    const raw = typeof payload === 'string' ? payload : JSON.stringify(payload);
+    if (ws && ws.conn && ws.conn.readyState === WebSocket.OPEN) {
+        ws.conn.send(raw);
+    } else {
+        if (_offlineQueue.length < OFFLINE_QUEUE_MAX) {
+            _offlineQueue.push(raw);
+        } else {
+            console.warn('[ws] offline queue full — dropping message');
+        }
+    }
+}
+
+function _flushOfflineQueue() {
+    if (!ws || !ws.conn || ws.conn.readyState !== WebSocket.OPEN) return;
+    while (_offlineQueue.length > 0) {
+        const raw = _offlineQueue.shift();
+        try { ws.conn.send(raw); } catch (e) { console.warn('[ws] flush error', e); }
+    }
+}
+
+// ── Subscription Manager ────────────────────────────────────
+// Tracks which wildcard topics are currently subscribed so we can
+// efficiently re-subscribe after reconnect and support runtime
+// subscribe/unsubscribe calls.
+
+const _activeSubscriptions = new Set(WS_TOPICS);
+
+/**
+ * Subscribe to one or more topic patterns (e.g. 'agent.*', 'trade.fill').
+ * Sends a subscribe message immediately if connected, else queues it.
+ * @param {...string} topics
+ */
+function wsSubscribe(...topics) {
+    const added = topics.filter(t => !_activeSubscriptions.has(t));
+    if (added.length === 0) return;
+    added.forEach(t => _activeSubscriptions.add(t));
+    wsSend({ subscribe: added });
+}
+
+/**
+ * Unsubscribe from one or more topic patterns.
+ * @param {...string} topics
+ */
+function wsUnsubscribe(...topics) {
+    const removed = topics.filter(t => _activeSubscriptions.has(t));
+    if (removed.length === 0) return;
+    removed.forEach(t => _activeSubscriptions.delete(t));
+    wsSend({ unsubscribe: removed });
+}
+
+/** Re-send full subscription list — called after every (re)connect. */
+function _resubscribeAll() {
+    if (_activeSubscriptions.size === 0) return;
+    wsSend({ subscribe: [..._activeSubscriptions] });
+}
+
+// ── Heartbeat ───────────────────────────────────────────────
+// Sends a ping every 30s. If the server does not echo a pong within
+// HEARTBEAT_TIMEOUT ms the connection is considered stale and is closed
+// so the reconnect logic takes over.
+
+const HEARTBEAT_INTERVAL  = 30_000;   // 30 s
+const HEARTBEAT_TIMEOUT   = 10_000;   // 10 s pong window
+
+let _hbInterval  = null;
+let _hbTimeout   = null;
+let _hbMissed    = 0;
+const HEARTBEAT_MAX_MISSED = 2;
+
+function _startHeartbeat() {
+    _stopHeartbeat();
+    _hbInterval = setInterval(_sendPing, HEARTBEAT_INTERVAL);
+}
+
+function _stopHeartbeat() {
+    if (_hbInterval) { clearInterval(_hbInterval); _hbInterval = null; }
+    if (_hbTimeout)  { clearTimeout(_hbTimeout);   _hbTimeout  = null; }
+    _hbMissed = 0;
+}
+
+function _sendPing() {
+    if (!ws || !ws.conn || ws.conn.readyState !== WebSocket.OPEN) return;
+    ws.conn.send(JSON.stringify({ ping: true }));
+
+    // Arm a timeout — if no pong arrives within HEARTBEAT_TIMEOUT
+    // the connection is stale; force-close it so reconnect fires.
+    _hbTimeout = setTimeout(() => {
+        _hbMissed++;
+        if (_hbMissed >= HEARTBEAT_MAX_MISSED) {
+            console.warn('[ws] heartbeat timeout — forcing reconnect');
+            _hbMissed = 0;
+            try { ws.conn.close(); } catch (e) { /* ignore */ }
+        }
+    }, HEARTBEAT_TIMEOUT);
+}
+
+/** Call when a pong (or any server message) is received to cancel the timeout. */
+function _resetHeartbeatTimeout() {
+    if (_hbTimeout) { clearTimeout(_hbTimeout); _hbTimeout = null; }
+    _hbMissed = 0;
+}
+
+// ── Event Deduplication ─────────────────────────────────────
+// Skip identical messages that arrive within DEDUP_WINDOW_MS of each other.
+// Key = topic + stable JSON of data payload.
+
+const DEDUP_WINDOW_MS = 1000;   // 1 s
+const _seenEvents = new Map();  // key -> timestamp
+
+function _isDuplicate(topic, data) {
+    let key;
+    try {
+        key = topic + '|' + JSON.stringify(data);
+    } catch (e) {
+        return false; // Can't serialize — pass through
+    }
+    const now = Date.now();
+    const last = _seenEvents.get(key);
+    if (last !== undefined && now - last < DEDUP_WINDOW_MS) return true;
+    _seenEvents.set(key, now);
+    // Prune old entries periodically to prevent unbounded growth
+    if (_seenEvents.size > 500) {
+        for (const [k, ts] of _seenEvents) {
+            if (now - ts > DEDUP_WINDOW_MS * 2) _seenEvents.delete(k);
+        }
+    }
+    return false;
+}
+
 // ── Subscribe to Extended Topics ────────────────────────────
 function wsSubscribeExtended() {
     if (!ws || !ws.conn || ws.conn.readyState !== WebSocket.OPEN) return;
@@ -49,6 +267,9 @@ function wsSubscribeExtended() {
 
 // ── Domain Event Handler ────────────────────────────────────
 function handleWsEvent(topic, data) {
+    // Deduplication guard
+    if (_isDuplicate(topic, data)) return;
+
     const prefix = _topicPrefix(topic);
     const action = _topicAction(topic);
 
@@ -238,8 +459,13 @@ function _refreshPanel(panelName) {
 }
 
 // ── Wire into existing ws object ────────────────────────────
-// This runs after root.js has initialized ws.
-// We register a catch-all handler for all extended topics.
+// Patches ws.connect to:
+//   1. Set state → connecting on entry
+//   2. Set state → connected / error / disconnected on socket events
+//   3. Start / stop heartbeat
+//   4. Flush offline queue after (re)connect
+//   5. Handle pong to reset heartbeat timeout
+//   6. Re-subscribe all tracked topics after reconnect
 (function _wireWsHandlers() {
     if (typeof ws === 'undefined' || !ws.on) {
         // Retry after root.js loads
@@ -247,17 +473,48 @@ function _refreshPanel(panelName) {
         return;
     }
 
-    // Re-subscribe with full topic list when connection opens
+    // Patch ws.connect — preserve original
     if (typeof ws.connect === 'function') {
-        const origConnect = ws.connect.bind(ws);
+        const _origConnect = ws.connect.bind(ws);
+
         ws.connect = function() {
-            origConnect();
-            // Chain onopen to also subscribe to extended topics
+            _setWsState(WsState.CONNECTING);
+            _origConnect();
+
+            // Attach enhanced hooks after the socket has been created
             if (ws.conn) {
-                const origOnOpen = ws.conn.onopen;
+                const _origOnOpen = ws.conn.onopen;
                 ws.conn.onopen = function(evt) {
-                    if (origOnOpen) origOnOpen.call(this, evt);
-                    wsSubscribeExtended();
+                    _setWsState(WsState.CONNECTED);
+                    _startHeartbeat();
+                    _resubscribeAll();
+                    _flushOfflineQueue();
+                    if (_origOnOpen) _origOnOpen.call(this, evt);
+                };
+
+                const _origOnMessage = ws.conn.onmessage;
+                ws.conn.onmessage = function(evt) {
+                    // Any message from the server resets the heartbeat timeout
+                    _resetHeartbeatTimeout();
+                    // Handle pong frames without passing them to the main dispatcher
+                    try {
+                        const parsed = JSON.parse(evt.data);
+                        if (parsed && parsed.pong) return; // pong consumed
+                    } catch (e) { /* not JSON — ignore */ }
+                    if (_origOnMessage) _origOnMessage.call(this, evt);
+                };
+
+                const _origOnClose = ws.conn.onclose;
+                ws.conn.onclose = function(evt) {
+                    _stopHeartbeat();
+                    _setWsState(WsState.DISCONNECTED);
+                    if (_origOnClose) _origOnClose.call(this, evt);
+                };
+
+                const _origOnError = ws.conn.onerror;
+                ws.conn.onerror = function(evt) {
+                    _setWsState(WsState.ERROR);
+                    if (_origOnError) _origOnError.call(this, evt);
                 };
             }
         };
@@ -267,4 +524,37 @@ function _refreshPanel(panelName) {
     for (const prefix of Object.keys(TOPIC_PANEL_MAP)) {
         ws.on(`${prefix}.*`, (data, topic) => handleWsEvent(topic, data));
     }
+})();
+
+// ── CSS additions for new connection states ─────────────────
+// Injected at runtime so no HTML/CSS files need touching.
+(function _injectWsStatusStyles() {
+    const STYLE_ID = 'ws-handlers-status-styles';
+    if (document.getElementById(STYLE_ID)) return;
+
+    const style = document.createElement('style');
+    style.id = STYLE_ID;
+    style.textContent = `
+        /* Connecting state — amber slow blink */
+        .status-dot.connecting {
+            background: var(--accent-gold, #f59e0b) !important;
+            box-shadow: 0 0 4px var(--accent-gold, #f59e0b);
+            animation: wsConnectingBlink 1s ease-in-out infinite !important;
+        }
+        .status-dot.connecting::after { display: none; }
+
+        /* Error state — red, no pulse */
+        .status-dot.error {
+            background: var(--accent-red, #ef4444) !important;
+            box-shadow: none !important;
+            animation: none !important;
+        }
+        .status-dot.error::after { display: none; }
+
+        @keyframes wsConnectingBlink {
+            0%, 100% { opacity: 1; }
+            50%       { opacity: 0.3; }
+        }
+    `;
+    document.head.appendChild(style);
 })();

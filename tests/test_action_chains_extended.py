@@ -234,22 +234,24 @@ class TestDefaultChains:
 
     @pytest.mark.asyncio
     async def test_survival_triggers_remediation(self):
+        # survival_economics is the trigger action (not financial_survival)
         p = AsyncMock()
         p.trigger = AsyncMock(return_value="remediated")
         engine = build_default_chains(proactive_engine=p)
         execs = await engine.evaluate_trigger(
-            "financial_survival", {"result": "emergency mode active"},
+            "survival_economics", {"result": "emergency mode active"},
         )
         matching = [e for e in execs if e.chain_id == "survival_to_revenue_remediation"]
         assert len(matching) == 1
 
     @pytest.mark.asyncio
     async def test_learning_triggers_improvement(self):
+        # skill_discovery is the trigger action (not learning_cycle)
         p = AsyncMock()
         p.trigger = AsyncMock(return_value="improved")
         engine = build_default_chains(proactive_engine=p)
         execs = await engine.evaluate_trigger(
-            "learning_cycle", {"result": "completed learning with improvements"},
+            "skill_discovery", {"result": "insight found with weight update"},
         )
         matching = [e for e in execs if e.chain_id == "learning_to_improvement"]
         assert len(matching) == 1
