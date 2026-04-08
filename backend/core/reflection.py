@@ -770,8 +770,6 @@ STRONGEST MEMORIES (top 20):
         - Goal/objective → store as GOAL memory
         - Knowledge gap → store as LEARNING memory for builder to fill
         """
-        import logging
-        log = logging.getLogger("root.reflection")
         action = reflection.action
         if not action:
             return
@@ -790,7 +788,7 @@ STRONGEST MEMORIES (top 20):
                         new_weight = self._learning.boost_routing_weight(
                             agent_id, category, amount=0.05,
                         )
-                        log.info(
+                        logger.info(
                             "Reflection action: boosted %s for '%s' → %.2f",
                             agent_id, category, new_weight,
                         )
@@ -807,7 +805,7 @@ STRONGEST MEMORIES (top 20):
                 source="reflection_engine",
                 confidence=0.8,
             ))
-            log.info("Reflection action: queued skill creation — %s", action[:100])
+            logger.info("Reflection action: queued skill creation — %s", action[:100])
             acted = True
 
         # 3. Goal/objective setting
@@ -820,7 +818,7 @@ STRONGEST MEMORIES (top 20):
                 source="reflection_engine",
                 confidence=0.75,
             ))
-            log.info("Reflection action: stored goal — %s", action[:100])
+            logger.info("Reflection action: stored goal — %s", action[:100])
             acted = True
 
         # 4. Knowledge gap / learning need
@@ -833,7 +831,7 @@ STRONGEST MEMORIES (top 20):
                 source="reflection_engine",
                 confidence=0.7,
             ))
-            log.info("Reflection action: stored knowledge gap — %s", action[:100])
+            logger.info("Reflection action: stored knowledge gap — %s", action[:100])
             acted = True
 
         if not acted:
@@ -845,7 +843,7 @@ STRONGEST MEMORIES (top 20):
                 source="reflection_engine",
                 confidence=0.6,
             ))
-            log.info("Reflection action (unclassified): %s", action[:100])
+            logger.info("Reflection action (unclassified): %s", action[:100])
 
     @staticmethod
     def _extract_category(text: str) -> str:

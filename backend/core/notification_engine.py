@@ -694,6 +694,7 @@ class NotificationEngine:
         source: str = "root",
         level: str = "low",
         details: str = "",
+        notification_type: str = "audit",
     ) -> bool:
         """Log and notify about any external action (HTTP call, trade, etc.).
 
@@ -704,7 +705,13 @@ class NotificationEngine:
         body = f"Target: {target}"
         if details:
             body = f"{body}\n{details}"
-        return await self.send(title=title, body=body, level=level, source=source)
+        return await self.send(
+            title=title,
+            body=body,
+            level=level,
+            source=source,
+            notification_type=notification_type,
+        )
 
     def _determine_channels(self) -> list[str]:
         """Return list of all configured channel names."""
@@ -1040,27 +1047,97 @@ class NotificationEngine:
                     self._batch_failure_count = 0
                     await asyncio.sleep(300)
 
-    # ── History & stats ─────────────────────────────────────
+    # ── History & Search ─────────────────────────────────────
 
-    def get_history(self, limit: int = 50) -> list[dict[str, Any]]:
-        """Return recent notification history."""
-        all_items = list(self._history)
+    def get_history(
+        self,
+        limit: int = 50,
+        search: Optional[str] = None,
+        level: Optional[str] = None,
+        source: Optional[str] = None,
+        notification_type: Optional[str] = None,
+        since: Optional[str] = None,
+        until: Optional[str] = None,
+        unread_only: bool = False,
+        unacknowledged_only: bool = False,
+    ) -> list[dict[str, Any]]:
+        """Return notification history with optional search and filtering.
+
+        Args:
+            limit: Maximum number of results (most recent first).
+            search: Keyword search across title and body (case-insensitive).
+            level: Filter to exact level ("low", "medium", "high", "critical").
+            source: Filter by source system/agent.
+            notification_type: Filter by notification type.
+            since: ISO datetime string — include only notifications at or after.
+            until: ISO datetime string — include only notifications at or before.
+            unread_only: If True, return only unread notifications.
+            unacknowledged_only: If True, return only unacknowledged HIGH/CRITICAL.
+        """
+        all_items: list[Notification] = list(self._history)
+
+        # Search filter
+        if search:
+            pattern = re.compile(re.escape(search), re.IGNORECASE)
+            all_items = [
+                n for n in all_items
+                if pattern.search(n.title) or pattern.search(n.body)
+            ]
+
+        # Level filter
+        if level:
+            all_items = [n for n in all_items if n.level == level]
+
+        # Source filter
+        if source:
+            all_items = [n for n in all_items if n.source == source]
+
+        # Type filter
+        if notification_type:
+            all_items = [n for n in all_items if n.notification_type == notification_type]
+
+        # Date range
+        if since:
+            all_items = [n for n in all_items if n.created_at >= since]
+        if until:
+            all_items = [n for n in all_items if n.created_at <= until]
+
+        # Unread filter
+        if unread_only:
+            all_items = [n for n in all_items if not n.read]
+
+        # Unacknowledged HIGH/CRITICAL
+        if unacknowledged_only:
+            all_items = [
+                n for n in all_items
+                if not n.acknowledged and n.level in ("high", "critical")
+            ]
+
+        # Apply limit (most-recent first)
         start = max(len(all_items) - limit, 0) if limit > 0 else 0
-        items: list[Notification] = list(all_items[slice(start, None)])
+        items = list(reversed(all_items[start:]))
+
         return [
             {
                 "id": n.id,
                 "title": n.title,
-                "body": n.body[slice(0, 200)],
+                "body": n.body[:200],
                 "level": n.level,
                 "source": n.source,
+                "notification_type": n.notification_type,
                 "sent": n.sent,
                 "channel": n.channel,
                 "read": n.read,
+                "acknowledged": n.acknowledged,
+                "escalation_count": n.escalation_count,
                 "created_at": n.created_at,
             }
-            for n in reversed(items)
+            for n in items
         ]
+
+    def search_history(self, query: str, limit: int = 50) -> list[dict[str, Any]]:
+        """Convenience method: full-text search over notification history."""
+        return self.get_history(limit=limit, search=query)
 
     def delivery_stats(self) -> dict[str, Any]:
         """Delivery statistics by channel."""
@@ -1076,6 +1153,7 @@ class NotificationEngine:
                 "email": self._delivery_counts["email_sent"],
                 "slack": self._delivery_counts["slack_sent"],
                 "webhook": self._delivery_counts["webhook_sent"],
+                "sms": self._delivery_counts["sms_sent"],
             },
         }
 
@@ -1083,6 +1161,8 @@ class NotificationEngine:
         """Notification statistics."""
         total = len(self._history)
         sent = sum(1 for n in self._history if n.sent)
+        unread = sum(1 for n in self._history if not n.read)
+        pending_escalation = len(self._pending_escalation)
         return {
             "configured": self.is_configured,
             "telegram": bool(self._telegram_token),
@@ -1090,9 +1170,21 @@ class NotificationEngine:
             "email": bool(self._smtp_host and self._notification_email),
             "slack": bool(self._slack_webhook_url),
             "webhooks": len(self._webhook_urls),
+            "sms": bool(self._sms_send_fn and self._sms_to),
             "muted_sources": sorted(self._muted_sources),
             "total_notifications": total,
             "sent": sent,
+            "unread": unread,
             "pending_medium": len(self._medium_queue),
+            "pending_deferred": len(self._deferred_queue),
+            "pending_escalation": pending_escalation,
+            "quiet_hours": {
+                "enabled": self._respect_quiet_hours,
+                "start": self._quiet_hours_start,
+                "end": self._quiet_hours_end,
+                "currently_active": self._is_quiet_hours(),
+            },
+            "templates": len(self._templates),
+            "channel_preferences": len(self._channel_prefs),
             "delivery": self.delivery_stats(),
         }

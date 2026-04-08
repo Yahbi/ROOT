@@ -117,6 +117,183 @@ async def experience_stats(request: Request):
     return request.app.state.experience_memory.stats()
 
 
+@router.get("/experience/search")
+async def search_experiences_scored(
+    request: Request,
+    q: str = "",
+    domain: Optional[str] = None,
+    limit: int = 10,
+    age_penalty: bool = True,
+):
+    """Relevance-scored experience search."""
+    exp_mem = request.app.state.experience_memory
+    results = exp_mem.search_experiences_scored(
+        query=q, limit=limit, domain=domain, age_penalty=age_penalty,
+    )
+    return {
+        "count": len(results),
+        "results": [
+            {
+                "score": r.score,
+                "id": r.experience.id,
+                "type": r.experience.experience_type.value,
+                "domain": r.experience.domain,
+                "title": r.experience.title,
+                "confidence": r.experience.confidence,
+                "times_applied": r.experience.times_applied,
+            }
+            for r in results
+        ],
+    }
+
+
+@router.get("/experience/patterns")
+async def detect_patterns(
+    request: Request,
+    domain: Optional[str] = None,
+    min_occurrences: int = 2,
+    window_days: int = 180,
+):
+    """Detect recurring success/failure patterns."""
+    exp_mem = request.app.state.experience_memory
+    patterns = exp_mem.detect_patterns(
+        domain=domain, min_occurrences=min_occurrences, window_days=window_days,
+    )
+    return {
+        "count": len(patterns),
+        "patterns": [
+            {
+                "pattern_id": p.pattern_id,
+                "pattern_type": p.pattern_type,
+                "domain": p.domain,
+                "title": p.title,
+                "description": p.description,
+                "occurrence_count": p.occurrence_count,
+                "avg_confidence": p.avg_confidence,
+                "keywords": p.keywords,
+                "example_ids": p.example_ids,
+            }
+            for p in patterns
+        ],
+    }
+
+
+@router.get("/experience/clusters")
+async def cluster_experiences(
+    request: Request,
+    domain: Optional[str] = None,
+    max_clusters: int = 10,
+):
+    """Cluster experiences by topic/domain similarity."""
+    exp_mem = request.app.state.experience_memory
+    clusters = exp_mem.cluster_experiences(domain=domain, max_clusters=max_clusters)
+    return {
+        "count": len(clusters),
+        "clusters": [
+            {
+                "cluster_id": c.cluster_id,
+                "label": c.label,
+                "domain": c.domain,
+                "size": c.size,
+                "dominant_type": c.dominant_type,
+                "avg_confidence": c.avg_confidence,
+                "keywords": c.keywords,
+                "experience_ids": c.experience_ids,
+            }
+            for c in clusters
+        ],
+    }
+
+
+@router.get("/experience/wisdom")
+async def extract_wisdom(
+    request: Request,
+    domain: Optional[str] = None,
+    min_support: int = 2,
+    min_confidence: float = 0.5,
+):
+    """Synthesize experiences into actionable wisdom."""
+    exp_mem = request.app.state.experience_memory
+    wisdoms = exp_mem.extract_wisdom(
+        domain=domain, min_support=min_support, min_confidence=min_confidence,
+    )
+    return {
+        "count": len(wisdoms),
+        "wisdom": [
+            {
+                "wisdom_id": w.wisdom_id,
+                "domain": w.domain,
+                "insight": w.insight,
+                "source_types": w.source_types,
+                "supporting_count": w.supporting_count,
+                "confidence": w.confidence,
+                "keywords": w.keywords,
+                "cross_domain_applicable": w.cross_domain_applicable,
+            }
+            for w in wisdoms
+        ],
+    }
+
+
+@router.post("/experience/age-decay")
+async def apply_age_decay(
+    request: Request,
+    half_life_days: int = 180,
+    min_confidence: float = 0.1,
+    dry_run: bool = False,
+):
+    """Apply time-based confidence decay to old experiences."""
+    exp_mem = request.app.state.experience_memory
+    return exp_mem.apply_age_decay(
+        half_life_days=half_life_days, min_confidence=min_confidence, dry_run=dry_run,
+    )
+
+
+@router.post("/experience/transfer")
+async def transfer_lesson(
+    request: Request,
+    source_domain: str = "",
+    target_domain: str = "",
+    min_confidence: float = 0.6,
+    max_transfer: int = 5,
+):
+    """Transfer lessons from one domain to another (cross-domain learning)."""
+    if not source_domain or not target_domain:
+        from fastapi import HTTPException
+        raise HTTPException(400, "source_domain and target_domain are required")
+    exp_mem = request.app.state.experience_memory
+    transferred = exp_mem.transfer_lesson(
+        source_domain=source_domain,
+        target_domain=target_domain,
+        min_confidence=min_confidence,
+        max_transfer=max_transfer,
+    )
+    return {
+        "transferred": len(transferred),
+        "source_domain": source_domain,
+        "target_domain": target_domain,
+        "experiences": [
+            {"id": e.id, "title": e.title, "confidence": e.confidence, "tags": e.tags}
+            for e in transferred
+        ],
+    }
+
+
+@router.get("/experience/domain-connections")
+async def get_domain_connections(request: Request):
+    """Get cross-domain learning connection graph."""
+    exp_mem = request.app.state.experience_memory
+    connections = exp_mem.get_domain_connections()
+    return {"connections": connections}
+
+
+@router.get("/experience/visualization")
+async def get_visualization_data(request: Request):
+    """Get aggregated visualization data for frontend charts."""
+    exp_mem = request.app.state.experience_memory
+    return exp_mem.get_visualization_data()
+
+
 # ── Experiment Lab ─────────────────────────────────────────────
 
 class ProposeExperimentRequest(BaseModel):
