@@ -249,13 +249,28 @@ class MultiProviderLLMRouter:
         temperature: float = 0.7,
         tools: Optional[list[dict[str, Any]]] = None,
         method: str = "complete",
+        background: bool = False,
     ) -> str:
-        """Route completion across providers with failover."""
+        """Route completion across providers with failover.
+
+        Parameters
+        ----------
+        background:
+            When ``True``, prefer cheap/free providers regardless of *method*.
+            Equivalent to setting *method* to a background method for routing
+            purposes.  Also waits for active chat to finish before proceeding.
+        """
+        is_background = background or method in BACKGROUND_METHODS
         # Background calls wait while user chat is active (Ollama is single-threaded)
-        if method in BACKGROUND_METHODS:
+        if is_background:
             await self._chat_active.wait()
         self._total_calls += 1
-        priority = self._get_priority(method)
+        priority = self._background_priority if is_background else self._get_priority(method)
+        if is_background and method not in BACKGROUND_METHODS:
+            logger.debug(
+                "Background routing: using cheap provider order for method=%s (tier=%s)",
+                method, model_tier,
+            )
         last_error = None
 
         for provider_name in priority:
@@ -309,13 +324,26 @@ class MultiProviderLLMRouter:
         model_tier: str = "default",
         max_tokens: int = 4096,
         method: str = "complete_with_tools",
+        background: bool = False,
     ) -> tuple[str, list[dict[str, Any]]]:
-        """Route tool-use completion across providers."""
+        """Route tool-use completion across providers.
+
+        Parameters
+        ----------
+        background:
+            When ``True``, prefer cheap/free providers regardless of *method*.
+        """
+        is_background = background or method in BACKGROUND_METHODS
         # Background calls wait while user chat is active
-        if method in BACKGROUND_METHODS:
+        if is_background:
             await self._chat_active.wait()
         self._total_calls += 1
-        priority = self._get_priority(method)
+        priority = self._background_priority if is_background else self._get_priority(method)
+        if is_background and method not in BACKGROUND_METHODS:
+            logger.debug(
+                "Background routing (tools): using cheap provider order for method=%s",
+                method,
+            )
         last_error = None
 
         for provider_name in priority:
