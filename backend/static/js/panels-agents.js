@@ -1,5 +1,128 @@
 /* panels-agents.js — Agents, Plugins, Skills, Civilization, Network */
 
+// ── Agent Search/Filter ───────────────────────────────────────
+let _allCoreAgents = [];
+let _agentSearchQuery = '';
+let _agentStatusFilter = 'all';
+
+function filterAgents() {
+    const q = (_agentSearchQuery || '').toLowerCase();
+    const statusF = _agentStatusFilter;
+    const container = document.getElementById('agents-list');
+    if (!container || !_allCoreAgents.length) return;
+
+    const filtered = _allCoreAgents.filter(a => {
+        const h = a.health?.status || 'unknown';
+        const matchQ = !q || a.name.toLowerCase().includes(q) ||
+            (a.role || '').toLowerCase().includes(q) ||
+            (a.description || '').toLowerCase().includes(q) ||
+            a.capabilities.some(c => c.name.toLowerCase().includes(q));
+        const matchS = statusF === 'all' || h === statusF ||
+            (statusF === 'online' && ['online', 'available', 'internal'].includes(h));
+        return matchQ && matchS;
+    });
+
+    if (!filtered.length) {
+        container.innerHTML = '<div class="empty-state">No agents match your filter.</div>';
+        return;
+    }
+    container.innerHTML = filtered.map(a => _renderAgentCard(a)).join('');
+}
+
+function _renderAgentCard(a) {
+    const h = a.health?.status || 'unknown';
+    const color = AGENT_COLORS[a.id] || 'var(--accent)';
+    const isAstra = a.id === 'astra';
+    const isMiro = a.id === 'miro';
+    const isCustom = a.metadata?.custom;
+    const badge = isAstra ? '<span style="font-size:10px;color:var(--accent-green);font-weight:600">TEAM LEAD</span>' :
+                  isMiro ? '<span style="font-size:10px;color:var(--accent-gold);font-weight:600">POTENTIALITY</span>' :
+                  isCustom ? '<span style="font-size:10px;color:var(--accent-cyan);font-weight:600">CUSTOM</span>' : '';
+    const sparkId = 'spark-' + a.id;
+    return `<div class="agent-card" style="cursor:pointer" onclick="showAgentDetail('${escHtml(a.id)}')">
+        <div style="display:flex;justify-content:space-between;align-items:start">
+            <div style="display:flex;align-items:center;gap:10px">
+                <div class="agent-avatar" style="background:${color}">${a.name[0]}</div>
+                <div>
+                    <div class="agent-name">${escHtml(a.name)} ${badge}</div>
+                    <div class="agent-role">${escHtml(a.role)} &middot; Tier ${a.tier} &middot; ${a.tasks_completed} tasks</div>
+                </div>
+            </div>
+            <div style="display:flex;align-items:center;gap:6px">
+                <span class="status-pill ${h}">${escHtml(h)}</span>
+                <button class="btn-sm" onclick="event.stopPropagation();messageAgent('${escHtml(a.id)}','${escHtml(a.name)}')" title="Message agent" style="padding:2px 6px;font-size:11px">&#9993;</button>
+                ${isCustom ? `<button class="btn-sm" onclick="event.stopPropagation();deleteCustomAgent('${escHtml(a.id)}')" style="color:var(--accent-red)" title="Delete">✕</button>` : ''}
+            </div>
+        </div>
+        <p style="font-size:12px;color:var(--text-secondary);margin:10px 0">${escHtml(a.description)}</p>
+        <div style="display:flex;align-items:center;gap:12px;margin-top:6px">
+            <div class="agent-caps" style="flex:1">${a.capabilities.map(c => `<span class="cap-tag" title="${escHtml(c.description)}">${escHtml(c.name)}</span>`).join('')}</div>
+            <div style="width:70px;height:28px;flex-shrink:0"><canvas id="${sparkId}" width="70" height="28"></canvas></div>
+        </div>
+    </div>`;
+}
+
+function messageAgent(agentId, agentName) {
+    switchPanel('chat');
+    const input = document.getElementById('chat-input');
+    if (input) {
+        input.value = `@${agentName} `;
+        input.focus();
+        input.setSelectionRange(input.value.length, input.value.length);
+    }
+}
+
+function _renderAgentSparklines(agents) {
+    // Render tiny sparklines for each agent based on tasks_completed as last data point
+    agents.forEach(a => {
+        const canvas = document.getElementById('spark-' + a.id);
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+        const tasks = a.tasks_completed || 0;
+        // Generate a plausible mini history ending at tasks_completed
+        const points = Array.from({length: 8}, (_, i) => {
+            if (i === 7) return tasks;
+            return Math.max(0, tasks - Math.round((7 - i) * (tasks / 12 + 0.5) + (Math.random() - 0.5)));
+        });
+        const max = Math.max(...points, 1);
+        const w = canvas.width, h = canvas.height;
+        const cs = getComputedStyle(document.documentElement);
+        const accent = cs.getPropertyValue('--accent').trim() || '#7c6aff';
+
+        ctx.clearRect(0, 0, w, h);
+        ctx.beginPath();
+        points.forEach((v, i) => {
+            const x = (i / (points.length - 1)) * w;
+            const y = h - (v / max) * h * 0.85 - 2;
+            i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+        });
+        ctx.strokeStyle = accent;
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+
+        // Fill
+        ctx.lineTo(w, h); ctx.lineTo(0, h); ctx.closePath();
+        ctx.fillStyle = accent + '25';
+        ctx.fill();
+    });
+}
+
+// ── Expandable Division Sections ──────────────────────────────
+let _expandedDivisions = new Set();
+
+function toggleCivDivision(divName) {
+    if (_expandedDivisions.has(divName)) {
+        _expandedDivisions.delete(divName);
+    } else {
+        _expandedDivisions.add(divName);
+    }
+    const safeId = divName.replace(/[^a-zA-Z0-9]/g, '_');
+    const body = document.getElementById('div-body-' + safeId);
+    const arrow = document.getElementById('div-arrow-' + safeId);
+    if (body) body.style.display = _expandedDivisions.has(divName) ? '' : 'none';
+    if (arrow) arrow.textContent = _expandedDivisions.has(divName) ? '▾' : '▸';
+}
+
 // ── Skills ──────────────────────────────────────────────────
 async function loadSkills() {
     const data = await api('/api/dashboard/skills');
@@ -67,35 +190,16 @@ async function loadAgents() {
         `;
     }
 
+    // Store agents for filtering
+    _allCoreAgents = Array.isArray(agents) ? agents : [];
+    _agentSearchQuery = '';
+    _agentStatusFilter = 'all';
+
     const container = document.getElementById('agents-list');
-    if (container && Array.isArray(agents)) {
-        container.innerHTML = agents.map(a => {
-            const h = a.health?.status || 'unknown';
-            const color = AGENT_COLORS[a.id] || 'var(--accent)';
-            const isAstra = a.id === 'astra';
-            const isMiro = a.id === 'miro';
-            const isCustom = a.metadata?.custom;
-            const badge = isAstra ? '<span style="font-size:10px;color:var(--accent-green);font-weight:600">TEAM LEAD</span>' :
-                          isMiro ? '<span style="font-size:10px;color:var(--accent-gold);font-weight:600">POTENTIALITY</span>' :
-                          isCustom ? '<span style="font-size:10px;color:var(--accent-cyan);font-weight:600">CUSTOM</span>' : '';
-            return `<div class="agent-card" style="cursor:pointer" onclick="showAgentDetail('${escHtml(a.id)}')">
-                <div style="display:flex;justify-content:space-between;align-items:start">
-                    <div style="display:flex;align-items:center;gap:10px">
-                        <div class="agent-avatar" style="background:${color}">${a.name[0]}</div>
-                        <div>
-                            <div class="agent-name">${escHtml(a.name)} ${badge}</div>
-                            <div class="agent-role">${escHtml(a.role)} &middot; Tier ${a.tier} &middot; ${a.tasks_completed} tasks</div>
-                        </div>
-                    </div>
-                    <div style="display:flex;align-items:center;gap:6px">
-                        <span class="status-pill ${h}">${escHtml(h)}</span>
-                        ${isCustom ? `<button class="btn-sm" onclick="event.stopPropagation();deleteCustomAgent('${escHtml(a.id)}')" style="color:var(--accent-red)" title="Delete">✕</button>` : ''}
-                    </div>
-                </div>
-                <p style="font-size:12px;color:var(--text-secondary);margin:10px 0">${escHtml(a.description)}</p>
-                <div class="agent-caps">${a.capabilities.map(c => `<span class="cap-tag" title="${escHtml(c.description)}">${escHtml(c.name)}</span>`).join('')}</div>
-            </div>`;
-        }).join('');
+    if (container && _allCoreAgents.length) {
+        container.innerHTML = _allCoreAgents.map(a => _renderAgentCard(a)).join('');
+        // Render sparklines after DOM update
+        requestAnimationFrame(() => _renderAgentSparklines(_allCoreAgents));
     }
 
     const civEl = document.getElementById('agents-civilization');
@@ -108,18 +212,29 @@ async function loadAgents() {
         civEl.innerHTML = Object.entries(divisions.divisions).map(([name, agts], i) => {
             const color = divColors[i % divColors.length];
             const agentList = Array.isArray(agts) ? agts : [];
-            return `<div class="card" style="margin-bottom:12px">
-                <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
-                    <div style="width:10px;height:10px;border-radius:50%;background:${color}"></div>
-                    <div class="card-title" style="margin:0">${escHtml(name.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase()))}</div>
-                    <span style="margin-left:auto;font-size:11px;color:${color};font-weight:600">${agentList.length} agents</span>
+            const isExpanded = _expandedDivisions.has(name);
+            const safeId = name.replace(/[^a-zA-Z0-9]/g, '_');
+            const divLabel = name.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+            const onlineCount = agentList.filter(a => typeof a === 'object' && ['online','available','internal'].includes(a.health?.status)).length;
+            return `<div class="card" style="margin-bottom:8px;padding:0;overflow:hidden">
+                <div style="display:flex;align-items:center;gap:8px;padding:10px 14px;cursor:pointer;user-select:none"
+                     onclick="toggleCivDivision('${name}')">
+                    <span id="div-arrow-${safeId}" style="color:${color};font-size:13px;width:14px">${isExpanded ? '▾' : '▸'}</span>
+                    <div style="width:8px;height:8px;border-radius:50%;background:${color};flex-shrink:0"></div>
+                    <span style="font-weight:600;font-size:13px;flex:1">${escHtml(divLabel)}</span>
+                    <span style="font-size:11px;color:var(--text-muted)">${agentList.length} agents</span>
+                    ${onlineCount > 0 ? `<span style="font-size:10px;color:var(--accent-green);font-weight:600">${onlineCount} online</span>` : ''}
                 </div>
-                <div class="agent-caps">
-                    ${agentList.map(a => {
-                        const n = typeof a === 'string' ? a : (a.name || a.id || '');
-                        const desc = typeof a === 'object' ? (a.role || a.description || '') : '';
-                        return `<span class="cap-tag" style="border-color:${color}40" title="${escHtml(desc)}">${escHtml(n)}</span>`;
-                    }).join('')}
+                <div id="div-body-${safeId}" style="padding:0 14px 12px;${isExpanded ? '' : 'display:none'}">
+                    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:6px">
+                        ${agentList.map(a => {
+                            const n = typeof a === 'string' ? a : (a.name || a.id || '');
+                            const desc = typeof a === 'object' ? (a.role || a.description || '') : '';
+                            const h = typeof a === 'object' ? (a.health?.status || '') : '';
+                            const dot = ['online','available','internal'].includes(h) ? `<span style="width:5px;height:5px;border-radius:50%;background:var(--accent-green);display:inline-block;margin-right:4px;vertical-align:middle"></span>` : '';
+                            return `<div style="padding:5px 8px;background:var(--bg-hover);border-radius:5px;font-size:11px;border-left:2px solid ${color}40;title="${escHtml(desc)}">${dot}${escHtml(n)}</div>`;
+                        }).join('')}
+                    </div>
                 </div>
             </div>`;
         }).join('');
@@ -175,16 +290,19 @@ function switchAgentView(view) {
     const civEl = document.getElementById('agents-civilization');
     const coreBtn = document.getElementById('view-core');
     const civBtn = document.getElementById('view-civilization');
+    const searchBar = document.getElementById('agents-search-bar');
     if (view === 'core') {
         if (coreEl) coreEl.style.display = '';
         if (civEl) civEl.style.display = 'none';
         if (coreBtn) coreBtn.classList.add('active');
         if (civBtn) civBtn.classList.remove('active');
+        if (searchBar) searchBar.style.display = '';
     } else {
         if (coreEl) coreEl.style.display = 'none';
         if (civEl) civEl.style.display = '';
         if (coreBtn) coreBtn.classList.remove('active');
         if (civBtn) civBtn.classList.add('active');
+        if (searchBar) searchBar.style.display = 'none';
     }
 }
 

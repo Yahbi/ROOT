@@ -2212,6 +2212,11 @@ input::placeholder, textarea::placeholder { color: var(--text-muted); }
     50%      { opacity: 0.6; }
 }
 
+@keyframes pulse-dot {
+    0%, 100% { opacity: 1; box-shadow: 0 0 0 0 currentColor; }
+    50%       { opacity: 0.7; box-shadow: 0 0 0 4px transparent; }
+}
+
 /* ══════════════════════════════════════════════════
    SANDBOX GATE PANEL
    ══════════════════════════════════════════════════ */
@@ -2606,3 +2611,308 @@ input::placeholder, textarea::placeholder { color: var(--text-muted); }
     outline: 2px solid var(--accent);
     outline-offset: 2px;
 }
+
+/* ══════════════════════════════════════════════════
+   MESSAGE SEARCH OVERLAY
+   ══════════════════════════════════════════════════ */
+.msg-search-overlay {
+    position: absolute;
+    top: 0; right: 0;
+    width: 320px;
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    border-top: none;
+    border-radius: 0 0 var(--radius) var(--radius);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+    z-index: 50;
+    display: none;
+    flex-direction: column;
+    backdrop-filter: blur(16px);
+}
+.msg-search-overlay.open { display: flex; }
+.msg-search-header {
+    display: flex; align-items: center; gap: 8px;
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--border);
+}
+.msg-search-header input {
+    flex: 1;
+    background: none;
+    border: none;
+    outline: none;
+    color: var(--text-primary);
+    font-size: 13px;
+}
+.msg-search-nav {
+    display: flex; align-items: center; gap: 4px;
+    font-size: 11px;
+    color: var(--text-muted);
+    white-space: nowrap;
+}
+.msg-search-nav button {
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    padding: 2px 5px;
+    border-radius: 3px;
+    font-size: 13px;
+    line-height: 1;
+}
+.msg-search-nav button:hover { background: var(--bg-hover); color: var(--text-primary); }
+.msg-search-close {
+    background: none; border: none;
+    color: var(--text-muted); cursor: pointer;
+    font-size: 18px; padding: 0 4px;
+    line-height: 1;
+}
+.msg-search-close:hover { color: var(--text-primary); }
+mark.msg-highlight {
+    background: rgba(255,200,0,0.32);
+    color: inherit;
+    border-radius: 2px;
+    padding: 0 1px;
+}
+mark.msg-highlight.current {
+    background: #e67e22;
+    color: #fff;
+    border-radius: 2px;
+}
+
+/* ══════════════════════════════════════════════════
+   TYPING INDICATOR (animated dots)
+   ══════════════════════════════════════════════════ */
+.typing-dots {
+    display: inline-flex; align-items: center; gap: 5px;
+    padding: 4px 0;
+}
+.typing-dots span {
+    display: inline-block;
+    width: 7px; height: 7px;
+    background: var(--accent);
+    border-radius: 50%;
+    opacity: 0.5;
+    animation: typing-bounce 1.2s ease-in-out infinite;
+}
+.typing-dots span:nth-child(2) { animation-delay: 0.2s; }
+.typing-dots span:nth-child(3) { animation-delay: 0.4s; }
+@keyframes typing-bounce {
+    0%, 80%, 100% { transform: translateY(0); opacity: 0.5; }
+    40% { transform: translateY(-6px); opacity: 1; }
+}
+
+/* ══════════════════════════════════════════════════
+   MESSAGE THREADING (reply to message)
+   ══════════════════════════════════════════════════ */
+.msg-reply-preview {
+    background: var(--bg-hover);
+    border-left: 3px solid var(--accent);
+    border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+    padding: 5px 10px;
+    margin-bottom: 6px;
+    font-size: 11px;
+    color: var(--text-muted);
+    cursor: pointer;
+    max-height: 36px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.msg-reply-preview:hover { color: var(--text-primary); }
+.msg-reply-preview strong {
+    color: var(--accent);
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    margin-right: 5px;
+}
+.reply-compose-indicator {
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+    border-radius: var(--radius-sm);
+    padding: 6px 10px;
+    margin-bottom: 6px;
+    font-size: 12px;
+    color: var(--text-secondary);
+    display: flex; align-items: center; gap: 8px;
+}
+.reply-compose-indicator strong { color: var(--accent); font-size: 11px; }
+.reply-compose-close {
+    margin-left: auto;
+    background: none; border: none;
+    color: var(--text-muted); cursor: pointer;
+    font-size: 16px; line-height: 1; padding: 0 2px;
+}
+.reply-compose-close:hover { color: var(--text-primary); }
+
+/* ══════════════════════════════════════════════════
+   CODE BLOCK EXECUTION
+   ══════════════════════════════════════════════════ */
+.code-run-btn {
+    background: none;
+    border: 1px solid rgba(80,250,123,0.4);
+    color: #50fa7b;
+    border-radius: var(--radius-sm);
+    padding: 2px 8px;
+    font-size: 10px;
+    cursor: pointer;
+    font-family: inherit;
+    font-weight: 600;
+    transition: all 0.15s;
+    margin-left: 4px;
+}
+.code-run-btn:hover {
+    background: rgba(80,250,123,0.12);
+    border-color: #50fa7b;
+}
+.code-exec-output {
+    border-top: 1px solid var(--border);
+    background: var(--bg-base);
+    border-radius: 0 0 var(--radius-sm) var(--radius-sm);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    padding: 10px 14px;
+    color: var(--text-secondary);
+    max-height: 180px;
+    overflow-y: auto;
+    white-space: pre-wrap;
+    word-break: break-all;
+}
+.code-exec-output .exec-error { color: #ff5555; }
+.code-exec-output .exec-ok { color: #50fa7b; }
+
+/* ══════════════════════════════════════════════════
+   DRAG & DROP FILE UPLOAD
+   ══════════════════════════════════════════════════ */
+.chat-drop-zone {
+    position: absolute;
+    inset: 0;
+    background: rgba(124,106,239,0.07);
+    border: 2px dashed var(--accent);
+    border-radius: var(--radius);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 20;
+    pointer-events: none;
+}
+.chat-drop-zone.active { display: flex; }
+.chat-drop-zone-inner {
+    text-align: center;
+    color: var(--accent);
+    pointer-events: none;
+}
+.chat-drop-zone-inner svg { display: block; margin: 0 auto 10px; opacity: 0.7; }
+.chat-drop-zone-inner p { font-size: 15px; font-weight: 700; margin: 0 0 4px; }
+.chat-drop-zone-inner small { font-size: 11px; opacity: 0.6; }
+
+/* ══════════════════════════════════════════════════
+   KEYBOARD SHORTCUTS PANEL
+   ══════════════════════════════════════════════════ */
+.shortcuts-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.55);
+    backdrop-filter: blur(4px);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+.shortcuts-overlay.open { display: flex; }
+.shortcuts-panel {
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 24px;
+    width: 520px;
+    max-width: 95vw;
+    max-height: 82vh;
+    overflow-y: auto;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+}
+.shortcuts-panel-title {
+    margin: 0 0 18px;
+    font-size: 15px;
+    font-weight: 700;
+    display: flex; align-items: center;
+    justify-content: space-between;
+    color: var(--text-primary);
+}
+.shortcuts-panel-title button {
+    background: none; border: none;
+    color: var(--text-muted); cursor: pointer;
+    font-size: 18px; line-height: 1;
+}
+.shortcuts-panel-title button:hover { color: var(--text-primary); }
+.shortcut-section { margin-bottom: 18px; }
+.shortcut-section-title {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    color: var(--accent);
+    font-weight: 700;
+    margin-bottom: 8px;
+    padding-bottom: 4px;
+    border-bottom: 1px solid var(--border);
+}
+.shortcut-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 5px 0;
+    font-size: 13px;
+    color: var(--text-secondary);
+    border-bottom: 1px solid color-mix(in srgb, var(--border) 40%, transparent);
+}
+.shortcut-row:last-child { border-bottom: none; }
+.shortcut-row:hover { color: var(--text-primary); }
+.shortcut-keys { display: flex; gap: 4px; align-items: center; }
+.shortcut-keys kbd {
+    background: var(--bg-hover);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 2px 6px;
+    font-size: 11px;
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--text-primary);
+    line-height: 1.4;
+    white-space: nowrap;
+}
+.shortcut-keys .key-sep { color: var(--text-muted); font-size: 10px; }
+
+/* ══════════════════════════════════════════════════
+   CONVERSATION BOOKMARKS
+   ══════════════════════════════════════════════════ */
+.conv-item-actions {
+    display: none;
+    gap: 2px;
+    flex-shrink: 0;
+}
+.conv-item:hover .conv-item-actions { display: flex; }
+.conv-item-action-btn {
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    padding: 2px 4px;
+    border-radius: 3px;
+    font-size: 13px;
+    line-height: 1;
+    transition: all 0.15s;
+}
+.conv-item-action-btn:hover { background: var(--bg-base); color: var(--text-primary); }
+.conv-item-action-btn.bookmarked { color: #f1c40f; }
+.conv-bookmarks-section { padding: 0 8px 4px; }
+.conv-bookmarks-title {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--text-muted);
+    font-weight: 600;
+    padding: 6px 2px 4px;
+}
+
+/* message bookmark button active state */
+.msg-action-btn.bookmarked { color: #f1c40f; }
