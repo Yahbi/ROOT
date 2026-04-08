@@ -7,7 +7,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/css/root.css?v=19">
+    <link rel="stylesheet" href="/css/root.css?v=20">
+    <link rel="stylesheet" href="/css/linux-desktop.css?v=1">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@11.9.0/styles/atom-one-dark.min.css">
 </head>
 <body>
@@ -184,6 +185,10 @@
                         <span class="theme-dot" style="background:#4a9eff"></span>
                         <span class="theme-label">Night</span>
                     </button>
+                    <button class="theme-btn" data-theme="linux" title="Linux Desktop — Transparency + Windows" onclick="enableDesktopMode()">
+                        <span class="theme-dot" style="background:#7c6aef"></span>
+                        <span class="theme-label">Linux</span>
+                    </button>
                 </div>
                 <div class="sidebar-status">
                     <span class="status-dot" id="global-status"></span>
@@ -240,6 +245,11 @@
                                 <span class="theme-opt-dot" style="background:#e0e0de;border:1px solid #bbb"></span>
                                 <span>Light</span>
                                 <span class="theme-opt-desc">Clean white</span>
+                            </button>
+                            <button class="theme-opt" data-theme="linux" onclick="enableDesktopMode()">
+                                <span class="theme-opt-dot" style="background:#7c6aef"></span>
+                                <span>Linux</span>
+                                <span class="theme-opt-desc">Desktop mode</span>
                             </button>
                         </div>
                     </div>
@@ -1214,13 +1224,196 @@
     <div id="root-modal"></div>
     <div id="toast-container"></div>
 
+    <!-- ══════════════════════════════════════════════════
+         LINUX DESKTOP MODE — Infrastructure
+         ══════════════════════════════════════════════════ -->
+
+    <!-- Desktop Wallpaper -->
+    <div id="desktop-wallpaper"></div>
+
+    <!-- Desktop Area (windows live here) -->
+    <div id="desktop-area">
+        <!-- Desktop Icons -->
+        <div class="desktop-icons">
+            <div class="desktop-icon" ondblclick="WindowManager.open('chat')">
+                <div class="desktop-icon-img" style="background:rgba(124,106,239,0.15)">></div>
+                <span class="desktop-icon-label">Terminal</span>
+            </div>
+            <div class="desktop-icon" ondblclick="WindowManager.open('dashboard')">
+                <div class="desktop-icon-img" style="background:rgba(80,250,123,0.15);color:#50fa7b">#</div>
+                <span class="desktop-icon-label">System Monitor</span>
+            </div>
+            <div class="desktop-icon" ondblclick="WindowManager.open('agents')">
+                <div class="desktop-icon-img" style="background:rgba(139,233,253,0.15);color:#8be9fd">&</div>
+                <span class="desktop-icon-label">Agents</span>
+            </div>
+            <div class="desktop-icon" ondblclick="WindowManager.open('trading')">
+                <div class="desktop-icon-img" style="background:rgba(255,184,108,0.15);color:#ffb86c">/</div>
+                <span class="desktop-icon-label">Trading</span>
+            </div>
+            <div class="desktop-icon" ondblclick="WindowManager.open('neural')">
+                <div class="desktop-icon-img" style="background:rgba(255,121,198,0.15);color:#ff79c6">*</div>
+                <span class="desktop-icon-label">Neural Galaxy</span>
+            </div>
+            <div class="desktop-icon" ondblclick="WindowManager.open('memory')">
+                <div class="desktop-icon-img" style="background:rgba(189,147,249,0.15);color:#bd93f9">~</div>
+                <span class="desktop-icon-label">Memory</span>
+            </div>
+        </div>
+
+        <!-- System Info Widget -->
+        <div class="desktop-widget" id="desktop-widget">
+            <div class="widget-title">System Status</div>
+            <div class="widget-stat">
+                <span class="widget-stat-label">Agents</span>
+                <span class="widget-stat-value" id="widget-agents">162</span>
+            </div>
+            <div class="widget-stat">
+                <span class="widget-stat-label">Memory</span>
+                <span class="widget-stat-value" id="widget-memory">686</span>
+            </div>
+            <div class="widget-stat">
+                <span class="widget-stat-label">Uptime</span>
+                <span class="widget-stat-value" id="widget-uptime">0:00</span>
+            </div>
+            <div class="widget-bar"><div class="widget-bar-fill" style="width:72%"></div></div>
+            <div class="widget-stat">
+                <span class="widget-stat-label">CPU Load</span>
+                <span class="widget-stat-value">72%</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Taskbar (Bottom) -->
+    <div id="desktop-taskbar">
+        <div class="taskbar-start" onclick="document.querySelector('.app-launcher').classList.toggle('open')">
+            <div class="taskbar-start-icon">R</div>
+            <span>ROOT</span>
+        </div>
+        <div class="taskbar-divider"></div>
+        <div class="taskbar-windows">
+            <!-- Window buttons appear here dynamically -->
+        </div>
+        <div class="taskbar-divider"></div>
+        <div class="taskbar-tray">
+            <div class="tray-item" title="Notifications" onclick="toggleNotifications()">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/></svg>
+            </div>
+            <div class="tray-item" title="Network">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12.55a11 11 0 0 1 14.08 0"/><path d="M1.42 9a16 16 0 0 1 21.16 0"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><line x1="12" y1="20" x2="12.01" y2="20"/></svg>
+            </div>
+            <div class="tray-separator"></div>
+            <div class="tray-clock">00:00</div>
+        </div>
+    </div>
+
+    <!-- App Launcher -->
+    <div class="app-launcher">
+        <div class="launcher-search">
+            <input type="text" placeholder="Search applications...">
+        </div>
+        <div class="launcher-grid">
+            <div class="launcher-app" data-panel="chat">
+                <div class="launcher-app-icon" style="background:rgba(124,106,239,0.15);color:#7c6aef">></div>
+                <span class="launcher-app-name">Terminal</span>
+            </div>
+            <div class="launcher-app" data-panel="dashboard">
+                <div class="launcher-app-icon" style="background:rgba(80,250,123,0.15);color:#50fa7b">#</div>
+                <span class="launcher-app-name">Monitor</span>
+            </div>
+            <div class="launcher-app" data-panel="agents">
+                <div class="launcher-app-icon" style="background:rgba(139,233,253,0.15);color:#8be9fd">&</div>
+                <span class="launcher-app-name">Agents</span>
+            </div>
+            <div class="launcher-app" data-panel="memory">
+                <div class="launcher-app-icon" style="background:rgba(189,147,249,0.15);color:#bd93f9">~</div>
+                <span class="launcher-app-name">Memory</span>
+            </div>
+            <div class="launcher-app" data-panel="trading">
+                <div class="launcher-app-icon" style="background:rgba(255,184,108,0.15);color:#ffb86c">/</div>
+                <span class="launcher-app-name">Trading</span>
+            </div>
+            <div class="launcher-app" data-panel="neural">
+                <div class="launcher-app-icon" style="background:rgba(255,121,198,0.15);color:#ff79c6">*</div>
+                <span class="launcher-app-name">Neural</span>
+            </div>
+            <div class="launcher-app" data-panel="miro">
+                <div class="launcher-app-icon" style="background:rgba(241,250,140,0.15);color:#f1fa8c">+</div>
+                <span class="launcher-app-name">MiRo</span>
+            </div>
+            <div class="launcher-app" data-panel="civilization">
+                <div class="launcher-app-icon" style="background:rgba(255,85,85,0.15);color:#ff5555">|</div>
+                <span class="launcher-app-name">Civilization</span>
+            </div>
+            <div class="launcher-app" data-panel="analytics">
+                <div class="launcher-app-icon" style="background:rgba(124,106,239,0.15);color:#7c6aef">^</div>
+                <span class="launcher-app-name">Analytics</span>
+            </div>
+            <div class="launcher-app" data-panel="goals">
+                <div class="launcher-app-icon" style="background:rgba(80,250,123,0.15);color:#50fa7b">o</div>
+                <span class="launcher-app-name">Goals</span>
+            </div>
+            <div class="launcher-app" data-panel="skills">
+                <div class="launcher-app-icon" style="background:rgba(139,233,253,0.15);color:#8be9fd">K</div>
+                <span class="launcher-app-name">Skills</span>
+            </div>
+            <div class="launcher-app" data-panel="plugins">
+                <div class="launcher-app-icon" style="background:rgba(189,147,249,0.15);color:#bd93f9">%</div>
+                <span class="launcher-app-name">Plugins</span>
+            </div>
+            <div class="launcher-app" data-panel="directives">
+                <div class="launcher-app-icon" style="background:rgba(255,184,108,0.15);color:#ffb86c">!</div>
+                <span class="launcher-app-name">Directives</span>
+            </div>
+            <div class="launcher-app" data-panel="network">
+                <div class="launcher-app-icon" style="background:rgba(255,121,198,0.15);color:#ff79c6">@</div>
+                <span class="launcher-app-name">Network</span>
+            </div>
+            <div class="launcher-app" data-panel="diagnostics">
+                <div class="launcher-app-icon" style="background:rgba(241,250,140,0.15);color:#f1fa8c">=</div>
+                <span class="launcher-app-name">Diagnostics</span>
+            </div>
+            <div class="launcher-app" data-panel="settings">
+                <div class="launcher-app-icon" style="background:rgba(80,80,100,0.3);color:#9090b8">C</div>
+                <span class="launcher-app-name">Settings</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Desktop Context Menu -->
+    <div class="desktop-context-menu">
+        <div class="ctx-item" onclick="WindowManager.tileWindows()">
+            <span class="ctx-item-icon">&#9638;</span> Tile Windows
+        </div>
+        <div class="ctx-item" onclick="WindowManager.cascadeWindows()">
+            <span class="ctx-item-icon">&#9642;</span> Cascade Windows
+        </div>
+        <div class="ctx-item" onclick="WindowManager.showDesktop()">
+            <span class="ctx-item-icon">&#9644;</span> Show Desktop
+        </div>
+        <div class="ctx-separator"></div>
+        <div class="ctx-item" onclick="WindowManager.open('chat')">
+            <span class="ctx-item-icon">></span> Terminal
+        </div>
+        <div class="ctx-item" onclick="WindowManager.open('dashboard')">
+            <span class="ctx-item-icon">#</span> System Monitor
+        </div>
+        <div class="ctx-separator"></div>
+        <div class="ctx-item" onclick="disableDesktopMode()">
+            <span class="ctx-item-icon">&#8617;</span> Exit Desktop Mode
+        </div>
+    </div>
+
+    <!-- Snap Preview -->
+    <div class="snap-preview"></div>
+
     <script defer src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/highlight.js@11.9.0/highlight.min.js"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/three@0.147.0/build/three.min.js"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/three@0.147.0/examples/js/controls/OrbitControls.js"></script>
     <script defer src="/js/neural-galaxy.js?v=8"></script>
     <script defer src="/js/modal-manager.js?v=2"></script>
-    <script defer src="/js/root.js?v=13"></script>
+    <script defer src="/js/root.js?v=14"></script>
     <script defer src="/js/panels-system.js?v=3"></script>
     <script defer src="/js/panels-agents.js?v=2"></script>
     <script defer src="/js/panels-autonomy.js?v=2"></script>
@@ -1228,5 +1421,6 @@
     <script defer src="/js/panels-intelligence.js?v=2"></script>
     <script defer src="/js/miro-panel.js?v=2"></script>
     <script defer src="/js/ws-handlers.js?v=2"></script>
+    <script defer src="/js/window-manager.js?v=1"></script>
 </body>
 </html>
