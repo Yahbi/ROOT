@@ -471,6 +471,644 @@ class ExperienceMemory:
             },
         }
 
+    # ── Feature 2: Pattern Recognition ────────────────────────────
+
+    def detect_patterns(
+        self,
+        domain: Optional[str] = None,
+        min_occurrences: int = 2,
+        window_days: int = 180,
+    ) -> list[ExperiencePattern]:
+        """Detect recurring success/failure patterns in experiences.
+
+        Patterns are found by clustering keyword co-occurrences within the
+        same domain and experience type. A pattern requires at least
+        ``min_occurrences`` experiences sharing common keywords.
+
+        Args:
+            domain: Restrict pattern search to a specific domain.
+            min_occurrences: Minimum number of experiences to form a pattern.
+            window_days: Only consider experiences within this many days.
+        """
+        cutoff = (datetime.now(timezone.utc) - timedelta(days=window_days)).isoformat()
+        sql = "SELECT * FROM experiences WHERE created_at >= ?"
+        params: list[Any] = [cutoff]
+        if domain:
+            sql += " AND domain = ?"
+            params.append(domain)
+
+        rows = self.conn.execute(sql, params).fetchall()
+        experiences = [self._row_to_experience(r) for r in rows]
+
+        # Group by (domain, experience_type) — then find shared keywords
+        groups: dict[tuple[str, str], list[Experience]] = defaultdict(list)
+        for exp in experiences:
+            groups[(exp.domain, exp.experience_type.value)].append(exp)
+
+        patterns: list[ExperiencePattern] = []
+        for (grp_domain, exp_type), exps in groups.items():
+            if len(exps) < min_occurrences:
+                continue
+
+            # Extract keywords from each experience
+            keyword_sets: list[Counter] = []
+            for exp in exps:
+                text = f"{exp.title} {exp.description} {' '.join(exp.tags)}"
+                words = [
+                    w.lower() for w in text.split()
+                    if len(w) >= 4 and w.isalpha()
+                ]
+                keyword_sets.append(Counter(words))
+
+            # Find keywords that appear in >= min_occurrences experiences
+            keyword_doc_freq: Counter = Counter()
+            for ks in keyword_sets:
+                for kw in ks:
+                    keyword_doc_freq[kw] += 1
+
+            recurring_keywords = [
+                kw for kw, freq in keyword_doc_freq.most_common(20)
+                if freq >= min_occurrences
+            ]
+            if not recurring_keywords:
+                continue
+
+            # Find which experiences share >= 2 of the top keywords
+            top_keywords = set(recurring_keywords[:5])
+            matched_exps = [
+                exp for exp, ks in zip(exps, keyword_sets)
+                if len(top_keywords & set(ks.keys())) >= min(2, len(top_keywords))
+            ]
+            if len(matched_exps) < min_occurrences:
+                matched_exps = exps  # fall back to all in group
+
+            # Classify pattern type
+            types_in_group = {exp.experience_type.value for exp in matched_exps}
+            if types_in_group == {"success"}:
+                pattern_type = "recurring_success"
+                pattern_title = f"Recurring success: {recurring_keywords[0] if recurring_keywords else exp_type}"
+            elif "failure" in types_in_group and "success" not in types_in_group:
+                pattern_type = "recurring_failure"
+                pattern_title = f"Recurring failure: {recurring_keywords[0] if recurring_keywords else exp_type}"
+            else:
+                pattern_type = "mixed"
+                pattern_title = f"Mixed outcomes: {recurring_keywords[0] if recurring_keywords else exp_type}"
+
+            avg_conf = sum(e.confidence for e in matched_exps) / len(matched_exps)
+            pattern_desc = (
+                f"{len(matched_exps)} experiences in '{grp_domain}' share keywords: "
+                f"{', '.join(recurring_keywords[:5])}. "
+                f"Pattern type: {pattern_type}."
+            )
+
+            patterns.append(ExperiencePattern(
+                pattern_id=f"pat_{uuid.uuid4().hex[:8]}",
+                pattern_type=pattern_type,
+                domain=grp_domain,
+                title=pattern_title,
+                description=pattern_desc,
+                occurrence_count=len(matched_exps),
+                avg_confidence=round(avg_conf, 3),
+                example_ids=[e.id for e in matched_exps[:3]],
+                keywords=recurring_keywords[:10],
+            ))
+
+        patterns.sort(key=lambda p: p.occurrence_count, reverse=True)
+        return patterns
+
+    # ── Feature 3: Experience Clustering ──────────────────────────
+
+    def cluster_experiences(
+        self,
+        domain: Optional[str] = None,
+        max_clusters: int = 10,
+    ) -> list[ExperienceCluster]:
+        """Cluster experiences by topic/domain similarity.
+
+        Uses keyword overlap to group experiences into topic clusters.
+        Each cluster has a label derived from its most frequent keywords.
+        """
+        sql = "SELECT * FROM experiences WHERE 1=1"
+        params: list[Any] = []
+        if domain:
+            sql += " AND domain = ?"
+            params.append(domain)
+        sql += " ORDER BY confidence DESC LIMIT 500"
+
+        rows = self.conn.execute(sql, params).fetchall()
+        experiences = [self._row_to_experience(r) for r in rows]
+
+        if not experiences:
+            return []
+
+        # Build keyword fingerprint for each experience
+        def get_keywords(exp: Experience) -> list[str]:
+            text = f"{exp.title} {exp.description} {' '.join(exp.tags)}"
+            return [
+                w.lower() for w in text.split()
+                if len(w) >= 4 and w.isalpha()
+            ]
+
+        exp_keywords = [(exp, set(get_keywords(exp))) for exp in experiences]
+
+        # Simple greedy clustering: start from highest-confidence unassigned experience
+        clusters: list[list[Experience]] = []
+        assigned: set[str] = set()
+
+        for seed_exp, seed_kw in exp_keywords:
+            if seed_exp.id in assigned or not seed_kw:
+                continue
+            cluster = [seed_exp]
+            assigned.add(seed_exp.id)
+
+            for other_exp, other_kw in exp_keywords:
+                if other_exp.id in assigned or not other_kw:
+                    continue
+                # Jaccard similarity
+                intersection = len(seed_kw & other_kw)
+                union = len(seed_kw | other_kw)
+                similarity = intersection / union if union > 0 else 0.0
+                if similarity >= 0.15:  # tunable threshold
+                    cluster.append(other_exp)
+                    assigned.add(other_exp.id)
+
+            if len(cluster) >= 1:
+                clusters.append(cluster)
+            if len(clusters) >= max_clusters:
+                break
+
+        result: list[ExperienceCluster] = []
+        for cluster_exps in clusters:
+            # Dominant type
+            type_counter: Counter = Counter(e.experience_type.value for e in cluster_exps)
+            dominant_type = type_counter.most_common(1)[0][0]
+
+            # Top keywords
+            all_words: Counter = Counter()
+            for exp in cluster_exps:
+                for kw in get_keywords(exp):
+                    all_words[kw] += 1
+            top_keywords = [kw for kw, _ in all_words.most_common(8)]
+
+            # Cluster label — most specific domain + top keywords
+            cluster_domain = cluster_exps[0].domain
+            label_parts = top_keywords[:3]
+            label = f"{cluster_domain}: {', '.join(label_parts)}" if label_parts else cluster_domain
+
+            avg_conf = sum(e.confidence for e in cluster_exps) / len(cluster_exps)
+
+            result.append(ExperienceCluster(
+                cluster_id=f"cl_{uuid.uuid4().hex[:8]}",
+                label=label,
+                domain=cluster_domain,
+                keywords=top_keywords,
+                experience_ids=[e.id for e in cluster_exps],
+                size=len(cluster_exps),
+                dominant_type=dominant_type,
+                avg_confidence=round(avg_conf, 3),
+            ))
+
+        result.sort(key=lambda c: c.size, reverse=True)
+        return result
+
+    # ── Feature 4: Wisdom Extraction ──────────────────────────────
+
+    def extract_wisdom(
+        self,
+        domain: Optional[str] = None,
+        min_support: int = 2,
+        min_confidence: float = 0.5,
+    ) -> list[Wisdom]:
+        """Synthesize experiences into actionable wisdom statements.
+
+        Wisdom is extracted by:
+        1. Grouping experiences by domain.
+        2. Finding keywords common to multiple high-confidence experiences.
+        3. Synthesizing a directional insight (do X / avoid Y).
+        4. Marking cross-domain applicability when keyword themes recur
+           across multiple domains.
+
+        Args:
+            min_support: Minimum number of experiences needed to generate wisdom.
+            min_confidence: Only include experiences above this confidence.
+        """
+        sql = "SELECT * FROM experiences WHERE confidence >= ?"
+        params: list[Any] = [min_confidence]
+        if domain:
+            sql += " AND domain = ?"
+            params.append(domain)
+
+        rows = self.conn.execute(sql, params).fetchall()
+        experiences = [self._row_to_experience(r) for r in rows]
+
+        # Collect keyword fingerprints per experience
+        def exp_keywords(exp: Experience) -> list[str]:
+            text = f"{exp.title} {exp.description} {' '.join(exp.tags)}"
+            return [w.lower() for w in text.split() if len(w) >= 4 and w.isalpha()]
+
+        # Group by domain
+        by_domain: dict[str, list[Experience]] = defaultdict(list)
+        for exp in experiences:
+            by_domain[exp.domain].append(exp)
+
+        # Build cross-domain keyword frequency for cross-domain detection
+        cross_kw_counter: Counter = Counter()
+        for exps in by_domain.values():
+            for exp in exps:
+                for kw in set(exp_keywords(exp)):
+                    cross_kw_counter[kw] += 1
+        cross_domain_kws = {kw for kw, c in cross_kw_counter.items() if c >= min_support * 2}
+
+        wisdoms: list[Wisdom] = []
+
+        for dom, exps in by_domain.items():
+            if len(exps) < min_support:
+                continue
+
+            successes = [e for e in exps if e.experience_type in (ExperienceType.SUCCESS, ExperienceType.STRATEGY)]
+            failures = [e for e in exps if e.experience_type == ExperienceType.FAILURE]
+            lessons = [e for e in exps if e.experience_type == ExperienceType.LESSON]
+
+            # --- Success wisdom ---
+            if len(successes) >= min_support:
+                kw_counter: Counter = Counter()
+                for exp in successes:
+                    for kw in exp_keywords(exp):
+                        kw_counter[kw] += 1
+                top_kws = [kw for kw, c in kw_counter.most_common(6) if c >= min_support]
+                if top_kws:
+                    avg_conf = sum(e.confidence for e in successes) / len(successes)
+                    is_cross = bool(set(top_kws[:3]) & cross_domain_kws)
+                    wisdoms.append(Wisdom(
+                        wisdom_id=f"wis_{uuid.uuid4().hex[:8]}",
+                        domain=dom,
+                        insight=(
+                            f"In '{dom}', approaches involving "
+                            f"{', '.join(top_kws[:3])} consistently produce successful outcomes "
+                            f"({len(successes)} supporting experiences)."
+                        ),
+                        source_types=["success", "strategy"],
+                        supporting_count=len(successes),
+                        confidence=round(avg_conf, 3),
+                        keywords=top_kws,
+                        cross_domain_applicable=is_cross,
+                        related_domains=[],
+                    ))
+
+            # --- Failure wisdom ---
+            if len(failures) >= min_support:
+                kw_counter = Counter()
+                for exp in failures:
+                    for kw in exp_keywords(exp):
+                        kw_counter[kw] += 1
+                top_kws = [kw for kw, c in kw_counter.most_common(6) if c >= min_support]
+                if top_kws:
+                    avg_conf = sum(e.confidence for e in failures) / len(failures)
+                    is_cross = bool(set(top_kws[:3]) & cross_domain_kws)
+                    wisdoms.append(Wisdom(
+                        wisdom_id=f"wis_{uuid.uuid4().hex[:8]}",
+                        domain=dom,
+                        insight=(
+                            f"In '{dom}', situations involving "
+                            f"{', '.join(top_kws[:3])} frequently lead to failures — "
+                            f"avoid or mitigate these conditions "
+                            f"({len(failures)} supporting experiences)."
+                        ),
+                        source_types=["failure"],
+                        supporting_count=len(failures),
+                        confidence=round(avg_conf, 3),
+                        keywords=top_kws,
+                        cross_domain_applicable=is_cross,
+                        related_domains=[],
+                    ))
+
+            # --- Lesson wisdom ---
+            if len(lessons) >= min_support:
+                kw_counter = Counter()
+                for exp in lessons:
+                    for kw in exp_keywords(exp):
+                        kw_counter[kw] += 1
+                top_kws = [kw for kw, c in kw_counter.most_common(6) if c >= min_support]
+                if top_kws:
+                    avg_conf = sum(e.confidence for e in lessons) / len(lessons)
+                    is_cross = bool(set(top_kws[:3]) & cross_domain_kws)
+                    wisdoms.append(Wisdom(
+                        wisdom_id=f"wis_{uuid.uuid4().hex[:8]}",
+                        domain=dom,
+                        insight=(
+                            f"Lessons from '{dom}' emphasize: "
+                            f"{', '.join(top_kws[:3])} are critical success factors "
+                            f"({len(lessons)} lessons recorded)."
+                        ),
+                        source_types=["lesson"],
+                        supporting_count=len(lessons),
+                        confidence=round(avg_conf, 3),
+                        keywords=top_kws,
+                        cross_domain_applicable=is_cross,
+                        related_domains=[],
+                    ))
+
+        wisdoms.sort(key=lambda w: (w.supporting_count, w.confidence), reverse=True)
+        return wisdoms
+
+    # ── Feature 5: Experience Aging ───────────────────────────────
+
+    def apply_age_decay(
+        self,
+        half_life_days: int = 180,
+        min_confidence: float = 0.1,
+        dry_run: bool = False,
+    ) -> dict[str, Any]:
+        """Apply time-based confidence decay to old experiences.
+
+        Uses an exponential decay model:
+            new_confidence = confidence * e^(-age_days / half_life_days)
+        Experiences with very high times_applied are protected from full decay.
+
+        Args:
+            half_life_days: Number of days after which confidence halves.
+            min_confidence: Confidence floor — never decays below this.
+            dry_run: If True, return what would change without persisting.
+
+        Returns:
+            Dict with decay stats: total_processed, total_decayed, avg_delta.
+        """
+        rows = self.conn.execute(
+            "SELECT id, confidence, times_applied, created_at FROM experiences"
+        ).fetchall()
+
+        now = datetime.now(timezone.utc)
+        total_decayed = 0
+        total_delta = 0.0
+        updates: list[tuple[float, str]] = []
+
+        for row in rows:
+            try:
+                created = datetime.fromisoformat(row["created_at"])
+            except (ValueError, TypeError):
+                continue
+
+            age_days = (now - created).total_seconds() / 86400
+            if age_days < 1:
+                continue  # Too fresh to decay
+
+            # Protection factor: frequently-applied experiences decay slower
+            protection = 1.0 + math.log1p(row["times_applied"]) * 0.2
+            effective_half_life = half_life_days * protection
+
+            decay_factor = math.exp(-age_days / effective_half_life)
+            new_confidence = max(min_confidence, row["confidence"] * decay_factor)
+            delta = row["confidence"] - new_confidence
+
+            if delta > 0.001:  # Only update if change is meaningful
+                updates.append((new_confidence, row["id"]))
+                total_decayed += 1
+                total_delta += delta
+
+        if not dry_run and updates:
+            self.conn.executemany(
+                "UPDATE experiences SET confidence = ? WHERE id = ?",
+                updates,
+            )
+            self.conn.commit()
+
+        return {
+            "total_processed": len(rows),
+            "total_decayed": total_decayed,
+            "avg_confidence_delta": round(total_delta / max(total_decayed, 1), 4),
+            "dry_run": dry_run,
+        }
+
+    def get_aged_experiences(self, older_than_days: int = 90) -> list[Experience]:
+        """Return experiences older than the given threshold (for review/archiving)."""
+        cutoff = (datetime.now(timezone.utc) - timedelta(days=older_than_days)).isoformat()
+        rows = self.conn.execute(
+            "SELECT * FROM experiences WHERE created_at < ? ORDER BY created_at ASC",
+            (cutoff,),
+        ).fetchall()
+        return [self._row_to_experience(r) for r in rows]
+
+    # ── Feature 6: Cross-Domain Learning ──────────────────────────
+
+    def transfer_lesson(
+        self,
+        source_domain: str,
+        target_domain: str,
+        min_confidence: float = 0.6,
+        max_transfer: int = 5,
+    ) -> list[Experience]:
+        """Apply lessons from source_domain to target_domain.
+
+        Finds high-confidence lessons/strategies in source_domain and
+        records adapted copies in target_domain with slightly reduced
+        confidence (to reflect uncertainty of cross-domain transfer).
+
+        Returns the list of newly created cross-domain experiences.
+        """
+        # Get high-confidence lessons/strategies from source domain
+        candidates = self.conn.execute(
+            """SELECT * FROM experiences
+               WHERE domain = ?
+               AND experience_type IN ('lesson', 'strategy')
+               AND confidence >= ?
+               AND (source_domain IS NULL OR source_domain != ?)
+               ORDER BY confidence DESC, times_applied DESC
+               LIMIT ?""",
+            (source_domain, min_confidence, target_domain, max_transfer * 2),
+        ).fetchall()
+
+        # Check which have NOT already been transferred to target
+        already_transferred: set[str] = set()
+        existing = self.conn.execute(
+            "SELECT source_domain, title FROM experiences WHERE domain = ? AND source_domain = ?",
+            (target_domain, source_domain),
+        ).fetchall()
+        for row in existing:
+            already_transferred.add(row["title"].lower())
+
+        created: list[Experience] = []
+        for row in candidates:
+            if len(created) >= max_transfer:
+                break
+            orig = self._row_to_experience(row)
+            if orig.title.lower() in already_transferred:
+                continue
+
+            # Adapt the lesson for the new domain
+            adapted_title = f"[From {source_domain}] {orig.title}"
+            adapted_desc = (
+                f"Cross-domain lesson transferred from '{source_domain}': "
+                f"{orig.description}"
+            )
+            adapted_tags = orig.tags + [f"from:{source_domain}", "cross-domain"]
+            # Reduce confidence by 15% to reflect transfer uncertainty
+            transfer_confidence = round(max(0.1, orig.confidence * 0.85), 3)
+
+            new_exp = self.record_experience(
+                experience_type=orig.experience_type.value,
+                domain=target_domain,
+                title=adapted_title,
+                description=adapted_desc,
+                context=orig.context,
+                outcome=orig.outcome,
+                confidence=transfer_confidence,
+                tags=adapted_tags,
+                source_domain=source_domain,
+            )
+            created.append(new_exp)
+
+        return created
+
+    def find_cross_domain_lessons(
+        self,
+        target_domain: str,
+        limit: int = 10,
+    ) -> list[Experience]:
+        """Find all cross-domain experiences that have been applied to target_domain."""
+        rows = self.conn.execute(
+            """SELECT * FROM experiences
+               WHERE domain = ? AND source_domain IS NOT NULL
+               ORDER BY confidence DESC, times_applied DESC
+               LIMIT ?""",
+            (target_domain, limit),
+        ).fetchall()
+        return [self._row_to_experience(r) for r in rows]
+
+    def get_domain_connections(self) -> dict[str, list[str]]:
+        """Map which domains have shared cross-domain lessons.
+
+        Returns a dict: {source_domain: [target_domain, ...]} for all
+        cross-domain transfers on record.
+        """
+        rows = self.conn.execute(
+            """SELECT DISTINCT domain, source_domain FROM experiences
+               WHERE source_domain IS NOT NULL"""
+        ).fetchall()
+        connections: dict[str, list[str]] = defaultdict(list)
+        for row in rows:
+            connections[row["source_domain"]].append(row["domain"])
+        return dict(connections)
+
+    # ── Feature 7: Visualization Data ─────────────────────────────
+
+    def get_visualization_data(self) -> dict[str, Any]:
+        """Return aggregated data structures suitable for frontend charts.
+
+        Provides:
+        - experience_timeline: experience counts per week (last 12 weeks)
+        - domain_breakdown: pie chart data by domain
+        - type_distribution: bar chart data by experience_type
+        - confidence_histogram: confidence distribution (buckets: 0-0.2, 0.2-0.4, ...)
+        - top_domains_by_confidence: ranked domains by average confidence
+        - activity_heatmap: daily experience creation counts (last 30 days)
+        - cross_domain_graph: nodes (domains) + edges (transfers) for graph viz
+        """
+        now = datetime.now(timezone.utc)
+
+        # 1. Experience timeline (last 12 weeks)
+        weekly_counts: dict[str, int] = {}
+        for week_offset in range(12):
+            week_start = now - timedelta(weeks=week_offset + 1)
+            week_end = now - timedelta(weeks=week_offset)
+            label = week_start.strftime("%Y-W%W")
+            count = self.conn.execute(
+                "SELECT COUNT(*) as c FROM experiences WHERE created_at >= ? AND created_at < ?",
+                (week_start.isoformat(), week_end.isoformat()),
+            ).fetchone()["c"]
+            weekly_counts[label] = count
+        timeline = [
+            {"week": k, "count": v}
+            for k, v in sorted(weekly_counts.items())
+        ]
+
+        # 2. Domain breakdown
+        domain_rows = self.conn.execute(
+            "SELECT domain, COUNT(*) as cnt FROM experiences GROUP BY domain ORDER BY cnt DESC"
+        ).fetchall()
+        domain_breakdown = [{"domain": r["domain"], "count": r["cnt"]} for r in domain_rows]
+
+        # 3. Type distribution
+        type_rows = self.conn.execute(
+            "SELECT experience_type, COUNT(*) as cnt, AVG(confidence) as avg_conf FROM experiences GROUP BY experience_type"
+        ).fetchall()
+        type_distribution = [
+            {
+                "type": r["experience_type"],
+                "count": r["cnt"],
+                "avg_confidence": round(r["avg_conf"], 3),
+            }
+            for r in type_rows
+        ]
+
+        # 4. Confidence histogram (6 buckets: 0-0.2, 0.2-0.4, ..., 0.8-1.0+)
+        confidence_buckets = []
+        bucket_edges = [0.0, 0.2, 0.4, 0.6, 0.8, 1.0]
+        for i in range(len(bucket_edges) - 1):
+            lo, hi = bucket_edges[i], bucket_edges[i + 1]
+            # Include upper bound in last bucket
+            op = "<=" if hi == 1.0 else "<"
+            count = self.conn.execute(
+                f"SELECT COUNT(*) as c FROM experiences WHERE confidence >= ? AND confidence {op} ?",
+                (lo, hi),
+            ).fetchone()["c"]
+            confidence_buckets.append({
+                "range": f"{lo:.1f}-{hi:.1f}",
+                "count": count,
+            })
+
+        # 5. Top domains by average confidence
+        top_domains = self.conn.execute(
+            """SELECT domain, AVG(confidence) as avg_conf, COUNT(*) as cnt
+               FROM experiences GROUP BY domain
+               HAVING cnt >= 1
+               ORDER BY avg_conf DESC LIMIT 10"""
+        ).fetchall()
+        top_domains_by_confidence = [
+            {"domain": r["domain"], "avg_confidence": round(r["avg_conf"], 3), "count": r["cnt"]}
+            for r in top_domains
+        ]
+
+        # 6. Activity heatmap (last 30 days)
+        activity_heatmap = []
+        for day_offset in range(30):
+            day = now - timedelta(days=day_offset)
+            day_str = day.strftime("%Y-%m-%d")
+            day_start = day_str + "T00:00:00"
+            day_end = day_str + "T23:59:59"
+            count = self.conn.execute(
+                "SELECT COUNT(*) as c FROM experiences WHERE created_at >= ? AND created_at <= ?",
+                (day_start, day_end),
+            ).fetchone()["c"]
+            activity_heatmap.append({"date": day_str, "count": count})
+        activity_heatmap.reverse()  # Oldest first
+
+        # 7. Cross-domain graph
+        connections = self.get_domain_connections()
+        all_domains = set()
+        edges = []
+        for src, targets in connections.items():
+            all_domains.add(src)
+            for tgt in targets:
+                all_domains.add(tgt)
+                edges.append({"source": src, "target": tgt})
+        # Add isolated domains (no cross-domain links)
+        for row in domain_rows:
+            all_domains.add(row["domain"])
+        cross_domain_graph = {
+            "nodes": [{"id": d} for d in sorted(all_domains)],
+            "edges": edges,
+        }
+
+        return {
+            "experience_timeline": timeline,
+            "domain_breakdown": domain_breakdown,
+            "type_distribution": type_distribution,
+            "confidence_histogram": confidence_buckets,
+            "top_domains_by_confidence": top_domains_by_confidence,
+            "activity_heatmap": activity_heatmap,
+            "cross_domain_graph": cross_domain_graph,
+        }
+
     @staticmethod
     def _row_to_experience(row: sqlite3.Row) -> Experience:
         tags = [t.strip() for t in row["tags"].split(",") if t.strip()]
