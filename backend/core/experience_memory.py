@@ -162,13 +162,27 @@ class ExperienceMemory:
                 confidence REAL DEFAULT 1.0,
                 times_applied INTEGER DEFAULT 0,
                 created_at TEXT NOT NULL,
-                tags TEXT DEFAULT ''
+                tags TEXT DEFAULT '',
+                last_accessed TEXT,
+                source_domain TEXT
             );
 
             CREATE INDEX IF NOT EXISTS idx_exp_type ON experiences(experience_type);
             CREATE INDEX IF NOT EXISTS idx_exp_domain ON experiences(domain);
             CREATE INDEX IF NOT EXISTS idx_exp_confidence ON experiences(confidence);
+            CREATE INDEX IF NOT EXISTS idx_exp_created ON experiences(created_at);
+            CREATE INDEX IF NOT EXISTS idx_exp_source_domain ON experiences(source_domain);
         """)
+        # Migrate existing databases that lack the new columns (safe no-op if columns exist)
+        for col, col_type, default in [
+            ("last_accessed", "TEXT", "NULL"),
+            ("source_domain", "TEXT", "NULL"),
+        ]:
+            try:
+                self.conn.execute(f"ALTER TABLE experiences ADD COLUMN {col} {col_type} DEFAULT {default}")
+                self.conn.commit()
+            except sqlite3.OperationalError:
+                pass  # Column already exists
 
     # ── Short-Term Memory ──────────────────────────────────────
 
@@ -236,14 +250,19 @@ class ExperienceMemory:
         outcome: Optional[str] = None,
         confidence: float = 1.0,
         tags: Optional[list[str]] = None,
+        source_domain: Optional[str] = None,
     ) -> Experience:
-        """Record a new experience (success, failure, strategy, or lesson)."""
+        """Record a new experience (success, failure, strategy, or lesson).
+
+        Args:
+            source_domain: If this experience was cross-domain-transferred from
+                another domain, record the originating domain here.
+        """
         exp_type = ExperienceType(experience_type)
         if not 0.0 <= confidence <= 1.0:
             raise ValueError("Confidence must be between 0.0 and 1.0")
 
         exp_id = f"exp_{uuid.uuid4().hex[:12]}"
-        import json
         ctx_str = json.dumps(context or {})
         tags_str = ",".join(tags or [])
         now = datetime.now(timezone.utc).isoformat()
@@ -251,10 +270,11 @@ class ExperienceMemory:
         self.conn.execute(
             """INSERT INTO experiences
                (id, experience_type, domain, title, description, context,
-                outcome, confidence, times_applied, created_at, tags)
-               VALUES (?, ?, ?, ?, ?, ?, ?, ?, 0, ?, ?)""",
+                outcome, confidence, times_applied, created_at, tags,
+                last_accessed, source_domain)
+               VALUES (?, ?, ?, ?, ?, ?, ?, ?, 0, ?, ?, NULL, ?)""",
             (exp_id, exp_type.value, domain, title, description,
-             ctx_str, outcome, confidence, now, tags_str),
+             ctx_str, outcome, confidence, now, tags_str, source_domain),
         )
         self.conn.commit()
 
@@ -347,7 +367,10 @@ class ExperienceMemory:
         self.conn.commit()
 
     def search_experiences(self, query: str, limit: int = 10) -> list[Experience]:
-        """Simple keyword search across experiences."""
+        """Keyword search across experiences (legacy, unscored).
+
+        Prefer search_experiences_scored() for relevance-ranked results.
+        """
         pattern = f"%{query}%"
         rows = self.conn.execute(
             """SELECT * FROM experiences
@@ -356,6 +379,78 @@ class ExperienceMemory:
             (pattern, pattern, pattern, limit),
         ).fetchall()
         return [self._row_to_experience(r) for r in rows]
+
+    # ── Feature 1: Relevance-Scored Search ────────────────────────
+
+    def search_experiences_scored(
+        self,
+        query: str,
+        limit: int = 10,
+        domain: Optional[str] = None,
+        age_penalty: bool = True,
+    ) -> list[ScoredExperience]:
+        """Search experiences with TF-IDF-style relevance scoring.
+
+        Score components:
+        - Term frequency: how often query tokens appear in title/description/tags
+        - Title boost: matches in title score 2x
+        - Confidence weight: multiplied by experience confidence
+        - Times-applied boost: frequently used experiences score higher
+        - Age penalty (optional): experiences older than 90 days get reduced score
+        """
+        tokens = [t.lower() for t in query.split() if len(t) > 1]
+        if not tokens:
+            return []
+
+        sql = "SELECT * FROM experiences WHERE 1=1"
+        params: list[Any] = []
+        if domain:
+            sql += " AND domain = ?"
+            params.append(domain)
+        sql += " LIMIT 500"
+
+        rows = self.conn.execute(sql, params).fetchall()
+        scored: list[ScoredExperience] = []
+        now = datetime.now(timezone.utc)
+
+        for row in rows:
+            exp = self._row_to_experience(row)
+            title_lower = exp.title.lower()
+            desc_lower = exp.description.lower()
+            tags_lower = " ".join(exp.tags).lower()
+
+            tf = 0.0
+            for token in tokens:
+                tf += title_lower.count(token) * 2.0   # title boost
+                tf += desc_lower.count(token) * 1.0
+                tf += tags_lower.count(token) * 1.5    # tags boost
+
+            if tf == 0.0:
+                continue
+
+            # IDF approximation: rarer tokens score higher — use log(1 + tf)
+            relevance = math.log1p(tf)
+
+            # Confidence weighting
+            relevance *= (0.5 + exp.confidence * 0.5)
+
+            # Times-applied boost (log scale, capped)
+            relevance *= (1.0 + math.log1p(exp.times_applied) * 0.1)
+
+            # Age penalty: exponential decay — half-life ~180 days
+            if age_penalty:
+                try:
+                    created = datetime.fromisoformat(exp.created_at)
+                    age_days = (now - created).total_seconds() / 86400
+                    decay = math.exp(-age_days / 180.0)
+                    relevance *= (0.5 + decay * 0.5)
+                except (ValueError, TypeError):
+                    pass
+
+            scored.append(ScoredExperience(experience=exp, score=round(relevance, 4)))
+
+        scored.sort(key=lambda s: s.score, reverse=True)
+        return scored[:limit]
 
     def stats(self) -> dict[str, Any]:
         """Experience memory statistics."""
@@ -378,7 +473,6 @@ class ExperienceMemory:
 
     @staticmethod
     def _row_to_experience(row: sqlite3.Row) -> Experience:
-        import json
         tags = [t.strip() for t in row["tags"].split(",") if t.strip()]
         try:
             context = json.loads(row["context"]) if row["context"] else {}
