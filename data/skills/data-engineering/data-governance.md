@@ -1,196 +1,242 @@
 ---
-name: Data Governance
-description: Policies, standards, and practices for managing data quality, ownership, lineage, and compliance
-category: data-engineering
-difficulty: advanced
+name: Data Governance Framework
+description: Implement data governance policies, data cataloging, access controls, and compliance frameworks
 version: "1.0.0"
 author: ROOT
-tags: [data-engineering, data-governance, data-catalog, lineage, compliance, GDPR, CCPA, data-mesh]
+tags: [data-engineering, governance, compliance, data-catalog, GDPR, lineage]
 platforms: [all]
+difficulty: intermediate
 ---
 
-# Data Governance
+# Data Governance Framework
 
-Establish the policies, processes, and organizational structures that ensure data is trusted, discoverable, and used responsibly.
+Data governance defines who can access what data, ensures data quality,
+and maintains compliance with regulations (GDPR, CCPA, HIPAA).
 
 ## Governance Pillars
 
-| Pillar | Goal | Key Mechanisms |
-|--------|------|---------------|
-| **Data Quality** | Data is accurate, complete, and timely | Quality rules, SLAs, DQ scoring |
-| **Data Security** | Data is protected from unauthorized access | Classification, access control, encryption |
-| **Data Lineage** | Know where data came from and where it goes | Catalog integration, column-level lineage |
-| **Data Ownership** | Clear accountability for each data domain | Domain owners, stewards, RACI |
-| **Compliance** | Meet regulatory obligations (GDPR, CCPA, HIPAA) | Data classification, retention, right to erasure |
-| **Discoverability** | Data is findable and understood | Catalog, metadata, documentation |
+| Pillar | Description | Tools |
+|--------|-------------|-------|
+| Data Catalog | Discover and understand available data | Datahub, Atlan, Alation |
+| Access Control | Who can see what data | Ranger, Lake Formation, IAM |
+| Data Lineage | Track data origin and transformations | OpenLineage, Datahub |
+| Data Quality | Ensure accuracy and completeness | Great Expectations, dbt tests |
+| Data Classification | Tag sensitivity level | Custom + cloud DLP tools |
+| Privacy Compliance | GDPR/CCPA/HIPAA requirements | Legal + technical controls |
 
-## Data Ownership Model
+## Data Classification Schema
 
-### Roles
-- **Data Owner**: Executive or senior manager accountable for a data domain; approves access policies
-- **Data Steward**: Operational role — maintains definitions, enforces standards, coordinates quality
-- **Data Producer**: Team that creates/maintains the dataset; responsible for quality at the source
-- **Data Consumer**: Team or individual using the dataset; provides quality feedback
-- **Data Governance Council**: Cross-functional body that sets policies and resolves disputes
-
-### RACI Matrix (Example: Customer Data)
-| Activity | Data Owner | Steward | Producer | Consumer | IT |
-|----------|-----------|---------|----------|----------|-----|
-| Define data standards | A | R | C | I | I |
-| Approve new data access | A | R | I | I | C |
-| Remediate quality issues | I | A | R | I | C |
-| Update data catalog | I | A | R | I | I |
-
-## Data Classification
-
-### Classification Tiers
-```yaml
-tiers:
-  public:
-    description: Safe to share externally
-    examples: [product catalog, public pricing, marketing content]
-    controls: [none beyond standard auth]
-
-  internal:
-    description: Business use, not for external sharing
-    examples: [employee directory, internal reports, aggregate metrics]
-    controls: [authenticated access, role-based]
-
-  confidential:
-    description: Sensitive business or personal data
-    examples: [customer PII, financial records, contracts]
-    controls: [need-to-know access, encryption, audit logging]
-
-  restricted:
-    description: Highest sensitivity — breach causes serious harm
-    examples: [payment card data, health records, source code]
-    controls: [strict need-to-know, MFA, HSM encryption, enhanced monitoring]
-```
-
-### PII Field Tagging (DataHub / Apache Atlas)
 ```python
-# Tag PII fields in the data catalog
-from datahub.emitter.mce_builder import make_term_urn
+from enum import Enum
 
-pii_tag = make_term_urn("PII")
-# Apply to dataset fields:
-# - email → PII.EMAIL
-# - phone → PII.PHONE
-# - ip_address → PII.NETWORK_IDENTIFIER
-# - full_name → PII.NAME
-# - date_of_birth → PII.SENSITIVE_PERSONAL
+class DataSensitivity(Enum):
+    PUBLIC = "public"           # No restriction (marketing copy, public pricing)
+    INTERNAL = "internal"       # Employees only (internal docs, aggregate metrics)
+    CONFIDENTIAL = "confidential"  # Need-to-know (financials, HR data)
+    RESTRICTED = "restricted"   # Strict controls (PII, PHI, credentials)
+
+PII_FIELDS = {
+    "email", "full_name", "phone_number", "ssn", "credit_card_number",
+    "ip_address", "date_of_birth", "home_address", "passport_number",
+    "driver_license", "bank_account_number"
+}
+
+def classify_table(table_schema: dict) -> dict:
+    """Classify table sensitivity based on columns present."""
+    pii_columns = set(table_schema["columns"]) & PII_FIELDS
+    if pii_columns:
+        return {
+            "sensitivity": DataSensitivity.RESTRICTED,
+            "pii_columns": list(pii_columns),
+            "requires_masking": True,
+            "gdpr_relevant": True
+        }
+    return {"sensitivity": DataSensitivity.INTERNAL, "pii_columns": []}
 ```
 
-## Regulatory Compliance
+## Data Masking for PII
 
-### GDPR Requirements
-| Requirement | Implementation |
-|-------------|---------------|
-| Lawful basis for processing | Document purpose per data element in catalog |
-| Data minimization | Only collect/store what is necessary |
-| Right to erasure (RTBF) | Automated deletion workflow by user_id |
-| Data portability | Export API returning user's data in JSON/CSV |
-| Privacy by design | Review data model before launch; DPIAs for high-risk processing |
-| Breach notification | 72-hour notification process; incident response runbook |
-
-### Right to Be Forgotten Workflow
 ```python
-async def handle_erasure_request(user_id: str):
-    """Execute GDPR Article 17 deletion across all systems."""
-    steps = [
-        delete_from_operational_db(user_id),
-        anonymize_in_data_warehouse(user_id),    # Replace PII with synthetic values
-        delete_from_data_lake_raw(user_id),
-        purge_from_ml_training_sets(user_id),
-        revoke_api_tokens(user_id),
-        clear_cache_entries(user_id),
-        notify_third_party_processors(user_id),  # Required by GDPR
-    ]
-    results = await asyncio.gather(*steps, return_exceptions=True)
-    log_erasure_completion(user_id, results)     # Maintain proof of deletion (no PII stored)
+import hashlib
+import re
+
+def mask_pii(df: pd.DataFrame, masking_rules: dict) -> pd.DataFrame:
+    """Apply masking to PII columns based on consumer role."""
+    df = df.copy()
+
+    for column, rule in masking_rules.items():
+        if column not in df.columns:
+            continue
+
+        if rule == "hash":
+            # Irreversible — for analytics where identity doesn't matter
+            df[column] = df[column].apply(
+                lambda x: hashlib.sha256(str(x).encode()).hexdigest()[:16] if pd.notna(x) else x
+            )
+        elif rule == "partial_mask":
+            # Email: j***@example.com — enough for debugging, not identifying
+            if column == "email":
+                df[column] = df[column].apply(
+                    lambda x: re.sub(r"(^.{1})(.+)(@)", r"\1***\3", str(x)) if pd.notna(x) else x
+                )
+        elif rule == "redact":
+            # Complete removal
+            df[column] = "[REDACTED]"
+        elif rule == "tokenize":
+            # Reversible pseudonymization for internal operations
+            df[column] = df[column].apply(
+                lambda x: tokenize(x) if pd.notna(x) else x
+            )
+
+    return df
+
+# Define masking rules per consumer role
+MASKING_RULES_BY_ROLE = {
+    "data_scientist": {
+        "email": "hash", "phone_number": "hash",
+        "full_name": "partial_mask", "ssn": "redact"
+    },
+    "data_analyst": {
+        "email": "partial_mask", "phone_number": "redact",
+        "full_name": "partial_mask", "ssn": "redact"
+    },
+    "support_agent": {
+        "email": "show", "phone_number": "show",
+        "full_name": "show", "ssn": "redact"  # Need email/phone for support
+    }
+}
 ```
 
-### CCPA Compliance Additions
-- Opt-out of sale of personal information (Do Not Sell link required)
-- Data inventory: maintain record of all data collected, purpose, third-party sharing
-- Access requests: respond within 45 days (vs GDPR's 30 days)
+## Data Lineage Tracking
 
-## Data Catalog
+```python
+from openlineage.client import OpenLineageClient, RunEvent, RunState, Run, Job
 
-### What to Document per Dataset
-```yaml
-dataset: orders
-owner: data-engineering@company.com
-steward: jane.smith@company.com
-domain: commerce
-classification: confidential
-pii_fields: [user_id, shipping_address, email]
-update_frequency: daily at 04:00 UTC
-sla_freshness: < 6 hours
-quality_score: 98.5   # Updated daily by DQ pipeline
-source_systems: [postgres-orders, stripe-events]
-downstream_consumers: [revenue-dashboard, finance-reporting, ml-churn-model]
-schema_version: 3.1.0
-description: >
-  One row per order placed on the platform. Includes all order states
-  from pending through delivered or cancelled. Joined with payments
-  for revenue reporting.
-columns:
-  order_id:
-    description: Unique identifier for the order
-    type: string
-    nullable: false
-    pii: false
-  user_id:
-    description: References the user who placed the order
-    type: string
-    nullable: false
-    pii: true
-    pii_type: INDIRECT_IDENTIFIER
+client = OpenLineageClient.from_environment()
+
+def track_pipeline_lineage(job_name: str, input_datasets: list, output_datasets: list):
+    """Track data lineage using OpenLineage standard."""
+    import uuid
+
+    run_id = str(uuid.uuid4())
+
+    # Report job start
+    client.emit(RunEvent(
+        eventType=RunState.START,
+        eventTime=datetime.now().isoformat() + "Z",
+        run=Run(runId=run_id),
+        job=Job(namespace="data-warehouse", name=job_name),
+        inputs=[Dataset(namespace="postgresql", name=ds) for ds in input_datasets],
+        outputs=[Dataset(namespace="bigquery", name=ds) for ds in output_datasets]
+    ))
+
+    return run_id
+
+def track_pipeline_complete(run_id: str, job_name: str, row_count: int):
+    client.emit(RunEvent(
+        eventType=RunState.COMPLETE,
+        eventTime=datetime.now().isoformat() + "Z",
+        run=Run(runId=run_id,
+                facets={"output_statistics": {"rowCount": row_count}}),
+        job=Job(namespace="data-warehouse", name=job_name)
+    ))
 ```
 
-## Data Lineage
+## GDPR Compliance Requirements
 
-### Column-Level Lineage Example
+```python
+class GDPRComplianceManager:
+    def handle_right_to_erasure(self, user_id: str) -> dict:
+        """Execute GDPR Article 17 — Right to Erasure (Right to be Forgotten)."""
+        deleted_records = {}
+
+        # Find all tables containing this user's data
+        tables_with_pii = self.catalog.find_tables_with_user_data(user_id)
+
+        for table in tables_with_pii:
+            if table["can_delete"]:
+                count = self.db.delete_user_data(table["name"], user_id)
+                deleted_records[table["name"]] = count
+            elif table["can_anonymize"]:
+                count = self.db.anonymize_user_data(table["name"], user_id)
+                deleted_records[f"{table['name']}_anonymized"] = count
+
+        # Log the erasure for compliance audit trail
+        self.audit_log.record_erasure(user_id, deleted_records)
+
+        # Notify downstream systems (email provider, analytics, etc.)
+        self.propagate_erasure_request(user_id)
+
+        return {"user_id": user_id, "records_processed": deleted_records,
+                "completed_at": datetime.now().isoformat()}
+
+    def handle_data_portability_request(self, user_id: str) -> str:
+        """GDPR Article 20 — Provide user's data in machine-readable format."""
+        user_data = {}
+        for table in self.catalog.find_tables_with_user_data(user_id):
+            user_data[table["name"]] = self.db.get_user_data(table["name"], user_id)
+
+        export_path = f"s3://user-exports/{user_id}/export_{datetime.now().date()}.json"
+        upload_to_s3(json.dumps(user_data, default=str), export_path)
+        return export_path
 ```
-stg_orders.amount
-    ↓ (cast to DECIMAL)
-int_orders_enriched.order_amount
-    ↓ (SUM)
-fct_daily_revenue.gross_revenue
-    ↓ (displayed in)
-Revenue Dashboard — Daily Revenue metric
-```
-
-### Why Column-Level Lineage Matters
-- Impact analysis: if `orders.amount` changes type, find all downstream breakages
-- Root cause: if `gross_revenue` is wrong, trace back to source field
-- Compliance: prove which reports use PII fields
-
-### Tools
-| Tool | Open Source | Column Lineage | Catalog | Governance |
-|------|------------|---------------|---------|------------|
-| Apache Atlas | Yes | Yes | Yes | Partial |
-| DataHub | Yes | Yes | Yes | Partial |
-| OpenMetadata | Yes | Yes | Yes | Full |
-| Alation | No | Yes | Yes | Full |
-| Collibra | No | Yes | Yes | Full |
 
 ## Data Retention Policies
 
-| Data Type | Operational Retention | Archival | Legal Hold |
-|-----------|----------------------|---------|------------|
-| Transaction data | 7 years | Glacier after 1 year | Indefinite if litigation |
-| User PII | Duration of account + 30 days after deletion request | N/A | Litigation hold only |
-| Security logs | 1 year | Cold storage 3 years | |
-| ML training data | Until model version retired | Version-controlled | |
-| Raw event logs | 90 days | S3 IA 1 year, then delete | |
+```python
+RETENTION_POLICIES = {
+    "transaction_logs": {
+        "hot_retention_days": 90,     # Keep in primary database
+        "warm_retention_days": 730,   # Move to S3-IA after 90 days
+        "cold_retention_days": 2555,  # Move to S3 Glacier after 2 years
+        "delete_after_days": 2555,    # Delete after 7 years (financial regulations)
+        "exceptions": ["fraud_flagged_records"]  # Never delete — legal hold
+    },
+    "user_behavior_events": {
+        "hot_retention_days": 30,
+        "warm_retention_days": 365,
+        "delete_after_days": 730,     # 2 years
+        "gdpr_applies": True          # Must honor erasure requests
+    },
+    "application_logs": {
+        "hot_retention_days": 7,
+        "warm_retention_days": 30,
+        "delete_after_days": 90
+    }
+}
+```
 
-## Governance Metrics
+## Data Catalog Template
 
-- **Data catalog coverage**: % of datasets documented in catalog (target > 90%)
-- **Ownership coverage**: % of datasets with assigned owner (target 100%)
-- **Quality score average**: weighted average DQ score across all datasets
-- **Access request SLA**: % of access requests resolved within 2 business days
-- **Erasure compliance rate**: % of GDPR/CCPA deletion requests completed within legal deadline
-- **Policy exception count**: open exceptions to data classification or retention policy
+```yaml
+# metadata/tables/fact_orders.yaml
+name: fact_orders
+description: One row per customer order — primary revenue fact table
+owner: data-engineering@company.com
+domain: commerce
+sensitivity: confidential
+contains_pii: false  # Customer IDs are pseudonymized
+freshness_sla_hours: 4
+source_system: order-management-service
+primary_key: order_key
+row_count_estimate: 50000000
+storage_size_gb: 120
+
+columns:
+  order_key:
+    description: Surrogate key — auto-generated
+    type: bigint
+    is_nullable: false
+  customer_key:
+    description: FK to dim_customers (SCD Type 2 surrogate key)
+    type: bigint
+    is_nullable: false
+  total_amount:
+    description: Total order value in USD including tax, excluding refunds
+    type: numeric(10,2)
+    is_nullable: false
+
+lineage:
+  upstream: [stg_orders, dim_customers, dim_products, dim_date]
+  downstream: [agg_daily_revenue, rpt_monthly_sales, ml_feature_store]
+```
