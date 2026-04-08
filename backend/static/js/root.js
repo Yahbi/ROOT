@@ -1212,13 +1212,51 @@ document.addEventListener('keydown', e => {
         return;
     }
 
-    // Escape to close command palette
+    // Keyboard shortcuts panel: Ctrl+/
+    if ((e.ctrlKey || e.metaKey) && e.key === '/') {
+        e.preventDefault();
+        const so = document.getElementById('shortcuts-overlay');
+        if (so && so.classList.contains('open')) closeShortcutsPanel();
+        else openShortcutsPanel();
+        return;
+    }
+
+    // Message search in chat: Ctrl+F (when chat panel active)
+    if ((e.ctrlKey || e.metaKey) && e.key === 'f' && state.activePanel === 'chat') {
+        e.preventDefault();
+        const so = document.getElementById('msg-search-overlay');
+        if (so && so.classList.contains('open')) closeMsgSearch();
+        else openMsgSearch();
+        return;
+    }
+
+    // New chat: Ctrl+N
+    if ((e.ctrlKey || e.metaKey) && e.key === 'n' && state.activePanel === 'chat') {
+        e.preventDefault();
+        startNewChat();
+        return;
+    }
+
+    // Export conversation: Ctrl+E (chat panel)
+    if ((e.ctrlKey || e.metaKey) && e.key === 'e' && state.activePanel === 'chat') {
+        e.preventDefault();
+        exportConversation();
+        return;
+    }
+
+    // Escape to close command palette / shortcuts / msg search
     if (e.key === 'Escape') {
+        const so = document.getElementById('shortcuts-overlay');
+        if (so && so.classList.contains('open')) { closeShortcutsPanel(); return; }
+        const ms = document.getElementById('msg-search-overlay');
+        if (ms && ms.classList.contains('open')) { closeMsgSearch(); return; }
         const overlay = document.getElementById('cmd-overlay');
         if (overlay && overlay.style.display === 'flex') {
             closeCmdPalette();
             return;
         }
+        // Cancel reply
+        if (_replyTarget) { cancelReply(); return; }
     }
 
     // Arrow navigation in command palette
@@ -1933,6 +1971,509 @@ async function updateSandboxBadge() {
     }
 }
 
+// ══════════════════════════════════════════════════════════════
+// FEATURE: Message Search — search visible messages in chat
+// ══════════════════════════════════════════════════════════════
+let _msgSearchMatches = [];
+let _msgSearchIdx = 0;
+let _msgSearchOriginals = new Map(); // msgEl.id → original innerHTML backup
+
+function openMsgSearch() {
+    const overlay = document.getElementById('msg-search-overlay');
+    if (!overlay) return;
+    overlay.classList.add('open');
+    const inp = document.getElementById('msg-search-input');
+    if (inp) { inp.value = ''; inp.focus(); }
+    _msgSearchMatches = [];
+    _msgSearchIdx = 0;
+    _updateMsgSearchCount();
+}
+
+function closeMsgSearch() {
+    const overlay = document.getElementById('msg-search-overlay');
+    if (overlay) overlay.classList.remove('open');
+    _clearMsgHighlights();
+    _msgSearchMatches = [];
+    _msgSearchIdx = 0;
+}
+
+function _clearMsgHighlights() {
+    document.querySelectorAll('#chat-scroll .msg-content').forEach(el => {
+        const backup = _msgSearchOriginals.get(el);
+        if (backup !== undefined) el.innerHTML = backup;
+    });
+    _msgSearchOriginals.clear();
+}
+
+function msgSearchQuery(query) {
+    _clearMsgHighlights();
+    _msgSearchMatches = [];
+    _msgSearchIdx = 0;
+
+    if (!query || query.length < 2) {
+        _updateMsgSearchCount();
+        return;
+    }
+
+    const escaped = query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const regex = new RegExp(`(${escaped})`, 'gi');
+    const contentEls = document.querySelectorAll('#chat-scroll .msg-content');
+
+    contentEls.forEach(el => {
+        const text = el.textContent || '';
+        if (regex.test(text)) {
+            _msgSearchOriginals.set(el, el.innerHTML);
+            // Walk text nodes to avoid breaking HTML
+            _highlightTextInEl(el, regex);
+            const marks = el.querySelectorAll('mark.msg-highlight');
+            marks.forEach(m => _msgSearchMatches.push(m));
+        }
+        regex.lastIndex = 0;
+    });
+
+    if (_msgSearchMatches.length > 0) {
+        _msgSearchIdx = 0;
+        _applyCurrentHighlight();
+    }
+    _updateMsgSearchCount();
+}
+
+function _highlightTextInEl(el, regex) {
+    // Replace text content in text nodes only, skipping child elements
+    const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT, null);
+    const textNodes = [];
+    let node;
+    while ((node = walker.nextNode())) textNodes.push(node);
+    textNodes.forEach(tn => {
+        const parent = tn.parentNode;
+        if (!parent || parent.tagName === 'MARK') return;
+        const parts = tn.textContent.split(regex);
+        if (parts.length <= 1) return;
+        const frag = document.createDocumentFragment();
+        parts.forEach((part, i) => {
+            if (i % 2 === 0) {
+                if (part) frag.appendChild(document.createTextNode(part));
+            } else {
+                const mark = document.createElement('mark');
+                mark.className = 'msg-highlight';
+                mark.textContent = part;
+                frag.appendChild(mark);
+            }
+        });
+        parent.replaceChild(frag, tn);
+    });
+}
+
+function _applyCurrentHighlight() {
+    _msgSearchMatches.forEach((m, i) => {
+        m.classList.toggle('current', i === _msgSearchIdx);
+    });
+    const cur = _msgSearchMatches[_msgSearchIdx];
+    if (cur) cur.scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+function msgSearchNav(dir) {
+    if (!_msgSearchMatches.length) return;
+    _msgSearchIdx = (_msgSearchIdx + dir + _msgSearchMatches.length) % _msgSearchMatches.length;
+    _applyCurrentHighlight();
+    _updateMsgSearchCount();
+}
+
+function _updateMsgSearchCount() {
+    const el = document.getElementById('msg-search-count');
+    if (!el) return;
+    if (_msgSearchMatches.length === 0) {
+        el.textContent = '0/0';
+    } else {
+        el.textContent = `${_msgSearchIdx + 1}/${_msgSearchMatches.length}`;
+    }
+}
+
+
+// ══════════════════════════════════════════════════════════════
+// FEATURE: Message Reactions — thumbs up/down, star, bookmark
+// ══════════════════════════════════════════════════════════════
+function bookmarkMsg(btn) {
+    btn.classList.toggle('bookmarked');
+    const isBookmarked = btn.classList.contains('bookmarked');
+    btn.innerHTML = isBookmarked ? '&#128278;' : '&#128279;'; // bookmark vs bookmark outline
+    btn.title = isBookmarked ? 'Bookmarked' : 'Bookmark';
+    if (isBookmarked) {
+        const msgEl = btn.closest('.msg');
+        const name = msgEl?.querySelector('.msg-name')?.textContent || '';
+        const content = msgEl?.querySelector('.msg-content')?.textContent?.slice(0, 80) || '';
+        const time = msgEl?.querySelector('.msg-time')?.textContent || '';
+        pushActivity('Message bookmarked', `${name}: ${content}`, 'memory');
+    }
+}
+
+
+// ══════════════════════════════════════════════════════════════
+// FEATURE: Typing Indicator — enhanced dots shown while AI thinks
+//   Already in appendThinking(). The CSS handles animation.
+//   This adds a richer inline typing dots version for status area.
+// ══════════════════════════════════════════════════════════════
+function appendTypingIndicator(agentName) {
+    // Used by streaming to show a lightweight "typing" message before tokens arrive
+    const container = document.getElementById('chat-scroll');
+    if (!container) return null;
+    const id = `typing-${Date.now()}`;
+    const div = document.createElement('div');
+    div.className = 'msg assistant';
+    div.id = id;
+    div.innerHTML = `
+        <div class="msg-avatar" style="background:${AGENT_COLORS.astra}">A</div>
+        <div class="msg-body">
+            <div class="msg-header">
+                <span class="msg-name">${escHtml(agentName || 'ASTRA')}</span>
+                <span class="msg-time">${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+            </div>
+            <div class="msg-content">
+                <div class="typing-dots"><span></span><span></span><span></span></div>
+            </div>
+        </div>`;
+    container.appendChild(div);
+    scrollChat();
+    return id;
+}
+
+
+// ══════════════════════════════════════════════════════════════
+// FEATURE: Message Threading — reply to specific messages
+// ══════════════════════════════════════════════════════════════
+let _replyTarget = null; // { id, name, preview }
+
+function replyToMsg(btn) {
+    const msgEl = btn.closest('.msg');
+    if (!msgEl) return;
+    const name = msgEl.querySelector('.msg-name')?.textContent || 'message';
+    const content = msgEl.querySelector('.msg-content')?.textContent?.slice(0, 100) || '';
+    _replyTarget = { id: msgEl.id, name, preview: content };
+
+    const indicator = document.getElementById('reply-compose-indicator');
+    const nameEl = document.getElementById('reply-compose-name');
+    const previewEl = document.getElementById('reply-compose-preview');
+    if (indicator && nameEl && previewEl) {
+        nameEl.textContent = name;
+        previewEl.textContent = content.length > 60 ? content.slice(0, 60) + '...' : content;
+        indicator.style.display = 'flex';
+    }
+    document.getElementById('chat-input')?.focus();
+    // Scroll the target message into view to confirm selection
+    msgEl.style.outline = '2px solid var(--accent)';
+    msgEl.style.outlineOffset = '2px';
+    setTimeout(() => { msgEl.style.outline = ''; msgEl.style.outlineOffset = ''; }, 1000);
+}
+
+function cancelReply() {
+    _replyTarget = null;
+    const indicator = document.getElementById('reply-compose-indicator');
+    if (indicator) indicator.style.display = 'none';
+}
+
+// Patch appendMsg to include reply context and threading actions
+const _origAppendMsg = appendMsg;
+// Override appendMsg to add bookmark + reply buttons and thread context
+function appendMsg(role, name, content, isThinking = false, agentId = null) {
+    // Stash current reply target and clear before the original call
+    const replyCtx = _replyTarget;
+    if (role === 'user' && replyCtx) _replyTarget = null;
+
+    const id = _origAppendMsg(role, name, content, isThinking, agentId);
+    const msgEl = document.getElementById(id);
+    if (!msgEl) return id;
+
+    // Inject reply-to preview inside msg-body if this message is a reply
+    if (role === 'user' && replyCtx && msgEl) {
+        const body = msgEl.querySelector('.msg-body');
+        if (body) {
+            const replyDiv = document.createElement('div');
+            replyDiv.className = 'msg-reply-preview';
+            replyDiv.innerHTML = `<strong>${escHtml(replyCtx.name)}</strong>${escHtml(replyCtx.preview.slice(0, 80))}`;
+            replyDiv.title = 'Jump to original message';
+            replyDiv.onclick = () => {
+                const target = document.getElementById(replyCtx.id);
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    target.style.outline = '2px solid var(--accent)';
+                    target.style.outlineOffset = '2px';
+                    setTimeout(() => { target.style.outline = ''; target.style.outlineOffset = ''; }, 1200);
+                }
+            };
+            const content = body.querySelector('.msg-content');
+            if (content) body.insertBefore(replyDiv, content);
+        }
+    }
+
+    // Add reply + bookmark buttons to assistant action bar
+    if (!isThinking && role === 'assistant') {
+        const actions = msgEl.querySelector('.msg-actions');
+        if (actions) {
+            // Insert Reply button at start
+            const replyBtn = document.createElement('button');
+            replyBtn.className = 'msg-action-btn';
+            replyBtn.title = 'Reply';
+            replyBtn.innerHTML = '&#8617;';
+            replyBtn.onclick = function() { replyToMsg(this); };
+            actions.insertBefore(replyBtn, actions.firstChild);
+
+            // Insert Bookmark button after star
+            const bookmarkBtn = document.createElement('button');
+            bookmarkBtn.className = 'msg-action-btn';
+            bookmarkBtn.title = 'Bookmark';
+            bookmarkBtn.innerHTML = '&#128279;';
+            bookmarkBtn.onclick = function() { bookmarkMsg(this); };
+            actions.appendChild(bookmarkBtn);
+        }
+    }
+
+    // Hide the reply indicator after user sends
+    if (role === 'user') cancelReply();
+
+    return id;
+}
+
+
+// ══════════════════════════════════════════════════════════════
+// FEATURE: Code Block Execution Preview (JS inline, Python note)
+// ══════════════════════════════════════════════════════════════
+
+// Patch renderMarkdown to add Run button for JS and Python code blocks
+const _origRenderMarkdown = renderMarkdown;
+function renderMarkdown(text) {
+    let html = _origRenderMarkdown(text);
+    // Add run button to code block headers for js/javascript and python
+    html = html.replace(
+        /(<div class="code-block-hdr">)(<span class="code-lang-tag">(javascript|js|python|py)<\/span>)(.*?)(<button class="code-copy-btn")/g,
+        (match, hdrOpen, langSpan, lang, middle, copyBtn) => {
+            const isJS = lang === 'javascript' || lang === 'js';
+            const isPy = lang === 'python' || lang === 'py';
+            const runHtml = `<button class="code-run-btn" onclick="_runCodeBlock(this,'${isJS ? 'js' : 'py'}')">&#9654; Run</button>`;
+            return `${hdrOpen}${langSpan}${runHtml}${middle}${copyBtn}`;
+        }
+    );
+    return html;
+}
+
+function _runCodeBlock(btn, lang) {
+    const wrap = btn.closest('.code-block-wrap');
+    if (!wrap) return;
+    const codeEl = wrap.querySelector('pre code');
+    if (!codeEl) return;
+
+    // Find code from buffer via copy button's key
+    const copyBtn = wrap.querySelector('.code-copy-btn');
+    const key = copyBtn?.dataset?.key;
+    const code = (key && _codeBuf[key]) ? _codeBuf[key] : codeEl.textContent;
+
+    // Remove previous output
+    const prev = wrap.querySelector('.code-exec-output');
+    if (prev) prev.remove();
+
+    const out = document.createElement('div');
+    out.className = 'code-exec-output';
+
+    if (lang === 'js') {
+        // Capture console.log output
+        const logs = [];
+        const origLog = console.log;
+        const origError = console.error;
+        console.log = (...args) => { logs.push(args.map(String).join(' ')); origLog.apply(console, args); };
+        console.error = (...args) => { logs.push('[error] ' + args.map(String).join(' ')); origError.apply(console, args); };
+        try {
+            // eslint-disable-next-line no-new-func
+            const result = new Function(code)();
+            console.log = origLog;
+            console.error = origError;
+            const output = logs.length ? logs.join('\n') : (result !== undefined ? String(result) : '(no output)');
+            out.innerHTML = `<span class="exec-ok">&#10003; ${escHtml(output)}</span>`;
+        } catch (e) {
+            console.log = origLog;
+            console.error = origError;
+            out.innerHTML = `<span class="exec-error">&#9888; ${escHtml(e.message)}</span>`;
+        }
+        wrap.appendChild(out);
+    } else {
+        // Python — show a helpful note (Pyodide integration point)
+        out.innerHTML = `<span style="color:var(--text-muted)">Python execution requires a backend sandbox. Use the <strong>/sandbox</strong> panel or copy this code to run locally.</span>`;
+        wrap.appendChild(out);
+    }
+
+    btn.textContent = 'Ran';
+    setTimeout(() => { btn.innerHTML = '&#9654; Run'; }, 3000);
+}
+
+
+// ══════════════════════════════════════════════════════════════
+// FEATURE: Drag & Drop File Upload
+// ══════════════════════════════════════════════════════════════
+function _initDragDrop() {
+    const chatMain = document.querySelector('.chat-main');
+    const dropZone = document.getElementById('chat-drop-zone');
+    if (!chatMain || !dropZone) return;
+
+    let _dragCounter = 0;
+
+    chatMain.addEventListener('dragenter', e => {
+        e.preventDefault();
+        _dragCounter++;
+        dropZone.classList.add('active');
+    });
+    chatMain.addEventListener('dragleave', e => {
+        e.preventDefault();
+        _dragCounter--;
+        if (_dragCounter <= 0) { _dragCounter = 0; dropZone.classList.remove('active'); }
+    });
+    chatMain.addEventListener('dragover', e => {
+        e.preventDefault();
+        e.dataTransfer.dropEffect = 'copy';
+    });
+    chatMain.addEventListener('drop', e => {
+        e.preventDefault();
+        _dragCounter = 0;
+        dropZone.classList.remove('active');
+        const file = e.dataTransfer.files?.[0];
+        if (!file) return;
+        if (file.size > 10 * 1024 * 1024) {
+            pushActivity('File too large', 'Max 10MB allowed', 'error');
+            return;
+        }
+        // Reuse existing file handling
+        pendingFile = file;
+        const preview = document.getElementById('file-preview');
+        if (preview) {
+            document.getElementById('file-name').textContent = file.name;
+            const sizeKB = (file.size / 1024).toFixed(1);
+            const sizeStr = file.size > 1024 * 1024
+                ? (file.size / 1024 / 1024).toFixed(1) + ' MB'
+                : sizeKB + ' KB';
+            document.getElementById('file-size').textContent = sizeStr;
+            preview.style.display = 'block';
+        }
+        pushActivity('File attached', file.name, 'system');
+        document.getElementById('chat-input')?.focus();
+    });
+
+    // Also support dropping onto the whole window to handle global drags
+    document.addEventListener('dragover', e => e.preventDefault());
+}
+
+
+// ══════════════════════════════════════════════════════════════
+// FEATURE: Keyboard Shortcuts Panel
+// ══════════════════════════════════════════════════════════════
+function openShortcutsPanel() {
+    const overlay = document.getElementById('shortcuts-overlay');
+    if (overlay) overlay.classList.add('open');
+}
+
+function closeShortcutsPanel() {
+    const overlay = document.getElementById('shortcuts-overlay');
+    if (overlay) overlay.classList.remove('open');
+}
+
+
+// ══════════════════════════════════════════════════════════════
+// FEATURE: Conversation Bookmarking
+// ══════════════════════════════════════════════════════════════
+let _bookmarkedSessions = new Set();
+
+function _loadBookmarks() {
+    try {
+        const stored = JSON.parse(localStorage.getItem('root-bookmarked-sessions') || '[]');
+        _bookmarkedSessions = new Set(stored);
+    } catch { _bookmarkedSessions = new Set(); }
+}
+
+function _saveBookmarks() {
+    try {
+        localStorage.setItem('root-bookmarked-sessions', JSON.stringify([..._bookmarkedSessions]));
+    } catch {}
+}
+
+function toggleConvBookmark(sessionId, btn, title) {
+    if (_bookmarkedSessions.has(sessionId)) {
+        _bookmarkedSessions.delete(sessionId);
+        if (btn) { btn.classList.remove('bookmarked'); btn.title = 'Bookmark'; btn.innerHTML = '&#9734;'; }
+    } else {
+        _bookmarkedSessions.add(sessionId);
+        if (btn) { btn.classList.add('bookmarked'); btn.title = 'Remove bookmark'; btn.innerHTML = '&#9733;'; }
+        pushActivity('Conversation bookmarked', title || sessionId, 'memory');
+    }
+    _saveBookmarks();
+    _renderBookmarksSidebar();
+}
+
+function _renderBookmarksSidebar() {
+    const container = document.getElementById('sidebar-bookmarks');
+    const section = document.getElementById('bookmarks-section');
+    if (!container || !section) return;
+
+    if (_bookmarkedSessions.size === 0) {
+        section.style.display = 'none';
+        return;
+    }
+    section.style.display = '';
+
+    // Get session titles from existing conv-items
+    const titleMap = {};
+    document.querySelectorAll('.conv-item[data-session-id]').forEach(el => {
+        const sid = el.dataset.sessionId;
+        const title = el.querySelector('.conv-item-title')?.textContent || sid;
+        if (sid) titleMap[sid] = title;
+    });
+
+    container.innerHTML = [..._bookmarkedSessions].map(sid => {
+        const title = titleMap[sid] || `Session ${sid.slice(-6)}`;
+        return `<div class="conv-item" data-session-id="${escHtml(sid)}" onclick="loadSessionMessages('${escHtml(sid)}', this)" style="padding:6px 10px">
+            <div class="conv-item-main">
+                <div class="conv-item-title" style="font-size:12px">&#9733; ${escHtml(title.slice(0, 40))}${title.length > 40 ? '\u2026' : ''}</div>
+            </div>
+        </div>`;
+    }).join('');
+}
+
+// Patch loadConversationSessions to add bookmark buttons
+const _origLoadConvSessions = loadConversationSessions;
+async function loadConversationSessions() {
+    await _origLoadConvSessions();
+    _loadBookmarks();
+    // Add bookmark buttons to each conv-item
+    const container = document.getElementById('sidebar-conversations');
+    if (!container) return;
+    container.querySelectorAll('.conv-item').forEach((item, i) => {
+        // Inject session ID from onclick attribute (parse it out)
+        const onclickStr = item.getAttribute('onclick') || '';
+        const match = onclickStr.match(/loadSessionMessages\('([^']+)'/);
+        if (!match) return;
+        const sessionId = match[1];
+        item.dataset.sessionId = sessionId;
+
+        // Wrap existing content in .conv-item-main if not already done
+        if (!item.querySelector('.conv-item-main')) {
+            const children = [...item.childNodes];
+            const main = document.createElement('div');
+            main.className = 'conv-item-main';
+            children.forEach(c => main.appendChild(c));
+            item.appendChild(main);
+        }
+
+        if (!item.querySelector('.conv-item-actions')) {
+            const actions = document.createElement('div');
+            actions.className = 'conv-item-actions';
+            const isBookmarked = _bookmarkedSessions.has(sessionId);
+            const title = item.querySelector('.conv-item-title')?.textContent || '';
+            actions.innerHTML = `<button class="conv-item-action-btn ${isBookmarked ? 'bookmarked' : ''}"
+                onclick="event.stopPropagation();toggleConvBookmark('${escHtml(sessionId)}',this,'${escHtml(title)}')"
+                title="${isBookmarked ? 'Remove bookmark' : 'Bookmark'}">${isBookmarked ? '&#9733;' : '&#9734;'}</button>`;
+            item.appendChild(actions);
+        }
+    });
+    _renderBookmarksSidebar();
+}
+
+
+// ══════════════════════════════════════════════════════════════
 // ── Init ────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
     try {
@@ -1959,6 +2500,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const ms = document.getElementById('memory-search');
     if (ms) ms.addEventListener('keydown', e => { if (e.key === 'Enter') searchMemories(); });
+
+    // Message search input: Enter = next, Shift+Enter = prev, Escape = close
+    const msgSearchInp = document.getElementById('msg-search-input');
+    if (msgSearchInp) {
+        msgSearchInp.addEventListener('keydown', e => {
+            if (e.key === 'Enter') { e.preventDefault(); msgSearchNav(e.shiftKey ? -1 : 1); }
+            if (e.key === 'Escape') { e.preventDefault(); closeMsgSearch(); }
+        });
+    }
 
     document.querySelectorAll('.nav-item[data-panel]').forEach(el => {
         el.addEventListener('click', () => {
@@ -2023,4 +2573,11 @@ document.addEventListener('DOMContentLoaded', () => {
     }, 30000);
 
     switchPanel('chat');
+
+    // Initialize drag & drop
+    _initDragDrop();
+
+    // Load bookmarks
+    _loadBookmarks();
+    _renderBookmarksSidebar();
 });
