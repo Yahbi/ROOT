@@ -521,7 +521,8 @@ CORE_KNOWLEDGE.extend(_load_json_corpus(_KNOWLEDGE_DIR))
 def bootstrap_memory(memory: MemoryEngine) -> int:
     """Seed the memory database with all AI folder knowledge. Returns count of new entries."""
     existing = memory.count()
-    if existing >= len(CORE_KNOWLEDGE):
+    # Allow small tolerance for dedup filtering a few near-duplicate entries
+    if existing >= len(CORE_KNOWLEDGE) - 10:
         logger.info("Memory already bootstrapped (%d entries), skipping", existing)
         return 0
 
