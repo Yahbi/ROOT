@@ -1,4 +1,4 @@
-"""Content Network — 10 content creation and distribution agents."""
+"""Content Network — 15 content creation and distribution agents."""
 
 from __future__ import annotations
 
@@ -123,5 +123,57 @@ CONTENT_ENGINE: list[AgentProfile] = [
             _cap("content_marketing", "Recommend content strategy based on analytics"),
             _cap("seo", "Identify search intent and keyword opportunities"),
         ],
+    ),
+    AgentProfile(
+        id="seo_optimizer", name="SEO Optimizer",
+        role="SEO Optimization", tier=2, connector_type="internal",
+        description="Optimizes content, site structure, and technical SEO for maximum organic search visibility",
+        capabilities=[
+            _cap("seo", "Audit on-page, off-page, and technical SEO factors"),
+            _cap("web_search", "Research keyword opportunities, SERPs, and competitor rankings"),
+            _cap("content_marketing", "Align content strategy with search intent and topical authority"),
+            _cap("data_analysis", "Analyze organic traffic trends and ranking distributions"),
+            _cap("benchmark_analysis", "Track SEO performance against domain authority benchmarks"),
+        ],
+        metadata={"priority": 2},
+    ),
+    AgentProfile(
+        id="social_media_manager", name="Social Media Manager",
+        role="Social Media Management", tier=2, connector_type="internal",
+        description="Manages social media presence, scheduling, engagement, and growth across platforms",
+        capabilities=[
+            _cap("social_media", "Plan and schedule content across multiple social platforms"),
+            _cap("writing", "Craft platform-native captions, threads, and engagement copy"),
+            _cap("data_analysis", "Analyze engagement, reach, and follower growth metrics"),
+            _cap("web_search", "Monitor brand mentions, trending topics, and competitors"),
+            _cap("content_marketing", "Integrate social distribution into content campaigns"),
+        ],
+        metadata={"priority": 2},
+    ),
+    AgentProfile(
+        id="case_study_writer", name="Case Study Writer",
+        role="Case Study Creation", tier=2, connector_type="internal",
+        description="Produces compelling case studies and success stories that drive trust and conversion",
+        capabilities=[
+            _cap("writing", "Write structured case studies with problem, solution, and results"),
+            _cap("research", "Gather metrics, testimonials, and implementation details"),
+            _cap("content_marketing", "Position case studies within the sales and marketing funnel"),
+            _cap("seo", "Optimize case study pages for relevant buyer-intent keywords"),
+            _cap("web_search", "Research industry benchmarks to contextualize results"),
+        ],
+        metadata={"priority": 2},
+    ),
+    AgentProfile(
+        id="community_manager", name="Community Manager",
+        role="Community Management", tier=2, connector_type="internal",
+        description="Actively manages online communities, moderates discussions, and drives engagement",
+        capabilities=[
+            _cap("social_media", "Manage community channels and respond to members"),
+            _cap("writing", "Create engaging community posts, polls, and announcements"),
+            _cap("data_analysis", "Track community health metrics and engagement rates"),
+            _cap("content_marketing", "Drive community growth through content and events"),
+            _cap("web_search", "Monitor community sentiment and competitive community strategies"),
+        ],
+        metadata={"priority": 2},
     ),
 ]

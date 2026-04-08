@@ -1,4 +1,4 @@
-"""Automation Business — 10 workflow and process automation agents."""
+"""Automation Business — 15 workflow and process automation agents."""
 
 from __future__ import annotations
 
@@ -121,5 +121,70 @@ AUTOMATION_ENGINE: list[AgentProfile] = [
             _cap("writing", "Write proposals, SOWs, and case studies"),
             _cap("data_analysis", "Build ROI projections for prospects"),
         ],
+    ),
+    AgentProfile(
+        id="webhook_manager", name="Webhook Manager",
+        role="Webhook Management", tier=2, connector_type="internal",
+        description="Manages webhook registrations, delivery, retries, and event routing across systems",
+        capabilities=[
+            _cap("automation", "Register, configure, and decommission webhooks across platforms"),
+            _cap("workflow_design", "Design event-driven automation flows triggered by webhooks"),
+            _cap("monitoring", "Track webhook delivery rates, failures, and retry queues"),
+            _cap("debugging", "Diagnose webhook signature failures and delivery errors"),
+            _cap("scripting", "Write webhook handler endpoints and validation logic"),
+        ],
+        metadata={"priority": 2},
+    ),
+    AgentProfile(
+        id="queue_monitor", name="Queue Monitor",
+        role="Queue Monitoring", tier=2, connector_type="internal",
+        description="Monitors message queues for depth, throughput, and consumer lag to prevent backlogs",
+        capabilities=[
+            _cap("monitoring", "Track queue depth, message age, and consumer lag metrics"),
+            _cap("automation", "Trigger auto-scaling of consumers based on queue backpressure"),
+            _cap("health_monitoring", "Alert on stuck queues, dead-letter accumulation, and DLQ growth"),
+            _cap("data_analysis", "Analyze queue throughput trends and capacity requirements"),
+            _cap("debugging", "Investigate poison messages and consumer failure patterns"),
+        ],
+        metadata={"priority": 2},
+    ),
+    AgentProfile(
+        id="cron_scheduler", name="Cron Scheduler",
+        role="Job Scheduling", tier=2, connector_type="internal",
+        description="Manages scheduled jobs, cron tasks, and time-based automation with drift detection",
+        capabilities=[
+            _cap("automation", "Create, update, and manage cron job schedules"),
+            _cap("monitoring", "Track job execution, duration, and completion status"),
+            _cap("health_monitoring", "Alert on missed schedules, long-running, and failed jobs"),
+            _cap("scripting", "Generate cron expression syntax and scheduling configurations"),
+            _cap("optimization", "Distribute job timing to reduce resource contention"),
+        ],
+        metadata={"priority": 2},
+    ),
+    AgentProfile(
+        id="rate_limiter", name="Rate Limiter",
+        role="Rate Limiting", tier=2, connector_type="internal",
+        description="Designs and enforces rate limiting policies to protect APIs and services from abuse",
+        capabilities=[
+            _cap("architecture", "Design token bucket, leaky bucket, and sliding window limiters"),
+            _cap("backend_dev", "Implement rate limiting middleware and API gateway rules"),
+            _cap("monitoring", "Track throttle events, limit breaches, and request patterns"),
+            _cap("optimization", "Tune rate limits to balance protection with legitimate usage"),
+            _cap("data_analysis", "Analyze traffic patterns to identify abuse and set limits"),
+        ],
+        metadata={"priority": 2},
+    ),
+    AgentProfile(
+        id="health_checker", name="Health Checker",
+        role="Health Checking", tier=2, connector_type="internal",
+        description="Implements and monitors health check endpoints across services for readiness and liveness",
+        capabilities=[
+            _cap("health_monitoring", "Define and monitor service health check endpoints"),
+            _cap("automation", "Automate health probe scheduling and result aggregation"),
+            _cap("monitoring", "Track health check pass rates and response times"),
+            _cap("debugging", "Investigate health check failures and degraded components"),
+            _cap("infrastructure", "Integrate health checks with load balancers and orchestrators"),
+        ],
+        metadata={"priority": 2},
     ),
 ]

@@ -9,6 +9,15 @@ Maintains a persistent priority queue of goals derived from:
 
 Breaks goals into actionable tasks, tracks progress across sessions,
 and learns which goals matter most.
+
+Enhanced features (v1.1):
+- Dependency tracking: goals can depend on other goals
+- Progress estimation: velocity-based completion date prediction
+- Priority scoring: importance × urgency matrix
+- Structured milestones: trackable sub-items with metadata
+- Conflict detection: identify goals competing for same resources
+- Suggestion engine: propose new goals based on capabilities and gaps
+- Retrospective: auto-analyse completed goals for lessons
 """
 
 from __future__ import annotations
@@ -18,7 +27,7 @@ import logging
 import sqlite3
 import uuid
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from typing import Any, Optional
 
 from backend.config import ROOT_DIR
@@ -52,6 +61,12 @@ class Goal:
     updated_at: str = field(default_factory=_now_iso)
     completed_at: Optional[str] = None
     metadata: dict[str, Any] = field(default_factory=dict)
+    # v1.1 fields
+    depends_on: tuple[str, ...] = ()       # goal IDs this goal depends on
+    importance: int = 5                    # 1–9 for priority matrix
+    urgency: int = 5                       # 1–9 for priority matrix
+    resources: tuple[str, ...] = ()        # resource tags (e.g. "llm", "capital", "time")
+    priority_score: float = 0.0            # computed importance × urgency (normalised)
 
 
 class GoalEngine:

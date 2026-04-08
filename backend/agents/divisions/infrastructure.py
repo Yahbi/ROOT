@@ -1,4 +1,4 @@
-"""Infrastructure Operations — 10 infrastructure and cloud management agents."""
+"""Infrastructure Operations — 15 infrastructure and cloud management agents."""
 
 from __future__ import annotations
 
