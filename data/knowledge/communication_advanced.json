@@ -1,0 +1,152 @@
+[
+  {
+    "content": "Active listening involves three techniques: paraphrasing (restate what you heard in your own words to confirm understanding), asking clarifying questions (probe assumptions and specifics before responding), and acknowledging emotions (name the feeling you observe, e.g., 'It sounds like this is frustrating'). Active listeners retain 40% more information than passive listeners.",
+    "type": "skill",
+    "tags": ["active_listening", "paraphrasing", "clarification"],
+    "source": "strategy_knowledge"
+  },
+  {
+    "content": "The MECE principle (Mutually Exclusive, Collectively Exhaustive) structures analysis so categories do not overlap and nothing is missed. For example, revenue drivers are MECE as: price * volume, where volume = new customers + existing customers. Non-MECE example: categorizing by 'marketing' and 'digital' (overlapping). MECE is the foundation of McKinsey-style problem solving.",
+    "type": "skill",
+    "tags": ["mece", "structured_thinking", "consulting"],
+    "source": "strategy_knowledge"
+  },
+  {
+    "content": "The pyramid principle (Barbara Minto) structures communication as: lead with the conclusion/recommendation first, then group supporting arguments into 3-5 pillars, then provide evidence under each pillar. Top-down communication respects the audience's time and allows them to drill into details only where interested. Every level answers 'why?' or 'how?' for the level above.",
+    "type": "skill",
+    "tags": ["pyramid_principle", "top_down", "structured_communication"],
+    "source": "strategy_knowledge"
+  },
+  {
+    "content": "The Socratic method uses a sequence of questions to expose hidden assumptions and guide the other person to discover insights themselves. Key question types: clarifying ('What do you mean by X?'), probing assumptions ('Why do you assume Y?'), exploring implications ('If that's true, what follows?'), and questioning the question ('Why is this the right question to ask?').",
+    "type": "skill",
+    "tags": ["socratic_method", "questioning", "assumptions"],
+    "source": "strategy_knowledge"
+  },
+  {
+    "content": "The STAR method structures behavioral stories: Situation (set the context in 1-2 sentences), Task (describe what was required of you), Action (detail the specific steps YOU took, using 'I' not 'we'), Result (quantify the outcome with metrics). STAR responses should be 90-120 seconds in interviews. Always prepare 8-10 STAR stories covering leadership, conflict, failure, and innovation.",
+    "type": "skill",
+    "tags": ["star_method", "storytelling", "interviews"],
+    "source": "strategy_knowledge"
+  },
+  {
+    "content": "Radical candor (Kim Scott) operates on two axes: care personally (build genuine relationships) and challenge directly (give honest feedback). The four quadrants are: radical candor (care + challenge), ruinous empathy (care without challenge, most common mistake), obnoxious aggression (challenge without care), and manipulative insincerity (neither care nor challenge).",
+    "type": "fact",
+    "tags": ["radical_candor", "feedback", "leadership"],
+    "source": "strategy_knowledge"
+  },
+  {
+    "content": "Nonviolent Communication (NVC, Marshall Rosenberg) has four steps: observation (describe what happened without judgment: 'When you arrived at 10:15...'), feeling (express your emotion: 'I felt anxious...'), need (identify the underlying need: 'because I need reliability...'), request (make a specific, actionable request: 'Would you be willing to text me if you'll be late?').",
+    "type": "skill",
+    "tags": ["nvc", "nonviolent_communication", "conflict"],
+    "source": "strategy_knowledge"
+  },
+  {
+    "content": "Conflict resolution (Fisher & Ury, 'Getting to Yes'): separate people from the problem (attack the issue, not the person), focus on interests not positions (ask 'why?' behind their demand), generate options for mutual gain (brainstorm before deciding), and use objective criteria (market data, precedent, expert opinion) to evaluate solutions.",
+    "type": "skill",
+    "tags": ["conflict_resolution", "negotiation", "interests"],
+    "source": "strategy_knowledge"
+  },
+  {
+    "content": "Influence without authority uses Cialdini's six principles: reciprocity (give first, others feel obligated to return), social proof (show others already doing it), commitment/consistency (get small yeses before big ask), authority (cite experts and data), liking (find genuine common ground), and scarcity (highlight limited availability or unique opportunity).",
+    "type": "skill",
+    "tags": ["influence", "persuasion", "cialdini"],
+    "source": "strategy_knowledge"
+  },
+  {
+    "content": "Executive communication formats: the 30-second elevator pitch (problem, solution, ask), the 1-page memo (situation, complication, resolution with key data), and the 5-slide deck (context, problem, solution, evidence, next steps). Executives process information top-down and want the 'so what?' immediately. Never bury the lead in details.",
+    "type": "skill",
+    "tags": ["executive_communication", "elevator_pitch", "memo"],
+    "source": "strategy_knowledge"
+  },
+  {
+    "content": "Framing effects dramatically influence decisions. Loss framing ('You'll lose $10K/month without this') is 2x more persuasive than gain framing ('You'll save $10K/month with this') due to loss aversion. Anchoring sets the reference point: presenting the premium option first makes the standard option feel like a bargain. Always frame proposals in terms of the audience's priorities.",
+    "type": "learning",
+    "tags": ["framing", "loss_aversion", "anchoring"],
+    "source": "strategy_knowledge"
+  },
+  {
+    "content": "Stakeholder communication mapping: identify each stakeholder's decision-making style (analytical wants data, driver wants results, expressive wants vision, amiable wants consensus), communication preference (email, meeting, Slack), update frequency (daily, weekly, milestone-based), and influence/interest level (high-high = manage closely, high-low = keep satisfied).",
+    "type": "skill",
+    "tags": ["stakeholder_mapping", "communication_style", "influence"],
+    "source": "strategy_knowledge"
+  },
+  {
+    "content": "Difficult conversation framework: (1) prepare your talking points and anticipate reactions, (2) open with shared purpose ('We both want the project to succeed'), (3) share your perspective using 'I' statements, (4) invite their perspective ('Help me understand your view'), (5) find common ground, (6) agree on specific next steps with timelines.",
+    "type": "skill",
+    "tags": ["difficult_conversations", "feedback", "framework"],
+    "source": "strategy_knowledge"
+  },
+  {
+    "content": "Written communication clarity rules: one idea per paragraph, topic sentence first, active voice ('The team shipped the feature' not 'The feature was shipped by the team'), concrete nouns and verbs (avoid 'leverage synergies'), shorter sentences (target 15-20 words average). The Flesch-Kincaid reading level for business writing should target grade 8-10.",
+    "type": "skill",
+    "tags": ["writing_clarity", "active_voice", "readability"],
+    "source": "strategy_knowledge"
+  },
+  {
+    "content": "Meeting facilitation: set a clear agenda with time boxes per topic, assign roles (facilitator, note-taker, timekeeper), start with the most important/contentious item (energy is highest), use 'parking lot' for off-topic items, end with explicit action items (who does what by when). The two-pizza rule: meetings with more than 6-8 people become inefficient.",
+    "type": "skill",
+    "tags": ["meeting_facilitation", "agenda", "action_items"],
+    "source": "strategy_knowledge"
+  },
+  {
+    "content": "Feedback delivery framework (SBI): Situation (describe the specific context: 'In yesterday's client call...'), Behavior (describe the observable behavior: 'you interrupted the client three times...'), Impact (describe the effect: 'which made the client visibly frustrated and we lost momentum'). SBI is factual and non-judgmental, making feedback easier to receive and act on.",
+    "type": "skill",
+    "tags": ["feedback", "sbi", "behavior"],
+    "source": "strategy_knowledge"
+  },
+  {
+    "content": "Negotiation BATNA (Best Alternative To a Negotiated Agreement) is your walkaway power. Before any negotiation, define your BATNA, reservation price (worst acceptable deal), aspiration point (ideal outcome), and ZOPA (Zone of Possible Agreement = overlap between parties' reservation prices). Never reveal your reservation price; always research the other party's BATNA.",
+    "type": "skill",
+    "tags": ["batna", "negotiation", "zopa"],
+    "source": "strategy_knowledge"
+  },
+  {
+    "content": "Cross-cultural communication: high-context cultures (Japan, China, Arab countries) communicate implicitly through context, relationships, and non-verbal cues. Low-context cultures (US, Germany, Scandinavia) communicate explicitly through direct statements. Adapting style prevents misunderstandings: be explicit with low-context colleagues, read between the lines with high-context colleagues.",
+    "type": "learning",
+    "tags": ["cross_cultural", "high_context", "low_context"],
+    "source": "strategy_knowledge"
+  },
+  {
+    "content": "Presentation storytelling arc: hook (start with a surprising fact, question, or story that creates tension), context (establish shared understanding of the current state), conflict (define the problem or opportunity creating urgency), resolution (present your solution with evidence), call to action (specify exactly what you want the audience to do next).",
+    "type": "skill",
+    "tags": ["presentation", "storytelling", "hook"],
+    "source": "strategy_knowledge"
+  },
+  {
+    "content": "Managing up requires understanding your manager's priorities, preferred communication style, and decision-making process. Send proactive status updates before being asked. Frame requests in terms of their goals ('This will help us hit the Q3 target'). Bring solutions not just problems. Disagree and commit: voice concerns clearly, then execute the decision fully.",
+    "type": "skill",
+    "tags": ["managing_up", "status_updates", "alignment"],
+    "source": "strategy_knowledge"
+  },
+  {
+    "content": "Email communication best practices: subject line should summarize the action needed ('Decision needed: Q3 budget allocation by Friday'), lead with the ask or key takeaway, use bullet points for multiple items, bold critical information, keep to 5 sentences when possible. For complex topics, use the BLUF format (Bottom Line Up Front) from military communication.",
+    "type": "skill",
+    "tags": ["email", "bluf", "professional_writing"],
+    "source": "strategy_knowledge"
+  },
+  {
+    "content": "Psychological safety (Amy Edmondson) enables teams to take risks without fear of punishment. Leaders build it by: admitting their own mistakes first, responding to failures with curiosity not blame ('What can we learn?'), explicitly inviting dissenting opinions, thanking people for raising concerns, and following through on commitments made during vulnerable moments.",
+    "type": "learning",
+    "tags": ["psychological_safety", "team_culture", "vulnerability"],
+    "source": "strategy_knowledge"
+  },
+  {
+    "content": "Persuasive data presentation: lead with the 'so what?' insight, not raw data. Use comparison (this vs that), change over time (trend), or composition (parts of whole) to tell a story. Limit charts to one key message each. Use the assertion-evidence framework: chart title states the conclusion ('Revenue grew 40% YoY') not the topic ('Revenue over time').",
+    "type": "skill",
+    "tags": ["data_presentation", "visualization", "persuasion"],
+    "source": "strategy_knowledge"
+  },
+  {
+    "content": "Decision communication framework for announcing decisions: state the decision clearly upfront, explain the reasoning and alternatives considered, acknowledge tradeoffs and who is affected, describe the implementation plan and timeline, and invite questions. For unpopular decisions, address concerns directly rather than ignoring them. Transparency builds trust even when the decision is disagreeable.",
+    "type": "skill",
+    "tags": ["decision_communication", "transparency", "trust"],
+    "source": "strategy_knowledge"
+  },
+  {
+    "content": "Active reading for comprehension: SQ3R method (Survey the headings, Question what you'll learn, Read actively, Recite key points from memory, Review). For technical documents, take notes in your own words (encoding effect), draw diagrams of relationships, and teach the concept to someone else (Feynman technique). Active reading retains 50-70% vs 10-20% for passive reading.",
+    "type": "skill",
+    "tags": ["active_reading", "sq3r", "feynman_technique"],
+    "source": "strategy_knowledge"
+  }
+]

@@ -1,0 +1,152 @@
+[
+  {
+    "content": "The bid-ask spread represents the cost of immediacy — the difference between the highest price a buyer will pay (bid) and the lowest price a seller will accept (ask). Tighter spreads indicate more liquid markets. S&P 500 stocks typically have spreads of $0.01-$0.03, while small-cap stocks may have spreads of $0.05-$0.50. The spread compensates market makers for inventory risk and adverse selection.",
+    "type": "fact",
+    "tags": ["trading", "microstructure", "spread"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Order book depth measures the visible liquidity at each price level. A deep order book (large quantities at multiple price levels) indicates that large orders can be executed with minimal price impact. Depth is asymmetric — more depth on the bid side suggests buying pressure. Spoofing (placing and canceling large orders to manipulate perceived depth) is illegal under Dodd-Frank and MiFID II.",
+    "type": "fact",
+    "tags": ["trading", "microstructure", "order_book"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Market makers profit from the bid-ask spread while managing inventory risk. When they accumulate excess long or short positions, they adjust quotes: widening spreads to slow flow, or skewing quotes (lowering both bid and ask to attract sellers when long). Designated market makers (DMMs) on NYSE have obligations to maintain fair and orderly markets in exchange for informational advantages and fee rebates.",
+    "type": "fact",
+    "tags": ["trading", "microstructure", "market_maker"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Price discovery is the process by which markets determine the fair price of an asset through the continuous interaction of buy and sell orders. In continuous trading, the limit order book performs price discovery through order matching. Opening and closing auctions aggregate orders and find a single clearing price that maximizes executed volume. The most informative price discovery occurs at the open and close.",
+    "type": "fact",
+    "tags": ["trading", "microstructure", "price_discovery"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Information asymmetry causes adverse selection in financial markets: informed traders selectively trade when they know the true value differs from the market price, picking off stale quotes from market makers. The Glosten-Milgrom model shows that the spread must be wide enough to compensate market makers for losses to informed traders, paid for by profits from uninformed (noise) traders.",
+    "type": "fact",
+    "tags": ["trading", "microstructure", "adverse_selection"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Kyle's lambda measures the permanent price impact per unit of order flow, reflecting the market's estimate of information content in trades. Higher lambda means more price impact per trade (less liquid). Lambda is estimated from the regression: price_change = lambda * order_flow_imbalance + noise. Institutional traders minimize lambda exposure by using algorithms (TWAP, VWAP) that spread orders over time to disguise their intent.",
+    "type": "fact",
+    "tags": ["trading", "microstructure", "price_impact"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "The Lee-Ready algorithm classifies trades as buyer-initiated or seller-initiated by comparing the trade price to the midpoint of the prevailing bid-ask spread. Trades above the midpoint are classified as buys; below as sells. For trades at the midpoint, the tick test is used: uptick = buy, downtick = sell. Accuracy is approximately 85% for liquid stocks. This classification enables calculation of order flow imbalance and trade informativeness.",
+    "type": "skill",
+    "tags": ["trading", "microstructure", "trade_classification"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Tick size is the minimum price increment for quoting and trading. US equities use $0.01 for stocks above $1.00. Smaller tick sizes allow tighter spreads and more precise pricing but may reduce displayed depth (less incentive to post limit orders since the price priority advantage is smaller). The SEC's Tick Size Pilot Program (2016-2018) tested wider $0.05 ticks for small-cap stocks to incentivize market making.",
+    "type": "fact",
+    "tags": ["trading", "microstructure", "tick_size"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Circuit breakers halt trading during extreme volatility. LULD (Limit Up-Limit Down) sets price bands around a reference price (typically 5-20% depending on tier) that update every 30 seconds. Trades cannot execute outside these bands. Market-wide circuit breakers (MWCB) trigger at S&P 500 declines of 7% (Level 1, 15-min halt), 13% (Level 2, 15-min halt), and 20% (Level 3, market closes for the day).",
+    "type": "fact",
+    "tags": ["trading", "microstructure", "circuit_breaker"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Market fragmentation splits trading across multiple venues: lit exchanges (NYSE, Nasdaq, CBOE — 13 US equity exchanges), dark pools (no pre-trade transparency, ~15% of volume), and ATS (Alternative Trading Systems). Regulation NMS requires best execution across all venues via the Order Protection Rule (Rule 611), which prevents trade-throughs of protected quotes. SIP (Securities Information Processor) consolidates quotes from all exchanges.",
+    "type": "fact",
+    "tags": ["trading", "microstructure", "fragmentation"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Payment for order flow (PFOF) is the practice where retail brokers route customer orders to wholesale market makers (Citadel Securities, Virtu Financial) who pay $0.002-$0.004 per share for the flow. Market makers profit because retail flow is uninformed (low adverse selection). Retail traders receive price improvement (execution inside the NBBO) but may not get the best possible price. PFOF is banned in the UK, Canada, and Australia.",
+    "type": "fact",
+    "tags": ["trading", "microstructure", "pfof"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "VWAP (Volume Weighted Average Price) is calculated as the cumulative sum of (price * volume) divided by cumulative volume throughout the trading day. VWAP algorithms execute orders in proportion to historical volume profiles to minimize market impact. Execution quality is measured as slippage versus VWAP. VWAP is most useful for orders that are small relative to daily volume (less than 5% of ADV).",
+    "type": "skill",
+    "tags": ["trading", "microstructure", "vwap"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "TWAP (Time Weighted Average Price) algorithms execute equal-sized slices at regular intervals over a specified period, regardless of volume patterns. TWAP is simpler than VWAP and is preferred when the trader wants to minimize timing risk or when the stock's volume profile is unpredictable. For a 100,000 share order over 2 hours in 5-minute intervals, each slice would be approximately 4,167 shares with randomization to avoid detection.",
+    "type": "skill",
+    "tags": ["trading", "microstructure", "twap"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Implementation shortfall (IS) measures the total cost of executing a trade versus the decision price (price when the portfolio manager decided to trade). IS = (execution price - decision price) * shares + opportunity cost of unexecuted shares. IS algorithms front-load execution to minimize opportunity cost (risk of adverse price movement) while balancing market impact cost. IS is the gold standard for institutional execution quality measurement.",
+    "type": "skill",
+    "tags": ["trading", "microstructure", "implementation_shortfall"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Latency arbitrage exploits speed advantages to trade ahead of slower market participants. Co-location (placing servers in exchange data centers) reduces latency to microseconds. Microwave/laser networks between exchanges (Chicago-New Jersey) reduce cross-exchange latency to 4 milliseconds versus 6ms for fiber. IEX's speed bump (350 microseconds delay) was designed to neutralize latency advantages and protect displayed quotes.",
+    "type": "fact",
+    "tags": ["trading", "microstructure", "hft", "latency"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "The maker-taker fee model pays rebates to liquidity providers (makers) and charges fees to liquidity takers. NYSE charges approximately $0.0030/share to takers and pays $0.0020/share to makers. The inverted model (used by some exchanges like EDGA) pays takers and charges makers. Fee structures influence order routing decisions and can create conflicts of interest when brokers prioritize rebates over execution quality.",
+    "type": "fact",
+    "tags": ["trading", "microstructure", "fees"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Market impact models estimate the price movement caused by executing an order. The square-root law of market impact states that impact is proportional to sigma * sqrt(V/ADV), where sigma is daily volatility, V is order size, and ADV is average daily volume. A trade of 1% of ADV in a stock with 2% daily volatility causes approximately 0.2% price impact. Impact is partly temporary (reverts) and partly permanent (information).",
+    "type": "skill",
+    "tags": ["trading", "microstructure", "market_impact"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Hidden (iceberg) orders display only a portion of the total order size, with the hidden quantity automatically refreshing as the displayed portion is filled. This reduces information leakage for large institutional orders. Detection methods include watching for repeated fills at the same price level with consistent displayed quantity. Approximately 15-25% of limit order book volume is hidden on major exchanges.",
+    "type": "fact",
+    "tags": ["trading", "microstructure", "iceberg_orders"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Order types beyond simple limit/market include: stop-loss (triggers market order at price), stop-limit (triggers limit order at price), trailing stop (follows price by fixed amount/percentage), pegged orders (track midpoint or primary quote), discretionary orders (display one price but accept fills at a better price within discretion range), and conditional orders (execute only if another condition is met). Each exchange supports different subsets.",
+    "type": "skill",
+    "tags": ["trading", "microstructure", "order_types"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Intraday volume follows a U-shaped pattern: high volume at the open (9:30-10:00 AM ~15% of daily volume), declining through midday (11:00-2:00 PM ~30%), and surging into the close (3:00-4:00 PM ~25%). The opening auction handles 3-5% of daily volume; the closing auction handles 7-10% and is growing due to passive investing. MOC (market-on-close) and LOC (limit-on-close) orders participate in the closing auction.",
+    "type": "fact",
+    "tags": ["trading", "microstructure", "intraday_patterns"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Realized volatility versus quoted spread determines whether a stock is optimally tick-constrained. When the minimum tick size ($0.01) is larger than the true economic spread, the stock is tick-constrained — the spread is artificially wide, benefiting market makers but harming traders. Approximately 25% of large-cap US stocks are tick-constrained, and sub-penny pricing proposals aim to address this inefficiency.",
+    "type": "learning",
+    "tags": ["trading", "microstructure", "tick_constraint"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Flash crashes are extreme, rapid price drops followed by quick recovery, caused by feedback loops between algorithms. The May 6, 2010 Flash Crash saw the DJIA drop 1,000 points (9%) in minutes, triggered by a large E-mini S&P 500 sell order ($4.1 billion) executed via a naive VWAP algorithm that overwhelmed liquidity. Post-crash reforms included LULD bands, clearly erroneous trade rules, and kill switches for algorithms.",
+    "type": "learning",
+    "tags": ["trading", "microstructure", "flash_crash"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Securities lending enables short selling by allowing borrowers to borrow shares from long holders (pension funds, mutual funds) for a fee. The lending fee ranges from 0.25% annually (general collateral) to 50%+ (hard-to-borrow). High lending fees signal heavy short interest. Short interest ratio (short shares / ADV) indicates how many days of trading volume it would take to cover all short positions; above 5 days is considered high.",
+    "type": "fact",
+    "tags": ["trading", "microstructure", "short_selling"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Pre-trade risk controls required by regulators include: fat-finger checks (reject orders exceeding size/price thresholds), credit limits (maximum exposure per account), position limits (maximum shares per symbol), message rate limits (maximum orders per second), and kill switches (immediately cancel all orders and halt new submissions). These controls must operate in sub-millisecond latency to avoid becoming a bottleneck for trading systems.",
+    "type": "skill",
+    "tags": ["trading", "microstructure", "risk_controls"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Consolidated tape (CT) provides a unified real-time feed of quotes and trades from all exchanges and ATS venues. In the US, SIP (Securities Information Processor) consolidates data from 13+ exchanges with latency of 200-500 microseconds. Direct exchange feeds offer lower latency (5-50 microseconds) but cost $100K+/month per exchange. The SEC's 2025 consolidated tape reforms aim to reduce SIP latency and costs.",
+    "type": "fact",
+    "tags": ["trading", "microstructure", "market_data"],
+    "source": "trading_knowledge"
+  }
+]

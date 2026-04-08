@@ -1,0 +1,152 @@
+[
+  {
+    "content": "Metaclasses control class creation by defining __new__ and __init__ on the metaclass. When Python encounters 'class Foo(metaclass=Meta)', it calls Meta.__new__(meta, name, bases, namespace) to create the class object. Common uses: auto-registering subclasses, enforcing interface contracts, injecting methods, and ORM field collection (Django models use metaclasses to gather Field instances from the class body into a _meta.fields list).",
+    "type": "fact",
+    "tags": ["metaclasses", "class_creation", "advanced_oop"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Descriptors implement __get__, __set__, and/or __delete__ to customize attribute access. Data descriptors (with __set__) take priority over instance __dict__, while non-data descriptors (only __get__) do not. Property is a data descriptor. The lookup order is: data descriptor on type → instance __dict__ → non-data descriptor on type → type __dict__ → __getattr__. This mechanism underlies @property, @classmethod, @staticmethod, and ORM fields.",
+    "type": "fact",
+    "tags": ["descriptors", "attribute_lookup", "data_model"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "__slots__ replaces the per-instance __dict__ with a fixed-size array, saving 40-60% memory per instance. A class with 5 attributes saves ~100 bytes per instance: __dict__ overhead (~100 bytes) + hash table overhead eliminated. Caveats: no dynamic attributes, subclasses without __slots__ revert to __dict__, and __slots__ must be redeclared in each subclass. Ideal for millions of instances like ORM rows or data points.",
+    "type": "fact",
+    "tags": ["slots", "memory_optimization", "performance"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "asyncio's event loop runs in a single thread, multiplexing I/O-bound coroutines via cooperative scheduling. asyncio.run() creates a loop, runs the main coroutine, and shuts down. await suspends the current coroutine, returning control to the loop which can run other ready tasks. asyncio.gather(*coros) runs coroutines concurrently, asyncio.create_task(coro) schedules without awaiting. The loop uses epoll (Linux) or kqueue (macOS) for efficient I/O notification.",
+    "type": "fact",
+    "tags": ["asyncio", "event_loop", "cooperative_scheduling"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "contextvars.ContextVar provides task-local storage for asyncio, solving the problem that threading.local is shared across all coroutines in the same thread. Each asyncio.Task copies the current Context at creation. Usage: var = ContextVar('name', default=None); token = var.set(value); var.get(). Essential for request-scoped data (user ID, trace ID, DB session) in async web frameworks like FastAPI and Starlette.",
+    "type": "skill",
+    "tags": ["contextvars", "async_context", "task_local_storage"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "weakref.WeakValueDictionary stores values without preventing garbage collection, ideal for caches where cached objects should be collected when no other references exist. weakref.finalize(obj, callback) registers a cleanup function called when obj is garbage collected. weakref.ref(obj) creates a weak reference; calling it returns the object or None if collected. Cannot weakref to int, str, tuple, or None due to CPython interning.",
+    "type": "skill",
+    "tags": ["weakref", "caching", "garbage_collection"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "__init_subclass__(cls, **kwargs) is a hook called on the parent class when a subclass is defined, replacing common metaclass patterns. Example: class Plugin: def __init_subclass__(cls, **kwargs): super().__init_subclass__(**kwargs); registry.append(cls). This automatically registers every Plugin subclass without decorators or metaclasses. The kwargs receive keyword arguments from the class statement: class MyPlugin(Plugin, version=2).",
+    "type": "skill",
+    "tags": ["init_subclass", "registration", "class_hooks"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "dataclass field factories handle mutable defaults safely: @dataclass class Config: items: list[str] = field(default_factory=list); metadata: dict = field(default_factory=lambda: {'version': 1}). Without field(default_factory=...), mutable defaults are shared across instances. field() also supports init=False (exclude from __init__), repr=False (exclude from __repr__), compare=False (exclude from __eq__), and hash=None.",
+    "type": "skill",
+    "tags": ["dataclass", "field_factories", "mutable_defaults"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "typing.Protocol enables structural typing (duck typing with type checking). A class satisfies a Protocol without inheriting from it, as long as it implements the required methods. Example: class Readable(Protocol): def read(self, n: int) -> bytes: ... — any class with a read(int)->bytes method is a Readable. Runtime checking via isinstance() requires @runtime_checkable decorator. Protocols enable clean dependency inversion without ABC inheritance.",
+    "type": "fact",
+    "tags": ["protocol", "structural_typing", "type_checking"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "functools.lru_cache(maxsize=128) memoizes function results in a dict keyed by arguments. Arguments must be hashable. For async functions, wrap with a custom async-aware cache or use aiocache. functools.singledispatch creates a generic function dispatching on the first argument's type. functools.partial(func, *args, **kwargs) freezes some arguments, useful for callbacks. functools.reduce(func, iterable, initial) applies a two-argument function cumulatively.",
+    "type": "skill",
+    "tags": ["functools", "lru_cache", "singledispatch"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "itertools recipes for high-performance iteration: itertools.islice(iter, n) takes first n items without list conversion. itertools.chain.from_iterable(iterables) flattens nested iterables lazily. itertools.groupby(sorted_data, key) groups consecutive elements. itertools.product(*iterables) computes Cartesian product. itertools.combinations(iterable, r) generates r-length tuples without replacement. All return lazy iterators, consuming O(1) memory regardless of input size.",
+    "type": "skill",
+    "tags": ["itertools", "lazy_iteration", "combinatorics"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "collections.Counter is a dict subclass for counting hashable objects. Counter('mississippi') gives Counter({'s':4, 'i':4, 'p':2, 'm':1}). Operations: most_common(n), counter1 + counter2 (add counts), counter1 - counter2 (subtract, keeping positive), counter1 & counter2 (intersection, min of each). collections.deque(maxlen=N) is an O(1) double-ended queue ideal for sliding windows; appendleft/popleft are O(1) vs list's O(n).",
+    "type": "skill",
+    "tags": ["collections", "counter", "deque"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "pathlib.Path provides object-oriented filesystem operations. Key patterns: Path.home() / '.config' / 'app.toml' (slash operator joins paths), path.glob('**/*.py') (recursive pattern matching), path.read_text(encoding='utf-8') / path.write_text(data) (atomic-ish read/write), path.stem (filename without extension), path.suffix (extension), path.parent (directory), path.exists() / path.is_file() / path.is_dir(). Replaces os.path with cleaner API.",
+    "type": "skill",
+    "tags": ["pathlib", "filesystem", "path_operations"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "contextlib provides utilities for context managers. contextlib.suppress(ExceptionType) silences specific exceptions: with suppress(FileNotFoundError): os.remove(f). contextlib.closing(thing) ensures thing.close() is called. @contextlib.asynccontextmanager enables async with blocks from generator functions. contextlib.ExitStack() manages a dynamic number of context managers, useful when the number of resources to manage is determined at runtime.",
+    "type": "skill",
+    "tags": ["contextlib", "context_managers", "resource_management"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "typing.TypeVar creates generic type parameters: T = TypeVar('T') or T = TypeVar('T', bound=SomeBase). Generic[T] makes classes generic: class Cache(Generic[T]): def get(self, key: str) -> T | None. ParamSpec captures callable signatures for decorator typing: P = ParamSpec('P'); def decorator(f: Callable[P, T]) -> Callable[P, T]. Concatenate[int, P] prepends parameters: Callable[Concatenate[int, P], T] adds int as first arg.",
+    "type": "fact",
+    "tags": ["typing", "generics", "paramspec"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Python's GIL (Global Interpreter Lock) allows only one thread to execute Python bytecode at a time. This means threading provides no speedup for CPU-bound work but does help I/O-bound work (threads release GIL during I/O waits). For CPU parallelism: use multiprocessing (separate processes, each with own GIL), concurrent.futures.ProcessPoolExecutor, or C extensions that release the GIL. Python 3.13+ offers experimental free-threaded mode (no-GIL build).",
+    "type": "fact",
+    "tags": ["gil", "concurrency", "parallelism"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Python's match statement (3.10+) supports structural pattern matching: match command: case {'action': 'buy', 'amount': int(n)} matches dicts with specific structure. Guard clauses: case Point(x, y) if x > 0. OR patterns: case 'quit' | 'exit'. Star patterns: case [first, *rest]. Class patterns use __match_args__ to map positional patterns. This replaces chains of isinstance/getattr checks with declarative, readable code.",
+    "type": "skill",
+    "tags": ["pattern_matching", "match_statement", "python310"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "The __class_getitem__ method enables subscript syntax on classes: MyClass[int] calls MyClass.__class_getitem__(int). This is how list[int], dict[str, Any] work in Python 3.9+. For custom generic classes, return types.GenericAlias(cls, params). Combined with __init_subclass__, this enables powerful generic container types without full metaclass machinery.",
+    "type": "fact",
+    "tags": ["class_getitem", "generic_alias", "type_syntax"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "async generators (async def with yield) produce values asynchronously: async for item in async_gen(). asyncio.TaskGroup (3.11+) is the modern replacement for gather: async with asyncio.TaskGroup() as tg: tg.create_task(coro1()); tg.create_task(coro2()). TaskGroup cancels all tasks if any raises an exception, providing cleaner error handling than gather(return_exceptions=True).",
+    "type": "skill",
+    "tags": ["async_generators", "taskgroup", "structured_concurrency"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Python 3.12 introduced type statement for type aliases: type Vector = list[float] (replaces TypeAlias annotation). PEP 695 also added generic syntax on classes and functions: class Stack[T]: and def first[T](lst: list[T]) -> T: — no more explicit TypeVar declarations. These improve readability and bring Python closer to TypeScript/Rust-style generics.",
+    "type": "fact",
+    "tags": ["type_statement", "pep695", "python312"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "__post_init__ in dataclasses runs after __init__, enabling validation and derived fields: @dataclass class Trade: price: float; qty: int; total: float = field(init=False); def __post_init__(self): if self.price < 0: raise ValueError('negative price'); self.total = self.price * self.qty. For frozen dataclasses, use object.__setattr__(self, 'total', self.price * self.qty) to bypass immutability during init.",
+    "type": "skill",
+    "tags": ["dataclass", "post_init", "validation"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "collections.OrderedDict maintains insertion order (since Python 3.7, regular dict does too) but adds move_to_end(key, last=True/False) and popitem(last=True/False) for LRU cache implementation. defaultdict(factory) auto-creates missing keys: defaultdict(list) for grouping, defaultdict(int) for counting, defaultdict(lambda: defaultdict(int)) for nested counters.",
+    "type": "skill",
+    "tags": ["ordereddict", "defaultdict", "data_structures"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "The descriptor protocol enables computed attributes, validators, and lazy loading. A reusable validator: class Positive: def __set_name__(self, owner, name): self.name = name; def __set__(self, obj, value): if value < 0: raise ValueError(f'{self.name} must be positive'); obj.__dict__[self.name] = value; def __get__(self, obj, type): return obj.__dict__.get(self.name). __set_name__ (3.6+) automatically captures the attribute name.",
+    "type": "skill",
+    "tags": ["descriptors", "validators", "set_name"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "sys.intern(string) forces string interning for strings not automatically interned by CPython (only identifier-like strings are auto-interned). Interning makes equality checks O(1) via identity comparison (is) instead of O(n) character comparison. Useful when storing millions of repeated string values (e.g., column names, status codes). Memory savings: one copy shared vs N duplicate copies.",
+    "type": "skill",
+    "tags": ["string_interning", "memory", "performance"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "The __prepare__ metaclass method returns the namespace dict used during class body execution. Returning an OrderedDict (pre-3.7) or custom MutableMapping captures attribute definition order and enables DSL-like class bodies. Example: an Enum metaclass uses __prepare__ to return a dict that auto-assigns incrementing values to names. This is how Python's enum.Enum knows the definition order of members.",
+    "type": "fact",
+    "tags": ["metaclass", "prepare", "namespace"],
+    "source": "engineering_knowledge"
+  }
+]

@@ -1,0 +1,152 @@
+[
+  {
+    "content": "Kubernetes Pods are the smallest deployable unit, containing one or more containers sharing network namespace (localhost) and storage volumes. A Pod gets a unique IP within the cluster. Sidecar containers (logging, service mesh proxy) run alongside the main container. Pod lifecycle: Pending → Running → Succeeded/Failed. Liveness probes restart unhealthy containers; readiness probes remove them from service endpoints; startup probes delay other probes for slow-starting apps.",
+    "type": "fact",
+    "tags": ["kubernetes", "pods", "container_orchestration"],
+    "source": "devops_knowledge"
+  },
+  {
+    "content": "Kubernetes Services provide stable networking for ephemeral Pods. ClusterIP (default): internal-only virtual IP, load-balances across matching Pods via kube-proxy iptables/IPVS rules. NodePort: exposes service on each node's IP at a static port (30000-32767). LoadBalancer: provisions a cloud load balancer pointing to NodePorts. Headless service (clusterIP: None) returns individual Pod IPs for stateful workloads needing direct addressing.",
+    "type": "fact",
+    "tags": ["kubernetes", "services", "networking"],
+    "source": "devops_knowledge"
+  },
+  {
+    "content": "Deployments manage ReplicaSets which manage Pods. Rolling update strategy: maxSurge=25% (create 25% extra pods), maxUnavailable=25% (allow 25% pods down during update). This ensures at least 75% capacity throughout rollout. Rollback: kubectl rollout undo deployment/name --to-revision=N. StatefulSets differ from Deployments: they provide stable network identity (pod-0, pod-1), ordered startup/shutdown, and persistent volume claims per pod, essential for databases and distributed systems.",
+    "type": "fact",
+    "tags": ["kubernetes", "deployments", "statefulsets"],
+    "source": "devops_knowledge"
+  },
+  {
+    "content": "ConfigMaps store non-sensitive configuration as key-value pairs, injected into Pods as environment variables or mounted as files. Secrets store sensitive data (base64-encoded, NOT encrypted by default; enable encryption-at-rest via EncryptionConfiguration). Best practice: use external secret managers (Vault, AWS Secrets Manager) with operators like External Secrets Operator that sync secrets into Kubernetes. Never commit Secrets manifests to git.",
+    "type": "learning",
+    "tags": ["kubernetes", "configmaps", "secrets_management"],
+    "source": "devops_knowledge"
+  },
+  {
+    "content": "Helm charts package Kubernetes manifests into reusable, versioned templates. A chart contains templates/ (Go-templated YAML), values.yaml (defaults), Chart.yaml (metadata), and optionally charts/ (dependencies). helm install release-name chart --set image.tag=v2.0 renders templates with merged values and applies to cluster. Helm 3 removed Tiller (in-cluster component), storing release state as Secrets in the release namespace.",
+    "type": "skill",
+    "tags": ["helm", "package_management", "kubernetes_deployment"],
+    "source": "devops_knowledge"
+  },
+  {
+    "content": "Service meshes (Istio, Linkerd) inject sidecar proxies (Envoy for Istio, linkerd2-proxy for Linkerd) into every Pod to handle service-to-service communication. Features: mutual TLS (automatic encryption without app changes), traffic splitting (90/10 canary), circuit breaking, retries with budgets, observability (distributed traces, golden metrics). Istio adds ~10ms p99 latency per hop; Linkerd adds ~1-2ms. Ambient mesh (Istio) eliminates sidecars using per-node ztunnel proxies.",
+    "type": "fact",
+    "tags": ["service_mesh", "istio", "linkerd"],
+    "source": "devops_knowledge"
+  },
+  {
+    "content": "GitOps uses Git as the single source of truth for infrastructure and application state. ArgoCD watches a Git repo and continuously reconciles cluster state to match manifests. FluxCD uses a pull-based model with controllers running inside the cluster. Key principles: declarative desired state in Git, automated reconciliation, drift detection (alert when cluster diverges from Git), and auditability (every change has a git commit with author and timestamp).",
+    "type": "fact",
+    "tags": ["gitops", "argocd", "fluxcd"],
+    "source": "devops_knowledge"
+  },
+  {
+    "content": "Terraform uses HashiCorp Configuration Language (HCL) to define infrastructure declaratively. State file (terraform.tfstate) maps resource declarations to real infrastructure IDs. Remote state backends (S3+DynamoDB, Terraform Cloud) enable team collaboration with state locking. terraform plan shows changes before apply. Key patterns: modules for reusability, workspaces for environment separation, and data sources for reading existing infrastructure. State drift detection: terraform plan reveals untracked manual changes.",
+    "type": "skill",
+    "tags": ["terraform", "infrastructure_as_code", "state_management"],
+    "source": "devops_knowledge"
+  },
+  {
+    "content": "Container security best practices: run as non-root user (USER 1000 in Dockerfile), use read-only root filesystem (readOnlyRootFilesystem: true), drop all capabilities and add only needed ones (drop: ALL, add: NET_BIND_SERVICE), apply seccomp profiles (RuntimeDefault blocks ~300 dangerous syscalls), use distroless or scratch base images (no shell = no shell exploits), scan images for CVEs (Trivy, Snyk), and sign images with cosign/Notary for supply chain security.",
+    "type": "skill",
+    "tags": ["container_security", "rootless", "seccomp"],
+    "source": "devops_knowledge"
+  },
+  {
+    "content": "The RED method monitors request-driven services with three metrics: Rate (requests per second), Errors (failed requests per second), and Duration (latency distribution, especially p50/p95/p99). The USE method monitors infrastructure resources: Utilization (% of resource capacity used), Saturation (degree of queuing/backlog), and Errors (error events). RED for services, USE for resources, together cover most observability needs.",
+    "type": "fact",
+    "tags": ["red_method", "use_method", "observability"],
+    "source": "devops_knowledge"
+  },
+  {
+    "content": "SLIs (Service Level Indicators) are quantitative metrics: request latency p99, error rate, availability percentage. SLOs (Service Level Objectives) set targets: 'p99 latency < 200ms for 99.9% of requests over 30 days.' SLAs (Service Level Agreements) are contractual commitments with penalties for SLO violations. Error budgets = 1 - SLO (e.g., 99.9% availability = 0.1% = 43.2 minutes/month error budget). When error budget is exhausted, prioritize reliability over features.",
+    "type": "fact",
+    "tags": ["slo", "sli", "sla", "error_budget"],
+    "source": "devops_knowledge"
+  },
+  {
+    "content": "Chaos engineering follows principles: (1) define steady state (baseline metrics), (2) hypothesize that steady state continues during experiment, (3) introduce real-world events (server crash, network partition, latency injection, disk fill), (4) observe differences between control and experiment. Chaos Monkey randomly terminates production instances. LitmusChaos provides Kubernetes-native chaos experiments. Start in staging, mature teams run in production during business hours with automatic rollback.",
+    "type": "learning",
+    "tags": ["chaos_engineering", "resilience_testing", "chaos_monkey"],
+    "source": "devops_knowledge"
+  },
+  {
+    "content": "Canary deployments route a small percentage of traffic (1-10%) to the new version while monitoring error rates and latency. If metrics remain within SLO thresholds, traffic is gradually shifted (10% → 25% → 50% → 100%). Flagger automates canary analysis in Kubernetes using Prometheus metrics. Progressive delivery differs from blue-green (instant 100% switch) by providing gradual validation. Rollback is automatic if canary metrics breach thresholds.",
+    "type": "skill",
+    "tags": ["canary_deployment", "progressive_delivery", "traffic_splitting"],
+    "source": "devops_knowledge"
+  },
+  {
+    "content": "Prometheus scrapes /metrics endpoints at configurable intervals (default 15s), storing time-series data in a custom TSDB. PromQL queries: rate(http_requests_total[5m]) calculates per-second rate over 5-minute windows. histogram_quantile(0.99, rate(http_request_duration_seconds_bucket[5m])) computes p99 latency. Alertmanager routes alerts based on labels with grouping, inhibition, and silencing. Grafana visualizes PromQL queries in dashboards.",
+    "type": "skill",
+    "tags": ["prometheus", "promql", "monitoring"],
+    "source": "devops_knowledge"
+  },
+  {
+    "content": "Distributed tracing follows requests across services using trace context propagation (W3C Trace-Context header: traceparent). Each service creates spans with timing and metadata. OpenTelemetry provides a vendor-neutral SDK: auto-instrumentation decorates HTTP clients, frameworks, and database drivers. Jaeger/Tempo store and query traces. Key pattern: correlate trace IDs with log lines (structured logging with trace_id field) for deep debugging of latency issues.",
+    "type": "skill",
+    "tags": ["distributed_tracing", "opentelemetry", "observability"],
+    "source": "devops_knowledge"
+  },
+  {
+    "content": "Kubernetes Horizontal Pod Autoscaler (HPA) scales pods based on metrics. CPU-based: targetCPUUtilizationPercentage: 70 adds pods when average CPU exceeds 70%. Custom metrics (requests per second, queue depth) via Prometheus Adapter enable workload-aware scaling. KEDA (Kubernetes Event-Driven Autoscaling) scales to zero and from zero based on event sources (Kafka lag, SQS queue depth, cron schedules). Scale-to-zero saves 100% compute cost during idle periods.",
+    "type": "skill",
+    "tags": ["hpa", "keda", "autoscaling"],
+    "source": "devops_knowledge"
+  },
+  {
+    "content": "Kubernetes NetworkPolicies control pod-to-pod traffic. Default: all pods can communicate with all other pods (flat network). NetworkPolicy spec selects pods via labels and defines allowed ingress/egress. Example: allow only frontend pods to reach API pods on port 8080, deny all other traffic. Requires a CNI plugin that supports NetworkPolicy (Calico, Cilium). Cilium uses eBPF for high-performance L3/L4/L7 network policy enforcement without iptables overhead.",
+    "type": "skill",
+    "tags": ["network_policy", "kubernetes_security", "cilium"],
+    "source": "devops_knowledge"
+  },
+  {
+    "content": "Terraform state management pitfalls: never edit state manually (use terraform state mv/rm). Lock state during operations (DynamoDB for S3 backend). Separate state files per environment (dev/staging/prod) to limit blast radius. terraform import brings existing resources under management. terraform taint forces resource recreation. State contains sensitive values in plaintext; use encrypted backends and restrict access. Large states (>10MB) slow down plan/apply; split into smaller root modules.",
+    "type": "learning",
+    "tags": ["terraform", "state_management", "best_practices"],
+    "source": "devops_knowledge"
+  },
+  {
+    "content": "Container image layers are cached and shared. Docker builds execute each instruction as a layer; unchanged layers use cache. Optimization: copy dependency files (requirements.txt, package.json) and install before copying source code, so dependency layer is cached when only source changes. Multi-stage builds: FROM builder AS build → install + compile; FROM runtime → COPY --from=build only artifacts. Use .dockerignore to exclude .git, node_modules, __pycache__.",
+    "type": "skill",
+    "tags": ["docker", "layer_caching", "build_optimization"],
+    "source": "devops_knowledge"
+  },
+  {
+    "content": "Blue-green deployment maintains two identical production environments. Green (new version) is deployed and tested alongside Blue (current). DNS or load balancer switch redirects traffic from Blue to Green instantly. Rollback is equally instant: switch back to Blue. Downside: requires 2x infrastructure during transition. Database migrations must be backward-compatible because both versions may run simultaneously during the switch window.",
+    "type": "fact",
+    "tags": ["blue_green", "deployment_strategy", "zero_downtime"],
+    "source": "devops_knowledge"
+  },
+  {
+    "content": "Infrastructure drift occurs when actual cloud resources diverge from the declared state in code. Causes: manual console changes, out-of-band scripts, or terraform apply failures. Detection: terraform plan in CI (scheduled nightly) shows drift. Remediation: terraform apply reconciles state, or manual changes are codified. Organizational prevention: remove console write access, require all changes through IaC pipelines, and use SCPs/Organization Policies to enforce.",
+    "type": "learning",
+    "tags": ["infrastructure_drift", "detection", "prevention"],
+    "source": "devops_knowledge"
+  },
+  {
+    "content": "Pod Disruption Budgets (PDB) prevent voluntary disruptions from reducing availability below a threshold: minAvailable: 2 or maxUnavailable: 1. During node drains (kubectl drain) or cluster upgrades, the scheduler respects PDBs and will not evict pods if it would violate the budget. Critical for stateful workloads: PDB + StatefulSet + pod anti-affinity (spread across nodes/zones) ensures high availability during maintenance windows.",
+    "type": "skill",
+    "tags": ["pdb", "availability", "maintenance"],
+    "source": "devops_knowledge"
+  },
+  {
+    "content": "Cost optimization in Kubernetes: right-size resource requests/limits using VPA (Vertical Pod Autoscaler) recommendations based on historical usage. Typical over-provisioning is 3-5x. Use spot/preemptible instances for fault-tolerant workloads (60-90% discount). Karpenter auto-selects optimal instance types. Kubecost or OpenCost tracks per-namespace/per-team costs. Shared clusters with resource quotas prevent teams from over-provisioning their namespaces.",
+    "type": "learning",
+    "tags": ["cost_optimization", "resource_management", "kubernetes"],
+    "source": "devops_knowledge"
+  },
+  {
+    "content": "Log aggregation patterns: structured JSON logging (not plain text) with fields: timestamp, level, service, trace_id, message. Ship via Fluent Bit (lightweight DaemonSet on each node) to Elasticsearch/OpenSearch or Loki. Loki indexes only labels (service, namespace) not log content, making it 10-100x cheaper than Elasticsearch for log storage. Query with LogQL: {service=\"api\"} |= \"error\" | json | duration > 1s. Retain hot logs 7-14 days, archive to S3 for compliance.",
+    "type": "skill",
+    "tags": ["logging", "loki", "log_aggregation"],
+    "source": "devops_knowledge"
+  },
+  {
+    "content": "Immutable infrastructure treats servers as cattle, not pets: never patch in place, always replace with new images. Packer builds machine images with all dependencies baked in. Kubernetes inherently follows this pattern: deploy new pod image, terminate old pods. Benefits: eliminates configuration drift, ensures reproducibility, simplifies rollback (deploy previous image). CI pipeline: code change → build image → test image → deploy image → destroy old. No SSH access to production.",
+    "type": "fact",
+    "tags": ["immutable_infrastructure", "packer", "cattle_not_pets"],
+    "source": "devops_knowledge"
+  }
+]

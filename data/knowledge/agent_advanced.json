@@ -1,0 +1,152 @@
+[
+  {
+    "content": "Multi-agent debate has agents argue different positions on a problem, then a synthesizer agent resolves disagreements into a final answer. Research shows debate among 3-5 agents with 2-3 rounds improves accuracy by 10-20% on complex reasoning tasks compared to single-agent answers, at the cost of 3-5x more tokens.",
+    "type": "fact",
+    "tags": ["multi_agent_debate", "reasoning", "synthesis"],
+    "source": "ai_knowledge"
+  },
+  {
+    "content": "Agent specialization vs generalization tradeoff: specialized agents (domain-specific prompt, curated tools, fine-tuned routing) achieve 30-50% better accuracy on in-domain tasks but fail on out-of-distribution inputs. Generalist agents handle diverse tasks but with lower peak performance. The optimal strategy is specialized agents with a generalist fallback.",
+    "type": "learning",
+    "tags": ["specialization", "generalization", "agent_design"],
+    "source": "ai_knowledge"
+  },
+  {
+    "content": "Agent trust scoring tracks success rate per domain using a Bayesian approach: trust = (successes + alpha) / (total + alpha + beta) where alpha and beta are prior parameters. Decay old outcomes with exponential weighting: effective_count = sum(outcome_i * decay^(t - t_i)). Route tasks to agents with highest trust score for the matching domain.",
+    "type": "skill",
+    "tags": ["trust_scoring", "bayesian", "routing"],
+    "source": "ai_knowledge"
+  },
+  {
+    "content": "Agent capability discovery uses semantic matching between task descriptions and agent capability profiles. Embed both task and agent descriptions using a sentence transformer, compute cosine similarity, and route to the top-K matching agents. Update capability profiles based on task outcomes to improve matching over time.",
+    "type": "skill",
+    "tags": ["capability_discovery", "semantic_matching", "embedding"],
+    "source": "ai_knowledge"
+  },
+  {
+    "content": "Dynamic team formation assembles ad-hoc agent teams per task complexity. Simple tasks (complexity score < 0.3) use a single agent. Medium tasks (0.3-0.7) use a specialist + reviewer pair. Complex tasks (> 0.7) form a 3-5 agent team with roles: researcher, executor, critic, synthesizer. Complexity scoring uses task length, domain count, and required tool diversity.",
+    "type": "skill",
+    "tags": ["dynamic_teams", "task_complexity", "team_formation"],
+    "source": "ai_knowledge"
+  },
+  {
+    "content": "Agent resource budgets enforce token limits per agent per task to prevent runaway costs. Set per-agent limits (e.g., 4096 tokens input, 2048 output for Haiku; 8192/4096 for Sonnet; 16384/8192 for Opus). Track cumulative spend per task and abort with partial results if budget exhausted. Budget allocation: 60% to primary agent, 20% to reviewer, 20% reserve.",
+    "type": "skill",
+    "tags": ["resource_budgets", "token_limits", "cost_control"],
+    "source": "ai_knowledge"
+  },
+  {
+    "content": "Agent communication protocols: request-reply (synchronous, caller blocks until response, simplest but creates bottlenecks), publish-subscribe (asynchronous, agents subscribe to topics, decoupled but eventual consistency), broadcast (all agents receive message, useful for announcements/alerts but O(N) cost). Hybrid: pub-sub for events, request-reply for queries.",
+    "type": "fact",
+    "tags": ["communication_protocols", "pub_sub", "request_reply"],
+    "source": "ai_knowledge"
+  },
+  {
+    "content": "Agent state machines model lifecycle: idle (waiting for tasks) -> assigned (task received, loading context) -> working (executing, may call tools or sub-agents) -> reporting (formatting results, updating metrics) -> idle. Transitions have timeouts: assigned->working (10s), working->reporting (120s). Stuck agents are killed and tasks reassigned after timeout.",
+    "type": "skill",
+    "tags": ["state_machine", "agent_lifecycle", "timeouts"],
+    "source": "ai_knowledge"
+  },
+  {
+    "content": "Agent retry with escalation follows a cost-efficient ladder: first attempt uses cheap/fast model (Haiku, ~$0.001), retry on failure uses mid-tier model (Sonnet, ~$0.01), final attempt uses expensive/powerful model (Opus, ~$0.10), and ultimate fallback escalates to human review. Each level gets progressively more context from previous failures.",
+    "type": "skill",
+    "tags": ["retry_escalation", "model_ladder", "cost_efficiency"],
+    "source": "ai_knowledge"
+  },
+  {
+    "content": "Agent memory sharing uses a shared context pool with access control. Read-only shared context (task description, global state) is visible to all agents. Agent-private memory (intermediate reasoning, draft outputs) is isolated. Shared results are published to the pool after agent completes. Access control prevents agents from reading unrelated task contexts.",
+    "type": "skill",
+    "tags": ["memory_sharing", "context_pool", "access_control"],
+    "source": "ai_knowledge"
+  },
+  {
+    "content": "ReAct (Reasoning + Acting) agents alternate between thinking steps and tool calls. The pattern is: Thought (reason about what to do) -> Action (call a tool) -> Observation (process tool output) -> repeat until done. ReAct outperforms pure chain-of-thought on tasks requiring external information by grounding reasoning in real data.",
+    "type": "fact",
+    "tags": ["react", "reasoning_acting", "tool_use"],
+    "source": "ai_knowledge"
+  },
+  {
+    "content": "Agent orchestration patterns: sequential pipeline (agent A output feeds agent B input), parallel fanout (multiple agents process same input independently, results merged), hierarchical (manager agent delegates subtasks to worker agents), and competitive (multiple agents attempt same task, best result selected). Pipeline suits multi-step workflows; fanout suits diverse perspectives.",
+    "type": "skill",
+    "tags": ["orchestration", "pipeline", "fanout", "hierarchical"],
+    "source": "ai_knowledge"
+  },
+  {
+    "content": "Reflection agents improve output quality by generating an initial response, then critiquing it, then revising based on the critique. The self-critique step catches errors, hallucinations, and missed requirements. Two reflection rounds typically capture 80% of improvements; diminishing returns after 3 rounds. Cost is 2-3x a single generation.",
+    "type": "learning",
+    "tags": ["reflection", "self_critique", "output_quality"],
+    "source": "ai_knowledge"
+  },
+  {
+    "content": "Tool selection for agents can be static (predefined tool set per agent type) or dynamic (agent selects tools from a registry based on task). Dynamic selection uses tool descriptions embedded alongside the task; the LLM chooses which tools to call. Limit available tools to 10-15 per agent call to prevent selection confusion and reduce prompt size.",
+    "type": "skill",
+    "tags": ["tool_selection", "dynamic_tools", "agent_tools"],
+    "source": "ai_knowledge"
+  },
+  {
+    "content": "Agent evaluation metrics: task success rate (binary completion), output quality score (LLM-as-judge 1-5 scale), latency (time to first token, total time), cost efficiency (quality per dollar), tool call accuracy (correct tool selected and used), and hallucination rate (factual errors per response). Track these per agent per domain for routing optimization.",
+    "type": "skill",
+    "tags": ["evaluation_metrics", "quality_scoring", "agent_performance"],
+    "source": "ai_knowledge"
+  },
+  {
+    "content": "Planning agents decompose complex goals into subtask DAGs before execution. Methods include task decomposition prompting (break this into steps), recursive decomposition (each step may be further broken down), and LLM-generated dependency graphs. Plan validation checks for cycles, missing dependencies, and feasibility before execution begins.",
+    "type": "skill",
+    "tags": ["planning", "task_decomposition", "dag"],
+    "source": "ai_knowledge"
+  },
+  {
+    "content": "Agent guardrails prevent harmful or off-topic outputs. Input guardrails filter/transform user messages before agent processing. Output guardrails check agent responses against safety rules, PII detection, and format requirements. Structural guardrails enforce output schemas via constrained decoding or JSON mode. Multiple guardrail layers provide defense in depth.",
+    "type": "skill",
+    "tags": ["guardrails", "safety", "output_validation"],
+    "source": "ai_knowledge"
+  },
+  {
+    "content": "Multi-agent consensus (council pattern) has N agents independently answer a question, then a judge agent synthesizes the best answer. Voting-based consensus (majority wins) is simple but loses nuance. Weighted voting using agent trust scores improves quality. Full synthesis where the judge reasons over all responses produces the highest quality but costs N+1 LLM calls.",
+    "type": "skill",
+    "tags": ["consensus", "council", "voting", "synthesis"],
+    "source": "ai_knowledge"
+  },
+  {
+    "content": "Agent context window management is critical for long-running tasks. Strategies: sliding window (keep last K messages), summarization (compress older context into a summary), retrieval-augmented (store all context in vector DB, retrieve relevant chunks), and hierarchical (nested summaries at increasing compression levels). Most effective: summarize + retrieve hybrid.",
+    "type": "skill",
+    "tags": ["context_management", "summarization", "window"],
+    "source": "ai_knowledge"
+  },
+  {
+    "content": "Agent error recovery strategies: retry with same input (transient errors), retry with modified prompt (add hints from error message), fallback to different agent (capability mismatch), graceful degradation (return partial results with confidence score), and escalation to human (all automated recovery failed). Log all errors with full context for post-mortem analysis.",
+    "type": "skill",
+    "tags": ["error_recovery", "retry", "graceful_degradation"],
+    "source": "ai_knowledge"
+  },
+  {
+    "content": "Agent-to-agent delegation requires a clear contract: task description, expected output format, deadline, resource budget, and escalation path. The delegating agent should provide relevant context but not its own reasoning to avoid anchoring bias. Track delegation chains to prevent infinite loops (max depth 3-5).",
+    "type": "skill",
+    "tags": ["delegation", "contract", "chain_depth"],
+    "source": "ai_knowledge"
+  },
+  {
+    "content": "Prompt engineering for agents differs from single-turn prompts. Agent system prompts should define: role and expertise, available tools with usage guidelines, output format requirements, decision-making criteria, and examples of good tool use sequences. Persona prompts improve adherence to specialized behavior by 15-25% compared to generic instructions.",
+    "type": "learning",
+    "tags": ["prompt_engineering", "system_prompt", "persona"],
+    "source": "ai_knowledge"
+  },
+  {
+    "content": "Agent observability requires structured logging of every decision point: task received, routing decision (which agent, why), tool calls (input, output, latency), LLM calls (model, tokens, cost), intermediate reasoning, and final output. Use OpenTelemetry traces with spans for each agent invocation to visualize the full execution flow.",
+    "type": "skill",
+    "tags": ["observability", "structured_logging", "tracing"],
+    "source": "ai_knowledge"
+  },
+  {
+    "content": "Agentic RAG extends basic retrieval-augmented generation by giving agents the ability to iteratively search, evaluate relevance, refine queries, and synthesize across multiple retrievals. The agent decides when it has enough information to answer. This outperforms single-shot RAG by 20-35% on complex multi-hop questions requiring information from multiple documents.",
+    "type": "fact",
+    "tags": ["agentic_rag", "iterative_retrieval", "multi_hop"],
+    "source": "ai_knowledge"
+  },
+  {
+    "content": "Agent swarm intelligence emerges when multiple simple agents following local rules produce globally intelligent behavior. In practice, a trading swarm has independent agents scanning different signals (technical, fundamental, sentiment), each publishing findings to a shared channel. A coordinator agent aggregates signals and makes final decisions weighted by agent historical accuracy.",
+    "type": "learning",
+    "tags": ["swarm_intelligence", "emergence", "coordination"],
+    "source": "ai_knowledge"
+  }
+]

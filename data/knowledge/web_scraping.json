@@ -1,0 +1,152 @@
+[
+  {
+    "content": "Robots.txt compliance is both ethical and practical. Parse /robots.txt to check Allow/Disallow rules for your User-Agent. The Crawl-delay directive specifies minimum seconds between requests. Ignoring robots.txt risks IP bans, legal action, and reputational damage. Python's urllib.robotparser module handles parsing.",
+    "type": "learning",
+    "tags": ["robots_txt", "compliance", "ethics"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Polite rate limiting targets 1 request per second per domain as a baseline. Use exponential backoff on 429 (Too Many Requests) or 503 responses. Randomize delays between 0.5-2.0 seconds to avoid detection patterns. Respect Retry-After headers when present. For large crawls, use a per-domain request queue with configurable delays.",
+    "type": "skill",
+    "tags": ["rate_limiting", "politeness", "backoff"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Headless browser ranking in 2026: Playwright (Microsoft, 105K+ GitHub stars) is preferred for its auto-wait capabilities, multi-browser support (Chromium, Firefox, WebKit), and built-in network interception. Puppeteer (Google, Chromium-only) is lighter weight. Selenium is legacy with slower execution but widest browser compatibility.",
+    "type": "fact",
+    "tags": ["playwright", "puppeteer", "selenium", "headless"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Anti-detection techniques: rotate User-Agent strings from a pool of 50+ real browser signatures, use residential proxy pools (Bright Data, Oxylabs) instead of datacenter IPs, randomize viewport sizes and mouse movements, disable webdriver flags (navigator.webdriver = false), and add realistic timing jitter between actions.",
+    "type": "skill",
+    "tags": ["anti_detection", "proxy_rotation", "fingerprinting"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Cloudflare bypass requires matching TLS fingerprints (JA3/JA4 hash) of real browsers, solving JavaScript challenges (Turnstile CAPTCHA), and maintaining cookies across requests. Libraries like curl_cffi or tls-client spoof TLS fingerprints. For heavy protection, use real browser automation via Playwright with stealth plugins (playwright-extra, puppeteer-extra-plugin-stealth).",
+    "type": "skill",
+    "tags": ["cloudflare", "tls_fingerprint", "challenge_solving"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Data extraction methods: CSS selectors (soup.select('div.price > span')) for well-structured HTML, XPath (tree.xpath('//table[@class=\"data\"]/tr/td[2]')) for complex navigation, regex for unstructured text within elements (re.findall(r'\\$[\\d,]+\\.\\d{2}', text)). Prefer CSS selectors for readability; use XPath when you need parent/sibling traversal.",
+    "type": "skill",
+    "tags": ["css_selectors", "xpath", "regex", "extraction"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Structured data embedded in HTML provides clean extraction without parsing. JSON-LD (in <script type=\"application/ld+json\">) contains schema.org entities like Product, Article, Organization. Microdata uses itemscope/itemprop attributes. Open Graph meta tags (og:title, og:image, og:description) provide social sharing metadata useful for content scraping.",
+    "type": "skill",
+    "tags": ["json_ld", "microdata", "open_graph", "structured_data"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Pagination handling strategies: cursor-based pagination (follow 'next' link or cursor token until null, most reliable), offset-based (increment page parameter, risk of skipping/duplicating on updates), infinite scroll (intercept XHR/fetch API calls that load more content, extract the API endpoint directly for faster scraping without rendering).",
+    "type": "skill",
+    "tags": ["pagination", "cursor", "infinite_scroll"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "JavaScript rendering for SPAs: many sites load data via XHR/fetch after initial HTML load. Inspect Network tab to find the underlying API endpoint and call it directly (much faster than rendering). If rendering is required, use Playwright's page.wait_for_selector() or page.wait_for_load_state('networkidle') to ensure dynamic content has loaded.",
+    "type": "skill",
+    "tags": ["javascript_rendering", "spa", "dynamic_content"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Legal considerations for web scraping: the CFAA (Computer Fraud and Abuse Act) in the US prohibits unauthorized access but hiQ v. LinkedIn (2022) established that scraping publicly accessible data is generally legal. GDPR limits scraping personal data of EU residents. Always review Terms of Service; contractual restrictions may apply even if technical access is permitted.",
+    "type": "fact",
+    "tags": ["legal", "cfaa", "gdpr", "terms_of_service"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Firecrawl (105K+ GitHub stars in 2026) converts entire websites to clean markdown, ideal for LLM consumption. It handles JavaScript rendering, extracts main content (removes nav/footer/ads), and provides structured output. API-based with generous free tier. Best for converting web pages to RAG-ready documents.",
+    "type": "fact",
+    "tags": ["firecrawl", "web_to_markdown", "llm"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Crawl4AI (64K+ GitHub stars in 2026) is a local-first, open-source web crawler optimized for AI/LLM use cases. It runs locally without API costs, supports multi-URL concurrent crawling, handles JavaScript rendering via built-in browser, and outputs clean markdown with metadata. Best for privacy-sensitive or high-volume scraping.",
+    "type": "fact",
+    "tags": ["crawl4ai", "local_first", "open_source"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Session management for authenticated scraping: use requests.Session() to persist cookies across requests. For login-protected content, POST credentials to the login endpoint, then reuse the session. Handle CSRF tokens by extracting them from the login page before submitting. Rotate sessions across multiple accounts to avoid rate limits.",
+    "type": "skill",
+    "tags": ["session_management", "authentication", "cookies"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Proxy management architecture: maintain a pool of 100+ proxies (mix of datacenter and residential), health-check them every 5 minutes (test against target site), remove failing proxies automatically, and rotate per-request or per-session. Use proxy chains (SOCKS5 through multiple hops) for high-security targets. Geographic targeting matches proxy location to content region.",
+    "type": "skill",
+    "tags": ["proxy_management", "pool", "health_check"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Data storage for scraped content: use SQLite for small-medium projects (up to 10M records), PostgreSQL with JSONB columns for semi-structured data at scale, S3/MinIO for raw HTML/screenshot archival, and Parquet files for analytical queries. Always store raw HTML alongside extracted data to allow re-extraction when parsing logic changes.",
+    "type": "skill",
+    "tags": ["data_storage", "sqlite", "raw_html"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Error handling in scrapers must handle: HTTP errors (403 forbidden, 404 not found, 429 rate limited, 500 server error), network errors (timeout, DNS failure, connection reset), parsing errors (unexpected HTML structure, missing elements), and encoding errors (mojibake from wrong charset detection). Log failed URLs for retry and track success rate per domain.",
+    "type": "skill",
+    "tags": ["error_handling", "retry", "logging"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Scrapy is the most mature Python scraping framework with built-in request scheduling, middleware pipeline, item pipeline, auto-throttle, and distributed crawling via Scrapy-Redis. It processes thousands of pages per minute using Twisted async I/O. Best for large-scale structured data extraction. Not ideal for JavaScript-heavy sites without Splash or Playwright integration.",
+    "type": "fact",
+    "tags": ["scrapy", "framework", "distributed"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Deduplication in web scraping uses content fingerprinting: compute SimHash or MinHash of extracted text to detect near-duplicate pages. URL normalization (lowercase, remove tracking parameters, sort query params) prevents fetching the same content via different URLs. Maintain a seen-URLs set in Redis for distributed crawlers.",
+    "type": "skill",
+    "tags": ["deduplication", "simhash", "url_normalization"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "CAPTCHA solving approaches: automated CAPTCHA-solving services (2Captcha, Anti-Captcha) cost $1-3 per 1000 solves with 90%+ accuracy. Machine learning approaches using CNN models can solve simple CAPTCHAs locally. For reCAPTCHA v3, maintaining a high browser trust score through realistic browsing patterns is more effective than solving challenges.",
+    "type": "skill",
+    "tags": ["captcha", "solving", "recaptcha"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Monitoring scraper health: track pages scraped per minute, success rate (target > 95%), average response time, proxy failure rate, data quality metrics (% of fields populated, schema validation pass rate), and cost per 1000 pages. Alert on success rate drops below 90% which usually indicates site structure changes or blocking.",
+    "type": "skill",
+    "tags": ["monitoring", "health_metrics", "alerting"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Site structure change detection: hash the CSS selector paths used for extraction and compare against baseline. When extraction yields null for >10% of expected fields, trigger an alert for selector updates. Use visual regression testing (screenshot comparison) to detect layout changes. Maintain selector versioning to quickly rollback.",
+    "type": "skill",
+    "tags": ["change_detection", "selector_versioning", "maintenance"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Browser fingerprint randomization changes canvas fingerprint (inject small noise into canvas rendering), WebGL renderer string, installed plugins list, screen resolution, timezone, language preferences, and platform string. The goal is to make each scraper instance appear as a unique real user. Libraries like fingerprint-injector automate this for Playwright.",
+    "type": "skill",
+    "tags": ["fingerprint_randomization", "canvas", "stealth"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Concurrent scraping with asyncio and aiohttp handles 100+ simultaneous connections efficiently. Use asyncio.Semaphore to limit concurrency per domain (max 5-10 concurrent requests to same host). For CPU-bound parsing, use ProcessPoolExecutor alongside async I/O. This architecture achieves 10-100x throughput over sequential requests.",
+    "type": "skill",
+    "tags": ["asyncio", "aiohttp", "concurrency"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "RSS and Atom feeds provide structured, machine-readable content updates without scraping HTML. Check for feed URLs at /feed, /rss, /atom.xml, or via <link rel=\"alternate\" type=\"application/rss+xml\"> in HTML head. Feedparser library handles both formats. Feeds are rate-limit friendly and provide clean content with timestamps.",
+    "type": "skill",
+    "tags": ["rss", "atom", "feeds", "structured"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "API discovery for scraping: before building an HTML scraper, check if the site has a public API (check /api, developer docs) or if the frontend uses a REST/GraphQL API visible in browser DevTools Network tab. Scraping APIs directly is 10-100x faster, more reliable, and returns structured data. Many sites have undocumented APIs powering their SPAs.",
+    "type": "learning",
+    "tags": ["api_discovery", "devtools", "graphql"],
+    "source": "engineering_knowledge"
+  }
+]

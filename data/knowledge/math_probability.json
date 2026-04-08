@@ -1,0 +1,152 @@
+[
+  {
+    "content": "Bayes' theorem computes posterior probability: P(A|B) = P(B|A) * P(A) / P(B). In practice, P(B) = P(B|A)*P(A) + P(B|not A)*P(not A). Example: if a test is 95% accurate (sensitivity) and disease prevalence is 1%, a positive result gives P(disease|positive) = 0.95*0.01 / (0.95*0.01 + 0.05*0.99) = 16.1%, not 95%. Base rate neglect is the most common Bayesian reasoning error.",
+    "type": "fact",
+    "tags": ["bayes_theorem", "posterior", "base_rate"],
+    "source": "math_knowledge"
+  },
+  {
+    "content": "The Law of Large Numbers (LLN) states that as sample size n approaches infinity, the sample mean converges to the population mean: X_bar_n -> mu almost surely (strong LLN) or in probability (weak LLN). Convergence rate is O(1/sqrt(n)): to halve the estimation error, quadruple the sample size. This is why Monte Carlo simulation works.",
+    "type": "fact",
+    "tags": ["law_of_large_numbers", "convergence", "sample_mean"],
+    "source": "math_knowledge"
+  },
+  {
+    "content": "The Central Limit Theorem (CLT) states that the sum (or mean) of n independent identically distributed random variables approaches a Normal distribution as n increases, regardless of the original distribution. The rule of thumb is n > 30 for most distributions, but heavily skewed distributions may need n > 100. The standardized sum is Z = (X_bar - mu) / (sigma/sqrt(n)) ~ N(0,1).",
+    "type": "fact",
+    "tags": ["central_limit_theorem", "normal_distribution", "standardization"],
+    "source": "math_knowledge"
+  },
+  {
+    "content": "A Markov chain has the memoryless property: P(X_{t+1}|X_t, X_{t-1}, ..., X_0) = P(X_{t+1}|X_t). The transition matrix P has entries p_ij = P(X_{t+1}=j|X_t=i). The stationary distribution pi satisfies pi = pi*P and sum(pi) = 1. For ergodic chains (irreducible + aperiodic), the chain converges to pi regardless of initial state.",
+    "type": "skill",
+    "tags": ["markov_chain", "stationary_distribution", "transition_matrix"],
+    "source": "math_knowledge"
+  },
+  {
+    "content": "Monte Carlo integration estimates integrals by random sampling: integral of f(x) over [a,b] is approximately (b-a)/N * sum(f(x_i)) where x_i are uniform random samples. Convergence rate is O(1/sqrt(N)) regardless of dimension, making Monte Carlo superior to grid methods in high dimensions (the curse of dimensionality). Variance reduction techniques like stratified sampling can improve efficiency by 2-10x.",
+    "type": "skill",
+    "tags": ["monte_carlo", "integration", "random_sampling"],
+    "source": "math_knowledge"
+  },
+  {
+    "content": "Importance sampling reduces variance of Monte Carlo estimates by sampling from a proposal distribution q(x) instead of the target p(x). The estimate becomes E_p[f(X)] = E_q[f(X) * p(X)/q(X)]. The optimal proposal is q*(x) proportional to |f(x)|*p(x). A poor choice of q can increase variance dramatically; the proposal should have heavier tails than the target.",
+    "type": "skill",
+    "tags": ["importance_sampling", "variance_reduction", "proposal_distribution"],
+    "source": "math_knowledge"
+  },
+  {
+    "content": "Geometric Brownian Motion (GBM) models stock prices: dS = mu*S*dt + sigma*S*dW where mu is drift (expected return), sigma is volatility, and dW is a Wiener process increment (dW ~ N(0, dt)). The solution is S(t) = S(0) * exp((mu - sigma^2/2)*t + sigma*W(t)). GBM implies log-returns are normally distributed, which underestimates tail risk in practice.",
+    "type": "fact",
+    "tags": ["geometric_brownian_motion", "stock_prices", "wiener_process"],
+    "source": "math_knowledge"
+  },
+  {
+    "content": "The birthday problem: in a group of n people, the probability that at least two share a birthday is 1 - prod_{i=0}^{n-1}((365-i)/365). With 23 people, this probability exceeds 50%; with 50 people, it exceeds 97%. This has direct application to hash collision estimation: with a k-bit hash, expect a collision after approximately 2^(k/2) items (birthday attack bound).",
+    "type": "fact",
+    "tags": ["birthday_problem", "hash_collision", "birthday_attack"],
+    "source": "math_knowledge"
+  },
+  {
+    "content": "The coupon collector problem asks: how many random draws (with replacement) are needed to collect all n types? Expected draws E[T] = n * H_n where H_n = 1 + 1/2 + 1/3 + ... + 1/n is the n-th harmonic number, approximately n * ln(n) + 0.577*n. For n=100 types, expect ~518 draws. Useful for estimating coverage in random testing or sampling completeness.",
+    "type": "fact",
+    "tags": ["coupon_collector", "harmonic_number", "coverage"],
+    "source": "math_knowledge"
+  },
+  {
+    "content": "The Poisson process models events occurring independently at a constant average rate lambda per unit time. The number of events in time t follows Poisson distribution: P(k events) = (lambda*t)^k * e^(-lambda*t) / k!. Inter-arrival times are exponentially distributed with mean 1/lambda. The memoryless property means: P(T > s+t | T > s) = P(T > t). Applications: server request arrivals, trade executions, error occurrences.",
+    "type": "fact",
+    "tags": ["poisson_process", "exponential", "memoryless"],
+    "source": "math_knowledge"
+  },
+  {
+    "content": "Conditional expectation and the tower property: E[E[X|Y]] = E[X]. This allows breaking complex expectations into simpler conditional parts. The law of total variance: Var(X) = E[Var(X|Y)] + Var(E[X|Y]), decomposing total variance into within-group and between-group components. These are foundational for hierarchical models and multi-stage decision analysis.",
+    "type": "fact",
+    "tags": ["conditional_expectation", "tower_property", "total_variance"],
+    "source": "math_knowledge"
+  },
+  {
+    "content": "Maximum likelihood estimation (MLE) finds parameters theta that maximize L(theta) = prod(f(x_i|theta)) or equivalently minimize the negative log-likelihood: -sum(log f(x_i|theta)). MLE is asymptotically efficient (achieves Cramer-Rao lower bound) and consistent (converges to true parameter as n->infinity). The Fisher information I(theta) = -E[d^2 log f/d theta^2] determines the variance of the MLE: Var(theta_hat) ~ 1/(n*I(theta)).",
+    "type": "skill",
+    "tags": ["mle", "maximum_likelihood", "fisher_information"],
+    "source": "math_knowledge"
+  },
+  {
+    "content": "The chi-squared test compares observed vs expected frequencies: X^2 = sum((O_i - E_i)^2 / E_i) with df = k-1-p degrees of freedom (k categories, p estimated parameters). Reject H0 (data fits expected distribution) if X^2 > critical value. Requirements: expected count E_i >= 5 in each cell. The chi-squared distribution is the sum of k squared standard normals.",
+    "type": "skill",
+    "tags": ["chi_squared", "goodness_of_fit", "hypothesis_testing"],
+    "source": "math_knowledge"
+  },
+  {
+    "content": "The Gambler's Ruin problem: a player with initial wealth i betting $1 per round against an opponent with wealth N-i. If p <= 0.5, the probability of ruin is 1 (certain ruin). If p > 0.5, ruin probability is ((1-p)/p)^i for an infinite opponent. With equal skill (p=0.5), the probability of reaching N before 0 is i/N. This models why even slight edge advantages compound dramatically over many trades.",
+    "type": "fact",
+    "tags": ["gamblers_ruin", "random_walk", "ruin_probability"],
+    "source": "math_knowledge"
+  },
+  {
+    "content": "Jensen's inequality: for a convex function g, E[g(X)] >= g(E[X]). For concave functions, the inequality reverses. Application in finance: E[log(wealth)] <= log(E[wealth]), which is why maximizing expected log wealth (Kelly criterion) is more conservative than maximizing expected wealth. Volatility drag on geometric returns is a direct consequence: geometric mean = arithmetic mean - variance/2.",
+    "type": "fact",
+    "tags": ["jensen_inequality", "convexity", "volatility_drag"],
+    "source": "math_knowledge"
+  },
+  {
+    "content": "Markov Chain Monte Carlo (MCMC) samples from complex posterior distributions. Metropolis-Hastings: propose x' from q(x'|x), accept with probability min(1, p(x')*q(x|x') / (p(x)*q(x'|x))). Gibbs sampling: sample each variable conditionally on current values of all others. Convergence diagnostics: trace plots, R-hat < 1.01 (Gelman-Rubin), effective sample size > 400.",
+    "type": "skill",
+    "tags": ["mcmc", "metropolis_hastings", "gibbs_sampling"],
+    "source": "math_knowledge"
+  },
+  {
+    "content": "The normal distribution N(mu, sigma^2) has key properties: 68-95-99.7 rule (68% within 1 sigma, 95% within 2 sigma, 99.7% within 3 sigma). The sum of independent normals is normal: X + Y ~ N(mu_x + mu_y, sigma_x^2 + sigma_y^2). The standard normal Z ~ N(0,1) has PDF phi(z) = e^(-z^2/2) / sqrt(2*pi) and CDF Phi(z) = integral from -inf to z of phi.",
+    "type": "fact",
+    "tags": ["normal_distribution", "68_95_99_rule", "standard_normal"],
+    "source": "math_knowledge"
+  },
+  {
+    "content": "Order statistics: for n iid samples from distribution F, the k-th smallest value X_(k) has CDF F_{(k)}(x) = sum_{j=k}^{n} C(n,j) * F(x)^j * (1-F(x))^{n-j}. The minimum X_(1) has CDF 1-(1-F(x))^n and the maximum X_(n) has CDF F(x)^n. For risk management: the maximum of n daily losses grows as O(sqrt(2*ln(n))) for normal distributions.",
+    "type": "skill",
+    "tags": ["order_statistics", "extreme_value", "minimum_maximum"],
+    "source": "math_knowledge"
+  },
+  {
+    "content": "Bayesian updating iteratively refines beliefs: prior -> likelihood -> posterior -> (becomes new prior). With conjugate priors, the posterior has the same distributional form as the prior: Beta prior + Binomial likelihood -> Beta posterior, Normal prior + Normal likelihood -> Normal posterior, Gamma prior + Poisson likelihood -> Gamma posterior. This enables closed-form sequential updating.",
+    "type": "skill",
+    "tags": ["bayesian_updating", "conjugate_prior", "sequential"],
+    "source": "math_knowledge"
+  },
+  {
+    "content": "The multivariate normal distribution for d-dimensional vector X ~ N(mu, Sigma) has PDF proportional to exp(-0.5*(x-mu)^T * Sigma^{-1} * (x-mu)). Marginals are normal: X_i ~ N(mu_i, Sigma_ii). Conditionals are normal: X_1|X_2=x_2 ~ N(mu_{1|2}, Sigma_{1|2}) where mu_{1|2} = mu_1 + Sigma_12 * Sigma_22^{-1} * (x_2 - mu_2). This is the basis for Gaussian processes and Kalman filters.",
+    "type": "skill",
+    "tags": ["multivariate_normal", "conditional_distribution", "gaussian"],
+    "source": "math_knowledge"
+  },
+  {
+    "content": "Stochastic dominance orders risky outcomes: X first-order stochastically dominates Y (X FSD Y) if F_X(t) <= F_Y(t) for all t, meaning X is always at least as likely to exceed any threshold. X second-order stochastically dominates Y (X SSD Y) if integral of F_X <= integral of F_Y, meaning all risk-averse investors prefer X. FSD implies SSD but not vice versa.",
+    "type": "fact",
+    "tags": ["stochastic_dominance", "risk_ordering", "decision_theory"],
+    "source": "math_knowledge"
+  },
+  {
+    "content": "The Kelly growth rate for repeated betting is G = E[log(1 + f*R)] where f is the fraction bet and R is the random return. Maximizing G gives the Kelly fraction. For a binary bet with win probability p and payout b: f* = p - (1-p)/b = (pb - q)/b. The long-run growth rate at full Kelly is G* = p*log(1+b*f*) + q*log(1-f*), which is provably the fastest asymptotic wealth growth.",
+    "type": "skill",
+    "tags": ["kelly_growth", "log_wealth", "optimal_fraction"],
+    "source": "math_knowledge"
+  },
+  {
+    "content": "Extreme Value Theory (EVT) models the distribution of maxima or exceedances over high thresholds. The Generalized Extreme Value (GEV) distribution covers three types: Gumbel (xi=0, light tail), Frechet (xi>0, heavy tail), Weibull (xi<0, bounded tail). For financial risk: model tail losses with Generalized Pareto Distribution (GPD) above a high threshold, providing better VaR/CVaR estimates than assuming normality.",
+    "type": "skill",
+    "tags": ["extreme_value_theory", "gev", "gpd", "tail_risk"],
+    "source": "math_knowledge"
+  },
+  {
+    "content": "Information theory measures: Shannon entropy H(X) = -sum(p_i * log2(p_i)) measures uncertainty in bits. Maximum entropy for n outcomes is log2(n) (uniform distribution). KL divergence D_KL(P||Q) = sum(p_i * log(p_i/q_i)) >= 0 measures how different P is from Q (not symmetric). Mutual information I(X;Y) = H(X) - H(X|Y) measures shared information. These underlie compression, communication, and machine learning loss functions.",
+    "type": "fact",
+    "tags": ["information_theory", "entropy", "kl_divergence"],
+    "source": "math_knowledge"
+  },
+  {
+    "content": "The Binomial distribution B(n,p) counts successes in n independent trials with success probability p: P(k) = C(n,k) * p^k * (1-p)^{n-k}. Mean = np, variance = np(1-p). Normal approximation is valid when np >= 10 and n(1-p) >= 10. Poisson approximation works when n > 20 and p < 0.05: B(n,p) is approximately Poisson(np). Wilson interval is the preferred confidence interval for proportions.",
+    "type": "fact",
+    "tags": ["binomial", "normal_approximation", "poisson_approximation"],
+    "source": "math_knowledge"
+  }
+]

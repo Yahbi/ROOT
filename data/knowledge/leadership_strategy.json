@@ -1,0 +1,152 @@
+[
+  {
+    "content": "OKRs (Objectives and Key Results) structure goal-setting with 3-5 ambitious objectives, each with 3-5 measurable key results. Achievement of 70% is considered good, as OKRs should be stretch goals. Google popularized OKRs; they work best when cascaded from company to team to individual with transparent tracking.",
+    "type": "skill",
+    "tags": ["strategy", "goal_setting", "okrs"],
+    "source": "strategy_knowledge"
+  },
+  {
+    "content": "SMART goals must be Specific (what exactly), Measurable (quantified target), Achievable (realistic given resources), Relevant (aligned with broader strategy), and Time-bound (deadline specified). Example: 'Increase monthly recurring revenue from $50K to $75K by Q3 2026' is SMART; 'grow revenue' is not.",
+    "type": "skill",
+    "tags": ["strategy", "goal_setting", "smart"],
+    "source": "strategy_knowledge"
+  },
+  {
+    "content": "The Eisenhower matrix categorizes tasks into four quadrants: Q1 Urgent+Important (do immediately), Q2 Not-Urgent+Important (schedule and protect time), Q3 Urgent+Not-Important (delegate), Q4 Not-Urgent+Not-Important (eliminate). Most high-impact work lives in Q2, but most people spend their time in Q1 and Q3 reactively.",
+    "type": "skill",
+    "tags": ["strategy", "prioritization", "time_management"],
+    "source": "strategy_knowledge"
+  },
+  {
+    "content": "The OODA loop (Observe-Orient-Decide-Act) was developed by military strategist John Boyd. The key insight is that the side with the faster OODA loop wins, not the side with more resources. Orient is the critical phase where mental models, culture, and previous experience shape interpretation. Disrupting an opponent's Orient phase creates confusion.",
+    "type": "fact",
+    "tags": ["strategy", "decision_making", "ooda"],
+    "source": "strategy_knowledge"
+  },
+  {
+    "content": "A decision journal records the date, context, options considered, reasoning for the choice, expected outcome, confidence level (1-10), and actual outcome (reviewed later). After 50+ entries, patterns emerge: common biases, overconfidence in certain domains, and which decision frameworks produce the best results for you specifically.",
+    "type": "skill",
+    "tags": ["strategy", "decision_making", "learning"],
+    "source": "strategy_knowledge"
+  },
+  {
+    "content": "A pre-mortem assumes the project has already failed catastrophically, then asks team members to independently write down reasons why. This surfaces risks that optimism bias hides during normal planning. Research by Gary Klein shows pre-mortems increase the ability to identify reasons for future outcomes by 30% compared to standard risk assessment.",
+    "type": "skill",
+    "tags": ["strategy", "risk_management", "pre_mortem"],
+    "source": "strategy_knowledge"
+  },
+  {
+    "content": "Red team/blue team exercises use adversarial thinking to stress-test strategies. The red team actively tries to break, exploit, or defeat the plan while the blue team defends it. In cybersecurity, red teams simulate attackers; in strategy, they argue the competitor's best moves. The key rule: the red team must genuinely try to win, not hold back.",
+    "type": "skill",
+    "tags": ["strategy", "adversarial_thinking", "risk"],
+    "source": "strategy_knowledge"
+  },
+  {
+    "content": "Scenario planning uses a 2x2 matrix of the two most impactful and uncertain variables to create four distinct future scenarios. Each scenario gets a narrative name (e.g., 'Golden Age' vs 'Winter Storm'), and strategies are tested against all four. The goal is not to predict the future but to prepare for multiple futures and identify robust strategies that work across scenarios.",
+    "type": "skill",
+    "tags": ["strategy", "scenario_planning", "uncertainty"],
+    "source": "strategy_knowledge"
+  },
+  {
+    "content": "Systems thinking models the world as stocks (accumulations), flows (rates of change), feedback loops (reinforcing or balancing), and delays (lag between cause and effect). Reinforcing loops drive exponential growth or collapse; balancing loops create stability. Most policy failures come from ignoring delays and feedback loops, leading to overshoot and oscillation.",
+    "type": "fact",
+    "tags": ["strategy", "systems_thinking", "mental_models"],
+    "source": "strategy_knowledge"
+  },
+  {
+    "content": "First principles thinking decomposes a problem to its fundamental truths (physics, economics, human nature) and rebuilds solutions from scratch. Elon Musk used this for SpaceX: instead of accepting rocket costs, he priced raw materials (aluminum, carbon fiber, titanium) and found rockets could theoretically cost 2% of existing prices. The hard part is identifying which 'truths' are actually assumptions.",
+    "type": "skill",
+    "tags": ["strategy", "first_principles", "innovation"],
+    "source": "strategy_knowledge"
+  },
+  {
+    "content": "Inversion solves problems backwards by asking 'What would guarantee failure?' then avoiding those things. Charlie Munger's approach: instead of asking how to have a great life, ask what would make life terrible (addiction, envy, resentment, unreliability) and avoid those. Inversion often reveals obvious failure modes that forward-thinking misses.",
+    "type": "skill",
+    "tags": ["strategy", "inversion", "mental_models"],
+    "source": "strategy_knowledge"
+  },
+  {
+    "content": "Second-order effects analysis asks 'and then what?' repeatedly to trace the chain of consequences from a decision. First-order effect of raising prices: more revenue per unit. Second-order: some customers leave. Third-order: remaining customers are less price-sensitive, enabling premium positioning. Most strategic errors come from optimizing for first-order effects while ignoring second and third-order consequences.",
+    "type": "skill",
+    "tags": ["strategy", "second_order", "consequences"],
+    "source": "strategy_knowledge"
+  },
+  {
+    "content": "The Cynefin framework categorizes situations into five domains: Clear (best practice, cause-effect obvious), Complicated (good practice, requires expertise), Complex (emergent practice, probe-sense-respond), Chaotic (novel practice, act-sense-respond), and Confused (unknown domain). The biggest leadership mistake is applying Clear-domain thinking (best practices, procedures) to Complex-domain problems (markets, innovation).",
+    "type": "fact",
+    "tags": ["strategy", "decision_making", "complexity"],
+    "source": "strategy_knowledge"
+  },
+  {
+    "content": "Commander's Intent communicates the desired end state without prescribing exactly how to get there. Format: 'We will [action] in order to [purpose] so that [end state].' This empowers subordinates to adapt when conditions change, since they understand the why behind the plan. Effective leaders communicate intent clearly and trust execution flexibility.",
+    "type": "skill",
+    "tags": ["leadership", "communication", "intent"],
+    "source": "strategy_knowledge"
+  },
+  {
+    "content": "The Pareto Principle (80/20 rule) states that roughly 80% of effects come from 20% of causes. In business: 80% of revenue from 20% of customers, 80% of bugs from 20% of code, 80% of results from 20% of effort. Strategic leverage means identifying and doubling down on the vital 20% rather than spreading effort evenly.",
+    "type": "fact",
+    "tags": ["strategy", "pareto", "efficiency"],
+    "source": "strategy_knowledge"
+  },
+  {
+    "content": "Wardley Mapping plots components of a business or system along two axes: value chain (visibility to user, top to bottom) and evolution (genesis → custom-built → product → commodity, left to right). This reveals which components to build vs. buy, where competitive advantage lies, and where the market is moving. Components on the right should be outsourced; components on the left are sources of differentiation.",
+    "type": "skill",
+    "tags": ["strategy", "wardley_mapping", "competitive_advantage"],
+    "source": "strategy_knowledge"
+  },
+  {
+    "content": "The flywheel effect (from Jim Collins) describes how consistent effort in a reinforcing loop builds momentum over time. Amazon's flywheel: lower prices → more customers → more sellers → better selection → more customers → economies of scale → lower prices. Each turn makes the next easier. The strategic insight is to identify your flywheel and remove friction from each step.",
+    "type": "learning",
+    "tags": ["strategy", "flywheel", "growth"],
+    "source": "strategy_knowledge"
+  },
+  {
+    "content": "Theory of Constraints (TOC) states that every system has exactly one bottleneck that limits throughput. The five focusing steps: 1) Identify the constraint, 2) Exploit it (maximize its output), 3) Subordinate everything else to it, 4) Elevate it (invest to increase capacity), 5) Repeat (find the new constraint). Optimizing non-constraints does not improve system throughput.",
+    "type": "fact",
+    "tags": ["strategy", "constraints", "optimization"],
+    "source": "strategy_knowledge"
+  },
+  {
+    "content": "The Ansoff Matrix provides four growth strategies based on markets and products: Market Penetration (existing product, existing market — lowest risk), Market Development (existing product, new market), Product Development (new product, existing market), and Diversification (new product, new market — highest risk). Most startups should exhaust market penetration before diversifying.",
+    "type": "fact",
+    "tags": ["strategy", "growth", "ansoff"],
+    "source": "strategy_knowledge"
+  },
+  {
+    "content": "Porter's Five Forces analyze industry attractiveness: threat of new entrants (barriers to entry), bargaining power of suppliers, bargaining power of buyers, threat of substitutes, and competitive rivalry. Industries with high barriers, weak supplier/buyer power, few substitutes, and moderate rivalry are most profitable. Strategy means positioning within or reshaping these forces.",
+    "type": "fact",
+    "tags": ["strategy", "competitive_analysis", "porter"],
+    "source": "strategy_knowledge"
+  },
+  {
+    "content": "Disagree and commit is a decision-making principle where team members voice objections during deliberation but fully commit to the decision once made, even if they disagree. This avoids both false consensus (suppressing dissent) and decision paralysis (endless debate). Jeff Bezos uses this at Amazon to maintain speed while allowing authentic disagreement.",
+    "type": "learning",
+    "tags": ["leadership", "decision_making", "culture"],
+    "source": "strategy_knowledge"
+  },
+  {
+    "content": "RACI matrices clarify roles for each task or decision: Responsible (does the work), Accountable (owns the outcome, only one person), Consulted (provides input before decision), Informed (notified after decision). Without clear RACI, decisions stall because nobody knows who has authority. Every project should have a RACI defined before kickoff.",
+    "type": "skill",
+    "tags": ["leadership", "governance", "raci"],
+    "source": "strategy_knowledge"
+  },
+  {
+    "content": "Radical Candor combines caring personally with challenging directly. The four quadrants: Radical Candor (care + challenge), Obnoxious Aggression (challenge without caring), Ruinous Empathy (care without challenging), Manipulative Insincerity (neither). Most managers default to Ruinous Empathy, avoiding hard feedback to be nice, which ultimately harms the person's growth.",
+    "type": "learning",
+    "tags": ["leadership", "feedback", "management"],
+    "source": "strategy_knowledge"
+  },
+  {
+    "content": "The Bezos two-pizza team rule limits team size to what two pizzas can feed (6-10 people). Smaller teams have fewer communication channels (n*(n-1)/2), make faster decisions, and have clearer ownership. A 6-person team has 15 communication channels; a 12-person team has 66. Beyond 8 people, coordination costs often exceed the benefit of additional members.",
+    "type": "learning",
+    "tags": ["leadership", "team_size", "organization"],
+    "source": "strategy_knowledge"
+  },
+  {
+    "content": "Boyd's Law states that speed of iteration beats quality of iteration. A team that ships weekly and learns from real user feedback will outperform a team that plans for months and ships a 'perfect' product. The key insight is that learning rate, not planning quality, determines long-term success. This applies to strategy, product development, and organizational change.",
+    "type": "learning",
+    "tags": ["strategy", "iteration", "speed"],
+    "source": "strategy_knowledge"
+  }
+]

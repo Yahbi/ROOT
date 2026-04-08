@@ -1,0 +1,152 @@
+[
+  {
+    "content": "Blockchain consensus mechanisms differ in their tradeoffs: Proof of Work (PoW) is energy-intensive (Bitcoin uses ~150 TWh/year) but maximally decentralized and battle-tested since 2009. Proof of Stake (PoS) is capital-efficient (Ethereum reduced energy usage by 99.95% post-Merge) but concentrates power among large stakeholders. Delegated PoS (DPoS) achieves high throughput (1000+ TPS) but with only 21-100 validators, creating centralization risk.",
+    "type": "fact",
+    "tags": ["blockchain", "consensus", "pow", "pos"],
+    "source": "emerging_tech"
+  },
+  {
+    "content": "Smart contract design patterns for Solidity include: proxy pattern (EIP-1967 transparent proxy or UUPS for upgradeability without redeployment), reentrancy guard (mutex lock preventing recursive calls, critical after the DAO hack which lost $60M), access control (OpenZeppelin's Ownable or role-based AccessControl), checks-effects-interactions (update state before external calls), and pull payment (recipients withdraw rather than contract pushing funds to avoid gas griefing).",
+    "type": "skill",
+    "tags": ["blockchain", "smart_contracts", "solidity"],
+    "source": "emerging_tech"
+  },
+  {
+    "content": "Tokenomics design considers supply dynamics (fixed supply like Bitcoin's 21M cap vs inflationary like Ethereum's ~0.5% annual issuance), demand drivers (utility tokens require actual use cases, governance tokens grant voting power), and distribution (initial allocation to team/investors/community, vesting schedules of 1-4 years with 6-12 month cliffs). Deflationary mechanisms include token burns (Binance quarterly burns) and fee destruction (Ethereum EIP-1559 burns base fees).",
+    "type": "fact",
+    "tags": ["blockchain", "tokenomics", "design"],
+    "source": "emerging_tech"
+  },
+  {
+    "content": "DeFi composability (money legos) allows protocols to be combined programmatically. Flash loans borrow unlimited funds within a single transaction (must be repaid before the transaction ends, no collateral needed). Flash loan arbitrage: borrow from Aave → swap on Uniswap → swap on SushiSwap → repay loan + profit, all atomically. This composability creates systemic risk: a bug in one protocol can cascade through the ecosystem, as seen in the $182M Beanstalk exploit.",
+    "type": "fact",
+    "tags": ["blockchain", "defi", "composability"],
+    "source": "emerging_tech"
+  },
+  {
+    "content": "Layer 2 scaling solutions reduce fees and increase throughput while inheriting Layer 1 security. Optimistic rollups (Optimism, Arbitrum) execute transactions off-chain and assume validity unless challenged within a 7-day dispute window; they achieve 10-50x cost reduction. ZK rollups (zkSync, StarkNet) generate cryptographic validity proofs for instant finality with no challenge period, achieving 100-1000x cost reduction but with more complex computation.",
+    "type": "fact",
+    "tags": ["blockchain", "layer2", "scaling"],
+    "source": "emerging_tech"
+  },
+  {
+    "content": "Quantum computing uses qubits that exist in superposition (simultaneously 0 and 1 until measured) and can be entangled (correlated regardless of distance). Quantum gates manipulate qubits: Hadamard (creates superposition), CNOT (creates entanglement), and phase gates (rotate quantum state). Current quantum computers (IBM 1,121 qubits, Google 72 qubits) have high error rates (~0.1-1% per gate), requiring error correction that consumes 1,000+ physical qubits per logical qubit.",
+    "type": "fact",
+    "tags": ["quantum", "computing", "basics"],
+    "source": "emerging_tech"
+  },
+  {
+    "content": "Shor's algorithm factors integers in polynomial time O((log N)^3), making it exponentially faster than the best classical algorithm (general number field sieve at O(e^(1.9*(log N)^(1/3)*(log log N)^(2/3)))). This directly threatens RSA (based on integer factoring) and ECC (based on discrete logarithm). A 2048-bit RSA key would require approximately 4,000 error-corrected logical qubits (millions of physical qubits) to break. Current quantum computers are far from this capability.",
+    "type": "fact",
+    "tags": ["quantum", "shors_algorithm", "cryptography"],
+    "source": "emerging_tech"
+  },
+  {
+    "content": "NIST Post-Quantum Cryptography (PQC) standards finalized in 2024 include: CRYSTALS-Kyber (ML-KEM) for key encapsulation (lattice-based, 1.5-3x larger keys than RSA but faster), CRYSTALS-Dilithium (ML-DSA) for digital signatures (lattice-based, 2.5KB signatures), FALCON (compact lattice signatures, 666-byte signatures but harder to implement), and SPHINCS+ (hash-based signatures, conservative but large 8-50KB signatures). Organizations should begin migrating to hybrid classical+PQC schemes now.",
+    "type": "fact",
+    "tags": ["quantum", "pqc", "nist"],
+    "source": "emerging_tech"
+  },
+  {
+    "content": "The quantum advantage timeline estimates 10-15 years before quantum computers can practically break current cryptographic systems. Near-term (2025-2028): quantum advantage for specific optimization and simulation problems. Medium-term (2028-2033): fault-tolerant quantum computing with 1,000+ logical qubits. Long-term (2033-2040): cryptographically relevant quantum computers. The 'harvest now, decrypt later' threat means adversaries are collecting encrypted data today to decrypt when quantum computers mature.",
+    "type": "fact",
+    "tags": ["quantum", "timeline", "threat"],
+    "source": "emerging_tech"
+  },
+  {
+    "content": "Hybrid classical-quantum algorithms combine quantum and classical processing for near-term advantage. VQE (Variational Quantum Eigensolver) finds molecular ground state energies using a quantum circuit parameterized by classical optimization, useful for drug discovery and materials science. QAOA (Quantum Approximate Optimization Algorithm) solves combinatorial optimization problems (routing, scheduling, portfolio optimization) with provable quantum speedup for certain problem structures.",
+    "type": "fact",
+    "tags": ["quantum", "hybrid", "algorithms"],
+    "source": "emerging_tech"
+  },
+  {
+    "content": "MEV (Maximal Extractable Value) is the profit that block producers can extract by reordering, inserting, or censoring transactions. Common MEV strategies: front-running (copying a profitable trade and executing it first), sandwich attacks (buy before and sell after a large trade, extracting value from slippage), and liquidation sniping. Flashbots mitigates negative MEV by creating a private transaction pool and fair ordering. MEV extraction exceeded $600M on Ethereum in 2023.",
+    "type": "fact",
+    "tags": ["blockchain", "mev", "economics"],
+    "source": "emerging_tech"
+  },
+  {
+    "content": "Zero-knowledge proofs (ZKPs) allow one party to prove a statement is true without revealing any information beyond the validity of the statement. zk-SNARKs (Succinct Non-interactive Arguments of Knowledge) produce small proofs (~200 bytes) verified in milliseconds but require a trusted setup ceremony. zk-STARKs (Scalable Transparent Arguments of Knowledge) need no trusted setup and are quantum-resistant but produce larger proofs (~50-100KB).",
+    "type": "fact",
+    "tags": ["blockchain", "zero_knowledge", "cryptography"],
+    "source": "emerging_tech"
+  },
+  {
+    "content": "Blockchain bridges connect separate chains, enabling cross-chain asset transfers. Trusted bridges (Wormhole, Multichain) use validators to attest to cross-chain transactions — they are faster but introduce trusted third-party risk. Trustless bridges use cryptographic proofs or light clients to verify state. Bridge exploits have caused over $2.5B in losses (Ronin $625M, Wormhole $320M, Nomad $190M). Bridge security remains the weakest link in the multi-chain ecosystem.",
+    "type": "learning",
+    "tags": ["blockchain", "bridges", "security"],
+    "source": "emerging_tech"
+  },
+  {
+    "content": "Quantum error correction encodes logical qubits across many physical qubits to detect and correct errors. The surface code, the leading error correction approach, requires approximately 1,000-10,000 physical qubits per logical qubit depending on error rates. Google's 2024 demonstration showed that their surface code crosses the break-even point where adding more qubits improves rather than degrades performance. This is a prerequisite for fault-tolerant quantum computing.",
+    "type": "fact",
+    "tags": ["quantum", "error_correction", "hardware"],
+    "source": "emerging_tech"
+  },
+  {
+    "content": "Account abstraction (ERC-4337) transforms blockchain wallets from simple key-pair accounts into programmable smart contract accounts. This enables: social recovery (friends can restore access), multi-signature requirements, gasless transactions (third party pays gas), session keys (limited permissions for dApps), batch transactions (multiple actions in one click), and spending limits. Account abstraction is considered essential for mainstream blockchain adoption.",
+    "type": "fact",
+    "tags": ["blockchain", "account_abstraction", "ux"],
+    "source": "emerging_tech"
+  },
+  {
+    "content": "Quantum key distribution (QKD) uses quantum mechanics to generate provably secure encryption keys. BB84 protocol: sender encodes bits in photon polarization using two randomly chosen bases; eavesdropping disturbs quantum states (no-cloning theorem), detectable by comparing a subset of bits. QKD networks are commercially deployed (China's 2,000km Beijing-Shanghai link) but require dedicated fiber optic infrastructure, limiting range to ~100km without quantum repeaters.",
+    "type": "fact",
+    "tags": ["quantum", "qkd", "security"],
+    "source": "emerging_tech"
+  },
+  {
+    "content": "Decentralized Autonomous Organizations (DAOs) use smart contracts for governance, with token holders voting on proposals. Governance challenges include: voter apathy (typical participation 5-15%), plutocracy (large holders dominate), governance attacks (flash loan borrowing tokens to vote), and coordination overhead. Innovations include quadratic voting (cost of votes scales quadratically, reducing whale influence), delegation (liquid democracy), and optimistic governance (proposals pass unless vetoed).",
+    "type": "fact",
+    "tags": ["blockchain", "dao", "governance"],
+    "source": "emerging_tech"
+  },
+  {
+    "content": "Quantum machine learning algorithms include: quantum support vector machines (exponential speedup for high-dimensional feature spaces), quantum principal component analysis (exponential speedup for dimensionality reduction), quantum Boltzmann machines (faster sampling for generative models), and quantum neural networks (parameterized quantum circuits as trainable layers). Current practical advantage over classical ML is unproven, but theoretical speedups exist for specific problem structures with high dimensionality.",
+    "type": "fact",
+    "tags": ["quantum", "machine_learning", "algorithms"],
+    "source": "emerging_tech"
+  },
+  {
+    "content": "Blockchain scalability trilemma (Vitalik Buterin) states that a blockchain can optimize for at most two of three properties: decentralization (many independent validators), security (resistant to attacks with <50% of stake/hashrate), and scalability (high transaction throughput). Bitcoin and Ethereum prioritize decentralization + security at ~7-30 TPS. Solana prioritizes security + scalability at ~4,000 TPS with fewer validators. Layer 2 solutions attempt to achieve all three by inheriting L1 security.",
+    "type": "fact",
+    "tags": ["blockchain", "scalability", "trilemma"],
+    "source": "emerging_tech"
+  },
+  {
+    "content": "Lattice-based cryptography, the foundation of most NIST PQC standards, relies on the hardness of problems like Learning With Errors (LWE) and Shortest Vector Problem (SVP) in high-dimensional lattices. These problems have no known efficient quantum algorithm, unlike factoring (Shor's) and discrete log. Key sizes are larger than current RSA/ECC (Kyber-768 public key is 1,184 bytes vs RSA-2048 at 256 bytes) but operations are faster due to simple modular arithmetic.",
+    "type": "fact",
+    "tags": ["quantum", "lattice", "cryptography"],
+    "source": "emerging_tech"
+  },
+  {
+    "content": "Real World Assets (RWA) tokenization converts physical assets (real estate, bonds, commodities, art) into blockchain tokens, enabling fractional ownership, 24/7 trading, and programmable compliance. Tokenized US Treasuries exceeded $1B in 2024 (Ondo Finance, Franklin Templeton). Challenges include: legal enforceability of on-chain ownership, oracle dependency for off-chain asset verification, regulatory classification of security tokens, and custody of underlying physical assets.",
+    "type": "learning",
+    "tags": ["blockchain", "rwa", "tokenization"],
+    "source": "emerging_tech"
+  },
+  {
+    "content": "Quantum simulation is the most promising near-term quantum application, as quantum computers naturally simulate quantum systems. Applications include: molecular dynamics for drug discovery (simulating protein folding, molecular interactions), materials science (high-temperature superconductors, battery materials), chemical process optimization (catalyst design, nitrogen fixation for fertilizer), and understanding fundamental physics. Google and IBM have demonstrated quantum advantage for specific simulation problems.",
+    "type": "fact",
+    "tags": ["quantum", "simulation", "applications"],
+    "source": "emerging_tech"
+  },
+  {
+    "content": "Rollup economics: Layer 2 rollups batch hundreds of transactions into a single L1 transaction, amortizing gas costs. A typical Ethereum L1 transaction costs $1-$10; the same transaction on Optimism or Arbitrum costs $0.01-$0.10. Rollup sequencers earn revenue from L2 transaction fees minus L1 data posting costs. Proto-danksharding (EIP-4844) introduced blob transactions that reduce L1 data costs by 10-100x, making rollups even cheaper. Full danksharding will further reduce costs by 100x.",
+    "type": "fact",
+    "tags": ["blockchain", "rollups", "economics"],
+    "source": "emerging_tech"
+  },
+  {
+    "content": "Quantum internet would connect quantum computers and quantum sensors through entanglement distribution, enabling: provably secure communication (QKD), distributed quantum computing (linking multiple small quantum computers into one large system), quantum-enhanced sensing (GPS, magnetic field detection), and blind quantum computing (delegate computation without revealing data). Current quantum networks span tens of kilometers; quantum repeaters (still experimental) are needed for global scale.",
+    "type": "fact",
+    "tags": ["quantum", "internet", "networking"],
+    "source": "emerging_tech"
+  },
+  {
+    "content": "Crypto-economic security models quantify how much it costs to attack a blockchain. Bitcoin's security budget equals block reward + transaction fees times hash rate cost. Ethereum PoS security: to control 33% of stake requires purchasing ~$15B of ETH, plus the opportunity cost of slashing risk. Economic security decreases when token price drops (less costly to acquire 33% of stake). Security budget analysis is critical for assessing the long-term viability of any blockchain network.",
+    "type": "learning",
+    "tags": ["blockchain", "security", "economics"],
+    "source": "emerging_tech"
+  }
+]

@@ -1,0 +1,152 @@
+[
+  {
+    "content": "Backpropagation computes gradients via the chain rule: dL/dw_i = dL/da_n * da_n/dz_n * dz_n/da_{n-1} * ... * da_i/dz_i * dz_i/dw_i, where a is activation, z is pre-activation (linear), and L is loss. For a network with n layers, this chains n multiplications. Each layer's gradient is computed in reverse order (output to input) and cached via a computational graph, making gradient computation O(n) rather than O(n^2).",
+    "type": "fact",
+    "tags": ["backpropagation", "chain_rule", "gradient_computation"],
+    "source": "ml_knowledge"
+  },
+  {
+    "content": "Vanishing gradients occur when sigmoid/tanh activation derivatives (max 0.25 for sigmoid, 1.0 for tanh) are multiplied across many layers, causing gradients to shrink exponentially toward zero. A 10-layer network with sigmoid has gradients ~0.25^10 = 9.5e-7 at the first layer. ReLU (max(0,x)) has gradient 1 for positive inputs, solving vanishing gradients but introducing dying ReLU (neurons stuck at 0). Leaky ReLU uses a small slope (0.01x) for negative inputs.",
+    "type": "fact",
+    "tags": ["vanishing_gradients", "activation_functions", "relu"],
+    "source": "ml_knowledge"
+  },
+  {
+    "content": "Exploding gradients cause weights to diverge to infinity during training, manifesting as NaN losses. Gradient clipping caps the gradient norm: if ||g|| > threshold, g = g * threshold / ||g||. Typical threshold: 1.0-5.0. PyTorch: torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=1.0). LSTM/GRU architectures inherently mitigate exploding gradients through their gating mechanisms, which bound the gradient flow.",
+    "type": "learning",
+    "tags": ["exploding_gradients", "gradient_clipping", "training_stability"],
+    "source": "ml_knowledge"
+  },
+  {
+    "content": "Batch normalization normalizes each mini-batch to zero mean and unit variance: x_hat = (x - mu_B) / sqrt(sigma_B^2 + epsilon), then scales and shifts: y = gamma * x_hat + beta, where gamma and beta are learnable parameters. During training, mu_B and sigma_B are per-batch; during inference, running averages are used. BN enables higher learning rates (3-10x), reduces sensitivity to initialization, and acts as a regularizer.",
+    "type": "fact",
+    "tags": ["batch_normalization", "normalization", "training_technique"],
+    "source": "ml_knowledge"
+  },
+  {
+    "content": "Layer normalization normalizes across features (not batch): mu and sigma computed per sample across all features. Unlike batch norm, it works with batch_size=1 and varying sequence lengths, making it standard in transformers. RMSNorm (used in LLaMA) simplifies further: x_hat = x / RMS(x) * gamma, where RMS(x) = sqrt(mean(x^2) + epsilon), removing the mean subtraction step for ~10% faster computation with equivalent performance.",
+    "type": "fact",
+    "tags": ["layer_norm", "rmsnorm", "transformer_normalization"],
+    "source": "ml_knowledge"
+  },
+  {
+    "content": "Dropout randomly zeroes neuron outputs with probability p during training: mask ~ Bernoulli(1-p), output = mask * activation / (1-p). The 1/(1-p) scaling (inverted dropout) ensures expected activation magnitude is preserved. Standard p=0.5 for hidden layers, p=0.2 for input layers. At inference, all neurons are active (no dropout). Dropout approximates training an ensemble of 2^n sub-networks where n is the number of dropout-eligible neurons.",
+    "type": "fact",
+    "tags": ["dropout", "regularization", "ensemble_approximation"],
+    "source": "ml_knowledge"
+  },
+  {
+    "content": "Learning rate schedules control lr over training epochs. Step decay: lr *= 0.1 every 30 epochs. Cosine annealing: lr_t = lr_min + 0.5*(lr_max - lr_min)*(1 + cos(pi*t/T)). Warmup: linearly increase lr from 0 to target over first 5-10% of steps, then decay. OneCycleLR: warmup → high lr → cosine decay, often achieving best results in fewer epochs. ReduceLROnPlateau: reduce lr by factor (0.1-0.5) when validation loss stalls for patience epochs.",
+    "type": "skill",
+    "tags": ["learning_rate_schedule", "cosine_annealing", "warmup"],
+    "source": "ml_knowledge"
+  },
+  {
+    "content": "Adam optimizer maintains per-parameter first moment (mean) m_t = beta1*m_{t-1} + (1-beta1)*g_t and second moment (variance) v_t = beta2*v_{t-1} + (1-beta2)*g_t^2. Bias-corrected: m_hat = m_t/(1-beta1^t), v_hat = v_t/(1-beta2^t). Update: theta -= lr * m_hat / (sqrt(v_hat) + epsilon). Defaults: beta1=0.9, beta2=0.999, epsilon=1e-8. AdamW decouples weight decay from gradient update, fixing L2 regularization behavior.",
+    "type": "fact",
+    "tags": ["adam_optimizer", "adaptive_learning_rate", "adamw"],
+    "source": "ml_knowledge"
+  },
+  {
+    "content": "Xavier/Glorot initialization sets weights from N(0, 2/(fan_in + fan_out)) or Uniform(-sqrt(6/(fan_in+fan_out)), sqrt(6/(fan_in+fan_out))). This preserves variance across layers for tanh/sigmoid activations. He/Kaiming initialization uses N(0, 2/fan_in) for ReLU, accounting for the fact that ReLU zeroes negative half of the distribution. Wrong initialization causes training to diverge or converge extremely slowly.",
+    "type": "fact",
+    "tags": ["weight_initialization", "xavier", "kaiming"],
+    "source": "ml_knowledge"
+  },
+  {
+    "content": "ResNet skip connections add the input directly to the output of a residual block: y = F(x) + x, where F is typically 2-3 conv layers. This enables training 100+ layer networks by allowing gradients to flow through the identity shortcut, bypassing problematic layers. The key insight: learning residual F(x) = H(x) - x is easier than learning H(x) directly, because when the optimal mapping is near-identity, F(x) approaches zero.",
+    "type": "fact",
+    "tags": ["resnet", "skip_connections", "deep_networks"],
+    "source": "ml_knowledge"
+  },
+  {
+    "content": "Vision Transformers (ViT) split images into 16x16 patches, project each to an embedding vector, add positional embeddings, and process through standard transformer encoder layers. A 224x224 image becomes 196 patch tokens (14x14 grid). ViT requires large-scale pretraining (ImageNet-21k or JFT-300M) to outperform CNNs; with limited data, CNNs' inductive biases (locality, translation equivariance) give them an advantage.",
+    "type": "fact",
+    "tags": ["vision_transformer", "vit", "image_classification"],
+    "source": "ml_knowledge"
+  },
+  {
+    "content": "LSTM gates control information flow: forget gate f_t = sigmoid(W_f*[h_{t-1},x_t]+b_f) decides what to erase from cell state; input gate i_t = sigmoid(W_i*[h_{t-1},x_t]+b_i) decides what new information to store; candidate c_tilde = tanh(W_c*[h_{t-1},x_t]+b_c) proposes new cell values; cell update c_t = f_t*c_{t-1} + i_t*c_tilde; output gate o_t = sigmoid(W_o*[h_{t-1},x_t]+b_o); hidden state h_t = o_t*tanh(c_t). The additive cell update avoids vanishing gradients over long sequences.",
+    "type": "fact",
+    "tags": ["lstm", "gating_mechanism", "sequence_modeling"],
+    "source": "ml_knowledge"
+  },
+  {
+    "content": "GRU (Gated Recurrent Unit) simplifies LSTM with 2 gates instead of 3: reset gate r_t = sigmoid(W_r*[h_{t-1},x_t]) controls how much past to forget; update gate z_t = sigmoid(W_z*[h_{t-1},x_t]) blends old and new state; candidate h_tilde = tanh(W*[r_t*h_{t-1},x_t]); output h_t = (1-z_t)*h_{t-1} + z_t*h_tilde. GRU matches LSTM performance on most tasks with ~33% fewer parameters and faster training.",
+    "type": "fact",
+    "tags": ["gru", "gating_mechanism", "efficient_rnn"],
+    "source": "ml_knowledge"
+  },
+  {
+    "content": "Transfer learning typically follows: (1) take a model pretrained on large dataset (ImageNet, WebText), (2) freeze all layers except the final classification head, (3) train the head on your data for 5-10 epochs, (4) optionally unfreeze top N layers and fine-tune with 10-100x lower learning rate. Discriminative learning rates (lower lr for earlier layers, higher for later layers) improve fine-tuning. Feature extraction (frozen backbone) works with <1000 samples; full fine-tuning benefits from 5000+.",
+    "type": "skill",
+    "tags": ["transfer_learning", "fine_tuning", "feature_extraction"],
+    "source": "ml_knowledge"
+  },
+  {
+    "content": "Data augmentation for images: random horizontal flip, rotation (+-15 degrees), color jitter (brightness/contrast/saturation +-20%), random crop and resize, Cutout (random square mask), Mixup (blend two images: x = lambda*x1 + (1-lambda)*x2, same for labels), CutMix (replace random patch with another image's patch). For text: back-translation, synonym replacement, random insertion/deletion, and paraphrase generation. Augmentation can be equivalent to 2-5x more training data.",
+    "type": "skill",
+    "tags": ["data_augmentation", "mixup", "cutmix"],
+    "source": "ml_knowledge"
+  },
+  {
+    "content": "Focal loss addresses class imbalance in object detection: FL(p_t) = -alpha_t * (1-p_t)^gamma * log(p_t). The (1-p_t)^gamma factor down-weights easy examples (high p_t) and focuses on hard examples (low p_t). With gamma=2, a well-classified example with p_t=0.9 has 100x lower loss than a misclassified example with p_t=0.1. Standard cross-entropy treats all examples equally, causing easy negatives to dominate the gradient in imbalanced datasets.",
+    "type": "fact",
+    "tags": ["focal_loss", "class_imbalance", "object_detection"],
+    "source": "ml_knowledge"
+  },
+  {
+    "content": "Contrastive learning (SimCLR, MoCo) learns representations by pulling augmented views of the same image together and pushing different images apart in embedding space. The InfoNCE loss: L = -log(exp(sim(z_i,z_j)/tau) / sum_k(exp(sim(z_i,z_k)/tau))) where tau is temperature (typically 0.07-0.5). Larger batch sizes provide more negatives and improve performance. Self-supervised contrastive pretraining matches or exceeds supervised pretraining when fine-tuned.",
+    "type": "fact",
+    "tags": ["contrastive_learning", "simclr", "self_supervised"],
+    "source": "ml_knowledge"
+  },
+  {
+    "content": "Knowledge distillation trains a smaller student model to mimic a larger teacher model's soft predictions. The distillation loss: L = alpha*T^2*KL(softmax(z_s/T), softmax(z_t/T)) + (1-alpha)*CE(y, softmax(z_s)), where T is temperature (2-20, higher = softer), alpha balances distillation and hard-label loss. Soft targets carry more information than hard labels because they encode inter-class similarities. Student can achieve 95%+ of teacher performance at 1/10th the size.",
+    "type": "skill",
+    "tags": ["knowledge_distillation", "model_compression", "teacher_student"],
+    "source": "ml_knowledge"
+  },
+  {
+    "content": "Gradient accumulation simulates larger batch sizes on limited GPU memory: for i, batch in enumerate(dataloader): loss = model(batch) / accumulation_steps; loss.backward(); if (i+1) % accumulation_steps == 0: optimizer.step(); optimizer.zero_grad(). With accumulation_steps=4 and batch_size=8, effective batch size is 32. Important: batch normalization statistics are still computed per micro-batch, which can degrade performance. Use gradient accumulation with layer norm or group norm instead.",
+    "type": "skill",
+    "tags": ["gradient_accumulation", "batch_size", "memory_optimization"],
+    "source": "ml_knowledge"
+  },
+  {
+    "content": "Mixed precision training uses float16 for forward/backward passes and float32 for weight updates and loss scaling. PyTorch AMP: with torch.cuda.amp.autocast(): output = model(input); loss = criterion(output); scaler.scale(loss).backward(); scaler.step(optimizer). Loss scaling prevents float16 underflow of small gradients by multiplying loss by a large factor (initially 2^16) and dividing gradients back. Provides ~2x speedup and ~50% memory reduction on modern GPUs.",
+    "type": "skill",
+    "tags": ["mixed_precision", "float16", "training_speedup"],
+    "source": "ml_knowledge"
+  },
+  {
+    "content": "Attention mechanisms in CNNs (SE-Net, CBAM) learn to reweight feature channels. Squeeze-and-Excitation: globally average pool each channel to a scalar, pass through FC→ReLU→FC→Sigmoid to get channel weights, multiply original features by these weights. This adds <1% parameters but improves accuracy by 0.5-1% on ImageNet. CBAM adds spatial attention (where to focus) on top of channel attention (what to focus on).",
+    "type": "fact",
+    "tags": ["attention_cnn", "squeeze_excitation", "cbam"],
+    "source": "ml_knowledge"
+  },
+  {
+    "content": "Depthwise separable convolutions (MobileNet) factorize standard convolution into depthwise (one filter per channel) and pointwise (1x1 conv across channels). A standard 3x3 conv on 64→128 channels costs 3*3*64*128 = 73,728 multiplications per position. Depthwise separable: 3*3*64 + 64*128 = 8,768 multiplications, an 8.4x reduction. This enables efficient models running at 30+ FPS on mobile devices with <5M parameters.",
+    "type": "fact",
+    "tags": ["depthwise_separable", "mobilenet", "efficient_convolution"],
+    "source": "ml_knowledge"
+  },
+  {
+    "content": "Label smoothing replaces hard one-hot targets with softened targets: y_smooth = (1-epsilon)*y_hard + epsilon/K, where K is the number of classes and epsilon is typically 0.1. For a 10-class problem with epsilon=0.1, the target becomes 0.91 for correct class and 0.01 for each wrong class. This prevents the model from becoming overconfident, improving calibration and generalization by 0.2-0.5% on classification benchmarks.",
+    "type": "skill",
+    "tags": ["label_smoothing", "regularization", "calibration"],
+    "source": "ml_knowledge"
+  },
+  {
+    "content": "Early stopping monitors validation loss and halts training when it stops improving for 'patience' epochs (typically 5-20). Restore weights from the best epoch. Combined with learning rate reduction on plateau: reduce lr by 0.5 when val_loss stalls for 5 epochs, stop training when val_loss stalls for 15 epochs even after lr reductions. This prevents overfitting without requiring precise epoch count selection.",
+    "type": "skill",
+    "tags": ["early_stopping", "overfitting_prevention", "training_strategy"],
+    "source": "ml_knowledge"
+  },
+  {
+    "content": "Diffusion models generate data by learning to reverse a gradual noising process. Forward process adds Gaussian noise in T steps: x_t = sqrt(alpha_bar_t)*x_0 + sqrt(1-alpha_bar_t)*epsilon. The model learns to predict the noise epsilon_theta(x_t, t) at each step. Sampling starts from pure noise x_T ~ N(0,I) and iteratively denoises. DDPM uses 1000 steps; DDIM reduces to 50-100 steps with deterministic sampling. Classifier-free guidance scales: s*(epsilon_cond - epsilon_uncond) + epsilon_uncond.",
+    "type": "fact",
+    "tags": ["diffusion_models", "ddpm", "image_generation"],
+    "source": "ml_knowledge"
+  }
+]

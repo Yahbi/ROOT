@@ -1,0 +1,152 @@
+[
+  {
+    "content": "Loss aversion, a cornerstone of prospect theory, shows losses are felt approximately 2.5x more intensely than equivalent gains. The utility function is concave for gains (risk-averse) and convex for losses (risk-seeking): U(x) = x^0.88 for gains and U(x) = -lambda*(-x)^0.88 for losses, where lambda ~= 2.25-2.5. This explains why investors hold losing positions too long and sell winners too early.",
+    "type": "fact",
+    "tags": ["loss_aversion", "prospect_theory", "utility_function"],
+    "source": "psychology_knowledge"
+  },
+  {
+    "content": "Prospect theory (Kahneman & Tversky, 1979) replaces expected utility with two phases: editing (simplify prospects by rounding, segregating, and canceling common components) and evaluation (apply an S-shaped value function centered on a reference point, weight probabilities using pi(p) where small probabilities are overweighted and large probabilities are underweighted). This explains lottery ticket purchases and insurance buying simultaneously.",
+    "type": "fact",
+    "tags": ["prospect_theory", "probability_weighting", "decision_making"],
+    "source": "psychology_knowledge"
+  },
+  {
+    "content": "Mental accounting causes people to treat money differently based on arbitrary categorization. A trader might take excessive risk with 'house money' (profits) while being conservative with principal. Thaler showed people treat a $100 theater ticket loss differently than losing $100 cash before buying a ticket, despite identical economic outcomes. Portfolios suffer when investors evaluate positions in isolation rather than total portfolio risk.",
+    "type": "fact",
+    "tags": ["mental_accounting", "thaler", "portfolio_evaluation"],
+    "source": "psychology_knowledge"
+  },
+  {
+    "content": "The disposition effect causes investors to sell winners 50% more frequently than losers (Odean, 1998). In a study of 10,000 trading accounts, stocks sold by individual investors outperformed stocks held by 3.4% over the following year, confirming this bias destroys returns. Tax-loss harvesting strategies can partially counteract the disposition effect by providing a rational framework for selling losers.",
+    "type": "learning",
+    "tags": ["disposition_effect", "selling_winners", "holding_losers"],
+    "source": "psychology_knowledge"
+  },
+  {
+    "content": "Herd behavior in financial markets occurs when investors follow the crowd rather than their own analysis, creating momentum and bubbles. Information cascades form when individuals rationally ignore private signals and mimic predecessors (if the first two investors buy, the third follows regardless of their signal). Deviations from herding require strong contrarian conviction, which is psychologically costly due to regret aversion.",
+    "type": "fact",
+    "tags": ["herd_behavior", "information_cascade", "momentum"],
+    "source": "psychology_knowledge"
+  },
+  {
+    "content": "Overconfidence bias manifests in three ways: overprecision (too-narrow confidence intervals; investors asked for 90% confidence ranges capture the true value only 50% of the time), overestimation (overrating one's skill; 74% of fund managers believe they are above average), and overplacement (believing one is better than peers). Overconfident traders trade 45% more frequently, reducing net returns by 2.65% annually (Barber & Odean, 2001).",
+    "type": "fact",
+    "tags": ["overconfidence", "calibration", "excessive_trading"],
+    "source": "psychology_knowledge"
+  },
+  {
+    "content": "Anchoring in valuation occurs when investors fixate on irrelevant reference points. Studies show analysts anchor on prior price targets even when fundamentals change dramatically. IPO pricing anchors on comparable company valuations. In negotiations, the first number mentioned anchors all subsequent discussion. To mitigate: explicitly consider why the anchor might be wrong and generate independent estimates before seeing anchor values.",
+    "type": "learning",
+    "tags": ["anchoring", "valuation_bias", "reference_points"],
+    "source": "psychology_knowledge"
+  },
+  {
+    "content": "Availability bias causes investors to overweight easily recalled events when assessing risk. After a market crash, investors overestimate crash probability for years afterward. Dramatic single-stock collapses (Enron, Lehman) make corporate bankruptcy seem more likely than base rates suggest (~0.6% annual for investment-grade bonds). Media coverage amplifies availability: heavily reported risks are overweighted vs statistical risks like slow portfolio erosion from fees.",
+    "type": "fact",
+    "tags": ["availability_bias", "risk_assessment", "media_influence"],
+    "source": "psychology_knowledge"
+  },
+  {
+    "content": "The sunk cost fallacy causes continued investment in losing positions because of prior costs that cannot be recovered. A trader adds to a losing position ('averaging down') not because of improved fundamentals but because selling would crystallize a loss on the total invested amount. Institutional investors exhibit this too: VCs continue funding failing startups to avoid writing off prior rounds. Rational decision-making requires evaluating only forward-looking expected value.",
+    "type": "learning",
+    "tags": ["sunk_cost", "averaging_down", "rational_decision"],
+    "source": "psychology_knowledge"
+  },
+  {
+    "content": "The endowment effect means people value assets they own 2-3x more than identical assets they don't own. Thaler's classic experiment: mug owners demanded $7.12 to sell while non-owners offered only $2.87 to buy the same mug. In trading, this manifests as reluctance to sell existing portfolio positions even when better alternatives exist, creating portfolio inertia and suboptimal allocation.",
+    "type": "fact",
+    "tags": ["endowment_effect", "ownership_bias", "portfolio_inertia"],
+    "source": "psychology_knowledge"
+  },
+  {
+    "content": "Status quo bias is the preference for the current state of affairs, requiring extra motivation to change. In 401(k) plans, default enrollment options are chosen by 90%+ of employees regardless of whether the default is optimal. For investors, status quo bias means maintaining an asset allocation long after circumstances change. Rebalancing rules (quarterly, threshold-based) create forcing functions to overcome this bias.",
+    "type": "learning",
+    "tags": ["status_quo_bias", "default_effect", "rebalancing"],
+    "source": "psychology_knowledge"
+  },
+  {
+    "content": "Framing effects show identical information presented differently leads to opposite decisions. Investors respond more positively to 'this fund gained 80% of years' than 'this fund lost money 20% of years' despite identical content. Narrow framing (evaluating investments individually) leads to rejection of positive-EV bets that would be accepted when framed as a portfolio. Presenting annualized returns vs cumulative returns dramatically changes risk perception.",
+    "type": "fact",
+    "tags": ["framing_effects", "presentation_bias", "narrow_framing"],
+    "source": "psychology_knowledge"
+  },
+  {
+    "content": "The representativeness heuristic judges probabilities by similarity to stereotypes rather than base rates. Investors see a company with 3 years of 20%+ growth and judge it 'representative' of a long-term winner, ignoring mean reversion. Hot IPO sectors attract disproportionate capital because recent successes make the sector 'representative' of opportunity. Base rate neglect: only ~4% of stocks account for all net market wealth creation (Bessembinder, 2018).",
+    "type": "fact",
+    "tags": ["representativeness", "base_rate_neglect", "stereotype_judgment"],
+    "source": "psychology_knowledge"
+  },
+  {
+    "content": "The gambler's fallacy is the belief that past random outcomes affect future probabilities. After 5 consecutive red numbers in roulette, people bet on black despite unchanged 48.6% odds. In trading, investors expect mean reversion after consecutive up/down days even when the process is near-random. Conversely, the 'hot hand' fallacy expects continuation of streaks. Markets exhibit momentum at 1-12 month horizons and reversal at 1-5 year horizons, neither of which is purely random.",
+    "type": "fact",
+    "tags": ["gamblers_fallacy", "hot_hand", "randomness_perception"],
+    "source": "psychology_knowledge"
+  },
+  {
+    "content": "The hot hand fallacy in investing occurs when investors chase recent outperformance, assuming skill-based persistence. However, only 2.4% of top-quartile mutual funds remain in the top quartile after 5 years (S&P SPIVA data). Performance-chasing flows peak right before fund reversion to the mean, making the average dollar invested in funds underperform the average fund by ~1.5% annually due to poorly timed entries and exits.",
+    "type": "learning",
+    "tags": ["hot_hand_fallacy", "performance_chasing", "fund_flows"],
+    "source": "psychology_knowledge"
+  },
+  {
+    "content": "Confirmation bias in investment research causes analysts to seek information supporting existing positions while discounting contradictory evidence. Long holders read bullish reports 3x more than bearish ones. Analysts who issue a buy recommendation subsequently interpret ambiguous earnings reports more favorably. Debiasing technique: assign a team member to play devil's advocate (red team) or require written documentation of the strongest bear case before any buy decision.",
+    "type": "learning",
+    "tags": ["confirmation_bias", "selective_information", "red_team"],
+    "source": "psychology_knowledge"
+  },
+  {
+    "content": "Hindsight bias ('I knew it all along') distorts post-event probability assessments, making past events seem more predictable than they were. After the 2008 crisis, 72% of surveyed investors claimed they 'saw it coming.' This bias prevents learning from mistakes because outcomes appear inevitable. It also inflates overconfidence in future predictions. Keeping a contemporaneous decision journal with reasoning at time of decision is the primary mitigation.",
+    "type": "learning",
+    "tags": ["hindsight_bias", "outcome_bias", "decision_journal"],
+    "source": "psychology_knowledge"
+  },
+  {
+    "content": "Survivorship bias in backtesting inflates strategy performance by excluding delisted, bankrupt, or merged stocks from the historical dataset. A momentum strategy backtested on current S&P 500 members ignores stocks that were removed due to decline, overstating returns by 1-3% annually. Proper backtesting uses point-in-time data: the stock universe as it existed at each historical date, including delisted securities with their full return history.",
+    "type": "learning",
+    "tags": ["survivorship_bias", "backtesting", "historical_data"],
+    "source": "psychology_knowledge"
+  },
+  {
+    "content": "The narrative fallacy is the tendency to construct coherent stories to explain random or complex events. Post-hoc market narratives ('stocks fell on inflation fears') are generated after the fact to explain moves that may have been noise. Nassim Taleb argues financial narratives create false confidence in understanding causality. Quantitative frameworks resist narrative fallacy by making decisions based on data and models rather than stories.",
+    "type": "fact",
+    "tags": ["narrative_fallacy", "taleb", "post_hoc_reasoning"],
+    "source": "psychology_knowledge"
+  },
+  {
+    "content": "Myopic loss aversion combines loss aversion with frequent portfolio evaluation. Benartzi and Thaler (1995) showed the equity premium puzzle is explained if investors evaluate portfolios annually: with 2.5x loss aversion and annual evaluation, investors demand ~6% equity premium. Evaluating quarterly increases demanded premium further. Investors who check portfolios less frequently take more risk and earn higher returns because they encounter fewer intermediate losses.",
+    "type": "learning",
+    "tags": ["myopic_loss_aversion", "equity_premium_puzzle", "evaluation_frequency"],
+    "source": "psychology_knowledge"
+  },
+  {
+    "content": "Regret aversion causes investors to avoid actions whose potential negative outcomes would cause regret. Errors of commission (buying a stock that drops) generate more regret than errors of omission (missing a stock that rises). This explains why investors prefer index funds over stock-picking (if the market drops, everyone suffers together). Anticipated regret also drives herding: deviating from consensus and being wrong is more painful than being wrong with the crowd.",
+    "type": "fact",
+    "tags": ["regret_aversion", "commission_vs_omission", "herding"],
+    "source": "psychology_knowledge"
+  },
+  {
+    "content": "The Dunning-Kruger effect in investing shows novice traders rate their skill at the 62nd percentile while experts rate themselves at the 74th percentile — a much smaller gap than actual skill differences. New traders overestimate their edge because they lack the meta-knowledge to assess their own competence. This drives excessive trading, under-diversification, and preference for speculative instruments (options, crypto) in early investing careers.",
+    "type": "learning",
+    "tags": ["dunning_kruger", "skill_assessment", "novice_overconfidence"],
+    "source": "psychology_knowledge"
+  },
+  {
+    "content": "Recency bias causes investors to overweight recent data when forming expectations. After a 10-year bull market, equity return expectations rise to 12%+ (vs historical 10% nominal). After a bear market, they drop below 5%. The Survey of Consumer Finances shows household equity allocation peaks at market tops and troughs at bottoms, consistent with recency-driven allocation. Three-year rolling returns are the strongest predictor of fund inflows.",
+    "type": "fact",
+    "tags": ["recency_bias", "return_expectations", "cyclical_allocation"],
+    "source": "psychology_knowledge"
+  },
+  {
+    "content": "The peak-end rule shows people judge experiences by their peak intensity and ending, not the average. A portfolio that drops 30% then recovers to -5% is remembered more favorably than one that drops 15% and stays there. This affects investor satisfaction: a strong year-end rally improves client retention even if annual returns are mediocre. Financial advisors leverage this by timing good-news communications to coincide with year-end statements.",
+    "type": "learning",
+    "tags": ["peak_end_rule", "experience_evaluation", "client_retention"],
+    "source": "psychology_knowledge"
+  },
+  {
+    "content": "Debiasing investment decisions uses structured frameworks: pre-mortem analysis (imagine the decision failed, list reasons), checklist protocols (Atul Gawande-style verification of key assumptions), base rate forcing (start with the outside view before adjusting for specifics), and accountability structures (explain decisions to others before acting). Bridgewater's 'radical transparency' and dot-voting system institutionalize debiasing by separating idea evaluation from idea originator status.",
+    "type": "skill",
+    "tags": ["debiasing", "structured_decisions", "pre_mortem"],
+    "source": "psychology_knowledge"
+  }
+]

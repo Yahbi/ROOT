@@ -1,0 +1,152 @@
+[
+  {
+    "content": "B-tree indexes store sorted data in balanced tree nodes, optimized for read-heavy workloads with O(log n) point lookups and efficient range scans. Each node maps to a disk page (typically 4-16KB). LSM-trees (Log-Structured Merge-trees) buffer writes in a memtable, then flush sorted runs to disk, compacting periodically. LSM-trees offer 10-100x better write throughput but suffer from write amplification during compaction and slower reads requiring multiple level checks.",
+    "type": "fact",
+    "tags": ["btree", "lsm_tree", "storage_engines"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "MVCC (Multi-Version Concurrency Control) maintains multiple versions of rows so readers never block writers. PostgreSQL stores xmin (creating transaction ID) and xmax (deleting transaction ID) per tuple; a transaction sees a row if xmin < own_txid and (xmax is null or xmax > own_txid). Dead tuples accumulate until VACUUM reclaims space. InnoDB uses undo logs to reconstruct older versions on-demand rather than storing full copies.",
+    "type": "fact",
+    "tags": ["mvcc", "concurrency", "postgresql"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "WAL (Write-Ahead Logging) ensures durability by writing changes to a sequential log before modifying data pages. Checkpointing transfers WAL changes to the main database file. SQLite WAL mode allows concurrent readers during writes (readers see the pre-WAL state). PostgreSQL's wal_level=replica enables streaming replication. Checkpoint frequency trades recovery time (more frequent = faster recovery) against I/O overhead during normal operation.",
+    "type": "fact",
+    "tags": ["wal", "checkpointing", "durability"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Query optimizer cost models estimate execution plans using statistics: row counts (pg_class.reltuples), distinct values (n_distinct), most common values (MCV lists), and histograms (equi-depth buckets). The optimizer evaluates plan cost as: total_cost = cpu_tuple_cost * rows + cpu_index_tuple_cost * index_rows + seq_page_cost * pages + random_page_cost * random_pages. Stale statistics (not running ANALYZE) cause the optimizer to choose suboptimal plans.",
+    "type": "fact",
+    "tags": ["query_optimizer", "cost_model", "statistics"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Index selectivity is the fraction of rows an index condition matches: selectivity = matching_rows / total_rows. Low selectivity (<5%) makes index scans efficient. High selectivity (>20%) often makes sequential scans faster because random I/O from index lookups costs more than sequential reads. The optimizer's decision point depends on the ratio: random_page_cost (default 4.0) / seq_page_cost (default 1.0). For SSDs, set random_page_cost to 1.1-1.5.",
+    "type": "learning",
+    "tags": ["selectivity", "index_efficiency", "ssd_tuning"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Covering indexes include all columns needed by a query, eliminating table lookups (index-only scans). PostgreSQL: CREATE INDEX ON orders(customer_id) INCLUDE (total, status). The INCLUDE columns are stored in leaf pages but not in the tree structure, so they don't affect sort order. Covering indexes can reduce query latency by 5-10x for analytical queries on wide tables by avoiding random I/O to the heap.",
+    "type": "skill",
+    "tags": ["covering_index", "index_only_scan", "include_columns"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Partial indexes index only a subset of rows matching a WHERE predicate: CREATE INDEX ON orders(created_at) WHERE status = 'pending'. This creates a much smaller index (e.g., 2% of rows vs 100%), faster to scan and cheaper to maintain. Ideal for queries that always filter on the predicate condition. Common patterns: indexing only active records, recent dates, or non-null values in sparse columns.",
+    "type": "skill",
+    "tags": ["partial_index", "conditional_index", "optimization"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Expression indexes index the result of a function or expression: CREATE INDEX ON users(lower(email)). PostgreSQL can use this index for WHERE lower(email) = 'foo@bar.com' but NOT for WHERE email = 'foo@bar.com'. GIN (Generalized Inverted Index) indexes support full-text search (tsvector), JSONB containment (@>), and array overlap (&&). GiST indexes support range types, geometry, and nearest-neighbor queries.",
+    "type": "skill",
+    "tags": ["expression_index", "gin_index", "gist_index"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "VACUUM in PostgreSQL reclaims dead tuples left by MVCC updates and deletes. Regular VACUUM marks space as reusable but doesn't shrink the file; VACUUM FULL rewrites the entire table (requires exclusive lock). Autovacuum triggers when dead tuples exceed autovacuum_vacuum_threshold + autovacuum_vacuum_scale_factor * reltuples. ANALYZE updates statistics independently. For high-write tables, tune autovacuum_vacuum_scale_factor down to 0.01 (1%) from default 0.2 (20%).",
+    "type": "skill",
+    "tags": ["vacuum", "autovacuum", "dead_tuples"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "PgBouncer operates in three pooling modes. Session mode: client gets a dedicated server connection for the session (compatible but minimal pooling benefit). Transaction mode: server connection is returned to pool after each transaction (reduces connections 10-100x but breaks SET, LISTEN/NOTIFY, prepared statements across transactions). Statement mode: connection returned after each statement (most aggressive, breaks multi-statement transactions).",
+    "type": "fact",
+    "tags": ["pgbouncer", "connection_pooling", "pooling_modes"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Read replica lag is the delay between a write on the primary and its availability on replicas. PostgreSQL streaming replication lag is typically <1 second under normal load but can spike during heavy writes, long-running queries on replicas (blocking WAL apply), or network issues. Monitor with pg_stat_replication.replay_lag. Design for eventual consistency: stale reads are acceptable for dashboards/reports but not for read-after-write patterns (use primary for those).",
+    "type": "learning",
+    "tags": ["replication_lag", "read_replicas", "eventual_consistency"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Hash sharding distributes rows across shards using shard_id = hash(key) % num_shards. Provides even distribution but makes range queries impossible (must scatter-gather across all shards). Range sharding assigns key ranges to shards (e.g., A-M on shard1, N-Z on shard2), enabling efficient range scans but risking hotspots. Directory-based sharding uses a lookup table mapping keys to shards, offering flexibility at the cost of the directory becoming a bottleneck.",
+    "type": "fact",
+    "tags": ["sharding", "horizontal_scaling", "partitioning"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Recursive CTEs (Common Table Expressions) traverse hierarchical data: WITH RECURSIVE tree AS (SELECT id, parent_id, name, 1 AS depth FROM nodes WHERE parent_id IS NULL UNION ALL SELECT n.id, n.parent_id, n.name, t.depth + 1 FROM nodes n JOIN tree t ON n.parent_id = t.id) SELECT * FROM tree. Add WHERE depth < 10 to prevent infinite recursion on cyclic data. PostgreSQL also supports CYCLE detection clause natively since v14.",
+    "type": "skill",
+    "tags": ["recursive_cte", "hierarchical_query", "tree_traversal"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Window functions compute across related rows without collapsing groups. ROW_NUMBER() assigns sequential integers per partition. RANK() assigns same rank for ties with gaps (1,2,2,4). DENSE_RANK() assigns same rank without gaps (1,2,2,3). LAG(col, n) accesses the nth previous row; LEAD(col, n) accesses the nth next row. Frame clause: ROWS BETWEEN 3 PRECEDING AND CURRENT ROW creates a sliding 4-row window for moving averages.",
+    "type": "skill",
+    "tags": ["window_functions", "row_number", "lag_lead"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "EXPLAIN ANALYZE in PostgreSQL runs the query and shows actual vs estimated row counts, execution time per node, and buffer statistics (with BUFFERS). Key diagnostics: if actual rows >> estimated rows, statistics are stale (run ANALYZE). Nested loop with high outer rows indicates missing index. Sort with external merge means work_mem is too low. Sequential scan on large table with low selectivity filter suggests missing index.",
+    "type": "skill",
+    "tags": ["explain_analyze", "query_tuning", "diagnostics"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "JSONB in PostgreSQL stores binary-parsed JSON with O(1) key access via @> (containment), -> (get key as JSON), ->> (get key as text), and #> (path access). GIN index on JSONB: CREATE INDEX ON docs USING gin(data jsonb_path_ops) enables fast @> containment queries. jsonb_path_ops indexes only contain values (not keys), reducing index size by 50% vs default operator class but not supporting key-existence (?) queries.",
+    "type": "skill",
+    "tags": ["jsonb", "postgresql", "document_store"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Transaction isolation levels control visibility of concurrent changes. READ COMMITTED (PostgreSQL default): each statement sees a snapshot taken at statement start. REPEATABLE READ: entire transaction sees a snapshot from transaction start. SERIALIZABLE: provides full serializability via SSI (Serializable Snapshot Isolation) which detects dangerous rw-dependency cycles and aborts one transaction. Higher isolation means more aborts/retries but fewer anomalies.",
+    "type": "fact",
+    "tags": ["isolation_levels", "serializability", "concurrency_control"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "SQLite's WAL mode allows multiple concurrent readers with a single writer, unlike the default journal mode which locks the entire database for writes. WAL checkpointing runs automatically when the WAL file exceeds 1000 pages (default). PRAGMA wal_checkpoint(TRUNCATE) forces a checkpoint and truncates the WAL file. For write-heavy workloads, set PRAGMA journal_size_limit to prevent unbounded WAL growth between checkpoints.",
+    "type": "skill",
+    "tags": ["sqlite_wal", "concurrent_access", "checkpointing"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Connection pool sizing follows the formula: pool_size = ((core_count * 2) + effective_spindle_count). For SSD-based systems, pool_size = core_count * 2 + 1 is a good starting point. A 4-core server needs only ~9 connections. Over-provisioning connections causes context-switching overhead: PostgreSQL with 200 idle connections consumes 200+ MB of RAM and increases per-query latency by 5-15% compared to 20 pooled connections.",
+    "type": "learning",
+    "tags": ["connection_pool_sizing", "performance", "resource_management"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Materialized views pre-compute and store query results: CREATE MATERIALIZED VIEW mv AS SELECT ...; REFRESH MATERIALIZED VIEW CONCURRENTLY mv. CONCURRENTLY refreshes without locking readers but requires a unique index. Use for expensive aggregations, dashboard queries, or denormalized read models. The tradeoff is staleness: data is only current as of the last refresh. Combine with pg_cron for scheduled refreshes every N minutes.",
+    "type": "skill",
+    "tags": ["materialized_views", "denormalization", "query_performance"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Table partitioning in PostgreSQL splits a large table into smaller physical tables by range (date ranges), list (specific values), or hash. CREATE TABLE orders (id bigint, created_at timestamptz) PARTITION BY RANGE(created_at). Each partition is an independent table with its own indexes and VACUUM schedule. Partition pruning eliminates irrelevant partitions at query time: a query for 2024 data only scans the 2024 partition, reducing I/O by the number of partitions.",
+    "type": "skill",
+    "tags": ["partitioning", "large_tables", "partition_pruning"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Write amplification in LSM-trees occurs during compaction: data is rewritten multiple times as it moves from L0 to deeper levels. With a size ratio of 10 between levels, write amplification is ~10 * num_levels. RocksDB mitigates this with leveled compaction (10x amplification), universal compaction (lower amplification, more space), and FIFO compaction (for time-series, oldest SST files are simply dropped).",
+    "type": "fact",
+    "tags": ["write_amplification", "lsm_compaction", "rocksdb"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "PostgreSQL advisory locks provide application-level locking without row-level overhead. pg_advisory_lock(bigint) acquires a session-level lock; pg_try_advisory_lock returns false if unavailable (non-blocking). Use cases: preventing duplicate cron jobs (lock on job_id before execution), rate limiting (lock on user_id), and coordinating distributed processes. Advisory locks consume no table I/O and don't conflict with row locks.",
+    "type": "skill",
+    "tags": ["advisory_locks", "application_locking", "coordination"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "The N+1 query problem occurs when an ORM loads N related objects individually instead of joining or batching. Loading 100 orders and their items generates 101 queries (1 for orders + 100 for items). Solutions: eager loading (JOIN fetch), batch loading (WHERE id IN (...) with chunks of 100), or DataLoader pattern (batch pending loads per event loop tick). N+1 detection: log query counts per request; anything over 20 warrants investigation.",
+    "type": "learning",
+    "tags": ["n_plus_one", "orm_performance", "query_optimization"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "FTS5 in SQLite provides full-text search with BM25 ranking. CREATE VIRTUAL TABLE docs USING fts5(title, content). Queries use MATCH: SELECT * FROM docs WHERE docs MATCH 'python AND (async OR await)' ORDER BY rank. FTS5 supports prefix queries ('pyth*'), column filters (title:python), phrase queries ('\"machine learning\"'), and NEAR queries (NEAR(python learning, 5) for proximity). The bm25() function returns relevance scores.",
+    "type": "skill",
+    "tags": ["fts5", "full_text_search", "sqlite"],
+    "source": "engineering_knowledge"
+  }
+]
