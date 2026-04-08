@@ -13,6 +13,23 @@ from fastapi.testclient import TestClient
 from backend.routes.notifications import router
 
 
+_ALL_NOTIFS = [
+    {"id": "n-1", "level": "high", "read": False, "message": "Alert 1"},
+    {"id": "n-2", "level": "low", "read": True, "message": "Info 2"},
+    {"id": "n-3", "level": "high", "read": False, "message": "Alert 3"},
+]
+
+
+def _make_get_history(notifs):
+    """Return a get_history side_effect that honours the level kwarg."""
+    def _get_history(*args, level=None, **kwargs):
+        result = notifs
+        if level:
+            result = [n for n in result if n.get("level") == level]
+        return result
+    return _get_history
+
+
 @pytest.fixture
 def mock_notifications():
     """Create a mock notification engine with controllable state."""
@@ -24,14 +41,12 @@ def mock_notifications():
     notif3 = SimpleNamespace(id="n-3", read=False)
     engine._history = deque([notif1, notif2, notif3])
 
-    engine.get_history.return_value = [
-        {"id": "n-1", "level": "high", "read": False, "message": "Alert 1"},
-        {"id": "n-2", "level": "low", "read": True, "message": "Info 2"},
-        {"id": "n-3", "level": "high", "read": False, "message": "Alert 3"},
-    ]
+    engine.get_history.side_effect = _make_get_history(_ALL_NOTIFS)
+    engine._determine_channels.return_value = ["telegram", "discord"]
     engine.stats.return_value = {
         "total_notifications": 3,
         "engine": "notification",
+        "unread": 2,
     }
     return engine
 
@@ -79,7 +94,7 @@ class TestGetNotifications:
         assert resp.status_code == 422
 
     def test_limit_validation_max(self, client):
-        resp = client.get("/api/notifications?limit=201")
+        resp = client.get("/api/notifications?limit=501")
         assert resp.status_code == 422
 
 

@@ -211,13 +211,13 @@ class TestAuditExternalAction:
 
 
 class TestHistory:
-    def test_history_bounded_at_200(self):
+    def test_history_bounded_at_500(self):
         engine = NotificationEngine()
-        for i in range(250):
+        for i in range(600):
             engine._history.append(
                 Notification(title=f"N{i}", body="b", level="low")
             )
-        assert len(engine._history) <= 200
+        assert len(engine._history) <= 500
 
     def test_get_history_returns_dicts(self):
         engine = NotificationEngine()

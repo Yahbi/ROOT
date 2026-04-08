@@ -68,12 +68,12 @@ class TestNotificationEngine:
 
     def test_history_bounded(self):
         engine = NotificationEngine()
-        # Manually fill history
-        for i in range(250):
+        # Manually fill history — maxlen is 500
+        for i in range(600):
             engine._history.append(
                 Notification(title=f"T{i}", body="B", level="low")
             )
-        assert len(engine._history) <= 200
+        assert len(engine._history) <= 500
 
     def test_stats(self):
         engine = NotificationEngine(
