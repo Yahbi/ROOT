@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from typing import Any, Optional
 
-from fastapi import APIRouter, Query, Request
+from fastapi import APIRouter, HTTPException, Query, Request
 from pydantic import BaseModel
 
 router = APIRouter(prefix="/api/plugins", tags=["plugins"])
@@ -17,7 +17,7 @@ class InvokeRequest(BaseModel):
 
 @router.get("")
 async def list_plugins(request: Request):
-    """List all registered plugins."""
+    """List all registered plugins with extended metadata."""
     engine = request.app.state.plugins
     return [
         {
@@ -25,10 +25,18 @@ async def list_plugins(request: Request):
             "name": p.name,
             "description": p.description,
             "version": p.version,
+            "author": p.author,
             "status": p.status.value,
             "category": p.category,
             "tags": p.tags,
+            "dependencies": list(p.dependencies),
             "tools": [{"name": t.name, "description": t.description} for t in p.tools],
+            "marketplace": {
+                "rating": p.marketplace.rating,
+                "downloads": p.marketplace.downloads,
+                "verified": p.marketplace.verified,
+                "license": p.marketplace.license,
+            },
         }
         for p in engine.list_plugins()
     ]
@@ -65,9 +73,89 @@ async def disable_plugin(plugin_id: str, request: Request):
     return {"status": "disabled" if ok else "not_found"}
 
 
+@router.post("/{plugin_id}/reload")
+async def reload_plugin(plugin_id: str, request: Request):
+    """Hot-reload a plugin (re-register with same definition, bumping version history)."""
+    engine = request.app.state.plugins
+    plugin = engine.get_plugin(plugin_id)
+    if not plugin:
+        raise HTTPException(status_code=404, detail=f"Plugin '{plugin_id}' not found")
+    engine.reload(plugin, version_note="Manual hot-reload via API")
+    return {"status": "reloaded", "plugin_id": plugin_id, "version": plugin.version}
+
+
 @router.get("/stats")
 async def plugin_stats(request: Request):
     return request.app.state.plugins.stats()
+
+
+@router.get("/health")
+async def plugin_health_all(request: Request):
+    """Return health metrics for all plugins."""
+    return request.app.state.plugins.all_health()
+
+
+@router.get("/health/unhealthy")
+async def plugin_health_unhealthy(
+    request: Request,
+    min_error_rate: float = Query(0.5, ge=0.0, le=1.0),
+    min_invocations: int = Query(5, ge=1),
+):
+    """List plugin IDs with error rate above the threshold."""
+    engine = request.app.state.plugins
+    return {"unhealthy": engine.unhealthy_plugins(min_error_rate, min_invocations)}
+
+
+@router.get("/{plugin_id}/health")
+async def plugin_health(plugin_id: str, request: Request):
+    """Return health metrics for a single plugin."""
+    engine = request.app.state.plugins
+    health = engine.get_health(plugin_id)
+    if health is None:
+        raise HTTPException(status_code=404, detail=f"No health data for plugin '{plugin_id}'")
+    return health.to_dict()
+
+
+@router.get("/marketplace")
+async def marketplace_all(request: Request):
+    """Return marketplace listings for all plugins."""
+    return request.app.state.plugins.marketplace_all()
+
+
+@router.get("/marketplace/{plugin_id}")
+async def marketplace_plugin(plugin_id: str, request: Request):
+    """Return marketplace listing for a single plugin."""
+    engine = request.app.state.plugins
+    listing = engine.marketplace_listing(plugin_id)
+    if listing is None:
+        raise HTTPException(status_code=404, detail=f"Plugin '{plugin_id}' not found")
+    return listing
+
+
+@router.get("/dependencies")
+async def dependency_graph(request: Request):
+    """Return the full plugin dependency graph."""
+    return request.app.state.plugins.dependency_graph()
+
+
+@router.get("/{plugin_id}/versions")
+async def plugin_version_history(plugin_id: str, request: Request):
+    """Return version history for a plugin."""
+    engine = request.app.state.plugins
+    history = engine.version_history(plugin_id)
+    if not history and not engine.get_plugin(plugin_id):
+        raise HTTPException(status_code=404, detail=f"Plugin '{plugin_id}' not found")
+    return {"plugin_id": plugin_id, "history": history}
+
+
+@router.get("/{plugin_id}/config-schema")
+async def plugin_config_schema(plugin_id: str, request: Request):
+    """Return the frontend configuration schema for a plugin."""
+    engine = request.app.state.plugins
+    schema = engine.config_schema(plugin_id)
+    if schema is None:
+        raise HTTPException(status_code=404, detail=f"Plugin '{plugin_id}' not found")
+    return {"plugin_id": plugin_id, "schema": schema}
 
 
 @router.get("/log")
