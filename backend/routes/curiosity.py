@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from fastapi import APIRouter, Request
+from fastapi import APIRouter, HTTPException, Request
 from fastapi.responses import JSONResponse
 
 router = APIRouter(prefix="/api/curiosity", tags=["curiosity"])
@@ -13,7 +13,7 @@ async def curiosity_stats(request: Request):
     """Get curiosity engine statistics."""
     curiosity = getattr(request.app.state, "curiosity", None)
     if not curiosity:
-        return {"error": "Curiosity engine not available"}
+        raise HTTPException(status_code=503, detail="Curiosity engine not initialized")
     return curiosity.stats()
 
 
@@ -22,7 +22,7 @@ async def curiosity_queue(request: Request, limit: int = 20):
     """Get the current curiosity queue — what ROOT wants to learn."""
     curiosity = getattr(request.app.state, "curiosity", None)
     if not curiosity:
-        return []
+        raise HTTPException(status_code=503, detail="Curiosity engine not initialized")
     return curiosity.get_queue(limit=limit)
 
 
@@ -31,7 +31,7 @@ async def curiosity_resolved(request: Request, limit: int = 20):
     """Get recently resolved curiosity items — what ROOT has learned."""
     curiosity = getattr(request.app.state, "curiosity", None)
     if not curiosity:
-        return []
+        raise HTTPException(status_code=503, detail="Curiosity engine not initialized")
     return curiosity.get_resolved(limit=limit)
 
 
@@ -40,7 +40,7 @@ async def curiosity_ask(request: Request):
     """Inject a question into ROOT's curiosity queue."""
     curiosity = getattr(request.app.state, "curiosity", None)
     if not curiosity:
-        return {"error": "Curiosity engine not available"}
+        raise HTTPException(status_code=503, detail="Curiosity engine not initialized")
 
     body = await request.json()
     question = body.get("question", "")

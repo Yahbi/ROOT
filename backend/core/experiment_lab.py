@@ -14,6 +14,7 @@ Results feed into the Experience Memory system.
 
 from __future__ import annotations
 
+import json
 import logging
 import sqlite3
 import uuid
@@ -205,7 +206,6 @@ class ExperimentLab:
         success: bool = True,
     ) -> Optional[Experiment]:
         """Complete an experiment with results."""
-        import json
         now = datetime.now(timezone.utc).isoformat()
         status = "completed" if success else "failed"
         metrics_str = json.dumps(metrics or {})
@@ -309,7 +309,6 @@ class ExperimentLab:
 
     @staticmethod
     def _row_to_experiment(row: sqlite3.Row) -> Experiment:
-        import json
         try:
             metrics = json.loads(row["metrics"]) if row["metrics"] else {}
         except json.JSONDecodeError:

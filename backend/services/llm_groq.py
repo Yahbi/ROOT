@@ -11,6 +11,7 @@ Models hosted: Llama, Mixtral, Gemma, and other open-source models.
 from __future__ import annotations
 
 import asyncio
+import json
 import logging
 from typing import Any, Optional
 
@@ -173,7 +174,6 @@ class GroqLLMService:
                 tool_calls = []
 
                 if choice.tool_calls:
-                    import json
                     for tc in choice.tool_calls:
                         tool_calls.append({
                             "id": tc.id,

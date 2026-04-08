@@ -123,7 +123,7 @@ class MessageBus:
     ) -> Optional[BusMessage]:
         """Publish a message and wait for a reply (request/response pattern)."""
         msg_id = f"msg_{uuid.uuid4().hex[:12]}"
-        future: asyncio.Future[BusMessage] = asyncio.get_event_loop().create_future()
+        future: asyncio.Future[BusMessage] = asyncio.get_running_loop().create_future()
         self._pending_replies[msg_id] = future
 
         message = BusMessage(

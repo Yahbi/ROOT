@@ -16,6 +16,7 @@ Models (install via `ollama pull <model>`):
 from __future__ import annotations
 
 import asyncio
+import json
 import logging
 from typing import Any, Optional
 
@@ -78,7 +79,6 @@ class OllamaLLMService:
                 import urllib.request
                 req = urllib.request.Request(f"{self._base_url}/api/tags")
                 with urllib.request.urlopen(req, timeout=3) as resp:
-                    import json
                     data = json.loads(resp.read())
                     self._available_models = [m["name"] for m in data.get("models", [])]
                     return True
@@ -211,7 +211,6 @@ class OllamaLLMService:
                 tool_calls = []
 
                 if use_tools and choice.tool_calls:
-                    import json
                     for tc in choice.tool_calls:
                         tool_calls.append({
                             "id": tc.id,

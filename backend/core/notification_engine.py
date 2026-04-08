@@ -102,6 +102,7 @@ class NotificationEngine:
             return
         self._running = True
         self._task = asyncio.ensure_future(self._batch_loop())
+        self._task.add_done_callback(lambda t: t.exception() if not t.cancelled() else None)
         logger.info("Notification engine: started (telegram=%s, discord=%s, email=%s, slack=%s, webhooks=%d)",
                      bool(self._telegram_token), bool(self._discord_webhook),
                      bool(self._smtp_host), bool(self._slack_webhook_url),

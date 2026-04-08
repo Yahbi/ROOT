@@ -8,6 +8,7 @@ Same interface: complete(), complete_with_tools(), stream().
 from __future__ import annotations
 
 import asyncio
+import json
 import logging
 from typing import Any, Optional
 
@@ -176,7 +177,6 @@ class OpenAILLMService:
                 tool_calls = []
 
                 if choice.tool_calls:
-                    import json
                     for tc in choice.tool_calls:
                         tool_calls.append({
                             "id": tc.id,
