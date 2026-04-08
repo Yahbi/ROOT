@@ -284,8 +284,24 @@ class ProactiveEngine:
         self._chain_engine = chain_engine
 
     def _register_default_actions(self) -> None:
-        """Register ROOT's built-in proactive behaviors."""
+        """Register ROOT's built-in proactive behaviors.
+
+        Priority guide:
+          PRIORITY_CRITICAL (0) — safety/monitoring; never skipped
+          PRIORITY_HIGH     (1) — trading execution / goal tracking
+          PRIORITY_NORMAL   (2) — standard intelligence behaviors (default)
+          PRIORITY_LOW      (3) — heavy batch/scan jobs; deferred under load
+
+        Dependency guide (depends_on):
+          - deploy_promoted depends on strategy_validator
+          - auto_trade_cycle / scalp_trade_cycle depend on market_scanner
+          - polymarket_trade_cycle depends on polymarket_scanner
+          - experiment_runner depends on experiment_proposer
+          - project_correlator depends on ecosystem_scanner
+          - miro_daily_briefing depends on miro_world_intelligence
+        """
         defaults = [
+            # ── PRIORITY_CRITICAL: must-run safety & monitoring ──
             ProactiveAction(
                 name="health_monitor",
                 description="Check all agent and service health, alert on issues",
@@ -294,13 +310,90 @@ class ProactiveEngine:
                     registry=self._registry, bus=self._bus,
                 ),
                 risk_level="low",
+                priority=PRIORITY_CRITICAL,
             ),
             ProactiveAction(
-                name="knowledge_consolidation",
-                description="Prune weak memories, strengthen used ones, find patterns",
-                interval_seconds=PROACTIVE_INTERVALS.get("knowledge_consolidation", 7200),
-                handler=lambda: consolidate_knowledge(memory=self._memory),
+                name="approval_timeout",
+                description="Expire stale approvals — HIGH auto-approved after 60min, CRITICAL expired",
+                interval_seconds=PROACTIVE_INTERVALS.get("approval_timeout", 300),
+                handler=lambda: check_approval_timeouts(
+                    approval_chain=self._approval,
+                ),
                 risk_level="low",
+                priority=PRIORITY_CRITICAL,
+            ),
+            ProactiveAction(
+                name="task_queue_drainer",
+                description="Process pending tasks from persistent queue through task executor",
+                interval_seconds=PROACTIVE_INTERVALS.get("task_queue_drainer", 120),
+                handler=lambda: drain_task_queue(
+                    task_queue=self._task_queue, task_executor=self._task_executor,
+                ),
+                risk_level="low",
+                priority=PRIORITY_CRITICAL,
+            ),
+            # ── Polymarket: Position Monitor (critical — guards open positions) ──
+            ProactiveAction(
+                name="polymarket_monitor",
+                description="Check open Polymarket positions for profit targets and stop losses",
+                interval_seconds=PROACTIVE_INTERVALS.get("polymarket_monitor", 300),
+                handler=lambda: monitor_polymarket_positions(
+                    polymarket_bot=self._polymarket_bot,
+                ),
+                risk_level="low",
+                priority=PRIORITY_CRITICAL,
+            ),
+
+            # ── PRIORITY_HIGH: trading execution + core tracking ──
+            ProactiveAction(
+                name="scalp_trade_cycle",
+                description="Fast 90s scalp cycle on leveraged ETFs (TQQQ, SQQQ, SOXL, SOXS) using EMA/RSI strategies",
+                interval_seconds=PROACTIVE_INTERVALS.get("scalp_trade_cycle", 90),
+                handler=lambda: scalp_trade_cycle(
+                    hedge_fund=self._hedge_fund,
+                    escalation=self._escalation,
+                    notification_engine=self._notifications,
+                ),
+                risk_level="critical",
+                priority=PRIORITY_HIGH,
+                depends_on=["market_scanner"],
+            ),
+            ProactiveAction(
+                name="auto_trade_cycle",
+                description="Run hedge fund scan→analyze→trade cycle with escalation approval",
+                interval_seconds=PROACTIVE_INTERVALS.get("auto_trade_cycle", 3600),
+                handler=lambda: auto_trade_cycle(
+                    hedge_fund=self._hedge_fund, escalation=self._escalation,
+                ),
+                risk_level="critical",
+                priority=PRIORITY_HIGH,
+                depends_on=["market_scanner"],
+            ),
+            ProactiveAction(
+                name="deploy_promoted",
+                description="Convert promoted strategies into live trading signals for hedge fund execution",
+                interval_seconds=PROACTIVE_INTERVALS.get("deploy_promoted", 3600),
+                handler=lambda: deploy_promoted_strategies(
+                    strategy_validator=self._strategy_validator,
+                    hedge_fund=self._hedge_fund,
+                    escalation=self._escalation,
+                    notification_engine=self._notifications,
+                ),
+                risk_level="critical",
+                priority=PRIORITY_HIGH,
+                depends_on=["strategy_validator"],
+            ),
+            ProactiveAction(
+                name="polymarket_trade_cycle",
+                description="Run Polymarket scalping + edge hunting trading cycle",
+                interval_seconds=PROACTIVE_INTERVALS.get("polymarket_trade_cycle", 1800),
+                handler=lambda: polymarket_trade_cycle(
+                    polymarket_bot=self._polymarket_bot,
+                    escalation=self._escalation,
+                ),
+                risk_level="critical",
+                priority=PRIORITY_HIGH,
+                depends_on=["polymarket_scanner"],
             ),
             ProactiveAction(
                 name="goal_tracker",
@@ -310,111 +403,16 @@ class ProactiveEngine:
                     memory=self._memory, llm=self._llm,
                 ),
                 risk_level="low",
+                priority=PRIORITY_HIGH,
             ),
-            ProactiveAction(
-                name="opportunity_scanner",
-                description="Look for opportunities aligned with Yohan's interests",
-                interval_seconds=PROACTIVE_INTERVALS.get("opportunity_scanner", 14400),
-                handler=lambda: scan_opportunities(
-                    collab=self._collab, llm=self._llm,
-                ),
-                risk_level="medium",
-            ),
-            ProactiveAction(
-                name="agent_evolution",
-                description="Assess agent performance and propose improvements",
-                interval_seconds=PROACTIVE_INTERVALS.get("agent_evolution", 7200),
-                handler=lambda: evolve_agents(self_dev=self._self_dev),
-                risk_level="low",
-            ),
-            ProactiveAction(
-                name="skill_discovery",
-                description="Create new skills from successful patterns",
-                interval_seconds=PROACTIVE_INTERVALS.get("skill_discovery", 3600),
-                handler=lambda: discover_skills(
-                    self_dev=self._self_dev, memory=self._memory,
-                ),
-                risk_level="medium",
-            ),
-            # ── Market Intelligence (Trading Swarm) ──
-            ProactiveAction(
-                name="market_scanner",
-                description="Scan markets via Trading Swarm + technical analysis + hedge fund intelligence",
-                interval_seconds=PROACTIVE_INTERVALS.get("market_scanner", 1800),
-                handler=lambda: scan_markets(
-                    collab=self._collab, llm=self._llm, memory=self._memory,
-                    hedge_fund=self._hedge_fund, market_data=self._market_data,
-                ),
-                risk_level="low",
-            ),
-            # ── GitHub & Open Source Intelligence ──
-            ProactiveAction(
-                name="github_scanner",
-                description="Scan GitHub for trending repos, AI breakthroughs, useful tools",
-                interval_seconds=PROACTIVE_INTERVALS.get("github_scanner", 14400),
-                handler=lambda: scan_github(
-                    collab=self._collab, llm=self._llm, memory=self._memory,
-                ),
-                risk_level="low",
-            ),
-            # ── Self-Rewrite (ROOT enhances itself) ──
-            ProactiveAction(
-                name="self_rewrite",
-                description="ROOT analyzes its own code and proposes enhancements via Coder agent",
-                interval_seconds=PROACTIVE_INTERVALS.get("self_rewrite", 21600),
-                handler=lambda: self_rewrite(
-                    collab=self._collab, llm=self._llm, self_dev=self._self_dev,
-                ),
-                risk_level="medium",
-            ),
-            # ── MiRo Prediction (future decision projection) ──
-            ProactiveAction(
-                name="miro_prediction",
-                description="Use MiRo swarm intelligence to project future decisions and patterns",
-                interval_seconds=PROACTIVE_INTERVALS.get("miro_prediction", 7200),
-                handler=lambda: miro_predict(
-                    collab=self._collab, llm=self._llm, memory=self._memory,
-                    notification_engine=self._notifications,
-                ),
-                risk_level="low",
-            ),
-            # ── OpenClaw Data Intelligence ──
-            ProactiveAction(
-                name="data_intelligence",
-                description="Run OpenClaw gap analysis and discovery for new public data sources",
-                interval_seconds=PROACTIVE_INTERVALS.get("data_intelligence", 14400),
-                handler=lambda: data_intelligence(collab=self._collab),
-                risk_level="medium",
-            ),
-            # ── Task Queue Drainer (bridges persistent queue → executor) ──
-            ProactiveAction(
-                name="task_queue_drainer",
-                description="Process pending tasks from persistent queue through task executor",
-                interval_seconds=PROACTIVE_INTERVALS.get("task_queue_drainer", 120),
-                handler=lambda: drain_task_queue(
-                    task_queue=self._task_queue, task_executor=self._task_executor,
-                ),
-                risk_level="low",
-            ),
-            # ── Autonomous Trading Cycle ──
-            ProactiveAction(
-                name="auto_trade_cycle",
-                description="Run hedge fund scan→analyze→trade cycle with escalation approval",
-                interval_seconds=PROACTIVE_INTERVALS.get("auto_trade_cycle", 3600),
-                handler=lambda: auto_trade_cycle(
-                    hedge_fund=self._hedge_fund, escalation=self._escalation,
-                ),
-                risk_level="critical",
-            ),
-            # ── Goal Assessment (stalled goal detection) ──
             ProactiveAction(
                 name="goal_assessment",
                 description="Assess active goals, detect stalled progress, propose fixes",
                 interval_seconds=PROACTIVE_INTERVALS.get("goal_assessment", 3600),
                 handler=lambda: assess_goals(goal_engine=self._goal_engine),
                 risk_level="low",
+                priority=PRIORITY_HIGH,
             ),
-            # ── Survival Economics (revenue awareness) ──
             ProactiveAction(
                 name="survival_economics",
                 description="Assess economic health, scan for revenue opportunities, ensure system sustainability",
@@ -424,8 +422,31 @@ class ProactiveEngine:
                     task_queue=self._task_queue, memory=self._memory,
                 ),
                 risk_level="low",
+                priority=PRIORITY_HIGH,
             ),
-            # ── MiRo Continuous Potentiality (constant assessment) ──
+            ProactiveAction(
+                name="revenue_remediation",
+                description="Auto-pause unprofitable products, flag top earners and near-profitable for optimization",
+                interval_seconds=PROACTIVE_INTERVALS.get("revenue_remediation", 3600),
+                handler=lambda: auto_remediate_revenue(
+                    revenue_engine=self._revenue_engine,
+                ),
+                risk_level="medium",
+                priority=PRIORITY_HIGH,
+            ),
+
+            # ── PRIORITY_NORMAL: standard intelligence behaviors ──
+            ProactiveAction(
+                name="market_scanner",
+                description="Scan markets via Trading Swarm + technical analysis + hedge fund intelligence",
+                interval_seconds=PROACTIVE_INTERVALS.get("market_scanner", 1800),
+                handler=lambda: scan_markets(
+                    collab=self._collab, llm=self._llm, memory=self._memory,
+                    hedge_fund=self._hedge_fund, market_data=self._market_data,
+                ),
+                risk_level="low",
+                priority=PRIORITY_NORMAL,
+            ),
             ProactiveAction(
                 name="miro_continuous",
                 description="MiRo continuously assesses market potentiality and shares insights to agent network",
@@ -435,8 +456,84 @@ class ProactiveEngine:
                     notification_engine=self._notifications,
                 ),
                 risk_level="low",
+                priority=PRIORITY_NORMAL,
             ),
-            # ── MiRo World Intelligence (6-domain autonomous analysis) ──
+            ProactiveAction(
+                name="miro_prediction",
+                description="Use MiRo swarm intelligence to project future decisions and patterns",
+                interval_seconds=PROACTIVE_INTERVALS.get("miro_prediction", 7200),
+                handler=lambda: miro_predict(
+                    collab=self._collab, llm=self._llm, memory=self._memory,
+                    notification_engine=self._notifications,
+                ),
+                risk_level="low",
+                priority=PRIORITY_NORMAL,
+            ),
+            ProactiveAction(
+                name="polymarket_scanner",
+                description="Scan Polymarket prediction markets and store price snapshots",
+                interval_seconds=PROACTIVE_INTERVALS.get("polymarket_scanner", 600),
+                handler=lambda: scan_polymarkets(
+                    polymarket_bot=self._polymarket_bot,
+                ),
+                risk_level="low",
+                priority=PRIORITY_NORMAL,
+            ),
+            ProactiveAction(
+                name="revenue_tracker",
+                description="Monitor project revenue health, flag risks, identify growth",
+                interval_seconds=PROACTIVE_INTERVALS.get("revenue_tracker", 3600),
+                handler=lambda: track_revenue_health(
+                    revenue_engine=self._revenue_engine,
+                    ecosystem=self._ecosystem, memory=self._memory,
+                ),
+                risk_level="low",
+                priority=PRIORITY_NORMAL,
+            ),
+            ProactiveAction(
+                name="goal_auto_recovery",
+                description="Auto-recover stalled goals by decomposing into tasks (7d/14d/30d tiers)",
+                interval_seconds=PROACTIVE_INTERVALS.get("goal_auto_recovery", 3600),
+                handler=lambda: auto_recover_goals(
+                    goal_engine=self._goal_engine,
+                ),
+                risk_level="medium",
+                priority=PRIORITY_NORMAL,
+            ),
+            ProactiveAction(
+                name="experiment_runner",
+                description="Start proposed experiments, evaluate running ones, scale successes",
+                interval_seconds=PROACTIVE_INTERVALS.get("experiment_runner", 3600),
+                handler=lambda: run_experiments(
+                    experiment_lab=self._experiment_lab,
+                    llm=self._llm, memory=self._memory,
+                    collab=self._collab,
+                ),
+                risk_level="medium",
+                priority=PRIORITY_NORMAL,
+                depends_on=["experiment_proposer"],
+            ),
+            ProactiveAction(
+                name="strategy_validator",
+                description="Autonomously discover, backtest, and rank trading strategies — promote winners to live",
+                interval_seconds=PROACTIVE_INTERVALS.get("strategy_validator", 14400),
+                handler=lambda: validate_strategies(
+                    strategy_validator=self._strategy_validator,
+                ),
+                risk_level="medium",
+                priority=PRIORITY_NORMAL,
+                depends_on=["market_scanner"],
+            ),
+            ProactiveAction(
+                name="ecosystem_scanner",
+                description="Scan project ecosystem and store cross-project awareness into memory",
+                interval_seconds=PROACTIVE_INTERVALS.get("ecosystem_scanner", 3600),
+                handler=lambda: scan_project_ecosystem(
+                    ecosystem=self._ecosystem, memory=self._memory,
+                ),
+                risk_level="low",
+                priority=PRIORITY_NORMAL,
+            ),
             ProactiveAction(
                 name="miro_world_intelligence",
                 description="MiRo scans world domains (markets, geopolitics, AI, crypto, weather, macro) on rotation",
@@ -449,8 +546,74 @@ class ProactiveEngine:
                     )).run_count,
                 ),
                 risk_level="low",
+                priority=PRIORITY_NORMAL,
             ),
-            # ── MiRo Daily Briefing (comprehensive daily push) ──
+            ProactiveAction(
+                name="skill_discovery",
+                description="Create new skills from successful patterns",
+                interval_seconds=PROACTIVE_INTERVALS.get("skill_discovery", 3600),
+                handler=lambda: discover_skills(
+                    self_dev=self._self_dev, memory=self._memory,
+                ),
+                risk_level="medium",
+                priority=PRIORITY_NORMAL,
+            ),
+            ProactiveAction(
+                name="opportunity_scanner",
+                description="Look for opportunities aligned with Yohan's interests",
+                interval_seconds=PROACTIVE_INTERVALS.get("opportunity_scanner", 14400),
+                handler=lambda: scan_opportunities(
+                    collab=self._collab, llm=self._llm,
+                ),
+                risk_level="medium",
+                priority=PRIORITY_NORMAL,
+            ),
+
+            # ── PRIORITY_LOW: heavy batch/scan jobs; deferred under load ──
+            ProactiveAction(
+                name="knowledge_consolidation",
+                description="Prune weak memories, strengthen used ones, find patterns",
+                interval_seconds=PROACTIVE_INTERVALS.get("knowledge_consolidation", 7200),
+                handler=lambda: consolidate_knowledge(memory=self._memory),
+                risk_level="low",
+                priority=PRIORITY_LOW,
+            ),
+            ProactiveAction(
+                name="agent_evolution",
+                description="Assess agent performance and propose improvements",
+                interval_seconds=PROACTIVE_INTERVALS.get("agent_evolution", 7200),
+                handler=lambda: evolve_agents(self_dev=self._self_dev),
+                risk_level="low",
+                priority=PRIORITY_LOW,
+            ),
+            ProactiveAction(
+                name="github_scanner",
+                description="Scan GitHub for trending repos, AI breakthroughs, useful tools",
+                interval_seconds=PROACTIVE_INTERVALS.get("github_scanner", 14400),
+                handler=lambda: scan_github(
+                    collab=self._collab, llm=self._llm, memory=self._memory,
+                ),
+                risk_level="low",
+                priority=PRIORITY_LOW,
+            ),
+            ProactiveAction(
+                name="self_rewrite",
+                description="ROOT analyzes its own code and proposes enhancements via Coder agent",
+                interval_seconds=PROACTIVE_INTERVALS.get("self_rewrite", 21600),
+                handler=lambda: self_rewrite(
+                    collab=self._collab, llm=self._llm, self_dev=self._self_dev,
+                ),
+                risk_level="medium",
+                priority=PRIORITY_LOW,
+            ),
+            ProactiveAction(
+                name="data_intelligence",
+                description="Run OpenClaw gap analysis and discovery for new public data sources",
+                interval_seconds=PROACTIVE_INTERVALS.get("data_intelligence", 14400),
+                handler=lambda: data_intelligence(collab=self._collab),
+                risk_level="medium",
+                priority=PRIORITY_LOW,
+            ),
             ProactiveAction(
                 name="miro_daily_briefing",
                 description="MiRo synthesizes a comprehensive daily briefing across all world domains",
@@ -460,8 +623,9 @@ class ProactiveEngine:
                     notification_engine=self._notifications,
                 ),
                 risk_level="low",
+                priority=PRIORITY_LOW,
+                depends_on=["miro_world_intelligence"],
             ),
-            # ── Business Discovery (opportunity scanning) ──
             ProactiveAction(
                 name="business_discovery",
                 description="Scan for micro-SaaS, automation, and product opportunities using researcher + analyst",
@@ -470,8 +634,8 @@ class ProactiveEngine:
                     collab=self._collab, memory=self._memory,
                 ),
                 risk_level="low",
+                priority=PRIORITY_LOW,
             ),
-            # ── Experiment Auto-Proposer (generates testable hypotheses) ──
             ProactiveAction(
                 name="experiment_proposer",
                 description="Auto-propose experiments from market scans, business discoveries, and agent insights (planning-enhanced)",
@@ -483,8 +647,8 @@ class ProactiveEngine:
                     planning_engine=self._planning_engine,
                 ),
                 risk_level="low",
+                priority=PRIORITY_LOW,
             ),
-            # ── Revenue Seeder (ensures products exist from real projects) ──
             ProactiveAction(
                 name="revenue_seeder",
                 description="Seed revenue engine with real products from Yohan's project ecosystem",
@@ -494,30 +658,8 @@ class ProactiveEngine:
                     ecosystem=self._ecosystem,
                 ),
                 risk_level="low",
+                priority=PRIORITY_LOW,
             ),
-            # ── Project Ecosystem Scanner (cross-project awareness) ──
-            ProactiveAction(
-                name="ecosystem_scanner",
-                description="Scan project ecosystem and store cross-project awareness into memory",
-                interval_seconds=PROACTIVE_INTERVALS.get("ecosystem_scanner", 3600),
-                handler=lambda: scan_project_ecosystem(
-                    ecosystem=self._ecosystem, memory=self._memory,
-                ),
-                risk_level="low",
-            ),
-            # ── Autonomous Experiment Runner (start → evaluate → learn) ──
-            ProactiveAction(
-                name="experiment_runner",
-                description="Start proposed experiments, evaluate running ones, scale successes",
-                interval_seconds=PROACTIVE_INTERVALS.get("experiment_runner", 3600),
-                handler=lambda: run_experiments(
-                    experiment_lab=self._experiment_lab,
-                    llm=self._llm, memory=self._memory,
-                    collab=self._collab,
-                ),
-                risk_level="medium",
-            ),
-            # ── Self-Writing Code Scanner ──
             ProactiveAction(
                 name="code_scanner",
                 description="Scan for code inefficiencies and propose self-improvement changes",
@@ -527,19 +669,8 @@ class ProactiveEngine:
                     llm=self._llm, memory=self._memory,
                 ),
                 risk_level="low",
+                priority=PRIORITY_LOW,
             ),
-            # ── Revenue Health Tracker ──
-            ProactiveAction(
-                name="revenue_tracker",
-                description="Monitor project revenue health, flag risks, identify growth",
-                interval_seconds=PROACTIVE_INTERVALS.get("revenue_tracker", 3600),
-                handler=lambda: track_revenue_health(
-                    revenue_engine=self._revenue_engine,
-                    ecosystem=self._ecosystem, memory=self._memory,
-                ),
-                risk_level="low",
-            ),
-            # ── Cross-Project Correlation (find synergies) ──
             ProactiveAction(
                 name="project_correlator",
                 description="Correlate across projects to find synergies and untapped opportunities",
@@ -550,102 +681,8 @@ class ProactiveEngine:
                     experience_memory=self._experience_memory,
                 ),
                 risk_level="low",
-            ),
-            # ── Actuator: Approval Timeout Escalation ──
-            ProactiveAction(
-                name="approval_timeout",
-                description="Expire stale approvals — HIGH auto-approved after 60min, CRITICAL expired",
-                interval_seconds=PROACTIVE_INTERVALS.get("approval_timeout", 300),
-                handler=lambda: check_approval_timeouts(
-                    approval_chain=self._approval,
-                ),
-                risk_level="low",
-            ),
-            # ── Actuator: Stalled Goal Auto-Recovery ──
-            ProactiveAction(
-                name="goal_auto_recovery",
-                description="Auto-recover stalled goals by decomposing into tasks (7d/14d/30d tiers)",
-                interval_seconds=PROACTIVE_INTERVALS.get("goal_auto_recovery", 3600),
-                handler=lambda: auto_recover_goals(
-                    goal_engine=self._goal_engine,
-                ),
-                risk_level="medium",
-            ),
-            # ── Actuator: Revenue Emergency Remediation ──
-            ProactiveAction(
-                name="revenue_remediation",
-                description="Auto-pause unprofitable products, flag top earners and near-profitable for optimization",
-                interval_seconds=PROACTIVE_INTERVALS.get("revenue_remediation", 3600),
-                handler=lambda: auto_remediate_revenue(
-                    revenue_engine=self._revenue_engine,
-                ),
-                risk_level="medium",
-            ),
-            # ── Strategy Validator (autonomous backtest → promote pipeline) ──
-            ProactiveAction(
-                name="strategy_validator",
-                description="Autonomously discover, backtest, and rank trading strategies — promote winners to live",
-                interval_seconds=PROACTIVE_INTERVALS.get("strategy_validator", 14400),
-                handler=lambda: validate_strategies(
-                    strategy_validator=self._strategy_validator,
-                ),
-                risk_level="medium",
-            ),
-            # ── Deploy Promoted Strategies (validator → hedge fund bridge) ──
-            ProactiveAction(
-                name="deploy_promoted",
-                description="Convert promoted strategies into live trading signals for hedge fund execution",
-                interval_seconds=PROACTIVE_INTERVALS.get("deploy_promoted", 3600),
-                handler=lambda: deploy_promoted_strategies(
-                    strategy_validator=self._strategy_validator,
-                    hedge_fund=self._hedge_fund,
-                    escalation=self._escalation,
-                    notification_engine=self._notifications,
-                ),
-                risk_level="critical",
-            ),
-            # ── Scalp Trade Cycle (fast leveraged ETF scalping) ──
-            ProactiveAction(
-                name="scalp_trade_cycle",
-                description="Fast 90s scalp cycle on leveraged ETFs (TQQQ, SQQQ, SOXL, SOXS) using EMA/RSI strategies",
-                interval_seconds=PROACTIVE_INTERVALS.get("scalp_trade_cycle", 90),
-                handler=lambda: scalp_trade_cycle(
-                    hedge_fund=self._hedge_fund,
-                    escalation=self._escalation,
-                    notification_engine=self._notifications,
-                ),
-                risk_level="critical",
-            ),
-            # ── Polymarket: Market Scanner ──
-            ProactiveAction(
-                name="polymarket_scanner",
-                description="Scan Polymarket prediction markets and store price snapshots",
-                interval_seconds=PROACTIVE_INTERVALS.get("polymarket_scanner", 600),
-                handler=lambda: scan_polymarkets(
-                    polymarket_bot=self._polymarket_bot,
-                ),
-                risk_level="low",
-            ),
-            # ── Polymarket: Trading Cycle ──
-            ProactiveAction(
-                name="polymarket_trade_cycle",
-                description="Run Polymarket scalping + edge hunting trading cycle",
-                interval_seconds=PROACTIVE_INTERVALS.get("polymarket_trade_cycle", 1800),
-                handler=lambda: polymarket_trade_cycle(
-                    polymarket_bot=self._polymarket_bot,
-                    escalation=self._escalation,
-                ),
-                risk_level="critical",
-            ),
-            # ── Polymarket: Position Monitor ──
-            ProactiveAction(
-                name="polymarket_monitor",
-                description="Check open Polymarket positions for profit targets and stop losses",
-                interval_seconds=PROACTIVE_INTERVALS.get("polymarket_monitor", 300),
-                handler=lambda: monitor_polymarket_positions(
-                    polymarket_bot=self._polymarket_bot,
-                ),
-                risk_level="low",
+                priority=PRIORITY_LOW,
+                depends_on=["ecosystem_scanner"],
             ),
         ]
 

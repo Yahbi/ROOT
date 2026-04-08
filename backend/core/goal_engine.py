@@ -120,7 +120,12 @@ class GoalEngine:
                 created_at TEXT NOT NULL,
                 updated_at TEXT NOT NULL,
                 completed_at TEXT,
-                metadata TEXT DEFAULT '{}'
+                metadata TEXT DEFAULT '{}',
+                depends_on TEXT DEFAULT '[]',
+                importance INTEGER DEFAULT 5,
+                urgency INTEGER DEFAULT 5,
+                resources TEXT DEFAULT '[]',
+                priority_score REAL DEFAULT 0.0
             );
 
             CREATE TABLE IF NOT EXISTS goal_events (
@@ -132,10 +137,70 @@ class GoalEngine:
                 FOREIGN KEY (goal_id) REFERENCES goals(id)
             );
 
+            CREATE TABLE IF NOT EXISTS goal_milestones (
+                id TEXT PRIMARY KEY,
+                goal_id TEXT NOT NULL,
+                title TEXT NOT NULL,
+                description TEXT DEFAULT '',
+                status TEXT DEFAULT 'pending',
+                order_index INTEGER DEFAULT 0,
+                due_date TEXT,
+                completed_at TEXT,
+                created_at TEXT NOT NULL,
+                FOREIGN KEY (goal_id) REFERENCES goals(id)
+            );
+
+            CREATE TABLE IF NOT EXISTS goal_retrospectives (
+                id TEXT PRIMARY KEY,
+                goal_id TEXT NOT NULL,
+                duration_days REAL,
+                completion_accuracy REAL,
+                lessons TEXT DEFAULT '[]',
+                successes TEXT DEFAULT '[]',
+                obstacles TEXT DEFAULT '[]',
+                velocity_avg REAL DEFAULT 0.0,
+                created_at TEXT NOT NULL,
+                FOREIGN KEY (goal_id) REFERENCES goals(id)
+            );
+
             CREATE INDEX IF NOT EXISTS idx_goals_status ON goals(status);
             CREATE INDEX IF NOT EXISTS idx_goals_priority ON goals(priority);
+            CREATE INDEX IF NOT EXISTS idx_goals_priority_score ON goals(priority_score);
             CREATE INDEX IF NOT EXISTS idx_goal_events_goal ON goal_events(goal_id);
+            CREATE INDEX IF NOT EXISTS idx_goal_milestones_goal ON goal_milestones(goal_id);
+            CREATE INDEX IF NOT EXISTS idx_goal_retro_goal ON goal_retrospectives(goal_id);
         """)
+        self._migrate_schema()
+
+    def _migrate_schema(self) -> None:
+        """Add new columns to existing databases (idempotent)."""
+        new_cols = [
+            ("depends_on", "TEXT DEFAULT '[]'"),
+            ("importance", "INTEGER DEFAULT 5"),
+            ("urgency", "INTEGER DEFAULT 5"),
+            ("resources", "TEXT DEFAULT '[]'"),
+            ("priority_score", "REAL DEFAULT 0.0"),
+        ]
+        existing = {
+            row[1]
+            for row in self.conn.execute("PRAGMA table_info(goals)").fetchall()
+        }
+        for col, typedef in new_cols:
+            if col not in existing:
+                self.conn.execute(f"ALTER TABLE goals ADD COLUMN {col} {typedef}")
+        self.conn.commit()
+
+    # ── Priority Scoring ─────────────────────────────────────────
+
+    @staticmethod
+    def compute_priority_score(importance: int, urgency: int) -> float:
+        """Importance × urgency matrix, normalised to [0, 1].
+
+        Both axes are 1–9 (1=highest). We invert so that score=1 is best.
+        """
+        inv_imp = (10 - max(1, min(9, importance))) / 9.0
+        inv_urg = (10 - max(1, min(9, urgency))) / 9.0
+        return round(inv_imp * inv_urg, 4)
 
     # ── Goal CRUD ────────────────────────────────────────────────
 
@@ -149,6 +214,10 @@ class GoalEngine:
         milestones: list[str] | None = None,
         deadline: Optional[str] = None,
         metadata: Optional[dict[str, Any]] = None,
+        depends_on: list[str] | None = None,
+        importance: int = 5,
+        urgency: int = 5,
+        resources: list[str] | None = None,
     ) -> Goal:
         """Add a new goal."""
         active_count = self.conn.execute(
@@ -167,15 +236,19 @@ class GoalEngine:
 
         goal_id = f"goal_{uuid.uuid4().hex[:12]}"
         now = _now_iso()
+        priority_score = self.compute_priority_score(importance, urgency)
 
         self.conn.execute(
             """INSERT INTO goals
                (id, title, description, priority, source, category,
-                milestones, deadline, created_at, updated_at, metadata)
-               VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+                milestones, deadline, created_at, updated_at, metadata,
+                depends_on, importance, urgency, resources, priority_score)
+               VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
             (goal_id, title[:500], description[:2000], priority, source,
              category, json.dumps(milestones or []), deadline,
-             now, now, json.dumps(metadata or {})),
+             now, now, json.dumps(metadata or {}),
+             json.dumps(depends_on or []), importance, urgency,
+             json.dumps(resources or []), priority_score),
         )
         self._log_event(goal_id, "created", f"Goal created: {title[:200]}")
         self.conn.commit()
@@ -185,6 +258,10 @@ class GoalEngine:
             priority=priority, source=source, category=category,
             milestones=tuple(milestones or []), deadline=deadline,
             created_at=now, updated_at=now, metadata=metadata or {},
+            depends_on=tuple(depends_on or []),
+            importance=importance, urgency=urgency,
+            resources=tuple(resources or []),
+            priority_score=priority_score,
         )
 
     def update_progress(self, goal_id: str, progress: float, note: str = "") -> Optional[Goal]:
@@ -481,21 +558,32 @@ class GoalEngine:
         )
 
     def _row_to_goal(self, row: sqlite3.Row) -> Goal:
-        milestones = []
-        completed_milestones = []
-        metadata = {}
-        try:
-            milestones = json.loads(row["milestones"] or "[]")
-        except (json.JSONDecodeError, TypeError):
-            pass
-        try:
-            completed_milestones = json.loads(row["completed_milestones"] or "[]")
-        except (json.JSONDecodeError, TypeError):
-            pass
-        try:
-            metadata = json.loads(row["metadata"] or "{}")
-        except (json.JSONDecodeError, TypeError):
-            pass
+        def _load_json_list(key: str) -> list:
+            try:
+                return json.loads(row[key] or "[]")
+            except (json.JSONDecodeError, TypeError, IndexError):
+                return []
+
+        def _load_json_dict(key: str) -> dict:
+            try:
+                return json.loads(row[key] or "{}")
+            except (json.JSONDecodeError, TypeError, IndexError):
+                return {}
+
+        # Safely read v1.1 columns (may be absent in old rows)
+        def _safe_int(key: str, default: int) -> int:
+            try:
+                v = row[key]
+                return int(v) if v is not None else default
+            except (IndexError, TypeError):
+                return default
+
+        def _safe_float(key: str, default: float) -> float:
+            try:
+                v = row[key]
+                return float(v) if v is not None else default
+            except (IndexError, TypeError):
+                return default
 
         return Goal(
             id=row["id"], title=row["title"],
@@ -504,13 +592,18 @@ class GoalEngine:
             source=row["source"] or "user",
             category=row["category"] or "general",
             progress=row["progress"] or 0.0,
-            milestones=tuple(milestones),
-            completed_milestones=tuple(completed_milestones),
+            milestones=tuple(_load_json_list("milestones")),
+            completed_milestones=tuple(_load_json_list("completed_milestones")),
             tasks_generated=row["tasks_generated"] or 0,
             tasks_completed=row["tasks_completed"] or 0,
             deadline=row["deadline"],
             created_at=row["created_at"],
             updated_at=row["updated_at"],
             completed_at=row["completed_at"],
-            metadata=metadata,
+            metadata=_load_json_dict("metadata"),
+            depends_on=tuple(_load_json_list("depends_on")),
+            importance=_safe_int("importance", 5),
+            urgency=_safe_int("urgency", 5),
+            resources=tuple(_load_json_list("resources")),
+            priority_score=_safe_float("priority_score", 0.0),
         )

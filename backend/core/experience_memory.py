@@ -8,13 +8,25 @@ Three memory layers:
 
 Experience memory is the system's wisdom — it learns from outcomes
 and informs future decisions.
+
+Extended capabilities:
+- Pattern recognition: detect recurring success/failure patterns
+- Relevance-scored search: TF-IDF-style scoring across title/description/tags
+- Experience clustering: group experiences by topic/domain similarity
+- Wisdom extraction: synthesize experiences into actionable wisdom
+- Experience aging: old experiences receive lower effective weight
+- Cross-domain learning: apply lessons from one domain to another
+- Visualization data: aggregated data ready for frontend charts
 """
 
 from __future__ import annotations
 
+import json
+import math
 import sqlite3
 import uuid
-from datetime import datetime, timezone
+from collections import Counter, defaultdict
+from datetime import datetime, timezone, timedelta
 from dataclasses import dataclass, field
 from enum import Enum
 from pathlib import Path
@@ -56,6 +68,54 @@ class ShortTermEntry:
     task_id: Optional[str] = None
     created_at: str = field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
     ttl_seconds: int = 3600      # Auto-expire after 1 hour
+
+
+@dataclass(frozen=True)
+class ScoredExperience:
+    """Experience with a relevance score attached (for ranked search results)."""
+    experience: Experience
+    score: float
+
+
+@dataclass(frozen=True)
+class ExperiencePattern:
+    """A recurring pattern detected across multiple experiences."""
+    pattern_id: str
+    pattern_type: str          # "recurring_success", "recurring_failure", "mixed"
+    domain: str
+    title: str                 # Synthesized pattern title
+    description: str           # What the pattern means
+    occurrence_count: int      # How many experiences match
+    avg_confidence: float
+    example_ids: list[str]     # Representative experience IDs
+    keywords: list[str]        # Key terms driving the pattern
+
+
+@dataclass(frozen=True)
+class ExperienceCluster:
+    """A cluster of topically related experiences."""
+    cluster_id: str
+    label: str                 # Human-readable cluster label
+    domain: str
+    keywords: list[str]
+    experience_ids: list[str]
+    size: int
+    dominant_type: str         # Most common experience_type in cluster
+    avg_confidence: float
+
+
+@dataclass(frozen=True)
+class Wisdom:
+    """Actionable wisdom synthesized from multiple experiences."""
+    wisdom_id: str
+    domain: str
+    insight: str               # The actionable wisdom statement
+    source_types: list[str]    # Which experience types contributed
+    supporting_count: int      # Number of experiences that support this
+    confidence: float          # Weighted confidence of the wisdom
+    keywords: list[str]
+    cross_domain_applicable: bool  # Can be applied to other domains
+    related_domains: list[str]
 
 
 class ExperienceMemory:

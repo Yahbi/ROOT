@@ -162,7 +162,8 @@ class TestGetActions:
     @pytest.mark.asyncio
     async def test_action_dict_keys(self, proactive):
         actions = await proactive.get_actions()
-        expected_keys = {
+        # Core fields (always present)
+        required_keys = {
             "name",
             "description",
             "enabled",
@@ -173,6 +174,18 @@ class TestGetActions:
             "error_count",
             "last_result",
         }
+        # v1.1 extended fields
+        extended_keys = {
+            "effective_interval_seconds",
+            "priority",
+            "depends_on",
+            "last_exec_time_ms",
+            "avg_exec_time_ms",
+            "value_score",
+            "backoff_multiplier",
+            "success_rate",
+        }
+        expected_keys = required_keys | extended_keys
         for action_dict in actions:
             assert set(action_dict.keys()) == expected_keys
 

@@ -1,5 +1,5 @@
 """
-Agent Civilization Divisions — 160 specialized agents across 10 divisions.
+Agent Civilization Divisions — 210 specialized agents across 10 divisions.
 
 Each division file defines agents with 4-6 actionable capabilities
 that map to real tools via the prompt_builder's CAPABILITY_TOOLS dict.

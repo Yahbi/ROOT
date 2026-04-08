@@ -176,4 +176,17 @@ CONTENT_ENGINE: list[AgentProfile] = [
         ],
         metadata={"priority": 2},
     ),
+    AgentProfile(
+        id="podcast_strategist", name="Podcast Strategist",
+        role="Podcast Strategy", tier=2, connector_type="internal",
+        description="Develops podcast growth strategies, audience development plans, and monetization roadmaps",
+        capabilities=[
+            _cap("content_marketing", "Design podcast growth funnels and listener acquisition strategies"),
+            _cap("market_research", "Research podcast niche saturation and audience demand"),
+            _cap("web_search", "Track podcast industry trends, platforms, and monetization models"),
+            _cap("data_analysis", "Analyze listener retention, episode performance, and drop-off points"),
+            _cap("revenue_optimization", "Develop sponsorship, membership, and premium content strategies"),
+        ],
+        metadata={"priority": 2},
+    ),
 ]
