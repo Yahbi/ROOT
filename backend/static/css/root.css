@@ -2916,3 +2916,627 @@ mark.msg-highlight.current {
 
 /* message bookmark button active state */
 .msg-action-btn.bookmarked { color: #f1c40f; }
+
+/* ══════════════════════════════════════════════════
+   ENHANCED UI ANIMATIONS & EFFECTS (v1.1)
+   ══════════════════════════════════════════════════ */
+
+/* ── Smooth Scroll Everywhere ── */
+html {
+    scroll-behavior: smooth;
+}
+.panel-scroll,
+.chat-messages,
+.notif-list,
+.cmd-results,
+.sidebar {
+    scroll-behavior: smooth;
+}
+
+/* ── 1. Smooth Hover 3D Tilt for Cards ── */
+@keyframes cardTiltReset {
+    to { transform: perspective(800px) rotateX(0deg) rotateY(0deg) translateY(0); }
+}
+
+.card,
+.stat-card,
+.agent-card,
+.reflection-card,
+.process-card,
+.sandbox-approval-card {
+    transform-style: preserve-3d;
+    will-change: transform;
+    transition:
+        transform 0.35s cubic-bezier(0.23, 1, 0.32, 1),
+        box-shadow 0.35s cubic-bezier(0.23, 1, 0.32, 1),
+        border-color 0.25s ease;
+}
+
+.card:hover,
+.stat-card:hover,
+.agent-card:hover,
+.reflection-card:hover {
+    transform: perspective(800px) rotateX(2deg) rotateY(-2deg) translateY(-3px);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.18), 0 4px 12px rgba(0, 0, 0, 0.12);
+}
+
+/* ── 2. Animated Gradient Borders for Active / Focused Elements ── */
+@keyframes gradientBorderSpin {
+    0%   { background-position: 0% 50%; }
+    50%  { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+.input-wrapper:focus-within {
+    border-color: transparent;
+    position: relative;
+}
+.input-wrapper:focus-within::before {
+    content: '';
+    position: absolute;
+    inset: -1px;
+    border-radius: 17px;
+    background: linear-gradient(
+        90deg,
+        var(--accent),
+        var(--accent-purple),
+        var(--accent-cyan),
+        var(--accent),
+        var(--accent-pink),
+        var(--accent)
+    );
+    background-size: 300% 300%;
+    animation: gradientBorderSpin 3s linear infinite;
+    z-index: -1;
+}
+.input-wrapper:focus-within::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 16px;
+    background: var(--bg-base);
+    z-index: -1;
+}
+
+/* Animated gradient border for active nav items */
+.nav-item.active {
+    position: relative;
+    overflow: hidden;
+}
+.nav-item.active::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 20%; bottom: 20%;
+    width: 2px;
+    background: linear-gradient(180deg, var(--accent), var(--accent-cyan), var(--accent));
+    background-size: 100% 200%;
+    animation: gradientBorderSpin 2s linear infinite;
+    border-radius: 1px;
+}
+
+/* ── 3. Glassmorphism — Stronger Blur for Dropdowns & Modals ── */
+.model-picker-dropdown,
+.theme-picker-dropdown,
+.notification-dropdown,
+.slash-dropdown,
+.cmd-palette {
+    backdrop-filter: blur(40px) saturate(200%) brightness(1.05);
+    -webkit-backdrop-filter: blur(40px) saturate(200%) brightness(1.05);
+    background: color-mix(in srgb, var(--bg-elevated) 75%, transparent);
+    border: 1px solid color-mix(in srgb, var(--border-hover) 50%, transparent);
+    box-shadow:
+        0 8px 48px rgba(0, 0, 0, 0.35),
+        0 0 0 1px rgba(255, 255, 255, 0.06) inset,
+        0 1px 0 rgba(255, 255, 255, 0.04) inset;
+}
+
+.modal-card {
+    backdrop-filter: blur(40px) saturate(200%);
+    -webkit-backdrop-filter: blur(40px) saturate(200%);
+    background: color-mix(in srgb, var(--bg-elevated) 80%, transparent);
+    border: 1px solid color-mix(in srgb, var(--border-hover) 45%, transparent);
+    box-shadow:
+        0 24px 80px rgba(0, 0, 0, 0.45),
+        0 0 0 1px rgba(255, 255, 255, 0.07) inset;
+}
+
+.pin-modal {
+    backdrop-filter: blur(40px) saturate(200%);
+    -webkit-backdrop-filter: blur(40px) saturate(200%);
+    background: color-mix(in srgb, var(--bg-surface) 75%, transparent);
+}
+
+/* ── 4. Loading Skeleton with Enhanced Shimmer ── */
+@keyframes skeletonShimmer {
+    0%   { background-position: -600px 0; }
+    100% { background-position: 600px 0; }
+}
+
+.skeleton {
+    background: linear-gradient(
+        105deg,
+        var(--bg-surface) 0%,
+        var(--bg-surface) 30%,
+        color-mix(in srgb, var(--bg-hover) 80%, var(--accent-glow)) 50%,
+        var(--bg-surface) 70%,
+        var(--bg-surface) 100%
+    );
+    background-size: 1200px 100%;
+    animation: skeletonShimmer 2s ease-in-out infinite;
+}
+
+.skeleton-text {
+    height: 12px;
+    margin-bottom: 8px;
+    border-radius: 6px;
+    opacity: 0.7;
+}
+.skeleton-text:nth-child(odd)  { width: 90%; }
+.skeleton-text:nth-child(even) { width: 70%; }
+
+.skeleton-card {
+    height: 80px;
+    margin-bottom: 10px;
+    border-radius: var(--radius-lg);
+}
+
+.skeleton-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.skeleton-title {
+    height: 16px;
+    width: 60%;
+    border-radius: 6px;
+    margin-bottom: 6px;
+}
+
+/* ── 5. Message Slide-In from Bottom ── */
+@keyframes msgSlideInUp {
+    from {
+        opacity: 0;
+        transform: translateY(18px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.msg {
+    animation: msgSlideInUp 0.32s cubic-bezier(0.23, 1, 0.32, 1) both;
+}
+
+/* Stagger for consecutive messages */
+.msg:nth-last-child(1)  { animation-delay: 0ms; }
+.msg:nth-last-child(2)  { animation-delay: 25ms; }
+.msg:nth-last-child(3)  { animation-delay: 50ms; }
+
+/* ── 6. Notification Slide-In from Right with Bounce ── */
+@keyframes notifSlideInBounce {
+    0%   { opacity: 0; transform: translateX(120%); }
+    60%  { opacity: 1; transform: translateX(-8px); }
+    80%  { transform: translateX(4px); }
+    100% { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes notifSlideOut {
+    from { opacity: 1; transform: translateX(0); }
+    to   { opacity: 0; transform: translateX(120%); }
+}
+
+.activity-item {
+    animation: notifSlideInBounce 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+.toast {
+    transition: opacity 0.3s ease, transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.toast--visible {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+}
+.toast {
+    transform: translateX(32px) scale(0.96);
+}
+
+/* ── 7. Smooth Panel Cross-Fade Transitions ── */
+@keyframes panelCrossFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(6px) scale(0.995);
+        filter: blur(2px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+        filter: blur(0);
+    }
+}
+
+.panel.active {
+    animation: panelCrossFadeIn 0.28s cubic-bezier(0.23, 1, 0.32, 1) both;
+}
+
+/* ── 8. Parallax Background Gradient Animation ── */
+@keyframes bgParallaxShift {
+    0%   { background-position: 50% -10%; }
+    25%  { background-position: 55% -8%; }
+    50%  { background-position: 50% -12%; }
+    75%  { background-position: 45% -9%; }
+    100% { background-position: 50% -10%; }
+}
+
+.main::before {
+    animation: bgParallaxShift 12s ease-in-out infinite;
+    background: radial-gradient(ellipse 80% 40% at 50% -10%, var(--accent-glow), transparent);
+    background-size: 120% 120%;
+    will-change: background-position;
+}
+
+/* Secondary ambient gradient layer */
+.main::after {
+    content: '';
+    position: absolute;
+    bottom: -100px;
+    right: -100px;
+    width: 500px;
+    height: 500px;
+    background: radial-gradient(circle, color-mix(in srgb, var(--accent-purple) 4%, transparent), transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+    animation: bgParallaxShift 18s ease-in-out infinite reverse;
+    will-change: background-position;
+}
+
+/* ── 9. Animated Agent Status Dots — Breathing Pulse ── */
+@keyframes breathingPulse {
+    0%, 100% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 currentColor;
+        opacity: 1;
+    }
+    40% {
+        transform: scale(1.2);
+        box-shadow: 0 0 0 4px transparent;
+        opacity: 0.85;
+    }
+    70% {
+        transform: scale(0.95);
+        opacity: 1;
+    }
+}
+
+@keyframes breathingPulseOuter {
+    0%, 100% { opacity: 0; transform: scale(1); }
+    50%       { opacity: 0.35; transform: scale(2.2); }
+}
+
+.dm-status.online,
+.status-dot:not(.offline) {
+    animation: breathingPulse 2.4s ease-in-out infinite;
+    position: relative;
+}
+
+.dm-status.online::after,
+.status-dot:not(.offline)::after {
+    content: '';
+    position: absolute;
+    inset: -2px;
+    border-radius: 50%;
+    background: currentColor;
+    opacity: 0;
+    animation: breathingPulseOuter 2.4s ease-in-out infinite;
+    pointer-events: none;
+}
+
+/* Agent card status indicator breathing */
+.status-pill.online,
+.status-pill.available {
+    animation: breathingPulse 2.8s ease-in-out infinite;
+}
+
+/* ── 10. Progress Bar — Striped + Animated ── */
+@keyframes progressStripeMove {
+    from { background-position: 40px 0; }
+    to   { background-position: 0 0; }
+}
+
+@keyframes progressBarFill {
+    from { width: 0%; }
+    to   { width: var(--progress-width, 100%); }
+}
+
+.confidence-fill,
+.score-meter-fill {
+    background-image: linear-gradient(
+        -45deg,
+        rgba(255, 255, 255, 0.12) 25%,
+        transparent 25%,
+        transparent 50%,
+        rgba(255, 255, 255, 0.12) 50%,
+        rgba(255, 255, 255, 0.12) 75%,
+        transparent 75%,
+        transparent
+    );
+    background-size: 20px 20px;
+    animation: progressStripeMove 0.8s linear infinite;
+    transition: width 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+/* Generic animated progress bar class */
+.progress-bar {
+    height: 6px;
+    background: var(--bg-hover);
+    border-radius: 3px;
+    overflow: hidden;
+    position: relative;
+}
+
+.progress-bar-fill {
+    height: 100%;
+    border-radius: 3px;
+    background: linear-gradient(90deg, var(--accent), var(--accent-cyan));
+    background-image: linear-gradient(
+        -45deg,
+        rgba(255, 255, 255, 0.15) 25%,
+        transparent 25%,
+        transparent 50%,
+        rgba(255, 255, 255, 0.15) 50%,
+        rgba(255, 255, 255, 0.15) 75%,
+        transparent 75%,
+        transparent
+    );
+    background-size: 24px 24px;
+    animation: progressStripeMove 0.7s linear infinite;
+    transition: width 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+/* ── 11. Neon Glow on Accent-Colored Elements on Hover ── */
+@keyframes neonPulse {
+    0%, 100% { filter: drop-shadow(0 0 4px var(--accent)) drop-shadow(0 0 12px var(--accent-glow)); }
+    50%       { filter: drop-shadow(0 0 8px var(--accent)) drop-shadow(0 0 24px var(--accent-glow)); }
+}
+
+.btn-primary:hover {
+    animation: neonPulse 1.8s ease-in-out infinite;
+    box-shadow:
+        0 6px 20px var(--accent-glow),
+        0 0 0 1px rgba(255, 255, 255, 0.1) inset,
+        0 0 20px var(--accent-glow);
+}
+
+.send-btn:hover {
+    animation: neonPulse 1.8s ease-in-out infinite;
+    box-shadow:
+        0 6px 24px var(--accent-glow),
+        0 0 0 1px rgba(255, 255, 255, 0.12) inset,
+        0 0 28px var(--accent-glow);
+}
+
+.mode-pill.active:hover,
+.artifact-tab.active:hover {
+    animation: neonPulse 1.8s ease-in-out infinite;
+}
+
+/* Neon glow on accent-colored text elements on hover */
+.nav-item.active:hover svg,
+.section-action-btn:hover,
+.lead-badge {
+    filter: drop-shadow(0 0 4px var(--accent));
+    transition: filter 0.3s ease;
+}
+
+.brand-icon {
+    transition: box-shadow 0.3s ease, filter 0.3s ease;
+}
+.brand-icon:hover {
+    filter: drop-shadow(0 0 8px var(--accent)) drop-shadow(0 0 16px var(--accent-glow));
+}
+
+/* Neon for accent-cyan code tags */
+.code-lang-tag:hover,
+.process-tool-tag:hover {
+    filter: drop-shadow(0 0 4px var(--accent-cyan));
+    transition: filter 0.25s ease;
+}
+
+/* ── Dropdown Open Animations ── */
+@keyframes dropdownSlideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-8px) scale(0.97);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+@keyframes dropdownSlideUp {
+    from {
+        opacity: 0;
+        transform: translateY(8px) scale(0.97);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.theme-picker-dropdown.open,
+.notification-dropdown {
+    animation: dropdownSlideDown 0.2s cubic-bezier(0.23, 1, 0.32, 1) both;
+}
+
+.model-picker-dropdown.open {
+    animation: dropdownSlideUp 0.2s cubic-bezier(0.23, 1, 0.32, 1) both;
+}
+
+.slash-dropdown {
+    animation: dropdownSlideUp 0.18s cubic-bezier(0.23, 1, 0.32, 1) both;
+}
+
+/* ── Enhanced Focus Ring Gradient ── */
+@keyframes focusRingPulse {
+    0%, 100% { box-shadow: 0 0 0 2px var(--accent-glow), 0 0 0 3px var(--accent); }
+    50%       { box-shadow: 0 0 0 4px var(--accent-glow), 0 0 0 3px var(--accent); }
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+    animation: focusRingPulse 2s ease-in-out infinite;
+}
+
+/* ── Card Enter Animations for Dynamic Content ── */
+@keyframes cardEnter {
+    from {
+        opacity: 0;
+        transform: translateY(12px) scale(0.97);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.agent-card,
+.stat-card,
+.card,
+.reflection-card {
+    animation: cardEnter 0.3s cubic-bezier(0.23, 1, 0.32, 1) both;
+}
+
+/* Stagger agent cards in grid */
+.agents-grid .agent-card:nth-child(1)  { animation-delay: 0ms; }
+.agents-grid .agent-card:nth-child(2)  { animation-delay: 40ms; }
+.agents-grid .agent-card:nth-child(3)  { animation-delay: 80ms; }
+.agents-grid .agent-card:nth-child(4)  { animation-delay: 120ms; }
+.agents-grid .agent-card:nth-child(5)  { animation-delay: 160ms; }
+.agents-grid .agent-card:nth-child(6)  { animation-delay: 200ms; }
+.agents-grid .agent-card:nth-child(7)  { animation-delay: 240ms; }
+.agents-grid .agent-card:nth-child(8)  { animation-delay: 280ms; }
+.agents-grid .agent-card:nth-child(9)  { animation-delay: 320ms; }
+.agents-grid .agent-card:nth-child(10) { animation-delay: 360ms; }
+.agents-grid .agent-card:nth-child(11) { animation-delay: 400ms; }
+.agents-grid .agent-card:nth-child(12) { animation-delay: 440ms; }
+
+/* Stagger stat cards in grid */
+.grid-4 .stat-card:nth-child(1) { animation-delay: 0ms; }
+.grid-4 .stat-card:nth-child(2) { animation-delay: 60ms; }
+.grid-4 .stat-card:nth-child(3) { animation-delay: 120ms; }
+.grid-4 .stat-card:nth-child(4) { animation-delay: 180ms; }
+
+/* ── Quick Suggestion Button Hover Glow ── */
+.quick-suggestions button:hover {
+    box-shadow: 0 0 12px var(--accent-glow);
+}
+
+/* ── Sidebar Brand Icon Pulse on Load ── */
+@keyframes brandIconPop {
+    0%   { transform: scale(0.8); opacity: 0; }
+    70%  { transform: scale(1.08); }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+.brand-icon {
+    animation: brandIconPop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+/* ── Welcome Icon Float Animation ── */
+@keyframes welcomeFloat {
+    0%, 100% { transform: translateY(0); }
+    50%       { transform: translateY(-6px); }
+}
+
+.welcome-icon {
+    animation: welcomeFloat 3.5s ease-in-out infinite;
+}
+
+/* ── Smooth thinking bar enhancement ── */
+@keyframes thinkingBarSweep {
+    0%   { transform: translateX(-100%); }
+    100% { transform: translateX(500%); }
+}
+
+.thinking-bar-fill {
+    animation: thinkingBarSweep 1.6s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    width: 25%;
+}
+
+/* ── Spinner Neon Trail ── */
+.spinner {
+    border-top-color: var(--accent);
+    box-shadow: 0 0 8px var(--accent-glow);
+}
+
+/* ── Activity Feed Enhanced Bounce ── */
+.activity-item:nth-child(2) { animation-delay: 80ms; }
+.activity-item:nth-child(3) { animation-delay: 160ms; }
+
+/* ── Scrollbar glow on active areas ── */
+.chat-messages::-webkit-scrollbar-thumb:hover,
+.panel-scroll::-webkit-scrollbar-thumb:hover {
+    background: var(--accent);
+    box-shadow: 0 0 6px var(--accent-glow);
+}
+
+/* ── Ensure prefers-reduced-motion remains respected ── */
+@media (prefers-reduced-motion: reduce) {
+    .card:hover,
+    .stat-card:hover,
+    .agent-card:hover,
+    .reflection-card:hover {
+        transform: none;
+        animation: none;
+    }
+    .main::before,
+    .main::after {
+        animation: none;
+    }
+    .dm-status.online,
+    .status-dot:not(.offline),
+    .status-pill.online,
+    .status-pill.available {
+        animation: none;
+    }
+    .confidence-fill,
+    .score-meter-fill,
+    .progress-bar-fill {
+        animation: none;
+    }
+    .msg {
+        animation: none;
+    }
+    .activity-item {
+        animation: slideInRight 0.15s ease both;
+    }
+    .thinking-bar-fill {
+        animation: bar-pulse 1.8s ease-in-out infinite;
+    }
+    .welcome-icon {
+        animation: none;
+    }
+    .brand-icon {
+        animation: none;
+    }
+    .agent-card,
+    .stat-card,
+    .card,
+    .reflection-card {
+        animation: none;
+    }
+    input:focus,
+    textarea:focus,
+    select:focus {
+        animation: none;
+    }
+    .btn-primary:hover,
+    .send-btn:hover {
+        animation: none;
+    }
+}
