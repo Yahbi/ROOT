@@ -1,152 +1,152 @@
 [
   {
-    "content": "The efficient frontier represents the set of portfolios offering maximum expected return for each level of risk. Portfolios below the frontier are suboptimal because a higher return can be achieved at the same risk level.",
+    "content": "The efficient frontier represents the set of portfolios offering the highest expected return for each level of risk. Portfolios below the frontier are suboptimal because they deliver less return for the same risk, while portfolios above it are unattainable given available assets.",
     "type": "fact",
     "tags": ["portfolio_theory", "efficient_frontier", "optimization"],
     "source": "trading_knowledge"
   },
   {
-    "content": "Mean-variance optimization solves min(w^T * Sigma * w) subject to w^T * mu = target_return and sum(w) = 1. The quadratic program produces optimal weights but is highly sensitive to estimation errors in mu and Sigma.",
+    "content": "Mean-variance optimization solves min(w^T * Sigma * w) subject to w^T * mu = target_return and sum(w) = 1. The solution traces out the efficient frontier as the target return varies. Quadratic programming solvers like CVXPY handle this with arbitrary linear and second-order cone constraints.",
     "type": "skill",
     "tags": ["mean_variance", "optimization", "quadratic_programming"],
     "source": "trading_knowledge"
   },
   {
-    "content": "The Black-Litterman model combines market equilibrium returns (derived from market cap weights via reverse optimization) with investor views using Bayesian updating. The formula is: E[r] = [(tau*Sigma)^(-1) + P^T*Omega^(-1)*P]^(-1) * [(tau*Sigma)^(-1)*Pi + P^T*Omega^(-1)*Q].",
+    "content": "The Black-Litterman model combines market equilibrium returns (derived from market cap weights via reverse optimization: pi = delta * Sigma * w_mkt) with investor views P*mu = Q + epsilon. The posterior expected returns are mu_BL = [(tau*Sigma)^-1 + P^T*Omega^-1*P]^-1 * [(tau*Sigma)^-1*pi + P^T*Omega^-1*Q], where tau ~ 0.025-0.05.",
     "type": "skill",
-    "tags": ["black_litterman", "bayesian", "equilibrium"],
+    "tags": ["black_litterman", "bayesian", "portfolio_construction"],
     "source": "trading_knowledge"
   },
   {
-    "content": "Risk parity allocates portfolio weights so each asset contributes equally to total portfolio risk. For asset i, the risk contribution is RC_i = w_i * (Sigma * w)_i / sqrt(w^T * Sigma * w), and the goal is RC_i = RC_j for all i, j.",
+    "content": "Risk parity allocates weights so each asset contributes equally to total portfolio risk. For asset i, the risk contribution is RC_i = w_i * (Sigma * w)_i / sqrt(w^T * Sigma * w). The optimization target is to equalize all RC_i values, which requires numerical solvers since no closed-form solution exists.",
     "type": "skill",
     "tags": ["risk_parity", "equal_risk_contribution", "allocation"],
     "source": "trading_knowledge"
   },
   {
-    "content": "Hierarchical Risk Parity (HRP) uses dendrogram clustering on the correlation matrix to build a tree structure, then allocates inversely proportional to cluster variance using recursive bisection. HRP avoids matrix inversion and is more robust than mean-variance optimization.",
+    "content": "Hierarchical Risk Parity (HRP) by Marcos Lopez de Prado uses dendrogram clustering on the correlation matrix, then applies a recursive bisection algorithm to allocate weights inversely proportional to cluster variance. HRP avoids matrix inversion, making it more stable than mean-variance when the covariance matrix is ill-conditioned or estimated from short histories.",
     "type": "skill",
     "tags": ["hrp", "hierarchical_clustering", "dendrogram"],
     "source": "trading_knowledge"
   },
   {
-    "content": "The Fama-French 5-factor model explains stock returns as: R_i - R_f = alpha + beta_MKT*(R_m-R_f) + beta_SMB*SMB + beta_HML*HML + beta_RMW*RMW + beta_CMA*CMA + epsilon. The five factors are market risk, size (small minus big), value (high minus low book-to-market), profitability (robust minus weak), and investment (conservative minus aggressive).",
+    "content": "The Fama-French 5-factor model explains returns as R_i - R_f = alpha + beta_mkt*(R_m - R_f) + beta_smb*SMB + beta_hml*HML + beta_rmw*RMW + beta_cma*CMA + epsilon. The five factors are market risk premium, size (small minus big), value (high minus low B/M), profitability (robust minus weak), and investment (conservative minus aggressive).",
     "type": "fact",
-    "tags": ["fama_french", "factor_model", "asset_pricing"],
+    "tags": ["fama_french", "factor_model", "five_factor"],
     "source": "trading_knowledge"
   },
   {
-    "content": "The maximum diversification portfolio maximizes the diversification ratio DR = (w^T * sigma) / sqrt(w^T * Sigma * w), where sigma is the vector of individual asset volatilities. This ratio equals 1 only when all assets are perfectly correlated.",
+    "content": "The maximum diversification portfolio maximizes the diversification ratio DR = (w^T * sigma) / sqrt(w^T * Sigma * w), where sigma is the vector of individual asset volatilities and Sigma is the covariance matrix. A higher DR indicates more diversification benefit from imperfect correlations. DR equals 1.0 only when all correlations are 1.0.",
     "type": "skill",
-    "tags": ["diversification_ratio", "portfolio_construction", "optimization"],
+    "tags": ["maximum_diversification", "diversification_ratio", "portfolio"],
     "source": "trading_knowledge"
   },
   {
-    "content": "The minimum variance portfolio minimizes total portfolio variance min(w^T * Sigma * w) without any return constraint. It has a closed-form solution: w* = Sigma^(-1) * 1 / (1^T * Sigma^(-1) * 1), where 1 is a vector of ones.",
+    "content": "The minimum variance portfolio solves min(w^T * Sigma * w) subject only to sum(w) = 1 and w >= 0, ignoring expected returns entirely. The unconstrained closed-form solution is w* = Sigma^(-1)*1 / (1^T*Sigma^(-1)*1). Empirical research shows minimum variance portfolios often outperform cap-weighted indices on a risk-adjusted basis because expected return estimates are notoriously noisy.",
     "type": "skill",
-    "tags": ["minimum_variance", "closed_form", "portfolio_construction"],
+    "tags": ["minimum_variance", "risk_minimization", "portfolio"],
     "source": "trading_knowledge"
   },
   {
-    "content": "The Ledoit-Wolf shrinkage estimator improves covariance estimation by shrinking the sample covariance matrix S toward a structured target F: Sigma_shrunk = delta*F + (1-delta)*S. The optimal shrinkage intensity delta is determined analytically to minimize expected loss.",
+    "content": "The Ledoit-Wolf shrinkage estimator computes Sigma_shrunk = (1-alpha)*S + alpha*F where S is the sample covariance matrix, F is a structured target (e.g., constant correlation or identity scaled by average variance), and alpha is the optimal shrinkage intensity derived analytically. This reduces estimation error when T/N (observations/assets) ratio is small.",
     "type": "skill",
     "tags": ["ledoit_wolf", "shrinkage", "covariance_estimation"],
     "source": "trading_knowledge"
   },
   {
-    "content": "Robust portfolio optimization addresses estimation error by using uncertainty sets around expected returns. Instead of point estimates, it solves max_w min_mu {w^T*mu : mu in U} where U is an ellipsoidal uncertainty set, leading to a second-order cone program.",
+    "content": "Robust portfolio optimization replaces point estimates with uncertainty sets. Instead of min(w^T * Sigma * w) s.t. w^T * mu = target, it solves min(w^T * Sigma * w) s.t. w^T * mu >= target for all mu in an ellipsoidal uncertainty set, yielding a second-order cone program. This produces portfolios less sensitive to estimation errors in expected returns.",
     "type": "skill",
-    "tags": ["robust_optimization", "uncertainty_sets", "socp"],
+    "tags": ["robust_optimization", "uncertainty_sets", "estimation_error"],
     "source": "trading_knowledge"
   },
   {
-    "content": "Transaction costs in portfolio optimization include explicit costs (commissions, exchange fees, taxes) and implicit costs (bid-ask spread, market impact). A realistic model adds a penalty term: min w^T*Sigma*w + lambda*sum(c_i*|w_i - w_i_current|) to the objective.",
+    "content": "Transaction costs in portfolio optimization include explicit costs (commissions 0.01-0.10%, exchange fees) and implicit costs (bid-ask spread 0.01-0.50%, market impact proportional to sqrt(order_size/ADV)). Models should penalize turnover: min(risk - lambda*return + gamma*sum(|w_new - w_old|)) where gamma calibrates the cost penalty.",
     "type": "skill",
-    "tags": ["transaction_costs", "rebalancing", "penalty_term"],
+    "tags": ["transaction_costs", "turnover", "trading_costs"],
     "source": "trading_knowledge"
   },
   {
-    "content": "Rebalancing frequency involves a tradeoff: frequent rebalancing keeps the portfolio closer to optimal weights but incurs higher transaction costs. Calendar rebalancing (monthly/quarterly) is simple but suboptimal; threshold rebalancing (trigger at 5% drift) is more cost-effective.",
+    "content": "Rebalancing frequency involves a tradeoff: too frequent rebalancing incurs excessive transaction costs and taxes, while too infrequent rebalancing allows drift from target allocations increasing uncompensated risk. Calendar rebalancing (monthly/quarterly) is simple but suboptimal; threshold rebalancing (trigger when any weight drifts >5% from target) is more cost-efficient.",
     "type": "learning",
     "tags": ["rebalancing", "frequency", "threshold"],
     "source": "trading_knowledge"
   },
   {
-    "content": "The Capital Asset Pricing Model (CAPM) states E[R_i] = R_f + beta_i*(E[R_m]-R_f), where beta_i = Cov(R_i, R_m)/Var(R_m). While foundational, CAPM is rejected empirically because size, value, and momentum effects are not captured by market beta alone.",
+    "content": "Factor investing tilts portfolios toward systematic risk premia. Common equity factors beyond Fama-French include momentum (past 12-1 month winners minus losers, ~6% annual premium), low volatility (low-beta stocks outperform on risk-adjusted basis), quality (high ROE, low debt, stable earnings), and carry (high yield minus low yield in FX/commodities).",
     "type": "fact",
-    "tags": ["capm", "beta", "asset_pricing"],
+    "tags": ["factor_investing", "momentum", "low_volatility", "quality"],
     "source": "trading_knowledge"
   },
   {
-    "content": "The Sharpe ratio measures risk-adjusted return as SR = (R_p - R_f) / sigma_p. A Sharpe ratio above 1.0 is considered good, above 2.0 is excellent. The Sortino ratio improves on this by using only downside deviation in the denominator.",
-    "type": "fact",
-    "tags": ["sharpe_ratio", "sortino_ratio", "risk_adjusted"],
-    "source": "trading_knowledge"
-  },
-  {
-    "content": "The Kelly criterion determines optimal position sizing: f* = (p*b - q) / b, where p is win probability, q = 1-p, and b is the win/loss ratio. Full Kelly is aggressive; practitioners typically use half-Kelly (f*/2) to reduce drawdown risk by ~50%.",
+    "content": "The Kelly criterion determines optimal bet size: f* = (bp - q) / b where b is odds, p is win probability, q = 1-p. For continuous returns, f* = (mu - r) / sigma^2. In practice, half-Kelly (f*/2) is used because it achieves 75% of the growth rate with much lower variance and maximum drawdown reduced by approximately 50%.",
     "type": "skill",
-    "tags": ["kelly_criterion", "position_sizing", "bet_sizing"],
+    "tags": ["kelly_criterion", "position_sizing", "optimal_bet"],
     "source": "trading_knowledge"
   },
   {
-    "content": "Maximum drawdown measures the largest peak-to-trough decline in portfolio value. The Calmar ratio (annualized return / max drawdown) and Sterling ratio are drawdown-based risk metrics. A max drawdown exceeding 20% often triggers behavioral selling in retail investors.",
+    "content": "Tail risk measures beyond standard deviation include Value-at-Risk (VaR) at the alpha percentile of the loss distribution and Conditional VaR (CVaR or Expected Shortfall) which averages losses beyond VaR. CVaR is coherent (subadditive) while VaR is not, making CVaR preferred for portfolio optimization. For normal returns, CVaR_5% ~ 1.37 * VaR_5%.",
     "type": "fact",
-    "tags": ["drawdown", "calmar_ratio", "risk_metrics"],
+    "tags": ["var", "cvar", "tail_risk", "expected_shortfall"],
     "source": "trading_knowledge"
   },
   {
-    "content": "Tail risk measures include Value-at-Risk (VaR) at confidence level alpha: the loss not exceeded with probability 1-alpha, and Conditional VaR (CVaR/Expected Shortfall) which averages losses beyond VaR. CVaR is coherent while VaR is not subadditive.",
+    "content": "The covariance matrix for N assets has N*(N+1)/2 unique parameters. With 500 assets, that is 125,250 parameters. Reliable estimation requires T >> N observations. When T/N < 5, sample covariance is highly unreliable and shrinkage, factor-based estimation, or random matrix theory cleaning is essential.",
     "type": "fact",
-    "tags": ["var", "cvar", "tail_risk"],
+    "tags": ["covariance_estimation", "dimensionality", "sample_size"],
     "source": "trading_knowledge"
   },
   {
-    "content": "Factor investing constructs portfolios with systematic exposure to return-generating factors. Common equity factors include market, size, value, momentum, quality, and low volatility. Factor returns have time-varying premia and can experience prolonged drawdowns.",
-    "type": "learning",
-    "tags": ["factor_investing", "smart_beta", "systematic"],
-    "source": "trading_knowledge"
-  },
-  {
-    "content": "The information ratio IR = alpha / tracking_error measures active return per unit of active risk relative to a benchmark. A portfolio manager with IR > 0.5 is considered good; IR > 1.0 is exceptional and rare over sustained periods.",
+    "content": "The tangency portfolio maximizes the Sharpe ratio SR = (w^T*mu - r_f) / sqrt(w^T*Sigma*w). Its weights are w* = Sigma^(-1)*(mu - r_f*1) / (1^T*Sigma^(-1)*(mu - r_f*1)). Combined with the risk-free asset via the Capital Market Line, every mean-variance optimal portfolio is a mix of the tangency portfolio and the risk-free asset.",
     "type": "fact",
-    "tags": ["information_ratio", "active_management", "benchmark"],
+    "tags": ["tangency_portfolio", "sharpe_ratio", "capital_market_line"],
     "source": "trading_knowledge"
   },
   {
-    "content": "Mean-CVaR optimization replaces variance with Conditional Value-at-Risk in the objective: min CVaR_alpha(w) subject to w^T*mu >= target. This can be reformulated as a linear program using auxiliary variables, making it computationally tractable for large portfolios.",
+    "content": "Black-Litterman view confidence is encoded in the uncertainty matrix Omega. A diagonal Omega with small values means high confidence in views. Setting Omega = diag(P * tau * Sigma * P^T) scales confidence proportionally to prior uncertainty, a common default that prevents views from dominating equilibrium too aggressively.",
     "type": "skill",
-    "tags": ["mean_cvar", "linear_program", "tail_risk_optimization"],
+    "tags": ["black_litterman", "view_confidence", "omega_matrix"],
     "source": "trading_knowledge"
   },
   {
-    "content": "Portfolio turnover is defined as sum(|w_new - w_old|)/2 and represents the fraction of the portfolio traded. High turnover erodes returns through costs; a good target is under 20% monthly for active strategies.",
-    "type": "learning",
-    "tags": ["turnover", "trading_cost", "portfolio_management"],
-    "source": "trading_knowledge"
-  },
-  {
-    "content": "Sector and geographic constraints in portfolio optimization add linear inequality constraints: sum(w_i for i in sector) <= max_sector_weight. Typical institutional limits are 30% per sector, 40% per country, and 10% per individual security.",
+    "content": "Portfolio constraints in practice include long-only (w >= 0), maximum position size (w_i <= 0.10), sector exposure limits (sum(w in sector) <= 0.30), turnover constraints (sum(|delta_w|) <= 0.30 per rebalance), and tracking error constraints (sqrt((w-w_bench)^T * Sigma * (w-w_bench)) <= target_TE for active management).",
     "type": "skill",
-    "tags": ["constraints", "sector_limits", "institutional"],
+    "tags": ["constraints", "position_limits", "tracking_error"],
     "source": "trading_knowledge"
   },
   {
-    "content": "The covariance matrix for N assets has N*(N+1)/2 unique parameters. With 500 assets, that is 125,250 parameters estimated from limited time series. This dimensionality curse makes shrinkage, factor models, or random matrix theory essential for stable estimates.",
+    "content": "Mean-variance optimization is highly sensitive to expected return inputs: a 1% change in expected return for one asset can swing its optimal weight by 20-50%. This estimation error amplification is why Black-Litterman, shrinkage estimators, and robust optimization methods are strongly preferred over raw sample mean estimates in practice.",
     "type": "learning",
-    "tags": ["covariance_estimation", "dimensionality", "random_matrix"],
+    "tags": ["estimation_sensitivity", "optimization_fragility", "expected_returns"],
     "source": "trading_knowledge"
   },
   {
-    "content": "The tangency portfolio lies at the point where the capital market line (from the risk-free rate) is tangent to the efficient frontier. Its weights are w* = Sigma^(-1)*(mu - R_f*1) / (1^T*Sigma^(-1)*(mu - R_f*1)), and it maximizes the Sharpe ratio.",
+    "content": "Risk budgeting generalizes risk parity by assigning target risk contributions b_i to each asset, where sum(b_i) = 1 but b_i need not be equal. The optimization finds weights such that RC_i / total_risk = b_i for each asset. This allows tilting risk toward higher-conviction positions while maintaining a risk-aware allocation framework.",
     "type": "skill",
-    "tags": ["tangency_portfolio", "capital_market_line", "sharpe_maximization"],
+    "tags": ["risk_budgeting", "risk_contribution", "allocation"],
     "source": "trading_knowledge"
   },
   {
-    "content": "Out-of-sample performance of optimized portfolios is typically 30-50% worse than in-sample. Techniques to improve robustness include resampled efficient frontier (Michaud), bootstrap aggregation of weights, and Bayesian estimation with informative priors.",
+    "content": "Factor-based covariance estimation models returns as R = B*F + epsilon where B is the N*K factor loading matrix and F is the K-dimensional factor return. The covariance estimate is Sigma = B*Sigma_F*B^T + D where D is the diagonal specific risk matrix. This reduces parameters from N^2/2 to N*K + K^2/2 + N, dramatically improving stability.",
+    "type": "skill",
+    "tags": ["factor_covariance", "dimensionality_reduction", "estimation"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Tax-aware portfolio optimization adds after-tax return maximization. Short-term capital gains (held < 1 year) are taxed at ordinary income rates (up to 37% in the US), while long-term gains are taxed at 15-20%. Tax-loss harvesting offsets realized gains and up to $3,000 of ordinary income annually, improving after-tax returns by 0.5-1.5% per year for taxable accounts.",
     "type": "learning",
-    "tags": ["out_of_sample", "resampling", "robustness"],
+    "tags": ["tax_optimization", "tax_loss_harvesting", "capital_gains"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "The information ratio IR = alpha / tracking_error measures active return per unit of active risk relative to a benchmark. An IR above 0.5 is good, above 1.0 is exceptional. The fundamental law of active management states IR = IC * sqrt(BR) where IC is the information coefficient (skill) and BR is breadth (number of independent bets per year).",
+    "type": "fact",
+    "tags": ["information_ratio", "active_management", "fundamental_law"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Regime-aware portfolio construction uses hidden Markov models or threshold indicators to detect market regimes (bull, bear, crisis) and adjusts allocations accordingly. In crisis regimes, correlations spike toward 1.0 reducing diversification benefits. Switching to defensive assets (treasuries, gold, cash) during detected regime changes can reduce maximum drawdowns by 30-50%.",
+    "type": "learning",
+    "tags": ["regime_detection", "dynamic_allocation", "crisis"],
     "source": "trading_knowledge"
   }
 ]
