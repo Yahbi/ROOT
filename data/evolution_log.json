@@ -1,20 +1,5 @@
 [
   {
-    "id": "evo_06669ed1dd28",
-    "action_type": "skill_created",
-    "description": "Created skill: general/auto-general \u2014 Auto-generated skill for general",
-    "details": {
-      "skill_path": "/Users/yohan/Desktop/ROOT/data/skills/general/auto-general/SKILL.md",
-      "tags": [
-        "auto-generated",
-        "builder-agent",
-        "general"
-      ]
-    },
-    "impact_score": 0.5,
-    "timestamp": "2026-03-22T02:42:30.303036+00:00"
-  },
-  {
     "id": "evo_026241f198c6",
     "action_type": "skill_created",
     "description": "Created skill: general/auto-general \u2014 Auto-generated skill for general",
@@ -5938,5 +5923,16 @@
     },
     "impact_score": 0.0,
     "timestamp": "2026-04-08T00:33:13.692516+00:00"
+  },
+  {
+    "id": "evo_3ed87c4cc8c2",
+    "action_type": "code_proposed",
+    "description": "Proposed improvement in knowledge: Initial knowledge bootstrap from AI folder",
+    "details": {
+      "area": "knowledge",
+      "rationale": "Seeded 556 core knowledge entries."
+    },
+    "impact_score": 0.0,
+    "timestamp": "2026-04-08T14:37:13.162214+00:00"
   }
 ]
