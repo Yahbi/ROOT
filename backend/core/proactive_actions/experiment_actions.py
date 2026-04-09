@@ -218,7 +218,7 @@ async def run_experiments(
                 if age_hours < 2:
                     continue
             except Exception:
-                logger.debug("Exception suppressed", exc_info=True)
+                logger.debug("Failed to parse experiment created_at timestamp", exc_info=True)
             # Use LLM to evaluate the experiment
             eval_prompt = (
                 f"Evaluate this experiment and determine if it should be marked "
@@ -315,7 +315,7 @@ async def scan_code_improvements(
         if pending >= 5:
             return f"Code improvement backlog full: {pending} pending proposals"
     except Exception:
-        logger.debug("Exception suppressed", exc_info=True)
+        logger.debug("Failed to check code proposal backlog stats", exc_info=True)
     if not llm:
         return "requires LLM for code analysis"
 
@@ -439,7 +439,7 @@ async def track_revenue_health(
                     f"{', '.join(underserved)}"
                 )
         except Exception:
-            logger.debug("Exception suppressed", exc_info=True)
+            logger.debug("Failed to analyze revenue stream diversity", exc_info=True)
     # Store revenue health to memory
     if memory and findings:
         from backend.models.memory import MemoryEntry, MemoryType

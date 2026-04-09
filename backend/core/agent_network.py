@@ -225,7 +225,7 @@ class AgentNetwork:
                 task = loop.create_task(self._publish_insight(insight))
                 task.add_done_callback(lambda t: t.exception() if not t.cancelled() else None)
             except RuntimeError:
-                pass  # No running event loop — skip publishing
+                logger.debug("No running event loop for insight publishing")
 
         return insight
 

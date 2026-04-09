@@ -190,7 +190,7 @@ class ExperienceMemory:
                 self.conn.execute(f"ALTER TABLE experiences ADD COLUMN {col} {col_type} DEFAULT {default}")
                 self.conn.commit()
             except sqlite3.OperationalError:
-                pass  # Column already exists
+                logger.debug("Column %s already exists in experiences table", col)
 
     # ── Short-Term Memory ──────────────────────────────────────
 

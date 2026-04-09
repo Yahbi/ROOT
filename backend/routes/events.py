@@ -50,7 +50,7 @@ async def sse_stream(request: Request, topics: str = "system.*"):
             try:
                 queue.put_nowait(event)
             except asyncio.QueueFull:
-                pass  # Drop oldest if queue is full
+                logger.debug("SSE event queue full, dropping event")
 
         # Subscribe to requested topics
         sub_id = f"sse_{id(queue)}"

@@ -345,7 +345,7 @@ class HedgeFundEngine:
             try:
                 self.conn.execute(sql)
             except sqlite3.OperationalError:
-                pass  # Column already exists
+                logger.debug("Column already exists during hedge_fund migration")
 
         _safe_add("ALTER TABLE trades ADD COLUMN current_price REAL DEFAULT 0")
         _safe_add("ALTER TABLE trades ADD COLUMN pnl REAL DEFAULT 0")

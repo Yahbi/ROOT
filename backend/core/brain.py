@@ -499,7 +499,7 @@ class Brain(BrainRoutingMixin):
             else:
                 response_text = ResponseTransforms.direct_mode(response_text)
         except Exception:
-            pass  # Transforms are optional enhancement
+            logger.debug("Response transforms failed (optional enhancement)", exc_info=True)
 
         # 5. Add to conversation history
         self._conversation.append({"role": "user", "content": user_message})

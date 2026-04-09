@@ -385,7 +385,7 @@ async def agent_connections(
             weights = learning.get_routing_weights()
             routing_weight = weights.get(agent_id, 0.0)
         except Exception:
-            logger.debug("Exception suppressed", exc_info=True)
+            logger.debug("Failed to fetch routing weights for agent %s", agent_id, exc_info=True)
     # Sort by richest communication (most insights + collabs), then alphabetically
     connections = sorted(
         connected_ids.values(),

@@ -513,7 +513,7 @@ class PluginEngine:
                             "Plugin '%s' tool '%s' output truncated by sandbox", plugin_id, tool_name
                         )
                 except Exception:
-                    pass  # Best-effort; don't fail the call over size check
+                    logger.debug("Plugin output size check failed (best-effort)", exc_info=True)
 
             elapsed = (time.monotonic() - start) * 1000
             pr = PluginResult(
