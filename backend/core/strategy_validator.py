@@ -1081,7 +1081,7 @@ class StrategyValidator:
                     task_category="trading",
                 )
             except Exception:
-                logger.debug("Exception suppressed", exc_info=True)
+                logger.debug("Failed to record strategy validation outcome in learning engine", exc_info=True)
         return {
             "id": validation_id,
             "strategy_name": strategy_name,

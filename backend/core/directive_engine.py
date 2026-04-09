@@ -808,7 +808,7 @@ class DirectiveEngine:
                         context={"category": directive.category, "priority": directive.priority},
                     )
                 except Exception:
-                    logger.debug("Exception suppressed", exc_info=True)
+                    logger.debug("Failed to record successful directive outcome for '%s'", directive.id, exc_info=True)
             # Directive chaining: create follow-up if result suggests one
             chain_keywords = ("further", "next step", "follow up", "investigate more", "deeper analysis")
             current_depth = self._get_chain_depth(directive)
@@ -881,7 +881,7 @@ class DirectiveEngine:
                         context={"category": directive.category, "priority": directive.priority},
                     )
                 except Exception:
-                    logger.debug("Exception suppressed", exc_info=True)
+                    logger.debug("Failed to record failed directive outcome for '%s'", directive.id, exc_info=True)
             return self._update_directive(
                 directive.id, status="failed", result=str(exc)[:500],
             )
@@ -946,7 +946,7 @@ class DirectiveEngine:
                     )
                     expired += 1
             except (ValueError, TypeError):
-                logger.debug("(ValueError, TypeError) suppressed", exc_info=True)
+                logger.debug("Failed to parse created_at for directive expiration check", exc_info=True)
         if expired:
             self.conn.commit()
         return expired
@@ -1007,7 +1007,7 @@ class DirectiveEngine:
                 try:
                     return int(signal.split(":")[1])
                 except (ValueError, IndexError):
-                    logger.debug("(ValueError, IndexError) suppressed", exc_info=True)
+                    logger.debug("Failed to parse chain_depth from directive source_signals", exc_info=True)
         return 0
 
     # ── Helpers ───────────────────────────────────────────────────
