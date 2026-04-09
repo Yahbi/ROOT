@@ -323,7 +323,7 @@ class SandboxGate:
                 ))
                 task.add_done_callback(lambda t: t.exception() if not t.cancelled() else None)
             except RuntimeError:
-                logger.debug("RuntimeError suppressed", exc_info=True)
+                logger.debug("No event loop for LIVE mode global notification", exc_info=True)
         logger.info("Global mode set to %s", mode.value)
         return new_config
 
@@ -353,7 +353,7 @@ class SandboxGate:
                 ))
                 task.add_done_callback(lambda t: t.exception() if not t.cancelled() else None)
             except RuntimeError:
-                logger.debug("RuntimeError suppressed", exc_info=True)
+                logger.debug("No event loop for LIVE mode system notification: %s", system_id, exc_info=True)
         logger.info("System '%s' mode set to %s", system_id, mode.value)
         return new_config
 
