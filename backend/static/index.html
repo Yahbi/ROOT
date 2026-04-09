@@ -1376,11 +1376,11 @@
          LINUX DESKTOP MODE — Infrastructure
          ══════════════════════════════════════════════════ -->
 
-    <!-- Desktop Wallpaper -->
-    <div id="desktop-wallpaper"></div>
+    <!-- Desktop Wallpaper (linux theme only) -->
+    <div id="desktop-wallpaper" style="display:none"></div>
 
-    <!-- Desktop Area (windows live here) -->
-    <div id="desktop-area">
+    <!-- Desktop Area — windows live here (linux theme only, hidden by default) -->
+    <div id="desktop-area" style="display:none">
         <!-- Desktop Icons -->
         <div class="desktop-icons">
             <div class="desktop-icon" ondblclick="WindowManager.open('chat')">
@@ -1432,8 +1432,8 @@
         </div>
     </div>
 
-    <!-- Taskbar (Bottom) -->
-    <div id="desktop-taskbar">
+    <!-- Taskbar (Bottom, linux theme only, hidden by default) -->
+    <div id="desktop-taskbar" style="display:none">
         <div class="taskbar-start" onclick="document.querySelector('.app-launcher').classList.toggle('open')">
             <div class="taskbar-start-icon">R</div>
             <span>ROOT</span>

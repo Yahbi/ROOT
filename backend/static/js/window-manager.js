@@ -78,6 +78,17 @@
     _setup() {
       if (this._desktop) return; // already set up
 
+      // Only activate window manager when Linux theme is active
+      const theme = document.documentElement.getAttribute('data-theme');
+      if (theme !== 'linux') {
+        // Hide desktop infrastructure if it exists but theme is not linux
+        const da = document.getElementById('desktop-area');
+        const tb = document.getElementById('desktop-taskbar');
+        if (da) da.style.display = 'none';
+        if (tb) tb.style.display = 'none';
+        return;
+      }
+
       this._desktop = document.getElementById('desktop-area');
       this._taskbar = document.getElementById('desktop-taskbar');
 

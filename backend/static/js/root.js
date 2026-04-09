@@ -400,6 +400,14 @@ function setTheme(theme) {
     });
     const dot = document.getElementById('theme-picker-dot');
     if (dot) dot.style.background = THEME_DOTS[theme] || '#888';
+    // Toggle desktop infrastructure for linux theme
+    const desktopEls = ['desktop-wallpaper', 'desktop-area', 'desktop-taskbar'];
+    desktopEls.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.style.display = theme === 'linux' ? '' : 'none';
+    });
+    const appEl = document.querySelector('.app');
+    if (appEl) appEl.style.display = theme === 'linux' ? 'none' : '';
     try { localStorage.setItem('root-theme-v2', theme); } catch {}
 }
 
