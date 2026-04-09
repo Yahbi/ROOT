@@ -170,7 +170,6 @@ class GoalEngine:
 
             CREATE INDEX IF NOT EXISTS idx_goals_status ON goals(status);
             CREATE INDEX IF NOT EXISTS idx_goals_priority ON goals(priority);
-            CREATE INDEX IF NOT EXISTS idx_goals_priority_score ON goals(priority_score);
             CREATE INDEX IF NOT EXISTS idx_goal_events_goal ON goal_events(goal_id);
             CREATE INDEX IF NOT EXISTS idx_goal_milestones_goal ON goal_milestones(goal_id);
             CREATE INDEX IF NOT EXISTS idx_goal_retro_goal ON goal_retrospectives(goal_id);
@@ -193,6 +192,8 @@ class GoalEngine:
         for col, typedef in new_cols:
             if col not in existing:
                 self.conn.execute(f"ALTER TABLE goals ADD COLUMN {col} {typedef}")
+        # Create index on migrated column after migration ensures it exists
+        self.conn.execute("CREATE INDEX IF NOT EXISTS idx_goals_priority_score ON goals(priority_score)")
         self.conn.commit()
 
     # ── Priority Scoring ─────────────────────────────────────────

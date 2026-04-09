@@ -284,8 +284,6 @@ class TaskQueue:
                 ON queued_tasks(priority, created_at);
             CREATE INDEX IF NOT EXISTS idx_tasks_next_run
                 ON queued_tasks(next_run_at);
-            CREATE INDEX IF NOT EXISTS idx_tasks_next_retry
-                ON queued_tasks(next_retry_at);
             CREATE INDEX IF NOT EXISTS idx_runs_task
                 ON task_runs(task_id);
             CREATE INDEX IF NOT EXISTS idx_dlq_failed
@@ -313,6 +311,10 @@ class TaskQueue:
                 )
                 logger.debug("Migrated queued_tasks: added column %s", col)
 
+        # Create index on migrated column after migration ensures it exists
+        self.conn.execute(
+            "CREATE INDEX IF NOT EXISTS idx_tasks_next_retry ON queued_tasks(next_retry_at)"
+        )
         self.conn.commit()
 
     def _recover_interrupted(self) -> int:

@@ -179,7 +179,6 @@ class ExperienceMemory:
             CREATE INDEX IF NOT EXISTS idx_exp_domain ON experiences(domain);
             CREATE INDEX IF NOT EXISTS idx_exp_confidence ON experiences(confidence);
             CREATE INDEX IF NOT EXISTS idx_exp_created ON experiences(created_at);
-            CREATE INDEX IF NOT EXISTS idx_exp_source_domain ON experiences(source_domain);
         """)
         # Migrate existing databases that lack the new columns (safe no-op if columns exist)
         for col, col_type, default in [
@@ -191,6 +190,9 @@ class ExperienceMemory:
                 self.conn.commit()
             except sqlite3.OperationalError:
                 logger.debug("Column %s already exists in experiences table", col)
+        # Create index on source_domain after migration ensures column exists
+        self.conn.execute("CREATE INDEX IF NOT EXISTS idx_exp_source_domain ON experiences(source_domain)")
+        self.conn.commit()
 
     # ── Short-Term Memory ──────────────────────────────────────
 
