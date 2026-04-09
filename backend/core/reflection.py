@@ -171,6 +171,8 @@ class ReflectionEngine:
     # Number of reflections per topic before scheduling a break
     TOPIC_SATURATION_LIMIT = 5
 
+    _MAX_TOPIC_ENTRIES = 200  # Cap on tracked topics for scheduling & chains
+
     def __init__(self, memory: MemoryEngine, llm: Optional[LLMService] = None, learning=None) -> None:
         self._memory = memory
         self._llm = llm
@@ -180,6 +182,20 @@ class ReflectionEngine:
         self._topic_last_reflected: dict[str, datetime] = {}
         # Chain state: current open chain (topic → last reflection id)
         self._active_chain: dict[str, str] = {}
+
+    def _prune_topic_dicts(self) -> None:
+        """Remove oldest topic entries when dicts exceed the cap."""
+        if len(self._topic_last_reflected) > self._MAX_TOPIC_ENTRIES:
+            # Remove oldest half by timestamp
+            sorted_topics = sorted(self._topic_last_reflected, key=self._topic_last_reflected.get)  # type: ignore[arg-type]
+            for t in sorted_topics[:len(sorted_topics) // 2]:
+                del self._topic_last_reflected[t]
+                self._active_chain.pop(t, None)
+        if len(self._active_chain) > self._MAX_TOPIC_ENTRIES:
+            # Remove entries not in _topic_last_reflected (orphans)
+            orphans = [k for k in self._active_chain if k not in self._topic_last_reflected]
+            for k in orphans:
+                del self._active_chain[k]
 
     def set_llm(self, llm: LLMService) -> None:
         self._llm = llm
@@ -240,6 +256,7 @@ class ReflectionEngine:
             effective_topic = reflection.topic or topic or "general"
             self._topic_last_reflected[effective_topic] = datetime.now(timezone.utc)
             self._active_chain[effective_topic] = reflection.id or ""
+            self._prune_topic_dicts()
 
             # Execute the action if one was generated
             if reflection.action:
@@ -356,6 +373,7 @@ What can ROOT learn from this interaction? Consider:
             effective_topic = chain[-1].topic or seed_topic
             self._active_chain[effective_topic] = chain[-1].id or ""
             self._topic_last_reflected[effective_topic] = datetime.now(timezone.utc)
+            self._prune_topic_dicts()
 
         return chain
 
@@ -414,6 +432,7 @@ DEPTH: {reflection.depth}"""
             self._save_reflection(reflection)
             self._reflections.append(reflection)
             self._topic_last_reflected["meta-reflection"] = datetime.now(timezone.utc)
+            self._prune_topic_dicts()
             if reflection.action:
                 self._execute_reflection_action(reflection)
         return reflection

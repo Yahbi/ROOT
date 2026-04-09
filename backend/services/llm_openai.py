@@ -506,7 +506,7 @@ class OpenAILLMService:
                             method="stream",
                         )
                     except Exception:
-                        pass
+                        logger.debug("Cost tracking failed during stream", exc_info=True)
                 yield f"__usage__:{json.dumps(usage_info)}"
         except Exception as e:
             logger.error("OpenAI stream error: %s", e)

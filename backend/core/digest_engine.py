@@ -364,11 +364,11 @@ class DigestEngine:
         try:
             highlights = tuple(json.loads(row["highlights"] or "[]"))
         except (json.JSONDecodeError, TypeError):
-            logger.debug("(json.JSONDecodeError, TypeError) suppressed", exc_info=True)
+            logger.debug("Failed to parse digest highlights JSON", exc_info=True)
         try:
             metrics = json.loads(row["metrics"] or "{}")
         except (json.JSONDecodeError, TypeError):
-            logger.debug("(json.JSONDecodeError, TypeError) suppressed", exc_info=True)
+            logger.debug("Failed to parse digest metrics JSON", exc_info=True)
         return Digest(
             id=row["id"], digest_type=row["digest_type"],
             title=row["title"], content=row["content"],

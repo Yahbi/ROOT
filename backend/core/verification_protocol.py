@@ -307,7 +307,7 @@ class ConsensusEngine:
                     if agent_weight is not None:
                         weight = agent_weight
                 except Exception:
-                    logger.debug("Exception suppressed", exc_info=True)
+                    logger.debug("Failed to fetch routing weight for agent %s", v.agent_id, exc_info=True)
             # Score = confidence * historical_weight
             score = v.confidence * weight
             weighted_scores.append((v, score))

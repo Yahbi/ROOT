@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import logging
 import uuid
+from collections import deque
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from typing import Any, Callable, Optional
@@ -65,7 +66,8 @@ class ActionChainEngine:
         self._learning = learning
         self._sandbox_gate = None  # Set via main.py
         self._chains: dict[str, ActionChain] = {}
-        self._executions: list[ChainExecution] = []
+        self._executions: deque[ChainExecution] = deque(maxlen=1000)
+        # Bounded by number of registered chains (finite, keyed by chain_id)
         self._last_fired: dict[str, str] = {}  # chain_id -> ISO timestamp
 
     def register_chain(self, chain: ActionChain) -> None:
@@ -216,7 +218,8 @@ class ActionChainEngine:
 
     def get_executions(self, limit: int = 20) -> list[dict[str, Any]]:
         """Recent chain executions (most recent first)."""
-        recent = self._executions[-limit:] if self._executions else []
+        exec_list = list(self._executions)
+        recent = exec_list[-limit:] if exec_list else []
         return [
             {
                 "id": e.id,
@@ -231,7 +234,7 @@ class ActionChainEngine:
         ]
 
     def stats(self) -> dict[str, Any]:
-        """Execution counts and success rates."""
+        """Execution counts and success rates (over retained window)."""
         total = len(self._executions)
         successes = sum(1 for e in self._executions if e.success)
         return {

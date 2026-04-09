@@ -16,6 +16,7 @@ from __future__ import annotations
 
 import asyncio
 import logging
+from collections import deque
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from typing import Any, Optional
@@ -83,7 +84,7 @@ class AdaptiveTuner:
         self._total_cycles = 0
         self._total_adjustments = 0
         self._last_cycle_at: Optional[str] = None
-        self._history: list[TuneAdjustment] = []
+        self._history: deque[TuneAdjustment] = deque(maxlen=500)
 
     # ── Main tuning cycle ─────────────────────────────────────
 

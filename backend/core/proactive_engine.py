@@ -1072,7 +1072,7 @@ class ProactiveEngine:
                         context={"action": action.name, "run_count": action.run_count},
                     )
                 except Exception:
-                    logger.debug("Exception suppressed", exc_info=True)
+                    logger.debug("Failed to record successful outcome for action '%s'", action.name, exc_info=True)
             # Evaluate action chains (reactive follow-ups)
             if self._chain_engine:
                 try:
@@ -1102,7 +1102,7 @@ class ProactiveEngine:
                         context={"action": action.name, "error_count": action.error_count},
                     )
                 except Exception:
-                    logger.debug("Exception suppressed", exc_info=True)
+                    logger.debug("Failed to record failed outcome for action '%s'", action.name, exc_info=True)
             if self._state_store:
                 self._state_store.save_proactive_state(
                     action.name, action.run_count, action.error_count,

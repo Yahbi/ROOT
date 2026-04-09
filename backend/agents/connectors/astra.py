@@ -235,7 +235,7 @@ class AstraConnector:
                         return {"agent": "astra", "result": final, "messages_exchanged": msg_count + 1,
                                 "tools_executed": tool_count, "tools_used": tools_used}
                     except Exception:
-                        pass
+                        logger.debug("[astra] Final fast completion after timeout also failed", exc_info=True)
                 return {
                     "agent": "astra", "result": "ASTRA analysis timed out — LLM provider may be slow. Try again shortly.",
                     "messages_exchanged": msg_count, "tools_executed": tool_count,
@@ -594,7 +594,7 @@ class AstraConnector:
                     logger.warning("Synthesis returned routing JSON instead of text — discarding")
                     return ""
             except (json.JSONDecodeError, ValueError):
-                pass
+                logger.debug("Synthesis response is not JSON, treating as text", exc_info=True)
         return text
 
     async def synthesize_findings(

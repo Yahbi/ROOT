@@ -453,7 +453,7 @@ class ExperienceMemory:
                     decay = math.exp(-age_days / 180.0)
                     relevance *= (0.5 + decay * 0.5)
                 except (ValueError, TypeError):
-                    logger.debug("(ValueError, TypeError) suppressed", exc_info=True)
+                    logger.debug("Failed to parse created_at for experience age decay", exc_info=True)
             scored.append(ScoredExperience(experience=exp, score=round(relevance, 4)))
 
         scored.sort(key=lambda s: s.score, reverse=True)

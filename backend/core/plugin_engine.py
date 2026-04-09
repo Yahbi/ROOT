@@ -247,8 +247,13 @@ class PluginEngine:
         self._state_store = state_store
         self._sandbox_gate = None  # Set via main.py
         # New tracking structures
+        # _version_history: keyed by plugin_id — bounded by number of plugins
+        # (finite set). Each list is capped to last 50 versions per plugin.
         self._version_history: dict[str, list[PluginVersionRecord]] = {}
+        # _health: keyed by plugin_id — bounded by number of plugins (finite set)
         self._health: dict[str, PluginHealth] = {}
+        self._MAX_VERSION_HISTORY_PER_PLUGIN = 50
+        self._MAX_HEALTH_ENTRIES = 200
 
     def register(self, plugin: Plugin, version_note: str = "") -> None:
         """Register a plugin and index its tools.
@@ -296,7 +301,11 @@ class PluginEngine:
             registered_at=datetime.now(timezone.utc).isoformat(),
             note=version_note or f"Registered v{plugin.version}",
         )
-        self._version_history.setdefault(plugin.id, []).append(record)
+        history = self._version_history.setdefault(plugin.id, [])
+        history.append(record)
+        # Cap version history per plugin
+        if len(history) > self._MAX_VERSION_HISTORY_PER_PLUGIN:
+            self._version_history[plugin.id] = history[-self._MAX_VERSION_HISTORY_PER_PLUGIN:]
 
         # ── Health tracking ────────────────────────────────────────
         if plugin.id not in self._health:
@@ -526,6 +535,11 @@ class PluginEngine:
         if health is None:
             health = PluginHealth(plugin_id=plugin_id)
             self._health[plugin_id] = health
+            # Prune health entries for unregistered plugins if over limit
+            if len(self._health) > self._MAX_HEALTH_ENTRIES:
+                stale = [k for k in self._health if k not in self._plugins]
+                for k in stale:
+                    del self._health[k]
         health.record(pr)
 
         # Auto-set plugin to ERROR status after 5 consecutive failures

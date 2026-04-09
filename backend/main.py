@@ -26,6 +26,7 @@ from contextlib import asynccontextmanager
 from typing import Callable
 
 from fastapi import FastAPI, Request
+from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
@@ -1463,6 +1464,32 @@ async def lifespan(app: FastAPI):
         except Exception as _e:
             logger.warning("Shutdown: error stopping embedding_service: %s", _e)
 
+    # Ensure all database connections are explicitly closed
+    logger.info("Shutdown: closing database connections...")
+    for _name, _engine in [
+        ("memory", mem),
+        ("experience_memory", experience_memory),
+        ("learning", learning),
+        ("goal_engine", goal_engine),
+        ("task_queue", task_queue),
+        ("hedge_fund", hedge_fund),
+        ("prediction_ledger", prediction_ledger),
+        ("directive", directive),
+        ("conversations", conversations),
+        ("state_store", state_store),
+        ("experiment_lab", experiment_lab),
+        ("self_writing_code", self_writing_code),
+        ("revenue_engine", revenue_engine),
+        ("escalation", escalation),
+        ("user_patterns", user_patterns),
+        ("digest", digest),
+        ("agent_network", agent_network),
+    ]:
+        try:
+            _engine.close()
+        except Exception as _e:
+            logger.debug("Shutdown: close %s (ignored): %s", _name, _e)
+
     _shutdown_elapsed = time.time() - _shutdown_ts
     logger.info("=== ROOT v1.0.0 shut down cleanly in %.1fs ===", _shutdown_elapsed)
 
@@ -1477,6 +1504,45 @@ _fastapi_app = FastAPI(
     redoc_url="/redoc",
     lifespan=lifespan,
 )
+
+
+# ── Global Exception Handlers ─────────────────────────────────
+
+
+@_fastapi_app.exception_handler(Exception)
+async def _global_exception_handler(request: Request, exc: Exception):
+    """Catch-all for unhandled exceptions — returns structured JSON instead of raw 500."""
+    import traceback
+    logger.error(
+        "Unhandled exception on %s %s: %s",
+        request.method,
+        request.url.path,
+        exc,
+        exc_info=True,
+    )
+    return JSONResponse(
+        status_code=500,
+        content={
+            "error": "internal_server_error",
+            "message": "An unexpected error occurred",
+            "path": request.url.path,
+        },
+    )
+
+
+@_fastapi_app.exception_handler(RequestValidationError)
+async def _validation_exception_handler(request: Request, exc: RequestValidationError):
+    """Return structured JSON for request validation failures instead of default 422."""
+    return JSONResponse(
+        status_code=422,
+        content={
+            "error": "validation_error",
+            "message": "Request validation failed",
+            "details": exc.errors(),
+            "path": request.url.path,
+        },
+    )
+
 
 _fastapi_app.add_middleware(
     CORSMiddleware,

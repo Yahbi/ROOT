@@ -117,6 +117,11 @@ class AgentNetwork:
             self._conn.close()
             self._conn = None
 
+    def close(self) -> None:
+        """Close the database connection."""
+        if hasattr(self, '_conn') and self._conn:
+            self._conn.close()
+
     @property
     def conn(self) -> sqlite3.Connection:
         if self._conn is None:

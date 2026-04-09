@@ -87,7 +87,9 @@ class BackupManager:
 
         try:
             source = sqlite3.connect(str(db_path))
+            source.execute("PRAGMA journal_mode=WAL")
             dest = sqlite3.connect(str(backup_path))
+            dest.execute("PRAGMA journal_mode=WAL")
             try:
                 source.backup(dest)
             finally:
@@ -221,6 +223,7 @@ class BackupManager:
         """Run ``PRAGMA integrity_check`` and return ``True`` if it passes."""
         try:
             conn = sqlite3.connect(str(db_path))
+            conn.execute("PRAGMA journal_mode=WAL")
             try:
                 result = conn.execute("PRAGMA integrity_check").fetchone()
                 return result is not None and result[0] == "ok"

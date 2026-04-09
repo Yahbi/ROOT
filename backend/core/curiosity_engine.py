@@ -24,6 +24,7 @@ from __future__ import annotations
 import logging
 import random
 import asyncio
+from collections import deque
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from typing import Any, Optional
@@ -132,7 +133,7 @@ class CuriosityEngine:
         self._llm = llm
 
         self._queue: list[CuriosityItem] = []
-        self._resolved: list[CuriosityItem] = []
+        self._resolved: deque[CuriosityItem] = deque(maxlen=200)
         self._cycle_count = 0
         self._failure_count: int = 0
         self._total_questions_generated = 0
@@ -473,7 +474,7 @@ class CuriosityEngine:
                         except Exception as exc:
                             logger.warning("Failed to store curiosity memory for %s: %s", item.id, exc)
 
-                    self._resolved = [*self._resolved[-99:], resolved_item]
+                    self._resolved.append(resolved_item)
                     self._total_questions_resolved += 1
                     fed += 1
 
@@ -495,7 +496,8 @@ class CuriosityEngine:
             if existing.question.lower()[:80] == q_lower:
                 return True
 
-        for resolved in self._resolved[-50:]:
+        resolved_list = list(self._resolved)
+        for resolved in resolved_list[-50:]:
             if resolved.question.lower()[:80] == q_lower:
                 return True
 
@@ -535,6 +537,7 @@ class CuriosityEngine:
 
     def get_resolved(self, limit: int = 20) -> list[dict[str, Any]]:
         """Get recently resolved curiosity items."""
+        resolved_list = list(self._resolved)
         return [
             {
                 "id": item.id,
@@ -544,7 +547,7 @@ class CuriosityEngine:
                 "resolution": item.resolution[:300],
                 "created_at": item.created_at,
             }
-            for item in reversed(self._resolved[-limit:])
+            for item in reversed(resolved_list[-limit:])
         ]
 
     def stats(self) -> dict[str, Any]:

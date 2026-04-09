@@ -110,7 +110,7 @@ class InternalAgentConnector:
                 args = parsed.get("parameters", parsed.get("input", {}))
                 return [{"name": name, "input": args}]
         except (json.JSONDecodeError, ValueError):
-            pass
+            logger.debug("Failed to extract tool calls from text", exc_info=True)
         return []
 
     async def send_task(self, task: str) -> dict[str, Any]:
@@ -180,7 +180,7 @@ class InternalAgentConnector:
                         return {"agent": self._agent_id, "result": final, "messages_exchanged": msg_count + 1,
                                 "tools_executed": tool_count, "tools_used": tools_used}
                     except Exception:
-                        pass
+                        logger.debug("[%s] Final fast completion after timeout also failed", self._agent_id, exc_info=True)
                 agent = self._registry.get(self._agent_id) if self._registry else None
                 agent_name = agent.name if agent else self._agent_id
                 return {
