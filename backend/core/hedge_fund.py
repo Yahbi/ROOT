@@ -13,9 +13,9 @@ Enhanced with:
 from __future__ import annotations
 
 import logging
-import math
 import sqlite3
 import uuid
+from collections import deque
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from pathlib import Path
@@ -196,7 +196,7 @@ class HedgeFundEngine:
         self._conn: Optional[sqlite3.Connection] = None
         self._running = False
         self._daily_pnl = 0.0
-        self._signals: list[Signal] = []
+        self._signals: deque[Signal] = deque(maxlen=1000)
 
     # ── Lifecycle ──────────────────────────────────────────────
 
@@ -215,6 +215,11 @@ class HedgeFundEngine:
         if self._conn:
             self._conn.close()
             self._conn = None
+
+    def close(self) -> None:
+        """Close the database connection."""
+        if hasattr(self, '_conn') and self._conn:
+            self._conn.close()
 
     @property
     def conn(self) -> sqlite3.Connection:
@@ -519,7 +524,8 @@ class HedgeFundEngine:
         for sig in signals:
             self._store_signal(sig)
 
-        self._signals = signals
+        self._signals.clear()
+        self._signals.extend(signals)
         logger.info("Market scan: %d signals generated", len(signals))
 
         # Publish to bus

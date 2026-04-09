@@ -95,6 +95,11 @@ class GoalEngine:
             self._conn.close()
             self._conn = None
 
+    def close(self) -> None:
+        """Close the database connection."""
+        if hasattr(self, '_conn') and self._conn:
+            self._conn.close()
+
     @property
     def conn(self) -> sqlite3.Connection:
         if self._conn is None:
@@ -420,7 +425,7 @@ class GoalEngine:
                         "days_inactive": days_since,
                     })
             except (ValueError, TypeError):
-                pass
+                logger.debug("Failed to parse updated_at for goal %s", goal.id, exc_info=True)
 
             # Auto-complete goals where all tasks are done
             if goal.tasks_generated > 0 and goal.tasks_completed >= goal.tasks_generated:
@@ -617,7 +622,7 @@ class GoalEngine:
             try:
                 deps = json.loads(row["depends_on"] or "[]")
             except (json.JSONDecodeError, TypeError):
-                pass
+                logger.debug("Failed to parse depends_on for goal %s", row["id"], exc_info=True)
             graph[row["id"]] = deps
         return graph
 
@@ -666,7 +671,7 @@ class GoalEngine:
                 ts = datetime.fromisoformat(ev["created_at"])
                 checkpoints.append((ts, pct))
             except (IndexError, ValueError):
-                pass
+                logger.debug("Failed to parse progress checkpoint from event", exc_info=True)
 
         now_dt = datetime.now(timezone.utc)
         try:
@@ -707,7 +712,7 @@ class GoalEngine:
                     result["deadline"] = goal.deadline
                     result["deadline_buffer_days"] = round((dl - eta).total_seconds() / 86400, 1)
                 except ValueError:
-                    pass
+                    logger.debug("Failed to parse deadline for goal %s", goal.id, exc_info=True)
         else:
             result["estimated_completion"] = None
             result["days_remaining"] = None
@@ -1020,8 +1025,7 @@ class GoalEngine:
                         confidence=0.8,
                     )
                 except Exception:
-                    pass
-
+                    logger.debug("Failed to store goal lesson in memory", exc_info=True)
         return {
             "retrospective_id": retro_id,
             "goal_id": goal_id,

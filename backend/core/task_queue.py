@@ -215,6 +215,11 @@ class TaskQueue:
             self._conn.close()
             self._conn = None
 
+    def close(self) -> None:
+        """Close the database connection."""
+        if hasattr(self, '_conn') and self._conn:
+            self._conn.close()
+
     @property
     def conn(self) -> sqlite3.Connection:
         if self._conn is None:
@@ -482,8 +487,7 @@ class TaskQueue:
                 start = datetime.fromisoformat(run["started_at"])
                 duration = (datetime.now(timezone.utc) - start).total_seconds()
             except (ValueError, TypeError):
-                pass
-
+                logger.debug("(ValueError, TypeError) suppressed", exc_info=True)
         with self.conn:
             self.conn.execute(
                 """UPDATE queued_tasks SET status = 'completed', result = ?,
@@ -1099,8 +1103,7 @@ class TaskQueue:
             if raw_deps:
                 depends_on = json.loads(raw_deps)
         except (json.JSONDecodeError, TypeError):
-            pass
-
+            logger.debug("(json.JSONDecodeError, TypeError) suppressed", exc_info=True)
         return QueuedTask(
             id=row["id"],
             goal=row["goal"],

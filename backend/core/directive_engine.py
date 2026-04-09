@@ -282,6 +282,11 @@ class DirectiveEngine:
             self._conn.close()
             self._conn = None
 
+    def close(self) -> None:
+        """Close the database connection."""
+        if hasattr(self, '_conn') and self._conn:
+            self._conn.close()
+
     @property
     def conn(self) -> sqlite3.Connection:
         if self._conn is None:
@@ -803,8 +808,7 @@ class DirectiveEngine:
                         context={"category": directive.category, "priority": directive.priority},
                     )
                 except Exception:
-                    pass
-
+                    logger.debug("Exception suppressed", exc_info=True)
             # Directive chaining: create follow-up if result suggests one
             chain_keywords = ("further", "next step", "follow up", "investigate more", "deeper analysis")
             current_depth = self._get_chain_depth(directive)
@@ -877,7 +881,7 @@ class DirectiveEngine:
                         context={"category": directive.category, "priority": directive.priority},
                     )
                 except Exception:
-                    pass
+                    logger.debug("Exception suppressed", exc_info=True)
             return self._update_directive(
                 directive.id, status="failed", result=str(exc)[:500],
             )
@@ -942,7 +946,7 @@ class DirectiveEngine:
                     )
                     expired += 1
             except (ValueError, TypeError):
-                pass
+                logger.debug("(ValueError, TypeError) suppressed", exc_info=True)
         if expired:
             self.conn.commit()
         return expired
@@ -1003,7 +1007,7 @@ class DirectiveEngine:
                 try:
                     return int(signal.split(":")[1])
                 except (ValueError, IndexError):
-                    pass
+                    logger.debug("(ValueError, IndexError) suppressed", exc_info=True)
         return 0
 
     # ── Helpers ───────────────────────────────────────────────────

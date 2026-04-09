@@ -7,6 +7,23 @@ const state = { activePanel: 'chat', loading: false, agents: [], theme: 'nebula'
 const messageQueue = [];
 let processingQueue = false;
 
+// ── HTML Sanitization ──────────────────────────────────────
+// Use sanitizeHTML() instead of raw innerHTML for any user/agent content
+function sanitizeHTML(str) {
+    const div = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML;
+}
+function safeSetHTML(el, html) {
+    // For trusted HTML (our own templates) — strips script tags and event handlers
+    if (!el) return;
+    const cleaned = html
+        .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
+        .replace(/\bon\w+\s*=\s*["'][^"']*["']/gi, '')
+        .replace(/javascript\s*:/gi, '');
+    el.innerHTML = cleaned;
+}
+
 // Dynamic unique colors per agent — golden angle for max visual separation
 const _agentColorCache = {};
 let _agentColorIndex = 0;

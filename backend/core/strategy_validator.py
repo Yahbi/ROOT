@@ -1081,8 +1081,7 @@ class StrategyValidator:
                     task_category="trading",
                 )
             except Exception:
-                pass
-
+                logger.debug("Exception suppressed", exc_info=True)
         return {
             "id": validation_id,
             "strategy_name": strategy_name,

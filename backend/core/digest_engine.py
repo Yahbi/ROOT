@@ -82,6 +82,11 @@ class DigestEngine:
             self._conn.close()
             self._conn = None
 
+    def close(self) -> None:
+        """Close the database connection."""
+        if hasattr(self, '_conn') and self._conn:
+            self._conn.close()
+
     @property
     def conn(self) -> sqlite3.Connection:
         if self._conn is None:
@@ -359,12 +364,11 @@ class DigestEngine:
         try:
             highlights = tuple(json.loads(row["highlights"] or "[]"))
         except (json.JSONDecodeError, TypeError):
-            pass
+            logger.debug("(json.JSONDecodeError, TypeError) suppressed", exc_info=True)
         try:
             metrics = json.loads(row["metrics"] or "{}")
         except (json.JSONDecodeError, TypeError):
-            pass
-
+            logger.debug("(json.JSONDecodeError, TypeError) suppressed", exc_info=True)
         return Digest(
             id=row["id"], digest_type=row["digest_type"],
             title=row["title"], content=row["content"],

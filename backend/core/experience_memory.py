@@ -22,6 +22,7 @@ Extended capabilities:
 from __future__ import annotations
 
 import json
+import logging
 import math
 import sqlite3
 import uuid
@@ -33,6 +34,8 @@ from pathlib import Path
 from typing import Any, Optional
 
 from backend.config import DATA_DIR
+
+logger = logging.getLogger("root.experience_memory")
 
 EXPERIENCE_DB = DATA_DIR / "experience.db"
 
@@ -142,6 +145,11 @@ class ExperienceMemory:
         if self._conn:
             self._conn.close()
             self._conn = None
+
+    def close(self) -> None:
+        """Close the database connection."""
+        if hasattr(self, '_conn') and self._conn:
+            self._conn.close()
 
     @property
     def conn(self) -> sqlite3.Connection:
@@ -445,8 +453,7 @@ class ExperienceMemory:
                     decay = math.exp(-age_days / 180.0)
                     relevance *= (0.5 + decay * 0.5)
                 except (ValueError, TypeError):
-                    pass
-
+                    logger.debug("(ValueError, TypeError) suppressed", exc_info=True)
             scored.append(ScoredExperience(experience=exp, score=round(relevance, 4)))
 
         scored.sort(key=lambda s: s.score, reverse=True)

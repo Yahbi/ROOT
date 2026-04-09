@@ -486,8 +486,7 @@ async def correlate_projects(
                     context={"projects": summary.get("total_projects", 0)},
                 )
             except Exception:
-                pass
-
+                logger.debug("Exception suppressed", exc_info=True)
         return f"Project correlator: {correlation[:200]}"
 
     except Exception as exc:

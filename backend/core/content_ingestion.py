@@ -419,7 +419,7 @@ class ContentIngestion:
                 logger.debug("PDF read via pdfplumber: %d pages", len(text_parts))
                 return "\n\n".join(text_parts)
         except ImportError:
-            pass
+            logger.debug("ImportError suppressed", exc_info=True)
         except Exception as exc:
             logger.warning("pdfplumber failed for %s: %s", path.name, exc)
 
@@ -436,7 +436,7 @@ class ContentIngestion:
                 logger.debug("PDF read via PyPDF2: %d pages", len(text_parts))
                 return "\n\n".join(text_parts)
         except ImportError:
-            pass
+            logger.debug("ImportError suppressed", exc_info=True)
         except Exception as exc:
             logger.warning("PyPDF2 failed for %s: %s", path.name, exc)
 
@@ -451,7 +451,7 @@ class ContentIngestion:
                 logger.debug("PDF read via PyMuPDF: %d pages", len(text_parts))
                 return combined
         except ImportError:
-            pass
+            logger.debug("ImportError suppressed", exc_info=True)
         except Exception as exc:
             logger.warning("PyMuPDF failed for %s: %s", path.name, exc)
 

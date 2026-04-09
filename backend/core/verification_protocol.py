@@ -307,8 +307,7 @@ class ConsensusEngine:
                     if agent_weight is not None:
                         weight = agent_weight
                 except Exception:
-                    pass
-
+                    logger.debug("Exception suppressed", exc_info=True)
             # Score = confidence * historical_weight
             score = v.confidence * weight
             weighted_scores.append((v, score))
