@@ -1,16 +1,5 @@
 [
   {
-    "id": "evo_716b44074e02",
-    "action_type": "code_proposed",
-    "description": "Proposed improvement in skills: ['Train a large language model on a diverse dataset of texts, including financial reports, scientific articles, and technical documentation.', 'Develop a novel algorithm for automatically extracting key points and main ideas from the input text.', 'Integrate this summarization skill with existing kn",
-    "details": {
-      "area": "skills",
-      "rationale": "Improved text summarization abilities will enhance ROOT's ability to condense complex information into actionable insights."
-    },
-    "impact_score": 0.0,
-    "timestamp": "2026-03-22T07:58:58.835020+00:00"
-  },
-  {
     "id": "evo_920805616fcc",
     "action_type": "skill_created",
     "description": "Created skill: general/auto-general \u2014 Auto-generated skill for general",
@@ -5878,5 +5867,16 @@
     },
     "impact_score": 0.0,
     "timestamp": "2026-04-09T19:47:07.415819+00:00"
+  },
+  {
+    "id": "evo_21fa2ac86e4f",
+    "action_type": "code_proposed",
+    "description": "Proposed improvement in knowledge: Expand preference knowledge: Actively collect more preference entries",
+    "details": {
+      "area": "knowledge",
+      "rationale": "Identified by Builder Agent during improvement cycle"
+    },
+    "impact_score": 0.0,
+    "timestamp": "2026-04-09T19:58:51.705518+00:00"
   }
 ]
