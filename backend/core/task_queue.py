@@ -487,7 +487,7 @@ class TaskQueue:
                 start = datetime.fromisoformat(run["started_at"])
                 duration = (datetime.now(timezone.utc) - start).total_seconds()
             except (ValueError, TypeError):
-                logger.debug("(ValueError, TypeError) suppressed", exc_info=True)
+                logger.debug("Failed to parse started_at timestamp for task duration", exc_info=True)
         with self.conn:
             self.conn.execute(
                 """UPDATE queued_tasks SET status = 'completed', result = ?,
@@ -1103,7 +1103,7 @@ class TaskQueue:
             if raw_deps:
                 depends_on = json.loads(raw_deps)
         except (json.JSONDecodeError, TypeError):
-            logger.debug("(json.JSONDecodeError, TypeError) suppressed", exc_info=True)
+            logger.debug("Failed to parse depends_on JSON for task %s", row["id"], exc_info=True)
         return QueuedTask(
             id=row["id"],
             goal=row["goal"],

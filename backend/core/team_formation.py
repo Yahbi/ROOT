@@ -134,7 +134,7 @@ class TeamFormation:
                 for agent in self._registry.list_core_agents():
                     all_candidates.add(agent.id)
             except Exception:
-                logger.debug("Exception suppressed", exc_info=True)
+                logger.debug("Failed to list core agents from registry for fallback candidates", exc_info=True)
         # Default weight for missing scores.
         combined: dict[str, float] = {}
         for agent_id in all_candidates:
