@@ -491,7 +491,7 @@ class AgentSwarm:
             try:
                 await self._task
             except asyncio.CancelledError:
-                logger.debug("except asyncio.CancelledError suppressed", exc_info=True)
+                logger.debug("Agent swarm task cancelled during shutdown")
         logger.info("Agent swarm stopped")
 
     async def _run_cycle(self) -> None:
