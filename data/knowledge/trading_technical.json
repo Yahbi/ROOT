@@ -1,0 +1,302 @@
+[
+  {
+    "content": "The Relative Strength Index (RSI) is calculated as RSI = 100 - 100/(1+RS), where RS is the average gain over 14 periods divided by the average loss over 14 periods. The standard lookback period is 14, originally proposed by J. Welles Wilder in 1978.",
+    "type": "fact",
+    "tags": ["RSI", "momentum", "oscillator"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "RSI readings above 70 indicate overbought conditions suggesting a potential pullback, while readings below 30 indicate oversold conditions suggesting a potential bounce. These thresholds can be adjusted to 80/20 in strongly trending markets to reduce false signals.",
+    "type": "fact",
+    "tags": ["RSI", "overbought", "oversold"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "RSI divergence occurs when price makes a new high but RSI makes a lower high (bearish divergence) or price makes a new low but RSI makes a higher low (bullish divergence). Divergence signals are strongest when RSI is simultaneously in overbought or oversold territory, and they often precede reversals by 1-3 bars.",
+    "type": "learning",
+    "tags": ["RSI", "divergence", "reversal"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "MACD is calculated as the 12-period EMA minus the 26-period EMA, producing the MACD line. The signal line is a 9-period EMA of the MACD line, and the histogram represents the difference between the MACD line and the signal line.",
+    "type": "fact",
+    "tags": ["MACD", "momentum", "trend"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "A bullish MACD crossover occurs when the MACD line crosses above the signal line, indicating upward momentum. A bearish crossover occurs when the MACD line crosses below the signal line. Crossovers are most reliable when they occur far from the zero line, confirming strong momentum shifts.",
+    "type": "learning",
+    "tags": ["MACD", "crossover", "signal"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "The MACD histogram peaks before the actual MACD crossover, providing an early warning of momentum change. When the histogram shrinks toward zero from positive territory, it signals weakening bullish momentum even before a bearish crossover completes.",
+    "type": "learning",
+    "tags": ["MACD", "histogram", "momentum"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Bollinger Bands consist of a 20-period Simple Moving Average (middle band) with upper and lower bands placed at +/- 2 standard deviations. Approximately 95% of price action falls within the bands under normal distribution assumptions.",
+    "type": "fact",
+    "tags": ["bollinger_bands", "volatility", "SMA"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "A Bollinger Band squeeze occurs when bandwidth (upper band minus lower band divided by middle band) contracts to its lowest level in 6 months, signaling an imminent high-volatility breakout. Traders watch for the first candle to close outside the bands after a squeeze to determine breakout direction.",
+    "type": "skill",
+    "tags": ["bollinger_bands", "squeeze", "breakout"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Bollinger Bandwidth is calculated as (Upper Band - Lower Band) / Middle Band x 100. Low bandwidth values below 4% on daily charts often precede explosive moves, while bandwidth expansion above 8% suggests the trend move may be maturing.",
+    "type": "fact",
+    "tags": ["bollinger_bands", "bandwidth", "volatility"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "VWAP (Volume Weighted Average Price) is calculated as the cumulative sum of (price x volume) divided by the cumulative total volume for the trading session. It resets at the start of each trading day and serves as the primary institutional benchmark for execution quality.",
+    "type": "fact",
+    "tags": ["VWAP", "volume", "institutional"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Institutional traders consider buying below VWAP and selling above VWAP as favorable execution. Price trading consistently above VWAP indicates bullish intraday sentiment, while trading below VWAP indicates bearish sentiment. VWAP acts as dynamic intraday support/resistance.",
+    "type": "learning",
+    "tags": ["VWAP", "institutional", "execution"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "TWAP (Time Weighted Average Price) splits a large order into equal-sized smaller orders executed at regular time intervals throughout a specified period. Unlike VWAP, TWAP gives equal weight to each time period regardless of volume, making it preferred for illiquid stocks where volume-based strategies could cause slippage.",
+    "type": "skill",
+    "tags": ["TWAP", "execution", "order_splitting"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "The key Fibonacci retracement levels are 23.6%, 38.2%, 50%, 61.8%, and 78.6%, derived from the Fibonacci sequence ratios. The 61.8% level (golden ratio) is considered the most significant retracement level, where strong trends most often find support before resuming.",
+    "type": "fact",
+    "tags": ["fibonacci", "retracement", "support_resistance"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Fibonacci retracements are drawn from swing low to swing high in uptrends and from swing high to swing low in downtrends. The 38.2% retracement is typical in strong trends, 50% in moderate trends, and 61.8% in weak trends that may still resume. A break below 78.6% often signals full trend reversal.",
+    "type": "skill",
+    "tags": ["fibonacci", "trend", "retracement"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Fibonacci extensions project price targets beyond the original move at 127.2%, 161.8%, and 261.8% levels. The 161.8% extension is the most commonly watched profit target for breakout trades, calculated by multiplying the initial move distance by 1.618 and adding it to the retracement low.",
+    "type": "skill",
+    "tags": ["fibonacci", "extension", "price_target"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "The Ichimoku Cloud uses five lines: Tenkan-sen (9-period midpoint), Kijun-sen (26-period midpoint), Senkou Span A (average of Tenkan and Kijun plotted 26 periods ahead), Senkou Span B (52-period midpoint plotted 26 periods ahead), and Chikou Span (close plotted 26 periods back). The cloud (kumo) is formed between Senkou Span A and B.",
+    "type": "fact",
+    "tags": ["ichimoku", "cloud", "trend"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "When price is above the Ichimoku cloud, the trend is bullish; below the cloud, bearish; inside the cloud, neutral/consolidating. A bullish signal occurs when the Tenkan-sen (9) crosses above the Kijun-sen (26) above the cloud. The cloud thickness indicates support/resistance strength.",
+    "type": "learning",
+    "tags": ["ichimoku", "trend_direction", "crossover"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "The Chikou Span (lagging span) confirms trend direction by plotting the current close 26 periods back. When the Chikou Span is above the price from 26 periods ago, it confirms bullish momentum. A Kumo twist, where Senkou Span A crosses Senkou Span B, signals a potential trend change 26 periods in the future.",
+    "type": "learning",
+    "tags": ["ichimoku", "chikou", "kumo_twist"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Volume Profile displays trading activity distributed across price levels over a specified period, identifying the Point of Control (POC) as the price level with the highest traded volume. The Value Area encompasses the price range where approximately 70% of total volume was traded.",
+    "type": "fact",
+    "tags": ["volume_profile", "POC", "value_area"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "High Volume Nodes (HVN) in the volume profile represent price levels with significant trading activity and act as magnets that attract price, serving as strong support/resistance. Low Volume Nodes (LVN) represent price levels with minimal trading activity where price tends to move quickly through, creating potential breakout zones.",
+    "type": "learning",
+    "tags": ["volume_profile", "HVN", "LVN"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Average True Range (ATR) is calculated as the 14-period exponential moving average of the True Range, where True Range is the greatest of: current high minus current low, absolute value of current high minus previous close, or absolute value of current low minus previous close. ATR measures volatility, not direction.",
+    "type": "fact",
+    "tags": ["ATR", "volatility", "true_range"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "ATR-based stop losses are commonly placed at 1.5x to 3x ATR below the entry price for long positions. A 2x ATR stop provides a balance between giving the trade room to breathe and limiting risk. Position size should be calculated as (Account Risk $) / (ATR x ATR Multiplier) to normalize risk across different volatility regimes.",
+    "type": "skill",
+    "tags": ["ATR", "stop_loss", "position_sizing"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "The Simple Moving Average (SMA) calculates the arithmetic mean of prices over N periods, giving equal weight to all data points. The Exponential Moving Average (EMA) applies a weighting multiplier of 2/(N+1) to the most recent price, making it more responsive to recent price changes than the SMA.",
+    "type": "fact",
+    "tags": ["SMA", "EMA", "moving_average"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "The Golden Cross occurs when the 50-period moving average crosses above the 200-period moving average, signaling a potential long-term bullish trend. The Death Cross is the opposite, when the 50 crosses below the 200. Historically on the S&P 500, the Golden Cross has preceded an average gain of 10.5% over the following 12 months.",
+    "type": "learning",
+    "tags": ["golden_cross", "death_cross", "moving_average"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "The 9-period and 21-period EMA crossover is a popular short-term trend-following system. When the 9 EMA crosses above the 21 EMA, it generates a buy signal; crossing below generates a sell signal. This combination works best in trending markets and produces frequent whipsaws in ranging conditions.",
+    "type": "skill",
+    "tags": ["EMA", "crossover", "short_term"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "A Doji candlestick has an open and close that are virtually equal, forming a cross or plus sign shape, indicating indecision between buyers and sellers. A Doji appearing after an extended uptrend or downtrend is a strong reversal signal, especially when confirmed by above-average volume on the following candle.",
+    "type": "fact",
+    "tags": ["candlestick", "doji", "reversal"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "A Bullish Engulfing pattern forms when a small bearish candle is followed by a larger bullish candle that completely engulfs the prior candle's body. A Bearish Engulfing is the opposite. These patterns are most significant at support/resistance levels and when the engulfing candle has 2-3x the volume of the engulfed candle.",
+    "type": "learning",
+    "tags": ["candlestick", "engulfing", "reversal"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "A Hammer candlestick has a small real body at the top with a lower shadow at least 2x the body length and little to no upper shadow, appearing at the bottom of a downtrend to signal reversal. The Morning Star is a three-candle bullish reversal pattern: long bearish candle, small-body candle gapping down, then a long bullish candle closing above the midpoint of the first candle.",
+    "type": "fact",
+    "tags": ["candlestick", "hammer", "morning_star"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Pivot points calculate support and resistance levels using the previous period's high, low, and close: Pivot = (H+L+C)/3, S1 = 2*Pivot - H, R1 = 2*Pivot - L, S2 = Pivot - (H-L), R2 = Pivot + (H-L). Floor traders use daily pivots as primary intraday reference levels for entry and exit decisions.",
+    "type": "fact",
+    "tags": ["pivot_points", "support_resistance", "intraday"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Round number levels (e.g., $50, $100, $200) act as psychological support and resistance because institutional and retail traders cluster orders at these levels. Options market makers often have significant gamma exposure at round-number strikes, amplifying the magnetic effect of these price levels.",
+    "type": "learning",
+    "tags": ["support_resistance", "psychology", "round_numbers"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "A breakaway gap occurs at the start of a new trend with above-average volume and is usually not filled, confirming a significant shift in supply/demand. An exhaustion gap appears near the end of a trend on high volume followed by quick reversal, often filling within 3-5 trading sessions.",
+    "type": "learning",
+    "tags": ["gap_analysis", "breakaway", "exhaustion"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Common gaps occur within trading ranges and are typically filled within 1-3 days, offering no significant directional signal. An island reversal forms when a gap in one direction is followed by a period of trading and then a gap in the opposite direction, isolating a cluster of candles and signaling a strong reversal.",
+    "type": "fact",
+    "tags": ["gap_analysis", "common_gap", "island_reversal"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "The Average Directional Index (ADX) measures trend strength on a 0-100 scale without indicating direction. ADX above 25 indicates a trending market suitable for trend-following strategies, while ADX below 20 indicates a ranging market better suited for mean-reversion strategies. ADX is derived from the 14-period smoothed average of the directional movement index.",
+    "type": "fact",
+    "tags": ["ADX", "trend_strength", "directional_movement"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "The +DI and -DI lines that accompany ADX indicate trend direction: when +DI crosses above -DI with ADX rising above 25, it signals a strong bullish trend entry. ADX readings above 40 indicate a very strong trend but also warn that the trend may be overextended and due for a pullback.",
+    "type": "skill",
+    "tags": ["ADX", "DI", "trend_entry"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "The Stochastic Oscillator consists of %K = 100 x (Close - Lowest Low) / (Highest High - Lowest Low) over 14 periods, and %D is the 3-period SMA of %K. Readings above 80 indicate overbought conditions and readings below 20 indicate oversold conditions.",
+    "type": "fact",
+    "tags": ["stochastic", "oscillator", "overbought_oversold"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "A stochastic buy signal occurs when %K crosses above %D below the 20 oversold level, and a sell signal when %K crosses below %D above the 80 overbought level. The slow stochastic (using 3-period smoothing on %K) reduces false signals compared to the fast stochastic and is preferred by most swing traders.",
+    "type": "skill",
+    "tags": ["stochastic", "crossover", "swing_trading"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "On-Balance Volume (OBV) adds the entire day's volume when the close is higher than the previous close and subtracts it when lower, creating a cumulative running total. OBV divergence from price is a powerful leading indicator: rising OBV with flat/falling price suggests accumulation before an upward move.",
+    "type": "fact",
+    "tags": ["OBV", "volume", "accumulation"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "When OBV makes a new high before price does, it signals that smart money is accumulating and a price breakout is likely. Conversely, when OBV fails to confirm a new price high (bearish OBV divergence), it warns of distribution and a potential top forming within 5-10 trading sessions.",
+    "type": "learning",
+    "tags": ["OBV", "divergence", "smart_money"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Heikin-Ashi candles use modified formulas: HA Close = (Open+High+Low+Close)/4, HA Open = (previous HA Open + previous HA Close)/2, HA High = max(High, HA Open, HA Close), HA Low = min(Low, HA Open, HA Close). These smoothed candles filter noise and make trend identification clearer than standard candlesticks.",
+    "type": "fact",
+    "tags": ["heikin_ashi", "candlestick", "smoothing"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "In Heikin-Ashi charts, a series of green candles with no lower wicks indicates a strong uptrend, while red candles with no upper wicks indicate a strong downtrend. Small-body candles with both upper and lower wicks (spinning tops) signal potential trend reversal. Heikin-Ashi should not be used for precise entry/exit prices since the values are averaged.",
+    "type": "learning",
+    "tags": ["heikin_ashi", "trend_identification", "reversal"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Keltner Channels consist of a middle line (20-period EMA) with upper and lower bands placed at +/- 2x the 10-period ATR from the EMA. Unlike Bollinger Bands which use standard deviation, Keltner Channels use ATR, making them smoother and less reactive to single large price bars.",
+    "type": "fact",
+    "tags": ["keltner_channels", "EMA", "ATR"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "When Bollinger Bands squeeze inside Keltner Channels (the TTM Squeeze), it signals extreme low volatility compression that typically precedes a significant directional move. The squeeze fires when Bollinger Bands expand back outside the Keltner Channels, and the momentum histogram direction indicates the likely breakout direction.",
+    "type": "skill",
+    "tags": ["keltner_channels", "bollinger_bands", "TTM_squeeze"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Williams %R is calculated as (Highest High - Close) / (Highest High - Lowest Low) x -100 over a 14-period lookback. It ranges from 0 to -100, where readings above -20 indicate overbought conditions and below -80 indicate oversold conditions. Williams %R is mathematically the inverse of the Fast Stochastic %K.",
+    "type": "fact",
+    "tags": ["williams_r", "oscillator", "overbought_oversold"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Williams %R is most effective when used to identify failure swings: if %R rises above -20 (overbought), pulls back, fails to reach -20 again on the next rally, and then falls below the prior pullback low, it generates a reliable sell signal. The opposite pattern applies for buy signals in oversold territory below -80.",
+    "type": "skill",
+    "tags": ["williams_r", "failure_swing", "signal"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "The Money Flow Index (MFI) is a volume-weighted RSI calculated over 14 periods. Typical Price = (High+Low+Close)/3, Raw Money Flow = Typical Price x Volume, then MFI = 100 - 100/(1+Positive Money Flow/Negative Money Flow). MFI above 80 is overbought and below 20 is oversold.",
+    "type": "fact",
+    "tags": ["MFI", "money_flow", "volume_weighted"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "MFI divergence from price is a more reliable signal than RSI divergence because it incorporates volume. When price makes a new high but MFI makes a lower high, it indicates that the rally lacks volume conviction and is likely to fail. MFI readings staying above 50 during pullbacks confirm a healthy uptrend with consistent buying pressure.",
+    "type": "learning",
+    "tags": ["MFI", "divergence", "volume_confirmation"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "The EMA weighting multiplier is calculated as 2/(period+1), giving the 12-period EMA a multiplier of 0.1538 and the 26-period EMA a multiplier of 0.0741. Each new EMA value = (Close - previous EMA) x multiplier + previous EMA, making recent prices exponentially more influential than older prices.",
+    "type": "fact",
+    "tags": ["EMA", "calculation", "weighting"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "The 200-day SMA is the most widely watched long-term moving average by institutional investors. Stocks trading above their 200-day SMA are considered in a long-term uptrend, while those below are in a downtrend. The S&P 500 has historically produced average annual returns of +12.4% when above the 200 SMA versus -0.2% when below.",
+    "type": "learning",
+    "tags": ["SMA", "200_day", "institutional"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Volume Profile's Value Area High (VAH) and Value Area Low (VAL) define the boundaries of the 70% volume zone. When price opens inside the Value Area and moves toward VAH, it tends to continue through; when price opens outside the Value Area, there is an 80% statistical probability it will rotate back into the Value Area.",
+    "type": "skill",
+    "tags": ["volume_profile", "value_area", "VAH_VAL"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "RSI can be used as a trend filter by shifting the overbought/oversold zones: in uptrends use 40/80 instead of 30/70, and in downtrends use 20/60. Andrew Cardwell's RSI range shift theory states that RSI tends to oscillate between 40-80 in bull markets and 20-60 in bear markets, with zone shifts confirming trend changes.",
+    "type": "skill",
+    "tags": ["RSI", "trend_filter", "range_shift"],
+    "source": "trading_knowledge"
+  }
+]

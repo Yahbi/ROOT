@@ -1,0 +1,402 @@
+[
+  {
+    "content": "Gross Domestic Product (GDP) is released quarterly by BEA. Calculation: C+I+G+(X-M). Market interpretation: >2% growth healthy, <0% recession. Traders watch for surprises vs consensus estimates \u2014 the deviation from expectations moves markets more than the absolute number.",
+    "type": "fact",
+    "tags": [
+      "gdp",
+      "economic_indicator",
+      "macro"
+    ],
+    "source": "economics_knowledge"
+  },
+  {
+    "content": "Trading around GDP release: position before announcement carries event risk. The market typically prices in consensus expectations \u2014 a beat drives rally, miss drives selloff. Volatility spikes around release and settles within 30-60 minutes. Use options straddles for pure volatility play.",
+    "type": "skill",
+    "tags": [
+      "gdp",
+      "event_trading",
+      "macro"
+    ],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Consumer Price Index (CPI) is released monthly by BLS. Calculation: weighted basket of goods. Market interpretation: 2% Fed target, >3% hot inflation. Traders watch for surprises vs consensus estimates \u2014 the deviation from expectations moves markets more than the absolute number.",
+    "type": "fact",
+    "tags": [
+      "cpi",
+      "economic_indicator",
+      "macro"
+    ],
+    "source": "economics_knowledge"
+  },
+  {
+    "content": "Trading around CPI release: position before announcement carries event risk. The market typically prices in consensus expectations \u2014 a beat drives rally, miss drives selloff. Volatility spikes around release and settles within 30-60 minutes. Use options straddles for pure volatility play.",
+    "type": "skill",
+    "tags": [
+      "cpi",
+      "event_trading",
+      "macro"
+    ],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Personal Consumption Expenditures (PCE) is released monthly by BEA. Calculation: broader than CPI. Market interpretation: Fed's preferred inflation gauge. Traders watch for surprises vs consensus estimates \u2014 the deviation from expectations moves markets more than the absolute number.",
+    "type": "fact",
+    "tags": [
+      "pce",
+      "economic_indicator",
+      "macro"
+    ],
+    "source": "economics_knowledge"
+  },
+  {
+    "content": "Trading around PCE release: position before announcement carries event risk. The market typically prices in consensus expectations \u2014 a beat drives rally, miss drives selloff. Volatility spikes around release and settles within 30-60 minutes. Use options straddles for pure volatility play.",
+    "type": "skill",
+    "tags": [
+      "pce",
+      "event_trading",
+      "macro"
+    ],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Non-Farm Payrolls (NFP) is released monthly first Friday by BLS. Calculation: net new jobs. Market interpretation: >200K strong, <100K weak. Traders watch for surprises vs consensus estimates \u2014 the deviation from expectations moves markets more than the absolute number.",
+    "type": "fact",
+    "tags": [
+      "nfp",
+      "economic_indicator",
+      "macro"
+    ],
+    "source": "economics_knowledge"
+  },
+  {
+    "content": "Trading around NFP release: position before announcement carries event risk. The market typically prices in consensus expectations \u2014 a beat drives rally, miss drives selloff. Volatility spikes around release and settles within 30-60 minutes. Use options straddles for pure volatility play.",
+    "type": "skill",
+    "tags": [
+      "nfp",
+      "event_trading",
+      "macro"
+    ],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "U-3 Unemployment (Unemployment Rate) is released monthly by BLS. Calculation: unemployed/labor force. Market interpretation: <4% tight labor market. Traders watch for surprises vs consensus estimates \u2014 the deviation from expectations moves markets more than the absolute number.",
+    "type": "fact",
+    "tags": [
+      "unemployment_rate",
+      "economic_indicator",
+      "macro"
+    ],
+    "source": "economics_knowledge"
+  },
+  {
+    "content": "Trading around Unemployment Rate release: position before announcement carries event risk. The market typically prices in consensus expectations \u2014 a beat drives rally, miss drives selloff. Volatility spikes around release and settles within 30-60 minutes. Use options straddles for pure volatility play.",
+    "type": "skill",
+    "tags": [
+      "unemployment_rate",
+      "event_trading",
+      "macro"
+    ],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Purchasing Managers Index (PMI) is released monthly by ISM. Calculation: survey of purchasing managers. Market interpretation: >50 expansion, <50 contraction. Traders watch for surprises vs consensus estimates \u2014 the deviation from expectations moves markets more than the absolute number.",
+    "type": "fact",
+    "tags": [
+      "pmi",
+      "economic_indicator",
+      "macro"
+    ],
+    "source": "economics_knowledge"
+  },
+  {
+    "content": "Trading around PMI release: position before announcement carries event risk. The market typically prices in consensus expectations \u2014 a beat drives rally, miss drives selloff. Volatility spikes around release and settles within 30-60 minutes. Use options straddles for pure volatility play.",
+    "type": "skill",
+    "tags": [
+      "pmi",
+      "event_trading",
+      "macro"
+    ],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Producer Price Index (PPI) is released monthly by BLS. Calculation: wholesale price changes. Market interpretation: leading indicator of CPI. Traders watch for surprises vs consensus estimates \u2014 the deviation from expectations moves markets more than the absolute number.",
+    "type": "fact",
+    "tags": [
+      "ppi",
+      "economic_indicator",
+      "macro"
+    ],
+    "source": "economics_knowledge"
+  },
+  {
+    "content": "Trading around PPI release: position before announcement carries event risk. The market typically prices in consensus expectations \u2014 a beat drives rally, miss drives selloff. Volatility spikes around release and settles within 30-60 minutes. Use options straddles for pure volatility play.",
+    "type": "skill",
+    "tags": [
+      "ppi",
+      "event_trading",
+      "macro"
+    ],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Advance Retail Sales (Retail Sales) is released monthly by Census Bureau. Calculation: total retail receipts. Market interpretation: 70% of GDP is consumption. Traders watch for surprises vs consensus estimates \u2014 the deviation from expectations moves markets more than the absolute number.",
+    "type": "fact",
+    "tags": [
+      "retail_sales",
+      "economic_indicator",
+      "macro"
+    ],
+    "source": "economics_knowledge"
+  },
+  {
+    "content": "Trading around Retail Sales release: position before announcement carries event risk. The market typically prices in consensus expectations \u2014 a beat drives rally, miss drives selloff. Volatility spikes around release and settles within 30-60 minutes. Use options straddles for pure volatility play.",
+    "type": "skill",
+    "tags": [
+      "retail_sales",
+      "event_trading",
+      "macro"
+    ],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "New Residential Construction (Housing Starts) is released monthly by Census Bureau. Calculation: new home construction began. Market interpretation: sensitive to interest rates. Traders watch for surprises vs consensus estimates \u2014 the deviation from expectations moves markets more than the absolute number.",
+    "type": "fact",
+    "tags": [
+      "housing_starts",
+      "economic_indicator",
+      "macro"
+    ],
+    "source": "economics_knowledge"
+  },
+  {
+    "content": "Trading around Housing Starts release: position before announcement carries event risk. The market typically prices in consensus expectations \u2014 a beat drives rally, miss drives selloff. Volatility spikes around release and settles within 30-60 minutes. Use options straddles for pure volatility play.",
+    "type": "skill",
+    "tags": [
+      "housing_starts",
+      "event_trading",
+      "macro"
+    ],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Conference Board Consumer Confidence (Consumer Confidence) is released monthly by Conference Board. Calculation: survey of household expectations. Market interpretation: >100 optimistic, <100 pessimistic. Traders watch for surprises vs consensus estimates \u2014 the deviation from expectations moves markets more than the absolute number.",
+    "type": "fact",
+    "tags": [
+      "consumer_confidence",
+      "economic_indicator",
+      "macro"
+    ],
+    "source": "economics_knowledge"
+  },
+  {
+    "content": "Trading around Consumer Confidence release: position before announcement carries event risk. The market typically prices in consensus expectations \u2014 a beat drives rally, miss drives selloff. Volatility spikes around release and settles within 30-60 minutes. Use options straddles for pure volatility play.",
+    "type": "skill",
+    "tags": [
+      "consumer_confidence",
+      "event_trading",
+      "macro"
+    ],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Initial Jobless Claims (Initial Claims) is released weekly Thursday by DOL. Calculation: new unemployment filings. Market interpretation: <200K very strong, >300K concerning. Traders watch for surprises vs consensus estimates \u2014 the deviation from expectations moves markets more than the absolute number.",
+    "type": "fact",
+    "tags": [
+      "initial_claims",
+      "economic_indicator",
+      "macro"
+    ],
+    "source": "economics_knowledge"
+  },
+  {
+    "content": "Trading around Initial Claims release: position before announcement carries event risk. The market typically prices in consensus expectations \u2014 a beat drives rally, miss drives selloff. Volatility spikes around release and settles within 30-60 minutes. Use options straddles for pure volatility play.",
+    "type": "skill",
+    "tags": [
+      "initial_claims",
+      "event_trading",
+      "macro"
+    ],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Industrial Production Index (Industrial Production) is released monthly by Fed. Calculation: output of factories/mines/utilities. Market interpretation: manufacturing health gauge. Traders watch for surprises vs consensus estimates \u2014 the deviation from expectations moves markets more than the absolute number.",
+    "type": "fact",
+    "tags": [
+      "industrial_production",
+      "economic_indicator",
+      "macro"
+    ],
+    "source": "economics_knowledge"
+  },
+  {
+    "content": "Trading around Industrial Production release: position before announcement carries event risk. The market typically prices in consensus expectations \u2014 a beat drives rally, miss drives selloff. Volatility spikes around release and settles within 30-60 minutes. Use options straddles for pure volatility play.",
+    "type": "skill",
+    "tags": [
+      "industrial_production",
+      "event_trading",
+      "macro"
+    ],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "International Trade in Goods and Services (Trade Balance) is released monthly by Census/BEA. Calculation: exports minus imports. Market interpretation: deficit = importing more than exporting. Traders watch for surprises vs consensus estimates \u2014 the deviation from expectations moves markets more than the absolute number.",
+    "type": "fact",
+    "tags": [
+      "trade_balance",
+      "economic_indicator",
+      "macro"
+    ],
+    "source": "economics_knowledge"
+  },
+  {
+    "content": "Trading around Trade Balance release: position before announcement carries event risk. The market typically prices in consensus expectations \u2014 a beat drives rally, miss drives selloff. Volatility spikes around release and settles within 30-60 minutes. Use options straddles for pure volatility play.",
+    "type": "skill",
+    "tags": [
+      "trade_balance",
+      "event_trading",
+      "macro"
+    ],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Federal Funds Target Rate (Fed Funds Rate) is released 8 FOMC meetings/year by Federal Reserve. Calculation: overnight interbank lending rate. Market interpretation: primary monetary policy tool. Traders watch for surprises vs consensus estimates \u2014 the deviation from expectations moves markets more than the absolute number.",
+    "type": "fact",
+    "tags": [
+      "fed_funds_rate",
+      "economic_indicator",
+      "macro"
+    ],
+    "source": "economics_knowledge"
+  },
+  {
+    "content": "Trading around Fed Funds Rate release: position before announcement carries event risk. The market typically prices in consensus expectations \u2014 a beat drives rally, miss drives selloff. Volatility spikes around release and settles within 30-60 minutes. Use options straddles for pure volatility play.",
+    "type": "skill",
+    "tags": [
+      "fed_funds_rate",
+      "event_trading",
+      "macro"
+    ],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "10-Year Treasury Note Yield (10Y Treasury Yield) is released continuous by Treasury. Calculation: government bond yield. Market interpretation: benchmark for mortgages, risk-free rate proxy. Traders watch for surprises vs consensus estimates \u2014 the deviation from expectations moves markets more than the absolute number.",
+    "type": "fact",
+    "tags": [
+      "10y_treasury_yield",
+      "economic_indicator",
+      "macro"
+    ],
+    "source": "economics_knowledge"
+  },
+  {
+    "content": "Trading around 10Y Treasury Yield release: position before announcement carries event risk. The market typically prices in consensus expectations \u2014 a beat drives rally, miss drives selloff. Volatility spikes around release and settles within 30-60 minutes. Use options straddles for pure volatility play.",
+    "type": "skill",
+    "tags": [
+      "10y_treasury_yield",
+      "event_trading",
+      "macro"
+    ],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "2-Year minus 10-Year Treasury Spread (2s10s Spread) is released continuous by Treasury. Calculation: yield curve slope. Market interpretation: inverted = recession signal (12-18mo lead). Traders watch for surprises vs consensus estimates \u2014 the deviation from expectations moves markets more than the absolute number.",
+    "type": "fact",
+    "tags": [
+      "2s10s_spread",
+      "economic_indicator",
+      "macro"
+    ],
+    "source": "economics_knowledge"
+  },
+  {
+    "content": "Trading around 2s10s Spread release: position before announcement carries event risk. The market typically prices in consensus expectations \u2014 a beat drives rally, miss drives selloff. Volatility spikes around release and settles within 30-60 minutes. Use options straddles for pure volatility play.",
+    "type": "skill",
+    "tags": [
+      "2s10s_spread",
+      "event_trading",
+      "macro"
+    ],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "CBOE Volatility Index (VIX) is released continuous by CBOE. Calculation: implied vol of SPX options. Market interpretation: <15 complacent, 15-25 normal, >25 fearful, >35 panic. Traders watch for surprises vs consensus estimates \u2014 the deviation from expectations moves markets more than the absolute number.",
+    "type": "fact",
+    "tags": [
+      "vix",
+      "economic_indicator",
+      "macro"
+    ],
+    "source": "economics_knowledge"
+  },
+  {
+    "content": "Trading around VIX release: position before announcement carries event risk. The market typically prices in consensus expectations \u2014 a beat drives rally, miss drives selloff. Volatility spikes around release and settles within 30-60 minutes. Use options straddles for pure volatility play.",
+    "type": "skill",
+    "tags": [
+      "vix",
+      "event_trading",
+      "macro"
+    ],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "DXY US Dollar Index (Dollar Index) is released continuous by ICE. Calculation: USD vs 6 major currencies. Market interpretation: strong dollar = headwind for multinationals. Traders watch for surprises vs consensus estimates \u2014 the deviation from expectations moves markets more than the absolute number.",
+    "type": "fact",
+    "tags": [
+      "dollar_index",
+      "economic_indicator",
+      "macro"
+    ],
+    "source": "economics_knowledge"
+  },
+  {
+    "content": "Trading around Dollar Index release: position before announcement carries event risk. The market typically prices in consensus expectations \u2014 a beat drives rally, miss drives selloff. Volatility spikes around release and settles within 30-60 minutes. Use options straddles for pure volatility play.",
+    "type": "skill",
+    "tags": [
+      "dollar_index",
+      "event_trading",
+      "macro"
+    ],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Copper Futures (Copper Price) is released continuous by COMEX. Calculation: industrial metal. Market interpretation: 'Dr. Copper' \u2014 leading economic indicator. Traders watch for surprises vs consensus estimates \u2014 the deviation from expectations moves markets more than the absolute number.",
+    "type": "fact",
+    "tags": [
+      "copper_price",
+      "economic_indicator",
+      "macro"
+    ],
+    "source": "economics_knowledge"
+  },
+  {
+    "content": "Trading around Copper Price release: position before announcement carries event risk. The market typically prices in consensus expectations \u2014 a beat drives rally, miss drives selloff. Volatility spikes around release and settles within 30-60 minutes. Use options straddles for pure volatility play.",
+    "type": "skill",
+    "tags": [
+      "copper_price",
+      "event_trading",
+      "macro"
+    ],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "WTI Crude Oil (Oil Price) is released continuous by NYMEX. Calculation: benchmark US oil. Market interpretation: >$80 inflationary, <$50 deflationary signal. Traders watch for surprises vs consensus estimates \u2014 the deviation from expectations moves markets more than the absolute number.",
+    "type": "fact",
+    "tags": [
+      "oil_price",
+      "economic_indicator",
+      "macro"
+    ],
+    "source": "economics_knowledge"
+  },
+  {
+    "content": "Trading around Oil Price release: position before announcement carries event risk. The market typically prices in consensus expectations \u2014 a beat drives rally, miss drives selloff. Volatility spikes around release and settles within 30-60 minutes. Use options straddles for pure volatility play.",
+    "type": "skill",
+    "tags": [
+      "oil_price",
+      "event_trading",
+      "macro"
+    ],
+    "source": "trading_knowledge"
+  }
+]

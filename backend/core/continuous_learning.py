@@ -21,6 +21,7 @@ import json
 import logging
 import random
 import uuid
+from collections import deque
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from typing import Any, Optional
@@ -162,7 +163,7 @@ class ContinuousLearningEngine:
 
         # Rotation state
         self._division_queue: list[str] = []
-        self._agent_queue: list[str] = []
+        self._agent_queue: deque[str] = deque(maxlen=500)
         self._current_division_idx = 0
 
         # Stats

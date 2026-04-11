@@ -1,0 +1,302 @@
+[
+  {
+    "content": "Monthly Recurring Revenue (MRR) is the most critical SaaS metric, representing predictable monthly income from subscriptions. ARR (Annual Recurring Revenue) equals MRR multiplied by 12 and is the standard valuation benchmark, with SaaS companies typically valued at 6-12x ARR depending on growth rate.",
+    "type": "fact",
+    "tags": ["saas", "metrics", "mrr", "arr"],
+    "source": "business_knowledge"
+  },
+  {
+    "content": "Monthly churn rate should be kept below 5% for healthy SaaS businesses, translating to roughly 46% annual retention at the upper bound. Best-in-class SaaS companies achieve monthly churn rates of 1-2%, which compounds to 78-89% annual retention. Even a 1% reduction in monthly churn can increase LTV by 20-30%.",
+    "type": "fact",
+    "tags": ["saas", "metrics", "churn"],
+    "source": "business_knowledge"
+  },
+  {
+    "content": "Customer Lifetime Value (LTV) is calculated as ARPU divided by monthly churn rate. For example, a $79/mo product with 3% monthly churn yields an LTV of $2,633. This metric determines how much you can profitably spend on customer acquisition.",
+    "type": "fact",
+    "tags": ["saas", "metrics", "ltv"],
+    "source": "business_knowledge"
+  },
+  {
+    "content": "Customer Acquisition Cost (CAC) measures the total sales and marketing spend divided by new customers acquired. The median CAC payback period across SaaS companies is 6.8 months, meaning it takes nearly 7 months of revenue to recover the cost of acquiring each customer.",
+    "type": "fact",
+    "tags": ["saas", "metrics", "cac"],
+    "source": "business_knowledge"
+  },
+  {
+    "content": "The LTV to CAC ratio should be at least 3:1 for a sustainable SaaS business, meaning each customer generates 3x more revenue over their lifetime than it costs to acquire them. A ratio below 1:1 means the business loses money on every customer, while ratios above 5:1 suggest underinvestment in growth.",
+    "type": "fact",
+    "tags": ["saas", "metrics", "ltv", "cac", "unit-economics"],
+    "source": "business_knowledge"
+  },
+  {
+    "content": "Net Revenue Retention (NRR) above 100% means existing customers generate more revenue over time through upsells and expansions than is lost to churn and downgrades. Top SaaS companies achieve NRR of 120-140%, effectively growing revenue without acquiring any new customers.",
+    "type": "fact",
+    "tags": ["saas", "metrics", "nrr", "retention"],
+    "source": "business_knowledge"
+  },
+  {
+    "content": "Three-tier pricing at $29/$79/$199 price points consistently converts best in SaaS, with the middle tier capturing 60-70% of signups due to the anchoring effect. The top tier establishes value perception while the bottom tier reduces barrier to entry.",
+    "type": "learning",
+    "tags": ["saas", "pricing", "conversion"],
+    "source": "business_knowledge"
+  },
+  {
+    "content": "Prices ending in 9 ($29, $49, $99) outperform round numbers by 8-24% in conversion tests across SaaS products. This charm pricing effect persists even when customers are aware of the tactic, making it one of the most reliable pricing optimizations available.",
+    "type": "learning",
+    "tags": ["saas", "pricing", "psychology"],
+    "source": "business_knowledge"
+  },
+  {
+    "content": "Usage-based pricing has been adopted by 41% of SaaS companies, up from 27% in 2019. This model aligns cost with value delivered and reduces friction for small customers to start, while enabling revenue to scale naturally with customer growth and product adoption.",
+    "type": "fact",
+    "tags": ["saas", "pricing", "usage-based"],
+    "source": "business_knowledge"
+  },
+  {
+    "content": "Offering annual billing at a 20% discount increases cash flow predictability and reduces churn, since annual subscribers have 40-60% lower churn than monthly subscribers. The upfront cash collection also improves runway and reduces CAC payback period from months to effectively zero.",
+    "type": "learning",
+    "tags": ["saas", "pricing", "annual-billing"],
+    "source": "business_knowledge"
+  },
+  {
+    "content": "Seat-based pricing is declining, now used by only about 15% of SaaS companies, as AI-powered tools make per-seat models less aligned with value delivery. Companies are shifting to outcome-based or usage-based models that better reflect the actual value customers receive.",
+    "type": "observation",
+    "tags": ["saas", "pricing", "trends"],
+    "source": "business_knowledge"
+  },
+  {
+    "content": "SEO takes 6-12 months to compound but delivers the lowest long-term CAC of any channel at $500-$1500 per customer. Once content ranks, it generates organic traffic indefinitely with minimal incremental cost, making it the highest-ROI marketing channel over a 2-3 year horizon.",
+    "type": "learning",
+    "tags": ["marketing", "seo", "cac"],
+    "source": "business_knowledge"
+  },
+  {
+    "content": "Content marketing produces the lowest customer acquisition cost at $500-$1500 per customer compared to $2,000-$5,000 for paid advertising. Companies that publish 16+ blog posts per month generate 3.5x more traffic and 4.5x more leads than those publishing 0-4 posts monthly.",
+    "type": "fact",
+    "tags": ["marketing", "content", "cac"],
+    "source": "business_knowledge"
+  },
+  {
+    "content": "Email marketing delivers an average ROI of $36 for every $1 spent, making it the highest-ROI digital marketing channel available. Segmented email campaigns achieve 14% higher open rates and 100% higher click-through rates compared to non-segmented broadcasts.",
+    "type": "fact",
+    "tags": ["marketing", "email", "roi"],
+    "source": "business_knowledge"
+  },
+  {
+    "content": "Social proof elements such as testimonials, case studies, and review counts increase conversions by up to 270%. Displaying specific customer logos, user counts, or revenue metrics on landing pages creates trust signals that dramatically reduce purchase hesitation for new visitors.",
+    "type": "learning",
+    "tags": ["marketing", "social-proof", "conversion"],
+    "source": "business_knowledge"
+  },
+  {
+    "content": "The micro-SaaS market is projected to reach $59.6 billion by 2030, growing at approximately 30% annually. Solo founders and small teams are driving this growth by targeting underserved niches with focused tools that larger companies overlook.",
+    "type": "fact",
+    "tags": ["micro-saas", "market-size", "trends"],
+    "source": "business_knowledge"
+  },
+  {
+    "content": "Successful micro-SaaS solo founders typically generate $5K-$50K per month in ARR, with the most common range being $10K-$20K/mo. These businesses usually reach profitability within 1-2 years due to minimal overhead and low infrastructure costs.",
+    "type": "fact",
+    "tags": ["micro-saas", "revenue", "solo-founder"],
+    "source": "business_knowledge"
+  },
+  {
+    "content": "Approximately 68% of micro-SaaS founders used AI for development in 2025, reducing time-to-MVP from 3-6 months to 2-6 weeks. AI-assisted development enables solo founders to build and ship production-quality products that previously required a full engineering team.",
+    "type": "observation",
+    "tags": ["micro-saas", "ai", "development"],
+    "source": "business_knowledge"
+  },
+  {
+    "content": "Micro-SaaS profitability typically arrives within 1-2 years, compared to 5-7 years for venture-backed SaaS. The key advantage is bootstrapped economics: no investor dilution, no growth-at-all-costs pressure, and the ability to reach sustainable profitability at $5K-$10K MRR.",
+    "type": "learning",
+    "tags": ["micro-saas", "profitability", "bootstrapping"],
+    "source": "business_knowledge"
+  },
+  {
+    "content": "The micro-SaaS market is growing at 30% annually, fueled by API-first infrastructure, no-code tools, and AI copilots that dramatically lower the barrier to building software products. The best niches target workflows where incumbents charge $200+/mo but only 20% of features are actually used.",
+    "type": "observation",
+    "tags": ["micro-saas", "growth", "market-opportunity"],
+    "source": "business_knowledge"
+  },
+  {
+    "content": "AI consulting strategy engagements command $150-$500 per hour, covering AI readiness assessments, use case identification, and implementation roadmaps. Companies typically engage for 40-100 hours of strategic consulting before committing to implementation projects.",
+    "type": "fact",
+    "tags": ["ai-consulting", "pricing", "strategy"],
+    "source": "business_knowledge"
+  },
+  {
+    "content": "AI implementation consulting rates range from $100-$300 per hour, covering model integration, data pipeline setup, and production deployment. The global AI consulting market is projected to reach $630 billion by 2028, driven by enterprise demand for AI transformation.",
+    "type": "fact",
+    "tags": ["ai-consulting", "pricing", "implementation", "market-size"],
+    "source": "business_knowledge"
+  },
+  {
+    "content": "AI consulting firms that secure annual maintenance contracts at 15-20% of the initial project value create predictable recurring revenue streams. A $50K implementation project converting to a $7.5K-$10K annual maintenance contract provides ongoing income with minimal incremental effort.",
+    "type": "learning",
+    "tags": ["ai-consulting", "recurring-revenue", "maintenance"],
+    "source": "business_knowledge"
+  },
+  {
+    "content": "Automated data report products command $99-$999 per month depending on data depth, industry specificity, and refresh frequency. The most successful data products solve specific decision-making needs, such as competitor pricing intelligence or market trend analysis for niche industries.",
+    "type": "fact",
+    "tags": ["data-products", "pricing", "reports"],
+    "source": "business_knowledge"
+  },
+  {
+    "content": "Data products achieve 80-90% gross margins after the initial build investment, since the marginal cost of serving an additional customer is near zero. Once the data collection and analysis pipeline is built, scaling from 10 to 1,000 customers requires minimal infrastructure cost increase.",
+    "type": "fact",
+    "tags": ["data-products", "margins", "scalability"],
+    "source": "business_knowledge"
+  },
+  {
+    "content": "API-based data access priced at $0.01-$0.10 per query enables usage-based monetization of datasets and algorithms. High-volume API products can generate $10K-$100K/mo from enterprise customers who integrate the data directly into their own workflows and applications.",
+    "type": "fact",
+    "tags": ["data-products", "api", "pricing"],
+    "source": "business_knowledge"
+  },
+  {
+    "content": "Upselling to existing customers is 5x cheaper than acquiring new ones, with expansion revenue being the primary growth driver for SaaS companies with NRR above 120%. Strategies include feature gating, usage-based tiers, and add-on modules that increase ARPU over time.",
+    "type": "learning",
+    "tags": ["revenue-optimization", "upsell", "expansion"],
+    "source": "business_knowledge"
+  },
+  {
+    "content": "Product-led growth (PLG) companies convert free users to paid at a target rate of 5% or higher, with best-in-class products like Slack and Zoom achieving 10-30% conversion. The key is designing natural upgrade triggers where free tier limitations align with moments of realized value.",
+    "type": "learning",
+    "tags": ["revenue-optimization", "plg", "conversion"],
+    "source": "business_knowledge"
+  },
+  {
+    "content": "Expansion revenue from existing customers should represent 20-40% of new ARR in mature SaaS companies. This includes seat expansion, tier upgrades, and cross-sells, and is the most capital-efficient revenue because it requires no additional CAC spend.",
+    "type": "fact",
+    "tags": ["revenue-optimization", "expansion", "growth"],
+    "source": "business_knowledge"
+  },
+  {
+    "content": "Free-to-paid conversion rates of 5% or higher are the target for freemium SaaS products, though the median across all freemium products is only 2-3%. Increasing this rate by even 1 percentage point can double revenue when operating at scale with large free user bases.",
+    "type": "fact",
+    "tags": ["revenue-optimization", "freemium", "conversion"],
+    "source": "business_knowledge"
+  },
+  {
+    "content": "Display advertising generates RPM (revenue per mille) of $10-$30 for content sites, with specialized niches like finance and technology commanding the higher end. A site with 100K monthly pageviews can expect $1,000-$3,000/mo in display ad revenue before any other monetization.",
+    "type": "fact",
+    "tags": ["content-monetization", "display-ads", "rpm"],
+    "source": "business_knowledge"
+  },
+  {
+    "content": "Affiliate marketing commissions range from 5-15% of sale value, with SaaS affiliate programs often paying 20-40% recurring commissions. A content site generating 1,000 referral purchases per month at $100 average order value with 10% commission earns $10,000/mo passively.",
+    "type": "fact",
+    "tags": ["content-monetization", "affiliate", "commission"],
+    "source": "business_knowledge"
+  },
+  {
+    "content": "Online courses priced at $49-$299 hit the sweet spot for self-paced digital education, with the $99-$199 range converting best. Course creators with an established audience of 10K+ email subscribers typically see 2-5% launch conversion rates, generating $20K-$100K per launch.",
+    "type": "learning",
+    "tags": ["content-monetization", "courses", "pricing"],
+    "source": "business_knowledge"
+  },
+  {
+    "content": "Sponsored content posts command $500-$5,000 per placement depending on audience size and niche specificity. Newsletters with 10K+ engaged subscribers in B2B niches like AI, fintech, or developer tools can charge $1,000-$3,000 per sponsored placement with 2-4 sponsors per month.",
+    "type": "fact",
+    "tags": ["content-monetization", "sponsorship", "newsletter"],
+    "source": "business_knowledge"
+  },
+  {
+    "content": "Automation agencies deliver 300-500% output increases for client businesses by implementing AI-powered workflows that replace manual processes. Common high-value automations include lead qualification, invoice processing, customer support triage, and report generation.",
+    "type": "fact",
+    "tags": ["automation-agency", "output", "efficiency"],
+    "source": "business_knowledge"
+  },
+  {
+    "content": "Automation agency project fees range from $5K-$50K depending on complexity, with simple Zapier/Make automations at the low end and custom AI pipeline integrations at the high end. The most profitable engagements combine an upfront project fee with ongoing retainer revenue.",
+    "type": "fact",
+    "tags": ["automation-agency", "pricing", "projects"],
+    "source": "business_knowledge"
+  },
+  {
+    "content": "Automation agency monthly retainers of $2K-$10K per client provide predictable recurring revenue for ongoing maintenance, optimization, and expansion of automated workflows. Agencies with 10-20 retainer clients at $5K/mo average generate $50K-$100K/mo with 60-70% margins.",
+    "type": "fact",
+    "tags": ["automation-agency", "retainer", "recurring-revenue"],
+    "source": "business_knowledge"
+  },
+  {
+    "content": "Experiment-driven growth uses 2-4 week sprint cycles to test hypotheses about pricing, messaging, features, and channels. Each experiment should have a clear success metric defined upfront, such as visitor-to-trial conversion rate exceeding 2% or trial-to-paid conversion exceeding 5%.",
+    "type": "skill",
+    "tags": ["experiments", "growth", "sprints"],
+    "source": "business_knowledge"
+  },
+  {
+    "content": "A healthy SaaS funnel targets greater than 2% visitor-to-trial conversion and greater than 5% trial-to-paid conversion, combined with less than 5% monthly churn. Experiments that move any of these metrics by 10%+ are considered winners and should be scaled aggressively with 10x the original investment.",
+    "type": "skill",
+    "tags": ["experiments", "funnel", "benchmarks"],
+    "source": "business_knowledge"
+  },
+  {
+    "content": "Winning experiments should be scaled 10x from their test budget while monitoring for diminishing returns. A Facebook ad test spending $500 that achieves $50 CAC should be scaled to $5,000 while tracking whether CAC remains stable, typically expecting a 20-30% efficiency loss at scale.",
+    "type": "skill",
+    "tags": ["experiments", "scaling", "growth"],
+    "source": "business_knowledge"
+  },
+  {
+    "content": "Monthly churn below 5% is the critical threshold for SaaS sustainability. At 5% monthly churn, you lose 46% of customers annually, requiring massive acquisition to maintain revenue. Each 1% reduction in monthly churn compounds dramatically: 3% monthly churn means 69% annual retention versus 54% at 5%.",
+    "type": "learning",
+    "tags": ["saas", "churn", "retention", "sustainability"],
+    "source": "business_knowledge"
+  },
+  {
+    "content": "The AI consulting market is projected to reach $630 billion by 2028, with small consultancies and solo practitioners capturing an increasing share through specialized niche expertise. Companies spending $1M+ on AI initiatives typically allocate 15-25% to external consulting and advisory services.",
+    "type": "fact",
+    "tags": ["ai-consulting", "market-size", "opportunity"],
+    "source": "business_knowledge"
+  },
+  {
+    "content": "SaaS companies should track the Rule of 40: growth rate plus profit margin should exceed 40%. A company growing at 30% with 15% margins scores 45, indicating healthy performance. This metric helps balance the tradeoff between aggressive growth and sustainable profitability.",
+    "type": "fact",
+    "tags": ["saas", "metrics", "rule-of-40", "growth"],
+    "source": "business_knowledge"
+  },
+  {
+    "content": "Product-led growth reduces CAC by 50-70% compared to sales-led approaches by letting the product itself drive acquisition, activation, and expansion. Companies like Notion and Figma scaled to $100M+ ARR with minimal sales teams by optimizing self-serve onboarding and viral loops.",
+    "type": "learning",
+    "tags": ["revenue-optimization", "plg", "cac", "growth"],
+    "source": "business_knowledge"
+  },
+  {
+    "content": "Data products targeting vertical industries command premium pricing because domain-specific data is scarce and high-value. A real estate analytics API at $0.05/query processing 500K queries/month generates $25K/mo with infrastructure costs under $2K, achieving 92% gross margins.",
+    "type": "observation",
+    "tags": ["data-products", "vertical", "margins", "pricing"],
+    "source": "business_knowledge"
+  },
+  {
+    "content": "Content monetization stacking combines multiple revenue streams from the same audience: display ads ($10-30 RPM), affiliate links (5-15% commission), sponsored posts ($500-5000), and digital products ($49-299). A site with 50K monthly visitors can generate $5K-$15K/mo by layering all four strategies.",
+    "type": "skill",
+    "tags": ["content-monetization", "revenue-stacking", "strategy"],
+    "source": "business_knowledge"
+  },
+  {
+    "content": "Automation agencies achieve the fastest time-to-revenue of any service business model, with first client revenue possible within 2-4 weeks of launch. The key is targeting businesses already using tools like HubSpot, Salesforce, or Shopify where integration points are well-documented and automations are standardized.",
+    "type": "observation",
+    "tags": ["automation-agency", "time-to-revenue", "strategy"],
+    "source": "business_knowledge"
+  },
+  {
+    "content": "Failed experiments are as valuable as successful ones when systematically recorded with hypothesis, methodology, results, and lessons learned. Companies running 10+ experiments per month learn 3-5x faster than competitors, even when 70-80% of experiments fail to meet their success criteria.",
+    "type": "learning",
+    "tags": ["experiments", "failure", "learning", "velocity"],
+    "source": "business_knowledge"
+  },
+  {
+    "content": "The median SaaS startup achieves $1M ARR in 18-24 months from launch, with AI-native products reaching this milestone 30-40% faster due to higher perceived value and willingness to pay. Products solving pain points worth $50K+/year to customers can command premium pricing from day one.",
+    "type": "observation",
+    "tags": ["saas", "milestones", "ai", "growth"],
+    "source": "business_knowledge"
+  },
+  {
+    "content": "Revenue diversification across 3-5 streams reduces business risk and smooths cash flow volatility. A portfolio combining SaaS MRR ($10K), consulting retainers ($8K), data products ($5K), content revenue ($3K), and automation projects ($7K) creates a resilient $33K/mo business with no single point of failure.",
+    "type": "skill",
+    "tags": ["revenue-optimization", "diversification", "risk", "strategy"],
+    "source": "business_knowledge"
+  }
+]

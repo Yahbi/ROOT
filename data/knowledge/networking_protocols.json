@@ -1,0 +1,152 @@
+[
+  {
+    "content": "The TCP/IP model has four layers: Application (HTTP, DNS, SMTP, FTP), Transport (TCP for reliable ordered delivery, UDP for low-latency unordered), Internet (IP addressing, routing, fragmentation), and Link (Ethernet, Wi-Fi, ARP). Each layer adds headers during encapsulation, and the maximum transmission unit (MTU) is typically 1500 bytes for Ethernet.",
+    "type": "fact",
+    "tags": ["networking", "tcp_ip", "model"],
+    "source": "infra_knowledge"
+  },
+  {
+    "content": "HTTP/2 introduces multiplexing (multiple requests/responses over a single TCP connection), server push (proactively sending resources before the client requests them), header compression via HPACK (reducing redundant header overhead by 85-90%), and stream prioritization. A single HTTP/2 connection replaces 6-8 HTTP/1.1 connections, eliminating head-of-line blocking at the HTTP layer.",
+    "type": "fact",
+    "tags": ["networking", "http2", "protocol"],
+    "source": "infra_knowledge"
+  },
+  {
+    "content": "HTTP/3 replaces TCP with QUIC (Quick UDP Internet Connections), built on UDP. QUIC provides 0-RTT connection establishment for repeat clients (vs 2-3 RTT for TCP+TLS), eliminates head-of-line blocking at the transport layer (independent streams), built-in TLS 1.3, and connection migration (survives IP address changes like Wi-Fi to cellular). Adoption is growing rapidly with major CDNs supporting it.",
+    "type": "fact",
+    "tags": ["networking", "http3", "quic"],
+    "source": "infra_knowledge"
+  },
+  {
+    "content": "WebSocket enables full-duplex bidirectional communication over a single TCP connection. It starts as an HTTP Upgrade request (status 101 Switching Protocols), then switches to the ws:// (or wss:// for TLS) protocol. WebSocket has minimal framing overhead (2-14 bytes vs HTTP's hundreds of header bytes), making it ideal for real-time applications like chat, gaming, and live data feeds.",
+    "type": "fact",
+    "tags": ["networking", "websocket", "real_time"],
+    "source": "infra_knowledge"
+  },
+  {
+    "content": "Server-Sent Events (SSE) provide a unidirectional server-to-client push channel over HTTP with content-type text/event-stream. SSE supports automatic reconnection with Last-Event-ID, named event types, and retry interval configuration. SSE is simpler than WebSocket for one-way data (dashboards, notifications) and works through HTTP proxies without special configuration. Max 6 connections per domain in HTTP/1.1, unlimited in HTTP/2.",
+    "type": "fact",
+    "tags": ["networking", "sse", "server_push"],
+    "source": "infra_knowledge"
+  },
+  {
+    "content": "gRPC uses HTTP/2 for transport and Protocol Buffers (protobuf) for serialization, achieving 5-10x smaller payloads than JSON. It supports four communication patterns: unary (request-response), server streaming, client streaming, and bidirectional streaming. gRPC generates client/server stubs from .proto files, ensuring type safety across languages. Latency is typically 2-5x lower than REST+JSON.",
+    "type": "fact",
+    "tags": ["networking", "grpc", "rpc"],
+    "source": "infra_knowledge"
+  },
+  {
+    "content": "DNS resolution follows a recursive query chain: client → recursive resolver (ISP or 8.8.8.8) → root nameserver (.com) → TLD nameserver → authoritative nameserver. Results are cached at each level according to TTL (Time To Live), typically 300-86400 seconds. Record types include A (IPv4), AAAA (IPv6), CNAME (alias), MX (mail), TXT (verification/SPF/DKIM), and NS (nameserver delegation).",
+    "type": "fact",
+    "tags": ["networking", "dns", "resolution"],
+    "source": "infra_knowledge"
+  },
+  {
+    "content": "CDN (Content Delivery Network) caches content at edge servers close to users, reducing latency from 200-500ms to 10-50ms for cached assets. Cache-Control headers govern behavior: max-age (seconds to cache), s-maxage (shared cache TTL), no-cache (must revalidate), no-store (never cache), and stale-while-revalidate (serve stale while fetching fresh). Purge/invalidate operations clear cached content globally in 5-30 seconds.",
+    "type": "skill",
+    "tags": ["networking", "cdn", "caching"],
+    "source": "infra_knowledge"
+  },
+  {
+    "content": "Load balancing algorithms include: round-robin (equal distribution, simple but ignores server capacity), weighted round-robin (distribute by server capacity), least-connections (route to server with fewest active connections), consistent hashing (same client always hits same server, good for caching), and IP hash. Health checks (HTTP GET /health every 5-30s) detect and remove unhealthy backends automatically.",
+    "type": "skill",
+    "tags": ["networking", "load_balancing", "algorithms"],
+    "source": "infra_knowledge"
+  },
+  {
+    "content": "TLS 1.3 reduces the handshake to 1-RTT (from 2-RTT in TLS 1.2) and supports 0-RTT for resumption. It removed insecure algorithms (RC4, SHA-1, RSA key exchange), requires forward secrecy via ephemeral Diffie-Hellman, and uses only AEAD ciphers (AES-GCM, ChaCha20-Poly1305). The simpler design eliminates many attack vectors like BEAST, POODLE, and downgrade attacks.",
+    "type": "fact",
+    "tags": ["networking", "tls", "security"],
+    "source": "infra_knowledge"
+  },
+  {
+    "content": "TCP three-way handshake: SYN (client → server, initial sequence number), SYN-ACK (server → client, acknowledges + own sequence number), ACK (client → server, connection established). This costs 1 RTT before data transfer begins. TCP also provides flow control (sliding window), congestion control (slow start, congestion avoidance, fast retransmit), and guaranteed ordered delivery via sequence numbers.",
+    "type": "fact",
+    "tags": ["networking", "tcp", "handshake"],
+    "source": "infra_knowledge"
+  },
+  {
+    "content": "UDP (User Datagram Protocol) provides connectionless, best-effort delivery with no handshake, no ordering, and no retransmission. This makes it ideal for real-time applications where latency matters more than reliability: video conferencing, online gaming, DNS queries, and IoT telemetry. UDP header is only 8 bytes vs TCP's 20+ bytes. Applications needing reliability over UDP implement it at the application layer (e.g., QUIC).",
+    "type": "fact",
+    "tags": ["networking", "udp", "protocol"],
+    "source": "infra_knowledge"
+  },
+  {
+    "content": "NAT (Network Address Translation) maps private IP addresses (10.x.x.x, 172.16-31.x.x, 192.168.x.x) to public IP addresses. PAT (Port Address Translation) multiplexes many private IPs through one public IP using port numbers. NAT traversal techniques include STUN (discover public IP/port), TURN (relay through server), and ICE (try direct, fallback to relay), critical for WebRTC peer-to-peer connections.",
+    "type": "fact",
+    "tags": ["networking", "nat", "traversal"],
+    "source": "infra_knowledge"
+  },
+  {
+    "content": "BGP (Border Gateway Protocol) is the routing protocol of the internet, connecting autonomous systems (AS). BGP uses path-vector routing, selecting routes based on AS path length, local preference, and policy. BGP hijacking occurs when an AS announces routes it doesn't own, redirecting traffic. RPKI (Resource Public Key Infrastructure) validates route origins cryptographically to prevent hijacks.",
+    "type": "fact",
+    "tags": ["networking", "bgp", "routing"],
+    "source": "infra_knowledge"
+  },
+  {
+    "content": "CORS (Cross-Origin Resource Sharing) controls which origins can access resources. Preflight requests (OPTIONS method) are sent for non-simple requests (custom headers, PUT/DELETE methods). Key headers: Access-Control-Allow-Origin (specific origin or *), Access-Control-Allow-Methods, Access-Control-Allow-Headers, and Access-Control-Max-Age (preflight cache duration in seconds, up to 7200). Misconfigured CORS with 'Allow-Origin: *' and 'Allow-Credentials: true' is a security vulnerability.",
+    "type": "skill",
+    "tags": ["networking", "cors", "security"],
+    "source": "infra_knowledge"
+  },
+  {
+    "content": "mTLS (mutual TLS) requires both client and server to present certificates during the TLS handshake. In standard TLS, only the server authenticates; in mTLS, both sides verify identity. Used in zero-trust architectures, service meshes (Istio, Linkerd), and API security. Each service gets a certificate from a certificate authority (CA), and certificates are rotated automatically (typically every 24 hours in service meshes).",
+    "type": "skill",
+    "tags": ["networking", "mtls", "zero_trust"],
+    "source": "infra_knowledge"
+  },
+  {
+    "content": "IPv6 uses 128-bit addresses (vs IPv4's 32-bit), providing 3.4 x 10^38 unique addresses. IPv6 addresses are written in 8 groups of 4 hex digits (e.g., 2001:0db8:85a3::8a2e:0370:7334). Key improvements over IPv4: no NAT needed (every device gets a public address), mandatory IPsec support, simplified header (no checksum, no fragmentation by routers), and built-in neighbor discovery replacing ARP.",
+    "type": "fact",
+    "tags": ["networking", "ipv6", "addressing"],
+    "source": "infra_knowledge"
+  },
+  {
+    "content": "Service mesh (Istio, Linkerd, Consul Connect) provides a dedicated infrastructure layer for service-to-service communication. Sidecar proxies (Envoy) handle mTLS, load balancing, retries, circuit breaking, observability (distributed tracing, metrics), and traffic management (canary routing, fault injection) without application code changes. Overhead is typically 1-3ms latency and 10-15% CPU per pod.",
+    "type": "skill",
+    "tags": ["networking", "service_mesh", "microservices"],
+    "source": "infra_knowledge"
+  },
+  {
+    "content": "WebRTC (Web Real-Time Communication) enables peer-to-peer audio, video, and data channels directly between browsers. The signaling process uses ICE candidates, SDP (Session Description Protocol) offers/answers, STUN for NAT traversal, and TURN as a fallback relay. WebRTC uses SRTP for encrypted media and SCTP over DTLS for data channels. Typical peer-to-peer latency is 50-200ms vs 200-500ms for server-relayed.",
+    "type": "fact",
+    "tags": ["networking", "webrtc", "real_time"],
+    "source": "infra_knowledge"
+  },
+  {
+    "content": "Rate limiting algorithms include: token bucket (allows bursts up to bucket capacity, refills at fixed rate), leaky bucket (smooths traffic to constant rate), fixed window (count requests per time window, vulnerable to boundary bursts), sliding window log (precise but memory-intensive), and sliding window counter (approximation combining fixed windows). Implement with Redis INCR + EXPIRE for distributed rate limiting.",
+    "type": "skill",
+    "tags": ["networking", "rate_limiting", "algorithms"],
+    "source": "infra_knowledge"
+  },
+  {
+    "content": "DNSSEC adds cryptographic signatures to DNS records, allowing resolvers to verify that responses haven't been tampered with. The chain of trust goes from root zone → TLD → authoritative zone using RRSIG (signature), DNSKEY (public key), and DS (delegation signer) records. DNSSEC prevents DNS spoofing and cache poisoning but does not encrypt queries — DNS-over-HTTPS (DoH) and DNS-over-TLS (DoT) provide privacy.",
+    "type": "fact",
+    "tags": ["networking", "dnssec", "security"],
+    "source": "infra_knowledge"
+  },
+  {
+    "content": "TCP congestion control algorithms: Slow Start (exponential growth until ssthresh), Congestion Avoidance (linear growth), Fast Retransmit (retransmit after 3 duplicate ACKs), and Fast Recovery. Modern algorithms include CUBIC (default in Linux, good for high-bandwidth paths), BBR (Google, models bandwidth and RTT instead of loss, 2-25x throughput improvement on lossy networks), and QUIC's per-stream congestion control.",
+    "type": "fact",
+    "tags": ["networking", "tcp", "congestion_control"],
+    "source": "infra_knowledge"
+  },
+  {
+    "content": "Reverse proxy sits in front of backend servers, handling: SSL termination (offload TLS processing), load balancing, caching, compression (gzip/brotli), request routing (path-based, header-based), rate limiting, and WAF (Web Application Firewall). Common reverse proxies: Nginx (event-driven, handles 10K+ concurrent connections), HAProxy (TCP/HTTP, health checks), and Envoy (modern, gRPC-native, xDS configuration).",
+    "type": "skill",
+    "tags": ["networking", "reverse_proxy", "infrastructure"],
+    "source": "infra_knowledge"
+  },
+  {
+    "content": "MQTT (Message Queuing Telemetry Transport) is a lightweight pub/sub protocol designed for constrained devices and low-bandwidth networks. It uses topics for message routing, supports QoS levels 0 (at most once), 1 (at least once), and 2 (exactly once), and features retained messages and last-will-and-testament for client disconnection. Packet overhead is as low as 2 bytes, ideal for IoT with millions of devices.",
+    "type": "fact",
+    "tags": ["networking", "mqtt", "iot"],
+    "source": "infra_knowledge"
+  },
+  {
+    "content": "HTTP caching layers include: browser cache (private, per-user), CDN/proxy cache (shared, multi-user), and origin server cache (application-level). ETag and Last-Modified headers enable conditional requests (304 Not Modified), saving bandwidth. Cache invalidation strategies: TTL-based (set max-age), event-based (purge on write), and versioned URLs (append hash to filename for immutable assets, e.g., app.a1b2c3.js).",
+    "type": "skill",
+    "tags": ["networking", "http_caching", "performance"],
+    "source": "infra_knowledge"
+  }
+]

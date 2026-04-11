@@ -1,0 +1,152 @@
+[
+  {
+    "content": "A Markov Decision Process (MDP) is defined by the tuple (S, A, P, R, gamma) where S is the state space, A is the action space, P(s'|s,a) is the transition probability, R(s,a) is the reward function, and gamma in [0,1) is the discount factor controlling the tradeoff between immediate and future rewards.",
+    "type": "fact",
+    "tags": ["mdp", "markov_decision_process", "fundamentals"],
+    "source": "ml_knowledge"
+  },
+  {
+    "content": "The Bellman optimality equation: V*(s) = max_a [R(s,a) + gamma * sum over s' of P(s'|s,a)*V*(s')]. For Q-values: Q*(s,a) = R(s,a) + gamma * sum over s' of P(s'|s,a) * max_a' Q*(s',a'). Value iteration converges by repeatedly applying the Bellman operator with convergence rate gamma^k.",
+    "type": "fact",
+    "tags": ["bellman_equation", "value_iteration", "dynamic_programming"],
+    "source": "ml_knowledge"
+  },
+  {
+    "content": "Q-learning is an off-policy temporal difference method that updates: Q(s,a) <- Q(s,a) + alpha * [r + gamma*max_a'(Q(s',a')) - Q(s,a)]. Learning rate alpha typically starts at 0.1-1.0 and decays. It converges to optimal Q* given infinite visits to all state-action pairs and decaying learning rate.",
+    "type": "fact",
+    "tags": ["q_learning", "temporal_difference", "off_policy"],
+    "source": "ml_knowledge"
+  },
+  {
+    "content": "SARSA is an on-policy TD method: Q(s,a) <- Q(s,a) + alpha * [r + gamma*Q(s',a') - Q(s,a)] where a' is the actual next action taken (not the max). SARSA is safer in stochastic environments because it accounts for exploration policy risk, while Q-learning optimizes for the greedy policy.",
+    "type": "fact",
+    "tags": ["sarsa", "on_policy", "temporal_difference"],
+    "source": "ml_knowledge"
+  },
+  {
+    "content": "Policy gradient methods directly optimize the policy using REINFORCE: gradient of J(theta) = E[sum_t gradient(log(pi(a_t|s_t; theta))) * G_t] where G_t is the return from time t. High variance is the main challenge, mitigated by subtracting a baseline (typically V(s)) without introducing bias.",
+    "type": "fact",
+    "tags": ["policy_gradient", "reinforce", "variance_reduction"],
+    "source": "ml_knowledge"
+  },
+  {
+    "content": "PPO (Proximal Policy Optimization) uses a clipped surrogate objective: L = min(r_t(theta)*A_t, clip(r_t(theta), 1-epsilon, 1+epsilon)*A_t) where r_t = pi_new/pi_old and epsilon=0.2 is standard. PPO is the default algorithm at OpenAI due to its stability, simplicity, and strong empirical performance.",
+    "type": "fact",
+    "tags": ["ppo", "proximal_policy_optimization", "clipped_objective"],
+    "source": "ml_knowledge"
+  },
+  {
+    "content": "A2C (Advantage Actor-Critic) uses two networks: an actor pi(a|s; theta) and a critic V(s; w). The advantage A(s,a) = Q(s,a) - V(s) reduces variance compared to raw returns. A3C adds asynchronous parallel workers for faster training, though synchronous A2C often matches performance with simpler implementation.",
+    "type": "fact",
+    "tags": ["a2c", "actor_critic", "advantage_function"],
+    "source": "ml_knowledge"
+  },
+  {
+    "content": "DQN (Deep Q-Network) stabilizes Q-learning with neural networks using two key innovations: experience replay buffer (store transitions, sample mini-batches of 32-64 uniformly) and a target network (updated every 10,000 steps via hard copy or soft update tau=0.001). Original DQN achieved human-level play on 29/49 Atari games.",
+    "type": "fact",
+    "tags": ["dqn", "experience_replay", "target_network"],
+    "source": "ml_knowledge"
+  },
+  {
+    "content": "Epsilon-greedy exploration selects a random action with probability epsilon (typically starting at 1.0, decaying to 0.01-0.1 over training). UCB (Upper Confidence Bound) selects argmax[Q(a) + c*sqrt(ln(t)/N(a))] with c=sqrt(2), balancing exploitation and exploration. Thompson Sampling samples from posterior distributions of reward estimates.",
+    "type": "skill",
+    "tags": ["exploration", "epsilon_greedy", "ucb", "thompson_sampling"],
+    "source": "ml_knowledge"
+  },
+  {
+    "content": "Multi-armed bandits formalize the exploration-exploitation tradeoff. Regret after T rounds: random achieves O(T) regret, epsilon-greedy achieves O(epsilon*T + K/epsilon), UCB achieves O(sqrt(KT*ln(T))), and Thompson Sampling achieves near-optimal O(sqrt(KT)) where K is the number of arms.",
+    "type": "fact",
+    "tags": ["multi_armed_bandits", "regret", "exploration_exploitation"],
+    "source": "ml_knowledge"
+  },
+  {
+    "content": "Reward shaping adds a potential-based shaping function F(s,s') = gamma*phi(s') - phi(s) to the original reward. This preserves the optimal policy (proven by Ng et al., 1999) while accelerating learning by 2-10x. The potential function phi should encode domain knowledge about state desirability.",
+    "type": "skill",
+    "tags": ["reward_shaping", "potential_based", "learning_acceleration"],
+    "source": "ml_knowledge"
+  },
+  {
+    "content": "Sparse reward problems (e.g., robotic manipulation where reward=1 only on success) cause most RL algorithms to fail. Solutions include Hindsight Experience Replay (HER) which relabels failed trajectories with achieved goals, curiosity-driven exploration (ICM module), and hierarchical RL with sub-goals every 10-50 steps.",
+    "type": "learning",
+    "tags": ["sparse_rewards", "hindsight_experience_replay", "curiosity"],
+    "source": "ml_knowledge"
+  },
+  {
+    "content": "Curriculum learning starts training on easy tasks and gradually increases difficulty. In RL, this reduces training time by 3-10x for complex tasks. Methods include automatic curriculum (domain randomization with difficulty scaling), self-play (agents train against past versions), and teacher networks that adapt task parameters.",
+    "type": "skill",
+    "tags": ["curriculum_learning", "progressive_training", "transfer"],
+    "source": "ml_knowledge"
+  },
+  {
+    "content": "Model-based RL learns a dynamics model P(s'|s,a) and uses it for planning. Dyna-Q integrates model-free and model-based: after each real step, perform k=5-50 simulated planning steps using the learned model. MuZero achieved superhuman performance on Go, chess, and Atari without knowing the game rules.",
+    "type": "fact",
+    "tags": ["model_based_rl", "dyna", "muzero", "planning"],
+    "source": "ml_knowledge"
+  },
+  {
+    "content": "RLHF (Reinforcement Learning from Human Feedback) trains a reward model from human preference comparisons (typically 50K-100K comparisons), then optimizes a policy against this reward model using PPO with a KL penalty (beta=0.01-0.1) against the base model to prevent reward hacking.",
+    "type": "fact",
+    "tags": ["rlhf", "human_feedback", "reward_model", "alignment"],
+    "source": "ml_knowledge"
+  },
+  {
+    "content": "Soft Actor-Critic (SAC) maximizes a modified objective: J = sum of E[r(s,a) + alpha*H(pi(.|s))] where H is the entropy and alpha is an automatically tuned temperature parameter. The entropy bonus encourages exploration and leads to more robust policies. SAC achieves state-of-the-art on continuous control benchmarks.",
+    "type": "fact",
+    "tags": ["sac", "soft_actor_critic", "entropy_regularization"],
+    "source": "ml_knowledge"
+  },
+  {
+    "content": "TD3 (Twin Delayed DDPG) addresses overestimation in continuous action spaces with 3 tricks: (1) twin Q-networks (take minimum), (2) delayed policy updates (every 2 critic updates), (3) target policy smoothing (add clipped noise N(0, 0.2) capped at +/-0.5 to target actions).",
+    "type": "fact",
+    "tags": ["td3", "ddpg", "continuous_control", "overestimation"],
+    "source": "ml_knowledge"
+  },
+  {
+    "content": "Distributional RL models the full return distribution instead of just the expected value. C51 uses 51 atoms spanning [Vmin, Vmax], QR-DQN uses quantile regression with N=200 quantiles, and IQN uses implicit quantile networks. Distributional approaches improve Atari scores by 20-50% over standard DQN.",
+    "type": "fact",
+    "tags": ["distributional_rl", "c51", "quantile_regression"],
+    "source": "ml_knowledge"
+  },
+  {
+    "content": "Inverse RL (IRL) recovers the reward function from expert demonstrations. Maximum entropy IRL finds the reward that makes the expert policy most likely while maximizing entropy. GAIL (Generative Adversarial Imitation Learning) bypasses explicit reward recovery by training a discriminator to distinguish expert from learned behavior.",
+    "type": "fact",
+    "tags": ["inverse_rl", "imitation_learning", "gail"],
+    "source": "ml_knowledge"
+  },
+  {
+    "content": "Multi-agent RL challenges include non-stationarity (other agents' policies change), credit assignment (which agent caused the reward), and exponential action space growth. MAPPO extends PPO to multi-agent settings with centralized critic and decentralized actors, achieving strong results on StarCraft micromanagement.",
+    "type": "learning",
+    "tags": ["multi_agent_rl", "mappo", "cooperation"],
+    "source": "ml_knowledge"
+  },
+  {
+    "content": "Offline RL (batch RL) learns from a fixed dataset without environment interaction. Conservative Q-Learning (CQL) adds a regularizer that penalizes Q-values for out-of-distribution actions by alpha=5.0 (typical). Decision Transformer frames RL as sequence modeling, conditioning on desired return to generate actions.",
+    "type": "fact",
+    "tags": ["offline_rl", "cql", "decision_transformer"],
+    "source": "ml_knowledge"
+  },
+  {
+    "content": "Reward hacking occurs when an agent exploits the reward function in unintended ways, achieving high reward without completing the desired task. Common mitigations: reward model ensembles (use minimum of N=5 models), KL-constrained optimization (beta=0.01-0.1), and human oversight with periodic reward model retraining.",
+    "type": "learning",
+    "tags": ["reward_hacking", "alignment", "safety"],
+    "source": "ml_knowledge"
+  },
+  {
+    "content": "Hyperparameter sensitivity in RL: discount factor gamma of 0.99 works for most tasks (0.999 for long-horizon, 0.95 for short). Learning rate 3e-4 is a strong default for Adam optimizer. Batch size 256 for off-policy, 2048-8192 for on-policy (PPO). Replay buffer size 1M transitions is standard for off-policy methods.",
+    "type": "skill",
+    "tags": ["hyperparameters", "tuning", "best_practices"],
+    "source": "ml_knowledge"
+  },
+  {
+    "content": "Sim-to-real transfer bridges the gap between simulated training and real-world deployment. Domain randomization varies simulation parameters (friction 0.5-2x, mass 0.8-1.2x, visual textures) during training to build robust policies. System identification fine-tunes simulation parameters to match real dynamics, reducing transfer gap by 60-80%.",
+    "type": "skill",
+    "tags": ["sim_to_real", "domain_randomization", "transfer_learning"],
+    "source": "ml_knowledge"
+  },
+  {
+    "content": "Monte Carlo Tree Search (MCTS) combines tree search with random simulations. UCT selects children maximizing Q(s,a) + c*sqrt(ln(N(s))/N(s,a)) with c=sqrt(2). AlphaZero replaced MCTS rollouts with a neural network value estimate and trained entirely through self-play, mastering chess in 4 hours (44M games).",
+    "type": "fact",
+    "tags": ["mcts", "alphazero", "tree_search", "self_play"],
+    "source": "ml_knowledge"
+  }
+]

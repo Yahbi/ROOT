@@ -1,0 +1,152 @@
+[
+  {
+    "content": "BATNA (Best Alternative To a Negotiated Agreement) is your walkaway power. A strong BATNA means you can reject unfavorable terms. Always identify and improve your BATNA before entering negotiations; the party with the better BATNA holds more leverage.",
+    "type": "skill",
+    "tags": ["batna", "negotiation_power", "preparation"],
+    "source": "strategy_knowledge"
+  },
+  {
+    "content": "ZOPA (Zone of Possible Agreement) is the range between each party's reservation price. If Seller's minimum is $80K and Buyer's maximum is $100K, the ZOPA is $80K-$100K. No ZOPA means no deal is possible without changing the terms or adding value.",
+    "type": "fact",
+    "tags": ["zopa", "reservation_price", "deal_structure"],
+    "source": "strategy_knowledge"
+  },
+  {
+    "content": "Anchoring bias means the first number put on the table disproportionately influences the final outcome. Studies show first offers account for 50-85% of the variance in final settlement prices. Make an aggressive but justifiable first offer to set the range in your favor.",
+    "type": "learning",
+    "tags": ["anchoring", "first_offer", "cognitive_bias"],
+    "source": "strategy_knowledge"
+  },
+  {
+    "content": "Logrolling involves trading concessions across issues of different priority. If you value delivery speed highly and they value price, offer a higher price in exchange for faster delivery. This creates value by exploiting different preference rankings across issues.",
+    "type": "skill",
+    "tags": ["logrolling", "value_creation", "multi_issue"],
+    "source": "strategy_knowledge"
+  },
+  {
+    "content": "Contingent contracts resolve disagreements about future outcomes with if/then terms. If a seller expects 30% revenue growth and buyer expects 15%, structure an earn-out: base price plus bonus payments triggered when revenue hits specified thresholds over 2-3 years.",
+    "type": "skill",
+    "tags": ["contingent_contracts", "earn_out", "risk_sharing"],
+    "source": "strategy_knowledge"
+  },
+  {
+    "content": "Fisher and Ury's principled negotiation has 4 pillars: (1) separate people from the problem, (2) focus on interests not positions, (3) generate multiple options for mutual gain before deciding, (4) insist on objective criteria (market data, precedent, expert opinion) to evaluate proposals.",
+    "type": "fact",
+    "tags": ["principled_negotiation", "harvard", "interest_based"],
+    "source": "strategy_knowledge"
+  },
+  {
+    "content": "The nibble tactic requests small concessions after the main deal is agreed ('Can you throw in free shipping?'). Counter by treating each nibble as a new negotiation: 'I can do that if we extend the contract by 3 months.' Never give unilateral concessions post-agreement.",
+    "type": "skill",
+    "tags": ["hardball_tactics", "nibble", "counter_tactics"],
+    "source": "strategy_knowledge"
+  },
+  {
+    "content": "Good cop/bad cop uses two negotiators playing opposing roles to create pressure toward the 'reasonable' option. Counter by naming the tactic directly ('I see you're playing good cop/bad cop'), which neutralizes its psychological effect in 90% of cases.",
+    "type": "skill",
+    "tags": ["hardball_tactics", "good_cop_bad_cop", "counter_tactics"],
+    "source": "strategy_knowledge"
+  },
+  {
+    "content": "The flinch reaction (visible shock at an offer) can reduce counterpart's confidence in their position by 15-20% on average. Even if the offer is reasonable, a controlled flinch followed by silence for 5-7 seconds often prompts an unprompted concession.",
+    "type": "skill",
+    "tags": ["body_language", "flinch", "psychological_tactics"],
+    "source": "strategy_knowledge"
+  },
+  {
+    "content": "Multi-party negotiations require coalition analysis. Identify blocking coalitions (groups that can veto), winning coalitions (minimum needed for agreement), and swing parties. Map each party's interests, BATNAs, and relationships before proposing solutions.",
+    "type": "skill",
+    "tags": ["multi_party", "coalition", "stakeholder_analysis"],
+    "source": "strategy_knowledge"
+  },
+  {
+    "content": "Salary negotiation: research the 25th-75th percentile range for your role, location, and experience on Glassdoor/Levels.fyi. Anchor at the 75th-90th percentile with data justification. Negotiate total compensation: base + bonus (10-30% typical) + equity + signing bonus + benefits.",
+    "type": "skill",
+    "tags": ["salary_negotiation", "compensation", "career"],
+    "source": "strategy_knowledge"
+  },
+  {
+    "content": "When negotiating job offers, never accept on the spot. Say 'I'm very excited about this. I'd like 48-72 hours to review the full package.' This creates time pressure on their side and gives you leverage to negotiate with competing offers or research market rates.",
+    "type": "skill",
+    "tags": ["salary_negotiation", "timing", "job_offers"],
+    "source": "strategy_knowledge"
+  },
+  {
+    "content": "M&A earn-outs typically structure 20-40% of the total purchase price as contingent payments over 2-3 years, tied to revenue or EBITDA milestones. Key terms to negotiate: metric definition, accounting methods, management autonomy, acceleration triggers, and dispute resolution.",
+    "type": "fact",
+    "tags": ["mergers_acquisitions", "earn_out", "deal_structure"],
+    "source": "strategy_knowledge"
+  },
+  {
+    "content": "Representations and warranties in M&A deals allocate risk. The seller represents facts about the business (financial accuracy, no undisclosed liabilities, IP ownership). Breaches trigger indemnification, typically capped at 10-20% of purchase price with a 12-18 month survival period.",
+    "type": "fact",
+    "tags": ["mergers_acquisitions", "reps_warranties", "indemnification"],
+    "source": "strategy_knowledge"
+  },
+  {
+    "content": "The decoy effect in negotiation involves presenting three options where one is clearly inferior to make the preferred option look more attractive. Presenting a $50K, $75K, and $72K option makes $75K look like the best value, increasing selection rate by 30-40%.",
+    "type": "learning",
+    "tags": ["decoy_effect", "framing", "pricing_strategy"],
+    "source": "strategy_knowledge"
+  },
+  {
+    "content": "Deadline pressure: 80% of concessions happen in the last 20% of negotiation time. Set artificial deadlines ('I need an answer by Friday') to force decisions. Counter by questioning deadline legitimacy and proposing an extension when pressured.",
+    "type": "learning",
+    "tags": ["deadline", "time_pressure", "tactics"],
+    "source": "strategy_knowledge"
+  },
+  {
+    "content": "The MeSo (Multiple Equivalent Simultaneous Offers) technique presents 2-3 different packages of equal value to you simultaneously. This signals flexibility, reveals counterpart preferences through their choice, and increases agreement rates by 25-30% compared to single offers.",
+    "type": "skill",
+    "tags": ["meso", "multiple_offers", "value_discovery"],
+    "source": "strategy_knowledge"
+  },
+  {
+    "content": "Negotiation preparation checklist: (1) define your BATNA, (2) estimate their BATNA, (3) set reservation price and aspiration price, (4) identify 5+ tradeable issues, (5) rank issues by priority, (6) research objective criteria, (7) prepare 3 opening scenarios, (8) plan concession strategy.",
+    "type": "skill",
+    "tags": ["preparation", "checklist", "negotiation_framework"],
+    "source": "strategy_knowledge"
+  },
+  {
+    "content": "Reciprocity principle: when you make a concession, explicitly label it ('I'm making an exception for you on pricing'). This triggers the obligation to reciprocate. Unlabeled concessions are often taken for granted, reducing your leverage by 40-50% according to negotiation research.",
+    "type": "learning",
+    "tags": ["reciprocity", "concessions", "psychology"],
+    "source": "strategy_knowledge"
+  },
+  {
+    "content": "The bracketing technique: if your target price is $100K, and you expect them to open at $80K, open at $120K. This brackets the target price symmetrically. As both sides make concessions toward the middle, the final price gravitates toward your target of $100K.",
+    "type": "skill",
+    "tags": ["bracketing", "price_negotiation", "anchoring"],
+    "source": "strategy_knowledge"
+  },
+  {
+    "content": "In vendor negotiations, always get 3+ competitive bids and share this fact (not the specific prices). Multi-vendor competition typically reduces prices by 15-25%. Include switching costs, total cost of ownership (TCO over 3-5 years), and SLA penalties in your evaluation.",
+    "type": "skill",
+    "tags": ["vendor_negotiation", "competitive_bidding", "procurement"],
+    "source": "strategy_knowledge"
+  },
+  {
+    "content": "The 'door in the face' technique starts with an extreme request that will be rejected, then follows with the real (more reasonable) request. The contrast effect makes the second request seem more acceptable, increasing compliance rates by 30-50% in studies.",
+    "type": "learning",
+    "tags": ["door_in_face", "contrast_effect", "persuasion"],
+    "source": "strategy_knowledge"
+  },
+  {
+    "content": "Non-compete clauses in M&A typically restrict the seller from competing for 2-5 years within a defined geographic area. Courts increasingly limit enforcement: California bans them entirely, FTC proposed a nationwide ban in 2024. Negotiate narrow scope and adequate compensation.",
+    "type": "fact",
+    "tags": ["non_compete", "mergers_acquisitions", "legal"],
+    "source": "strategy_knowledge"
+  },
+  {
+    "content": "Cultural negotiation differences: US/UK favor direct communication and time-bound deals. Japan requires relationship building (nemawashi) and group consensus, extending timelines 3-5x. Middle Eastern negotiations emphasize personal trust and hospitality before business discussions.",
+    "type": "learning",
+    "tags": ["cross_cultural", "international", "negotiation_style"],
+    "source": "strategy_knowledge"
+  },
+  {
+    "content": "Post-settlement settlement: after reaching an initial agreement, propose 'Now that we have a deal, let's see if we can improve it for both of us.' This Pareto-improving step discovers additional value 60-70% of the time without risking the existing agreement.",
+    "type": "skill",
+    "tags": ["post_settlement", "pareto_improvement", "value_creation"],
+    "source": "strategy_knowledge"
+  }
+]

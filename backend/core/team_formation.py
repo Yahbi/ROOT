@@ -68,6 +68,9 @@ class TeamFormation:
     ) -> None:
         self._learning_engine = learning_engine
         self._registry = registry
+        # _agent_load: keyed by agent_id — bounded by finite agent set (~162).
+        # Safety cap to prevent unbounded growth if rogue IDs appear.
+        self._MAX_AGENT_LOAD_ENTRIES = 300
         self._agent_load: dict[str, int] = {}
         self._lock = threading.Lock()
         self._total_teams_formed = 0
@@ -131,8 +134,7 @@ class TeamFormation:
                 for agent in self._registry.list_core_agents():
                     all_candidates.add(agent.id)
             except Exception:
-                pass
-
+                logger.debug("Failed to list core agents from registry for fallback candidates", exc_info=True)
         # Default weight for missing scores.
         combined: dict[str, float] = {}
         for agent_id in all_candidates:
@@ -171,6 +173,11 @@ class TeamFormation:
         """Increment the concurrent task counter for an agent."""
         with self._lock:
             self._agent_load[agent_id] = self._agent_load.get(agent_id, 0) + 1
+            # Prune idle agents if dict grows beyond safety cap
+            if len(self._agent_load) > self._MAX_AGENT_LOAD_ENTRIES:
+                idle = [k for k, v in self._agent_load.items() if v == 0]
+                for k in idle:
+                    del self._agent_load[k]
         logger.debug("Task started for %s (load=%d)", agent_id, self._agent_load[agent_id])
 
     def record_task_end(self, agent_id: str) -> None:

@@ -239,11 +239,9 @@ class SandboxGate:
             try:
                 import asyncio
 
-                loop = asyncio.get_event_loop()
-                if loop.is_running():
-                    loop.create_task(self._notify_live_action(decision))
-                else:
-                    loop.run_until_complete(self._notify_live_action(decision))
+                loop = asyncio.get_running_loop()
+                task = loop.create_task(self._notify_live_action(decision))
+                task.add_done_callback(lambda t: t.exception() if not t.cancelled() else None)
             except RuntimeError:
                 logger.debug("No event loop for live notification: %s", action)
 
@@ -257,9 +255,9 @@ class SandboxGate:
                 try:
                     import asyncio
 
-                    loop = asyncio.get_event_loop()
-                    if loop.is_running():
-                        loop.create_task(self._notify_sandbox_intent(decision))
+                    loop = asyncio.get_running_loop()
+                    task = loop.create_task(self._notify_sandbox_intent(decision))
+                    task.add_done_callback(lambda t: t.exception() if not t.cancelled() else None)
                 except RuntimeError:
                     logger.debug("No event loop for sandbox intent notification: %s", action)
 
@@ -316,17 +314,16 @@ class SandboxGate:
             try:
                 import asyncio
 
-                loop = asyncio.get_event_loop()
-                if loop.is_running():
-                    loop.create_task(self._notification_engine.send(
-                        title="CRITICAL: ROOT switched to LIVE mode",
-                        body="Global mode is now LIVE. All subsystems without overrides will execute real actions.",
-                        level="critical",
-                        source="sandbox_gate",
-                    ))
+                loop = asyncio.get_running_loop()
+                task = loop.create_task(self._notification_engine.send(
+                    title="CRITICAL: ROOT switched to LIVE mode",
+                    body="Global mode is now LIVE. All subsystems without overrides will execute real actions.",
+                    level="critical",
+                    source="sandbox_gate",
+                ))
+                task.add_done_callback(lambda t: t.exception() if not t.cancelled() else None)
             except RuntimeError:
-                pass
-
+                logger.debug("No event loop for LIVE mode global notification", exc_info=True)
         logger.info("Global mode set to %s", mode.value)
         return new_config
 
@@ -347,17 +344,16 @@ class SandboxGate:
             try:
                 import asyncio
 
-                loop = asyncio.get_event_loop()
-                if loop.is_running():
-                    loop.create_task(self._notification_engine.send(
-                        title=f"CRITICAL: {system_id} switched to LIVE mode",
-                        body=f"Subsystem '{system_id}' is now LIVE. Real actions will be executed.",
-                        level="critical",
-                        source="sandbox_gate",
-                    ))
+                loop = asyncio.get_running_loop()
+                task = loop.create_task(self._notification_engine.send(
+                    title=f"CRITICAL: {system_id} switched to LIVE mode",
+                    body=f"Subsystem '{system_id}' is now LIVE. Real actions will be executed.",
+                    level="critical",
+                    source="sandbox_gate",
+                ))
+                task.add_done_callback(lambda t: t.exception() if not t.cancelled() else None)
             except RuntimeError:
-                pass
-
+                logger.debug("No event loop for LIVE mode system notification: %s", system_id, exc_info=True)
         logger.info("System '%s' mode set to %s", system_id, mode.value)
         return new_config
 

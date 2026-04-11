@@ -95,6 +95,11 @@ class SelfWritingCodeSystem:
             self._conn.close()
             self._conn = None
 
+    def close(self) -> None:
+        """Close the database connection."""
+        if hasattr(self, '_conn') and self._conn:
+            self._conn.close()
+
     @property
     def conn(self) -> sqlite3.Connection:
         if self._conn is None:
@@ -216,8 +221,11 @@ class SelfWritingCodeSystem:
                     import asyncio
                     proposal = self._get_by_id(proposal_id)
                     if proposal:
-                        loop = asyncio.get_event_loop()
-                        loop.create_task(self._auto_deploy(proposal))
+                        loop = asyncio.get_running_loop()
+                        task = loop.create_task(self._auto_deploy(proposal))
+                        task.add_done_callback(lambda t: t.exception() if not t.cancelled() else None)
+                except RuntimeError:
+                    logger.debug("No running event loop — skipping auto-deploy scheduling")
                 except Exception as e:
                     logger.warning("Code auto-deploy scheduling failed: %s", e)
 

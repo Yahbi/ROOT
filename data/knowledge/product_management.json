@@ -1,0 +1,152 @@
+[
+  {
+    "content": "An MVP (Minimum Viable Product) is the smallest product that delivers the core value proposition to early adopters. The key word is VIABLE — it must actually solve the problem, not just be minimal. Dropbox's MVP was a 3-minute demo video that validated demand before building anything; Zappos' MVP was buying shoes from stores and shipping them manually.",
+    "type": "fact",
+    "tags": ["product", "mvp", "validation"],
+    "source": "product_knowledge"
+  },
+  {
+    "content": "Product-market fit signals include: retention curve that flattens (users stick around), NPS score above 40, organic/word-of-mouth growth exceeding 40% of new users, users complaining when the product is down, and the '40% test' — if 40% of users would be very disappointed if the product disappeared. Sean Ellis coined this metric as the clearest PMF signal.",
+    "type": "fact",
+    "tags": ["product", "product_market_fit", "metrics"],
+    "source": "product_knowledge"
+  },
+  {
+    "content": "User research methods span qualitative and quantitative: interviews (5-8 users reveal 80% of usability issues), surveys (n>100 for statistical significance), usability tests (task completion rate, time-on-task, error rate), analytics (event tracking, heatmaps, session recordings), and diary studies (longitudinal behavior over days/weeks). Always triangulate: use at least 2 methods to validate findings.",
+    "type": "skill",
+    "tags": ["product", "user_research", "methods"],
+    "source": "product_knowledge"
+  },
+  {
+    "content": "RICE prioritization scores features as Reach (users affected per quarter) * Impact (0.25/0.5/1/2/3 scale) * Confidence (percentage) / Effort (person-months). A feature reaching 10,000 users with high impact (2), 80% confidence, and 2 months effort scores (10000*2*0.8)/2 = 8000. Compare RICE scores across features to prioritize the backlog objectively.",
+    "type": "skill",
+    "tags": ["product", "prioritization", "rice"],
+    "source": "product_knowledge"
+  },
+  {
+    "content": "ICE scoring rates features on Impact (1-10), Confidence (1-10), and Ease (1-10), then averages them. It is simpler than RICE but more subjective. MoSCoW categorizes requirements as Must-have (core functionality), Should-have (important but not critical), Could-have (nice-to-have), and Won't-have (explicitly out of scope for this release).",
+    "type": "skill",
+    "tags": ["product", "prioritization", "ice", "moscow"],
+    "source": "product_knowledge"
+  },
+  {
+    "content": "A/B testing requires minimum sample size calculated as n = 16 * sigma^2 / delta^2 for 80% statistical power, where sigma is the standard deviation and delta is the minimum detectable effect. For conversion rates, use n = 16 * p * (1-p) / delta^2. A 5% baseline conversion rate with 1% minimum detectable effect needs approximately 7,600 users per variant.",
+    "type": "skill",
+    "tags": ["product", "ab_testing", "statistics"],
+    "source": "product_knowledge"
+  },
+  {
+    "content": "Cohort analysis groups users by signup week (or month) and tracks retention over time. A healthy product shows improving cohorts (newer users retain better than older ones). If Week 4 retention is 40% for January cohort but 30% for March cohort, something degraded the experience. Cohort analysis separates growth effects from engagement effects, unlike aggregate metrics.",
+    "type": "skill",
+    "tags": ["product", "cohort_analysis", "retention"],
+    "source": "product_knowledge"
+  },
+  {
+    "content": "The AARRR funnel (Pirate Metrics) tracks Acquisition (how users find you), Activation (first value moment / aha moment), Retention (users coming back), Revenue (users paying), and Referral (users inviting others). Optimize in order: fix retention before investing in acquisition, because acquiring users into a leaky bucket wastes money. Each stage has distinct metrics and interventions.",
+    "type": "skill",
+    "tags": ["product", "funnel", "aarrr", "metrics"],
+    "source": "product_knowledge"
+  },
+  {
+    "content": "Jobs-to-be-Done (JTBD) framework says customers 'hire' products to accomplish a job. The job statement format is: 'When [situation], I want to [motivation], so I can [expected outcome].' Milkshake example: people 'hired' milkshakes for a boring commute, not as a dessert. Competing products are anything that serves the same job, not just direct category competitors.",
+    "type": "fact",
+    "tags": ["product", "jtbd", "customer_research"],
+    "source": "product_knowledge"
+  },
+  {
+    "content": "Feature flags enable percentage rollout (1% → 10% → 50% → 100%), instant kill switch for broken features, A/B testing integration, and user-segment targeting. Best practices: flags should have an owner and expiration date, remove flags after full rollout to prevent technical debt, and maintain a flag inventory. Tools like LaunchDarkly or Unleash manage flags at scale.",
+    "type": "skill",
+    "tags": ["product", "feature_flags", "deployment"],
+    "source": "product_knowledge"
+  },
+  {
+    "content": "A North Star Metric is the single metric that best captures the core value your product delivers to customers. Airbnb's is nights booked, Spotify's is time spent listening, Slack's is messages sent. The NSM should be: leading (predicts future success), actionable (teams can influence it), and correlated with revenue. Pair the NSM with 3-5 input metrics that drive it.",
+    "type": "fact",
+    "tags": ["product", "north_star", "metrics"],
+    "source": "product_knowledge"
+  },
+  {
+    "content": "The Kano Model classifies features into five categories: Must-be (expected, absence causes dissatisfaction), One-dimensional (more is better, linear satisfaction), Attractive (delighters, unexpected but welcome), Indifferent (users don't care), and Reverse (some users actively dislike). Over time, Attractive features become Must-be as expectations rise. Survey users with functional/dysfunctional question pairs to classify.",
+    "type": "fact",
+    "tags": ["product", "kano", "feature_classification"],
+    "source": "product_knowledge"
+  },
+  {
+    "content": "Product discovery (dual-track agile) runs discovery and delivery in parallel. Discovery validates whether to build something (desirable, viable, feasible, usable) through rapid experiments: painted door tests (fake feature button measures interest), Wizard of Oz (human behind the curtain), concierge MVP (manual service), and prototypes (Figma clickthrough). Spend 20% of sprint capacity on discovery.",
+    "type": "skill",
+    "tags": ["product", "discovery", "validation"],
+    "source": "product_knowledge"
+  },
+  {
+    "content": "User story mapping arranges user stories on two axes: horizontal is the user journey (left to right), vertical is priority (top to bottom). The backbone (top row) shows the main user activities. Slicing horizontally creates releases: Release 1 includes only the top stories from each activity, forming a thin but complete end-to-end experience. This prevents building deep features that miss the full journey.",
+    "type": "skill",
+    "tags": ["product", "story_mapping", "planning"],
+    "source": "product_knowledge"
+  },
+  {
+    "content": "Net Promoter Score (NPS) asks 'How likely are you to recommend this product to a friend?' on a 0-10 scale. Promoters (9-10) minus Detractors (0-6) = NPS. Scores above 50 are excellent, above 70 are world-class. Always follow up with an open-ended 'why' question — the qualitative data is more actionable than the score itself. Survey at meaningful moments, not randomly.",
+    "type": "skill",
+    "tags": ["product", "nps", "customer_satisfaction"],
+    "source": "product_knowledge"
+  },
+  {
+    "content": "The product lifecycle has four stages: Introduction (high cost, low sales, focus on early adopters), Growth (rapid adoption, competitors enter, focus on differentiation), Maturity (peak sales, commoditization, focus on efficiency and retention), and Decline (falling demand, focus on harvest or pivot). Product strategy must shift at each stage; what works in Growth fails in Maturity.",
+    "type": "fact",
+    "tags": ["product", "lifecycle", "strategy"],
+    "source": "product_knowledge"
+  },
+  {
+    "content": "Activation rate measures the percentage of new signups who reach the 'aha moment' — the point where they first experience core product value. For Slack, it is sending 2,000 messages as a team. For Dropbox, it is saving one file to a synced folder. Improving activation from 20% to 30% has the same effect as increasing acquisition by 50%, but is usually much cheaper.",
+    "type": "fact",
+    "tags": ["product", "activation", "onboarding"],
+    "source": "product_knowledge"
+  },
+  {
+    "content": "Opportunity Solution Trees (OST) by Teresa Torres connect desired outcomes to opportunities (user needs/pain points) to solutions to experiments. The tree structure prevents jumping from outcome directly to solution. Each opportunity should have multiple potential solutions, and each solution should have a low-cost experiment to validate it before building.",
+    "type": "skill",
+    "tags": ["product", "discovery", "opportunity"],
+    "source": "product_knowledge"
+  },
+  {
+    "content": "Product-led growth (PLG) uses the product itself as the primary driver of acquisition, conversion, and expansion. Characteristics: freemium or free trial, self-serve onboarding, in-product viral loops, and usage-based pricing. PLG companies have lower CAC ($0.50-$2 vs $100+ for sales-led) but require excellent UX and time-to-value under 5 minutes.",
+    "type": "fact",
+    "tags": ["product", "plg", "growth"],
+    "source": "product_knowledge"
+  },
+  {
+    "content": "Customer Development (Steve Blank) has four phases: Customer Discovery (find problem-solution fit through interviews), Customer Validation (test sales process and business model), Customer Creation (scale demand generation), and Company Building (transition from startup to organization). Most startups fail because they skip Discovery and Validation, jumping straight to building and scaling.",
+    "type": "fact",
+    "tags": ["product", "customer_development", "lean"],
+    "source": "product_knowledge"
+  },
+  {
+    "content": "Time-to-value (TTV) is the duration from signup to first meaningful value experience. Reducing TTV directly improves activation and retention. Tactics: progressive onboarding (don't front-load setup), pre-populated demo data, interactive tutorials (not video tours), contextual tooltips, and smart defaults. Every additional step in onboarding loses 20-30% of users.",
+    "type": "learning",
+    "tags": ["product", "onboarding", "time_to_value"],
+    "source": "product_knowledge"
+  },
+  {
+    "content": "Pricing strategy frameworks include value-based pricing (price relative to customer value, typically 10-20% of value delivered), cost-plus pricing (cost + margin, race to bottom), competitor-based pricing (market rate +/- positioning), and willingness-to-pay surveys (Van Westendorp price sensitivity meter with four questions). Most SaaS companies underprice by 20-40%.",
+    "type": "skill",
+    "tags": ["product", "pricing", "strategy"],
+    "source": "product_knowledge"
+  },
+  {
+    "content": "Usage analytics hierarchy: event tracking (what users do), session analysis (user journey within a visit), funnel analysis (conversion between steps), retention analysis (return behavior over time), and behavioral cohorts (grouping users by actions, not demographics). Instrument events with a taxonomy: object_action format (e.g., 'document_created', 'search_executed', 'invite_sent').",
+    "type": "skill",
+    "tags": ["product", "analytics", "instrumentation"],
+    "source": "product_knowledge"
+  },
+  {
+    "content": "The build-measure-learn loop from Lean Startup should actually be planned in reverse: decide what to Learn, determine what to Measure to validate/invalidate the hypothesis, then decide what to Build to generate that measurement. Each loop iteration should take days to weeks, not months. The output is validated learning, not shipped features.",
+    "type": "learning",
+    "tags": ["product", "lean_startup", "experimentation"],
+    "source": "product_knowledge"
+  },
+  {
+    "content": "Retention curves show what percentage of users return over time (Day 1, Day 7, Day 30, Day 90). A healthy product has a retention curve that flattens — meaning a core group of users sticks around indefinitely. If the curve trends toward zero, no amount of acquisition spending will save the product. Benchmark: 40% Day 1, 20% Day 7, and 10% Day 30 retention is decent for mobile apps.",
+    "type": "fact",
+    "tags": ["product", "retention", "metrics"],
+    "source": "product_knowledge"
+  }
+]

@@ -214,8 +214,7 @@ class OutcomeEvaluator:
                 quality = float(score_match.group(1))
                 quality = max(0.0, min(1.0, quality))
             except ValueError:
-                pass
-
+                logger.debug("Failed to parse LLM quality score", exc_info=True)
         # Extract REASONING
         reason_match = re.search(r"REASONING:\s*(.+)", response)
         if reason_match:

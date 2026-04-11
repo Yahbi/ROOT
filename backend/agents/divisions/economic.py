@@ -1,4 +1,4 @@
-"""Economic Engine — 20 revenue and growth agents."""
+"""Economic Engine — 25 revenue and growth agents."""
 
 from __future__ import annotations
 
@@ -240,5 +240,70 @@ ECONOMIC_ENGINE: list[AgentProfile] = [
             _cap("risk_assessment", "Assess financial risk and downside scenarios"),
             _cap("evaluation", "Evaluate forecast accuracy and recalibrate"),
         ],
+    ),
+    AgentProfile(
+        id="subscription_optimizer", name="Subscription Optimizer",
+        role="Subscription Optimization", tier=2, connector_type="internal",
+        description="Optimizes subscription models, billing cycles, and plan structures for MRR growth",
+        capabilities=[
+            _cap("revenue_optimization", "Optimize subscription tier structures and billing"),
+            _cap("pricing_analysis", "Analyze willingness-to-pay across subscriber segments"),
+            _cap("financial_analysis", "Model MRR, ARR, and expansion revenue scenarios"),
+            _cap("benchmark_analysis", "Benchmark subscription metrics against SaaS industry"),
+            _cap("evaluation", "Evaluate subscription change impact on key cohort metrics"),
+        ],
+        metadata={"priority": 2},
+    ),
+    AgentProfile(
+        id="churn_predictor", name="Churn Predictor",
+        role="Churn Prediction", tier=2, connector_type="internal",
+        description="Predicts customer churn risk and recommends proactive retention interventions",
+        capabilities=[
+            _cap("pattern_recognition", "Identify behavioral patterns predictive of churn"),
+            _cap("statistical_analysis", "Build churn probability models from usage data"),
+            _cap("data_analysis", "Analyze engagement signals and health score trends"),
+            _cap("evaluation", "Evaluate model accuracy and update prediction thresholds"),
+            _cap("revenue_optimization", "Prioritize retention actions by revenue at risk"),
+        ],
+        metadata={"priority": 1},
+    ),
+    AgentProfile(
+        id="ltv_calculator", name="LTV Calculator",
+        role="Lifetime Value Analysis", tier=2, connector_type="internal",
+        description="Calculates and segments customer lifetime value to guide acquisition and retention spend",
+        capabilities=[
+            _cap("financial_analysis", "Compute LTV by segment, channel, and product tier"),
+            _cap("statistical_analysis", "Apply cohort analysis and survival models to LTV"),
+            _cap("data_analysis", "Analyze LTV drivers and correlation with usage patterns"),
+            _cap("pricing_analysis", "Align pricing strategy with LTV-to-CAC targets"),
+            _cap("financial_forecasting", "Forecast LTV evolution under different growth scenarios"),
+        ],
+        metadata={"priority": 2},
+    ),
+    AgentProfile(
+        id="pricing_tester", name="Pricing Tester",
+        role="Pricing Experimentation", tier=2, connector_type="internal",
+        description="Designs and runs pricing experiments to find optimal price points and packaging",
+        capabilities=[
+            _cap("experiment_design", "Design controlled pricing experiments and price tests"),
+            _cap("pricing_analysis", "Analyze price elasticity and conversion impact"),
+            _cap("statistical_analysis", "Evaluate pricing test results with significance testing"),
+            _cap("revenue_optimization", "Identify revenue-maximizing price-volume combinations"),
+            _cap("competitive_intel", "Monitor competitor pricing changes and market reactions"),
+        ],
+        metadata={"priority": 2},
+    ),
+    AgentProfile(
+        id="revenue_forecaster", name="Revenue Forecaster",
+        role="Revenue Forecasting", tier=2, connector_type="internal",
+        description="Builds granular revenue forecasts by stream, segment, and time horizon",
+        capabilities=[
+            _cap("financial_forecasting", "Build bottom-up and top-down revenue forecasts"),
+            _cap("statistical_analysis", "Apply time-series models to revenue data"),
+            _cap("data_analysis", "Analyze revenue composition by stream and cohort"),
+            _cap("risk_assessment", "Quantify revenue forecast uncertainty and downside risk"),
+            _cap("evaluation", "Track forecast accuracy and recalibrate models"),
+        ],
+        metadata={"priority": 1},
     ),
 ]

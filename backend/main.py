@@ -20,10 +20,15 @@ from __future__ import annotations
 import asyncio
 import contextlib
 import logging
+import time
+import uuid
 from contextlib import asynccontextmanager
+from typing import Callable
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
+from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
 
 from backend.config import HOST, PORT, REFLECTION_INTERVAL_SECONDS, ANTHROPIC_API_KEY, OPENAI_API_KEY, DEEPSEEK_API_KEY, LLM_PROVIDER, CORS_ORIGINS, VERSION, TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID, DISCORD_WEBHOOK_URL
@@ -109,26 +114,83 @@ from backend.routes import scenarios as scenarios_routes
 from backend.routes import councils as councils_routes
 from backend.routes import agi as agi_routes
 from backend.routes import perpetual as perpetual_routes
+from backend.routes import a2a as a2a_routes
 
 logging.basicConfig(
     level=logging.INFO,
-    format="%(asctime)s [%(name)s] %(levelname)s: %(message)s",
+    format="%(asctime)s.%(msecs)03d [%(name)s] %(levelname)s: %(message)s",
+    datefmt="%Y-%m-%dT%H:%M:%S",
 )
 logger = logging.getLogger("root")
 
 
+# ── Request ID Middleware (pure ASGI) ─────────────────────────────
+
+class RequestIDMiddleware:
+    """
+    Pure ASGI middleware — attaches a UUID request-id to every HTTP request.
+
+    The ID is injected as both a request header (X-Request-ID) forwarded
+    downstream and echoed back in the response header for end-to-end tracing.
+    If the client already supplies X-Request-ID, that value is preserved.
+    """
+
+    def __init__(self, app: Callable) -> None:
+        self.app = app
+
+    async def __call__(self, scope: dict, receive: Callable, send: Callable) -> None:
+        if scope["type"] not in ("http", "websocket"):
+            await self.app(scope, receive, send)
+            return
+
+        # Reuse caller-supplied ID or generate a fresh one
+        request_id: str | None = None
+        for key, value in scope.get("headers", []):
+            if key.lower() == b"x-request-id":
+                request_id = value.decode("utf-8", errors="replace")
+                break
+        if not request_id:
+            request_id = str(uuid.uuid4())
+
+        # Inject into scope headers so downstream handlers can read it
+        headers = list(scope.get("headers", []))
+        headers.append((b"x-request-id", request_id.encode()))
+        scope = {**scope, "headers": headers}
+        # Also store on scope dict for easy access
+        scope["request_id"] = request_id
+
+        if scope["type"] == "websocket":
+            await self.app(scope, receive, send)
+            return
+
+        # Echo back in response headers
+        async def send_with_request_id(message: dict) -> None:
+            if message["type"] == "http.response.start":
+                existing = list(message.get("headers", []))
+                existing.append((b"x-request-id", request_id.encode()))
+                message = {**message, "headers": existing}
+            await send(message)
+
+        await self.app(scope, receive, send_with_request_id)
+
+
 # ── Background loops ──────────────────────────────────────────
+
+# Registry of active background task names → asyncio.Task for health checks
+_bg_loop_registry: dict[str, asyncio.Task] = {}
+
 
 async def _safe_loop(name: str, coro_fn, *args, **kwargs) -> None:
     """Run an async function in a loop with error handling. Never crashes."""
+    logger.info("[loop:%s] started", name)
     while True:
         try:
             await coro_fn(*args, **kwargs)
         except asyncio.CancelledError:
-            logger.info("Background loop '%s' cancelled", name)
+            logger.info("[loop:%s] cancelled — shutting down cleanly", name)
             return
         except Exception as e:
-            logger.error("Background loop '%s' error: %s", name, e, exc_info=True)
+            logger.error("[loop:%s] unhandled error — will retry: %s", name, e, exc_info=True)
 
 
 async def _reflection_loop(reflection: ReflectionEngine, interval: int) -> None:
@@ -136,15 +198,23 @@ async def _reflection_loop(reflection: ReflectionEngine, interval: int) -> None:
     while True:
         await asyncio.sleep(interval)
         try:
+            t0 = time.monotonic()
             result = await asyncio.wait_for(
                 reflection.reflect(trigger="scheduled"), timeout=90.0
             )
+            elapsed = time.monotonic() - t0
             if result:
-                logger.info("Reflection completed: %s", result.insight[:100])
+                logger.info("[loop:reflection] completed in %.1fs: %s",
+                            elapsed, result.insight[:100])
+            else:
+                logger.info("[loop:reflection] completed in %.1fs (no new insight)", elapsed)
+        except asyncio.CancelledError:
+            logger.info("[loop:reflection] cancelled")
+            return
         except asyncio.TimeoutError:
-            logger.warning("Reflection loop timed out after 90s")
+            logger.warning("[loop:reflection] timed out after 90s")
         except Exception as e:
-            logger.error("Reflection loop error: %s", e)
+            logger.error("[loop:reflection] error: %s", e, exc_info=True)
 
 
 async def _decay_loop(mem: MemoryEngine, interval: int = 86400) -> None:
@@ -153,9 +223,12 @@ async def _decay_loop(mem: MemoryEngine, interval: int = 86400) -> None:
         await asyncio.sleep(interval)
         try:
             affected = mem.decay()
-            logger.info("Memory decay: %d entries adjusted", affected)
+            logger.info("[loop:decay] %d memory entries adjusted", affected)
+        except asyncio.CancelledError:
+            logger.info("[loop:decay] cancelled")
+            return
         except Exception as e:
-            logger.error("Decay loop error: %s", e)
+            logger.error("[loop:decay] error: %s", e, exc_info=True)
 
 
 # ── Lifespan ──────────────────────────────────────────────────
@@ -163,8 +236,10 @@ async def _decay_loop(mem: MemoryEngine, interval: int = 86400) -> None:
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Full startup / shutdown lifecycle with all systems."""
+    _startup_ts = time.time()
     logger.info("=" * 60)
     logger.info("  ROOT v1.0.0 — ASTRA-ROOT Intelligence Civilization — Starting Up")
+    logger.info("  Startup timestamp: %s", time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime(_startup_ts)))
     logger.info("=" * 60)
 
     # ── 0. State Store (persistent runtime state) ────────────
@@ -1154,42 +1229,40 @@ async def lifespan(app: FastAPI):
 
     # ── 29. Background Tasks (all wrapped with error handling) ──
     bg_tasks: list[asyncio.Task] = []
+
+    def _make_task(coro, name: str) -> asyncio.Task:
+        """Create a named background task, register it for health checks, and track it."""
+        task = asyncio.create_task(coro, name=name)
+        bg_tasks.append(task)
+        _bg_loop_registry[name] = task
+        return task
+
     if llm:
-        bg_tasks.append(asyncio.create_task(
+        _make_task(
             _safe_loop("reflection", _reflection_loop, reflection, REFLECTION_INTERVAL_SECONDS),
-            name="reflection_loop",
-        ))
-        # These create their own internal task loops — call directly, not via _safe_loop
+            "reflection_loop",
+        )
+        # These engines manage their own internal asyncio loops — start directly
         await proactive.start()
         await auto_loop.start()
         await continuous_learning.start()
         await curiosity.start()
         await actuator.start()
-    bg_tasks.append(asyncio.create_task(
-        _safe_loop("decay", _decay_loop, mem),
-        name="decay_loop",
-    ))
-    bg_tasks.append(asyncio.create_task(
-        _safe_loop("builder", builder.start_loop, 300),
-        name="builder_loop",
-    ))
+
+    _make_task(_safe_loop("decay", _decay_loop, mem), "decay_loop")
+    _make_task(_safe_loop("builder", builder.start_loop, 300), "builder_loop")
+
     # triggers.start() creates its own internal task loops — call directly
     await triggers.start()
-    bg_tasks.append(asyncio.create_task(
-        _safe_loop("agent_network", agent_network.run_propagation_loop),
-        name="network_loop",
-    ))
+
+    _make_task(_safe_loop("agent_network", agent_network.run_propagation_loop), "network_loop")
+
     if llm:
-        bg_tasks.append(asyncio.create_task(
-            _safe_loop("directive", directive.run_loop),
-            name="directive_loop",
-        ))
-    # AGI: Adaptive Tuner background loop (every 2 hours)
-    # start_loop() manages its own internal loop — call directly, not via _safe_loop
-    bg_tasks.append(asyncio.create_task(
-        adaptive_tuner.start_loop(),
-        name="adaptive_tuner_loop",
-    ))
+        _make_task(_safe_loop("directive", directive.run_loop), "directive_loop")
+
+    # AGI: Adaptive Tuner — start_loop() manages its own internal loop
+    _make_task(adaptive_tuner.start_loop(), "adaptive_tuner_loop")
+
     # Decision Feedback loop (every 15 minutes)
     async def _decision_feedback_loop():
         await asyncio.sleep(300)  # Let outcomes accumulate first
@@ -1198,16 +1271,19 @@ async def lifespan(app: FastAPI):
                 signals = await decision_feedback.analyze()
                 if signals.get("recommendations"):
                     decision_feedback.apply_signals(signals)
-                    logger.info("Decision feedback: applied %d recommendations",
+                    logger.info("[loop:decision_feedback] applied %d recommendations",
                                 len(signals.get("recommendations", [])))
+            except asyncio.CancelledError:
+                logger.info("[loop:decision_feedback] cancelled")
+                return
             except Exception as e:
-                logger.error("Decision feedback error: %s", e)
+                logger.error("[loop:decision_feedback] error: %s", e, exc_info=True)
             await asyncio.sleep(900)  # 15 minutes
 
-    bg_tasks.append(asyncio.create_task(
+    _make_task(
         _safe_loop("decision_feedback", _decision_feedback_loop),
-        name="decision_feedback_loop",
-    ))
+        "decision_feedback_loop",
+    )
 
     # Emergency Protocol health checks (every 5 minutes)
     async def _emergency_check_loop():
@@ -1224,14 +1300,17 @@ async def lifespan(app: FastAPI):
                 status = emergency_protocol.check_health(metrics)
                 if status.severity.value != "ok":
                     await emergency_protocol.respond(status)
+            except asyncio.CancelledError:
+                logger.info("[loop:emergency_checks] cancelled")
+                return
             except Exception as e:
-                logger.error("Emergency check error: %s", e)
+                logger.error("[loop:emergency_checks] error: %s", e, exc_info=True)
             await asyncio.sleep(300)  # 5 minutes
 
-    bg_tasks.append(asyncio.create_task(
+    _make_task(
         _safe_loop("emergency_checks", _emergency_check_loop),
-        name="emergency_check_loop",
-    ))
+        "emergency_check_loop",
+    )
 
     # Continuous Research background loop (every 30 min)
     if llm:
@@ -1267,9 +1346,14 @@ async def lifespan(app: FastAPI):
         logger.info("Perpetual intelligence + Agent swarm: STARTED")
 
     # ── Startup complete ──────────────────────────────────────
+    app.state.bg_tasks = bg_tasks
+    app.state.startup_time = _startup_ts
+
     assessment = self_dev.assess()
+    _elapsed = time.time() - _startup_ts
     logger.info("=" * 60)
-    logger.info("  ROOT v1.0.0 ALIVE — %s — ASTRA-ROOT CIVILIZATION", app.state.mode.upper())
+    logger.info("  ROOT v1.0.0 ALIVE — %s — ASTRA-ROOT CIVILIZATION (boot %.1fs)",
+                app.state.mode.upper(), _elapsed)
     logger.info("  Maturity: %s (%.0f%%)",
                 assessment["maturity_level"], assessment["maturity_score"] * 100)
     logger.info("  Memories: %d | Skills: %d | Agents: %d | Plugins: %d",
@@ -1303,51 +1387,111 @@ async def lifespan(app: FastAPI):
     yield
 
     # ── Shutdown (proper cleanup with awaited cancellation) ──
-    logger.info("ROOT v1.0.0 shutting down...")
-    await hooks.fire(HookEvent.ON_SHUTDOWN, {})
-    perpetual.stop()
-    agent_swarm.stop()
-    directive.stop()
-    agent_network.stop()
-    triggers.stop()
-    actuator.stop()
-    curiosity.stop()
-    proactive.stop()
-    auto_loop.stop()
-    continuous_learning.stop()
-    builder.stop()
-    hedge_fund.stop()
-    # Cancel all background tasks and wait for them to finish
+    _shutdown_ts = time.time()
+    logger.info("ROOT v1.0.0 shutting down — initiating graceful teardown...")
+    try:
+        await hooks.fire(HookEvent.ON_SHUTDOWN, {})
+    except Exception as _e:
+        logger.warning("Shutdown hook error (ignored): %s", _e)
+
+    # Stop long-running autonomous loops first (signal then wait)
+    logger.info("Shutdown: stopping autonomous loops...")
+    for _name, _stopper in [
+        ("perpetual", perpetual.stop),
+        ("agent_swarm", agent_swarm.stop),
+        ("directive", directive.stop),
+        ("agent_network", agent_network.stop),
+        ("triggers", triggers.stop),
+        ("actuator", actuator.stop),
+        ("curiosity", curiosity.stop),
+        ("proactive", proactive.stop),
+        ("auto_loop", auto_loop.stop),
+        ("continuous_learning", continuous_learning.stop),
+        ("builder", builder.stop),
+        ("hedge_fund", hedge_fund.stop),
+    ]:
+        try:
+            _stopper()
+            logger.debug("Shutdown: stopped %s", _name)
+        except Exception as _e:
+            logger.warning("Shutdown: error stopping %s: %s", _name, _e)
+
+    # Cancel all tracked background asyncio tasks and await them
+    logger.info("Shutdown: cancelling %d background tasks...", len(bg_tasks))
     for t in bg_tasks:
         t.cancel()
     for t in bg_tasks:
         with contextlib.suppress(asyncio.CancelledError):
             await t
-    adaptive_tuner.stop()
-    outcome_registry.stop()
-    adaptive_config.stop()
+    _bg_loop_registry.clear()
+    logger.info("Shutdown: all background tasks cancelled")
+
+    # Stop remaining engines
+    logger.info("Shutdown: stopping remaining engines...")
+    for _name, _stopper in [
+        ("adaptive_tuner", adaptive_tuner.stop),
+        ("outcome_registry", outcome_registry.stop),
+        ("adaptive_config", adaptive_config.stop),
+        ("continuous_research", continuous_research.stop),
+        ("notifications", notifications.stop),
+        ("revenue_engine", revenue_engine.stop),
+        ("ecosystem", ecosystem.stop),
+        ("self_writing_code", self_writing_code.stop),
+        ("experiment_lab", experiment_lab.stop),
+        ("experience_memory", experience_memory.stop),
+        ("digest", digest.stop),
+        ("escalation", escalation.stop),
+        ("goal_engine", goal_engine.stop),
+        ("user_patterns", user_patterns.stop),
+        ("task_queue", task_queue.stop),
+        ("conversations", conversations.stop),
+        ("prediction_ledger", prediction_ledger.stop),
+        ("council_store", council_store.stop),
+        ("learning", learning.stop),
+        ("cost_tracker", cost_tracker.stop),
+        ("mem", mem.stop),
+        ("state_store", state_store.stop),
+    ]:
+        try:
+            _stopper()
+            logger.debug("Shutdown: stopped %s", _name)
+        except Exception as _e:
+            logger.warning("Shutdown: error stopping %s: %s", _name, _e)
+
     if embedding_service:
-        embedding_service.stop()
-    continuous_research.stop()
-    notifications.stop()
-    revenue_engine.stop()
-    ecosystem.stop()
-    self_writing_code.stop()
-    experiment_lab.stop()
-    experience_memory.stop()
-    digest.stop()
-    escalation.stop()
-    goal_engine.stop()
-    user_patterns.stop()
-    task_queue.stop()
-    conversations.stop()
-    prediction_ledger.stop()
-    council_store.stop()
-    learning.stop()
-    cost_tracker.stop()
-    mem.stop()
-    state_store.stop()
-    logger.info("=== ROOT v1.0.0 shut down cleanly ===")
+        try:
+            embedding_service.stop()
+        except Exception as _e:
+            logger.warning("Shutdown: error stopping embedding_service: %s", _e)
+
+    # Ensure all database connections are explicitly closed
+    logger.info("Shutdown: closing database connections...")
+    for _name, _engine in [
+        ("memory", mem),
+        ("experience_memory", experience_memory),
+        ("learning", learning),
+        ("goal_engine", goal_engine),
+        ("task_queue", task_queue),
+        ("hedge_fund", hedge_fund),
+        ("prediction_ledger", prediction_ledger),
+        ("directive", directive),
+        ("conversations", conversations),
+        ("state_store", state_store),
+        ("experiment_lab", experiment_lab),
+        ("self_writing_code", self_writing_code),
+        ("revenue_engine", revenue_engine),
+        ("escalation", escalation),
+        ("user_patterns", user_patterns),
+        ("digest", digest),
+        ("agent_network", agent_network),
+    ]:
+        try:
+            _engine.close()
+        except Exception as _e:
+            logger.debug("Shutdown: close %s (ignored): %s", _name, _e)
+
+    _shutdown_elapsed = time.time() - _shutdown_ts
+    logger.info("=== ROOT v1.0.0 shut down cleanly in %.1fs ===", _shutdown_elapsed)
 
 
 # ── App ────────────────────────────────────────────────────────
@@ -1360,6 +1504,45 @@ _fastapi_app = FastAPI(
     redoc_url="/redoc",
     lifespan=lifespan,
 )
+
+
+# ── Global Exception Handlers ─────────────────────────────────
+
+
+@_fastapi_app.exception_handler(Exception)
+async def _global_exception_handler(request: Request, exc: Exception):
+    """Catch-all for unhandled exceptions — returns structured JSON instead of raw 500."""
+    import traceback
+    logger.error(
+        "Unhandled exception on %s %s: %s",
+        request.method,
+        request.url.path,
+        exc,
+        exc_info=True,
+    )
+    return JSONResponse(
+        status_code=500,
+        content={
+            "error": "internal_server_error",
+            "message": "An unexpected error occurred",
+            "path": request.url.path,
+        },
+    )
+
+
+@_fastapi_app.exception_handler(RequestValidationError)
+async def _validation_exception_handler(request: Request, exc: RequestValidationError):
+    """Return structured JSON for request validation failures instead of default 422."""
+    return JSONResponse(
+        status_code=422,
+        content={
+            "error": "validation_error",
+            "message": "Request validation failed",
+            "details": exc.errors(),
+            "path": request.url.path,
+        },
+    )
+
 
 _fastapi_app.add_middleware(
     CORSMiddleware,
@@ -1407,9 +1590,28 @@ _fastapi_app.include_router(scenarios_routes.router)
 _fastapi_app.include_router(councils_routes.router)
 _fastapi_app.include_router(agi_routes.router)
 _fastapi_app.include_router(perpetual_routes.router)
+_fastapi_app.include_router(a2a_routes.router)
 
 
-# Health check
+# ── MCP Server ────────────────────────────────────────────────────
+# Exposes all FastAPI routes as MCP tools so any MCP client
+# (Claude Desktop, VS Code Copilot, Cursor, etc.) can discover
+# and invoke ROOT's capabilities.
+try:
+    from fastapi_mcp import FastApiMCP
+
+    _mcp = FastApiMCP(
+        _fastapi_app,
+        name="ROOT Intelligence Civilization",
+        description="ASTRA-ROOT: 162+ AI agents, memory, trading, autonomous loops, and more.",
+    )
+    _mcp.mount_sse()
+    logger.info("MCP server: mounted at /mcp (SSE transport, all API routes exposed as MCP tools)")
+except ImportError:
+    logger.info("MCP server: disabled (fastapi-mcp not installed)")
+
+
+# Health check (shallow — fast, no external calls)
 @_fastapi_app.get("/api/health")
 async def health():
     return {
@@ -1419,12 +1621,130 @@ async def health():
     }
 
 
+# Deep health check — verifies databases, LLM, and background loop liveness
+@_fastapi_app.get("/api/health/deep")
+async def health_deep(request: Request):
+    """
+    Deep system health check.
+
+    Checks:
+    - All SQLite database connections (SELECT 1)
+    - LLM provider availability (reports configured providers)
+    - Background loop liveness (done/cancelled = degraded)
+    - Core engine availability (memory, learning, agents)
+
+    Returns 200 if healthy, 503 if any critical component is degraded.
+    """
+    import sqlite3
+    from pathlib import Path
+
+    checks: dict[str, dict] = {}
+    overall_healthy = True
+
+    # ── Database checks ───────────────────────────────────────
+    _data_dir = Path(__file__).parent.parent / "data"
+    _dbs = [
+        "memory.db", "conversations.db", "learning.db", "hedge_fund.db",
+        "state.db", "task_queue.db", "goals.db", "predictions.db",
+        "experience.db", "experiments.db", "self_code.db", "revenue.db",
+        "escalation.db", "user_patterns.db", "costs.db", "outcomes.db",
+        "adaptive_config.db", "vectors.db", "councils.db", "directives.db",
+    ]
+    db_results: dict[str, str] = {}
+    for db_name in _dbs:
+        db_path = _data_dir / db_name
+        if not db_path.exists():
+            db_results[db_name] = "missing"
+            continue
+        try:
+            con = sqlite3.connect(str(db_path), timeout=2.0)
+            con.execute("SELECT 1")
+            con.close()
+            db_results[db_name] = "ok"
+        except Exception as _e:
+            db_results[db_name] = f"error: {_e}"
+            overall_healthy = False
+
+    checks["databases"] = {
+        "status": "ok" if all(v == "ok" for v in db_results.values()) else "degraded",
+        "details": db_results,
+    }
+    if checks["databases"]["status"] != "ok":
+        overall_healthy = False
+
+    # ── LLM availability ──────────────────────────────────────
+    llm_router = getattr(request.app.state, "llm_router", None)
+    if llm_router is not None:
+        try:
+            providers = list(getattr(llm_router, "_providers", {}).keys())
+            checks["llm"] = {
+                "status": "ok" if providers else "degraded",
+                "providers": providers,
+                "count": len(providers),
+            }
+            if not providers:
+                overall_healthy = False
+        except Exception as _e:
+            checks["llm"] = {"status": "error", "detail": str(_e)}
+            overall_healthy = False
+    else:
+        checks["llm"] = {"status": "offline", "detail": "no llm_router attached"}
+
+    # ── Background loop liveness ──────────────────────────────
+    loop_statuses: dict[str, str] = {}
+    for name, task in _bg_loop_registry.items():
+        if task.done():
+            exc = task.exception() if not task.cancelled() else None
+            loop_statuses[name] = f"dead (exc={exc})" if exc else "cancelled"
+        else:
+            loop_statuses[name] = "running"
+
+    loops_healthy = all(s == "running" for s in loop_statuses.values())
+    checks["background_loops"] = {
+        "status": "ok" if loops_healthy else "degraded",
+        "total": len(loop_statuses),
+        "running": sum(1 for s in loop_statuses.values() if s == "running"),
+        "details": loop_statuses,
+    }
+    if not loops_healthy:
+        overall_healthy = False
+
+    # ── Core engine checks ────────────────────────────────────
+    engines: dict[str, str] = {}
+    _engine_attrs = [
+        "memory", "learning", "registry", "plugins", "brain",
+        "goal_engine", "proactive", "hedge_fund", "revenue_engine",
+        "experience_memory", "experiment_lab", "directive", "agent_network",
+    ]
+    for attr in _engine_attrs:
+        engines[attr] = "ok" if hasattr(request.app.state, attr) else "missing"
+    checks["engines"] = {
+        "status": "ok" if all(v == "ok" for v in engines.values()) else "degraded",
+        "details": engines,
+    }
+
+    # ── Uptime ────────────────────────────────────────────────
+    startup_time = getattr(request.app.state, "startup_time", None)
+    uptime_seconds = round(time.time() - startup_time, 1) if startup_time else None
+
+    result = {
+        "status": "healthy" if overall_healthy else "degraded",
+        "version": VERSION,
+        "mode": getattr(request.app.state, "mode", "unknown"),
+        "uptime_seconds": uptime_seconds,
+        "checks": checks,
+    }
+    status_code = 200 if overall_healthy else 503
+    return JSONResponse(content=result, status_code=status_code)
+
+
 # Static files (dashboard)
 _fastapi_app.mount("/", StaticFiles(directory="backend/static", html=True), name="static")
 
 
 # ── Pure ASGI middleware wrapping ────────────────────────────────
-app = SecurityHeaders(RateLimiter(APIKeyAuth(_fastapi_app)))
+# Stack (outermost → innermost): RequestID → SecurityHeaders → RateLimiter → APIKeyAuth → FastAPI
+app = RequestIDMiddleware(SecurityHeaders(RateLimiter(APIKeyAuth(_fastapi_app))))
 
 
 if __name__ == "__main__":

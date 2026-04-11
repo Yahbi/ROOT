@@ -117,6 +117,11 @@ class AgentNetwork:
             self._conn.close()
             self._conn = None
 
+    def close(self) -> None:
+        """Close the database connection."""
+        if hasattr(self, '_conn') and self._conn:
+            self._conn.close()
+
     @property
     def conn(self) -> sqlite3.Connection:
         if self._conn is None:
@@ -215,9 +220,12 @@ class AgentNetwork:
 
         # Publish to bus
         if self._bus:
-            asyncio.get_event_loop().call_soon(
-                lambda: asyncio.ensure_future(self._publish_insight(insight))
-            )
+            try:
+                loop = asyncio.get_running_loop()
+                task = loop.create_task(self._publish_insight(insight))
+                task.add_done_callback(lambda t: t.exception() if not t.cancelled() else None)
+            except RuntimeError:
+                logger.debug("No running event loop for insight publishing")
 
         return insight
 

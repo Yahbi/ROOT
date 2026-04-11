@@ -30,16 +30,16 @@ class TestCivilizationDefinitions:
         assert len(ALL_DIVISIONS) == 10
 
     def test_division_sizes(self):
-        assert len(STRATEGY_COUNCIL) == 15
-        assert len(RESEARCH_DIVISION) == 20
-        assert len(ENGINEERING_DIVISION) == 30
-        assert len(DATA_DIVISION) == 15
-        assert len(LEARNING_DIVISION) == 20
-        assert len(ECONOMIC_ENGINE) == 20
-        assert len(CONTENT_ENGINE) == 10
-        assert len(AUTOMATION_ENGINE) == 10
-        assert len(INFRASTRUCTURE_OPS) == 10
-        assert len(GOVERNANCE_SAFETY) == 10
+        assert len(STRATEGY_COUNCIL) == 20
+        assert len(RESEARCH_DIVISION) == 25
+        assert len(ENGINEERING_DIVISION) == 35
+        assert len(DATA_DIVISION) == 20
+        assert len(LEARNING_DIVISION) == 25
+        assert len(ECONOMIC_ENGINE) == 25
+        assert len(CONTENT_ENGINE) == 15
+        assert len(AUTOMATION_ENGINE) == 15
+        assert len(INFRASTRUCTURE_OPS) == 15
+        assert len(GOVERNANCE_SAFETY) == 15
 
     def test_all_agents_have_ids(self):
         for agent in get_all_civilization_agents():
@@ -63,7 +63,7 @@ class TestCivilizationDefinitions:
 
     def test_get_division(self):
         strategy = get_division("Strategy Council")
-        assert len(strategy) == 15
+        assert len(strategy) == 20
 
     def test_get_nonexistent_division(self):
         assert get_division("Nonexistent") == []
@@ -104,7 +104,7 @@ class TestRegistryIntegration:
     def test_list_division_agents(self):
         registry = build_default_registry()
         strategy = registry.list_division("Strategy Council")
-        assert len(strategy) == 15
+        assert len(strategy) == 20
 
     def test_find_by_capability(self):
         registry = build_default_registry()

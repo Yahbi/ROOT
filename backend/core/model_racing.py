@@ -10,6 +10,7 @@ from __future__ import annotations
 import asyncio
 import re
 import time
+from collections import deque
 from dataclasses import dataclass, field
 from typing import Any
 
@@ -51,11 +52,14 @@ _HEDGING_PHRASES = re.compile(
 class ModelRacing:
     """Race multiple LLM providers in parallel and return the best response."""
 
+    _MAX_PROVIDERS = 50  # Upper bound on tracked providers (finite set in practice)
+    _MAX_SCORE_HISTORY = 500  # Max score samples kept per provider
+
     def __init__(self, llm_router: Any = None) -> None:
         self._llm_router = llm_router
         self._total_races = 0
         self._provider_wins: dict[str, int] = {}
-        self._avg_scores: dict[str, list[float]] = {}
+        self._avg_scores: dict[str, deque[float]] = {}
 
     # ------------------------------------------------------------------
     # Public API
@@ -123,7 +127,17 @@ class ModelRacing:
             self._provider_wins.get(winner.provider, 0) + 1
         )
         for c in ranked:
-            self._avg_scores.setdefault(c.provider, []).append(c.score)
+            if c.provider not in self._avg_scores:
+                self._avg_scores[c.provider] = deque(maxlen=self._MAX_SCORE_HISTORY)
+            self._avg_scores[c.provider].append(c.score)
+
+        # Prune provider tracking dicts if they somehow exceed the cap
+        if len(self._provider_wins) > self._MAX_PROVIDERS:
+            # Keep providers with the most wins
+            sorted_providers = sorted(self._provider_wins, key=self._provider_wins.get, reverse=True)  # type: ignore[arg-type]
+            for k in sorted_providers[self._MAX_PROVIDERS:]:
+                del self._provider_wins[k]
+                self._avg_scores.pop(k, None)
 
         return RaceResult(
             winner=winner,

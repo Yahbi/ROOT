@@ -1,0 +1,152 @@
+[
+  {
+    "content": "The Black-Scholes formula for a European call option is C = S*N(d1) - K*e^(-rT)*N(d2), where d1 = (ln(S/K) + (r + sigma^2/2)*T) / (sigma*sqrt(T)) and d2 = d1 - sigma*sqrt(T). S is spot price, K is strike, r is risk-free rate, T is time to expiration, sigma is volatility, and N() is the cumulative standard normal distribution.",
+    "type": "fact",
+    "tags": ["black_scholes", "options_pricing", "european_options"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Delta measures option price sensitivity to underlying price changes: Delta_call = N(d1) ranges from 0 to 1, Delta_put = N(d1) - 1 ranges from -1 to 0. ATM options have delta ~0.50. Delta also approximates the probability of expiring in-the-money. A portfolio with total delta = 0 is delta-neutral, hedged against small price moves.",
+    "type": "fact",
+    "tags": ["delta", "greeks", "options_sensitivity"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Gamma measures the rate of change of delta per $1 move in the underlying: Gamma = N'(d1) / (S * sigma * sqrt(T)), where N'(d1) is the standard normal PDF. Gamma peaks for ATM options near expiration, creating 'gamma risk' for short options positions. Long gamma profits from large moves; short gamma profits from stability.",
+    "type": "fact",
+    "tags": ["gamma", "greeks", "convexity"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Theta measures daily time decay: Theta_call = -(S*N'(d1)*sigma)/(2*sqrt(T)) - r*K*e^(-rT)*N(d2). ATM options decay fastest, accelerating as expiration approaches (proportional to 1/sqrt(T)). A 30-DTE ATM option loses roughly twice as much daily theta as a 120-DTE option of the same strike, all else equal.",
+    "type": "fact",
+    "tags": ["theta", "greeks", "time_decay"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Vega measures sensitivity to implied volatility changes: Vega = S*sqrt(T)*N'(d1). All options have positive vega (value increases with volatility). ATM options have the highest vega, and longer-dated options have more vega than shorter-dated. A 1% IV increase on an option with vega = 0.15 adds $0.15 to the option's price.",
+    "type": "fact",
+    "tags": ["vega", "greeks", "volatility_sensitivity"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Rho measures sensitivity to interest rate changes: Rho_call = K*T*e^(-rT)*N(d2), Rho_put = -K*T*e^(-rT)*N(-d2). Rho is typically the least impactful Greek for short-dated options but becomes significant for LEAPS (1-2 year options). A 1% rate increase adds approximately rho dollars to the option price.",
+    "type": "fact",
+    "tags": ["rho", "greeks", "interest_rate_sensitivity"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Put-call parity for European options states C - P = S - K*e^(-rT), meaning a call and put at the same strike and expiry are linked by the forward price. Violations of put-call parity create arbitrage: if C - P > S - K*e^(-rT), sell the call, buy the put, buy the stock, and borrow K*e^(-rT) for a risk-free profit.",
+    "type": "fact",
+    "tags": ["put_call_parity", "arbitrage", "options_fundamentals"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "The implied volatility surface maps IV across strikes (moneyness) and expirations. The skew dimension shows OTM puts typically trade at higher IV than OTM calls (equity skew) due to crash protection demand. The term structure dimension shows near-term IV reacting more to events while long-term IV is more stable, typically 15-25% for SPX.",
+    "type": "fact",
+    "tags": ["iv_surface", "volatility_skew", "term_structure"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "The volatility smile shows IV is lowest ATM and increases for both OTM puts and OTM calls, forming a U-shape. This contradicts Black-Scholes which assumes constant volatility. Post-1987 crash, the equity smile became a skew (smirk) with much higher IV on the put side. Currency options maintain a more symmetric smile due to bidirectional tail risk.",
+    "type": "fact",
+    "tags": ["volatility_smile", "skew", "market_microstructure"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "An iron condor sells an OTM put spread and an OTM call spread simultaneously: sell put at K1, buy put at K2 (K2<K1), sell call at K3, buy call at K4 (K4>K3) where K1<spot<K3. Max profit is net credit received. Max loss is width of wider spread minus credit. Optimal entry: 30-45 DTE, sell 16-delta strikes (~1 standard deviation), targeting 1/3 credit-to-width ratio.",
+    "type": "skill",
+    "tags": ["iron_condor", "spread_strategy", "neutral"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "A butterfly spread combines a bull spread and bear spread sharing a middle strike: buy 1 call at K1, sell 2 calls at K2, buy 1 call at K3 (K1<K2<K3, equidistant). Max profit = (K2-K1) - net debit, realized only if underlying expires exactly at K2. Cost is low (typically $0.50-$2.00), making it a high-reward, low-probability play for pinning near a strike at expiration.",
+    "type": "skill",
+    "tags": ["butterfly_spread", "directional", "pin_risk"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Calendar spreads (time spreads) sell a near-term option and buy a longer-term option at the same strike. Profit comes from differential theta decay: the short option decays faster. Max profit occurs when the underlying is at the strike at near-term expiration. Calendar spreads are long vega: they benefit from IV increases and lose from IV decreases across the term structure.",
+    "type": "skill",
+    "tags": ["calendar_spread", "time_spread", "theta_strategy"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Ratio spreads buy N options at one strike and sell M options (M>N) at another strike in the same expiration. A 1x2 call ratio spread buys 1 ATM call and sells 2 OTM calls, often for zero cost. This profits from moderate upside moves but has unlimited risk above the upper breakeven. Adding a further OTM long call converts it to a broken-wing butterfly with capped risk.",
+    "type": "skill",
+    "tags": ["ratio_spread", "asymmetric_payoff", "advanced_strategy"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "A risk reversal simultaneously sells an OTM put and buys an OTM call (bullish) or sells an OTM call and buys an OTM put (bearish). The bullish version mimics long stock exposure with no upfront capital if the premiums offset. It creates a synthetic leveraged position with defined downside risk at the short put strike and unlimited upside from the long call.",
+    "type": "skill",
+    "tags": ["risk_reversal", "synthetic_position", "directional"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Synthetic long stock = long call + short put at the same strike and expiration. Put-call parity guarantees this replicates stock ownership with identical delta (~1.0). Advantages: lower capital requirement (margin vs full stock price), no borrowing costs for short synthetics, and ability to create positions on hard-to-borrow stocks.",
+    "type": "fact",
+    "tags": ["synthetic_positions", "put_call_parity", "replication"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Assignment risk is highest for short ITM American-style options near ex-dividend dates. Early exercise of calls is rational when the time value remaining is less than the dividend amount. Short put assignment occurs when extrinsic value approaches zero (deep ITM). The cost of assignment includes losing remaining time value and potential margin impact from unexpected stock positions.",
+    "type": "learning",
+    "tags": ["assignment_risk", "early_exercise", "american_options"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Early exercise of American puts is optimal when the interest earned on the strike price (from selling stock at K) exceeds the remaining time value. For deep ITM puts with minimal time value, early exercise captures the interest on K*e^(r*T) sooner. This is why American put prices diverge from European puts primarily for deep ITM, near-expiration contracts.",
+    "type": "fact",
+    "tags": ["early_exercise", "american_put", "optimal_exercise"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Options on futures (e.g., /ES, /CL, /GC options) differ from equity options in that the underlying is a futures contract, not the spot asset. The Black model replaces Black-Scholes: C = e^(-rT)*(F*N(d1) - K*N(d2)) where F is the futures price. Settlement can be into the futures position (physical) or cash, depending on the contract specification.",
+    "type": "fact",
+    "tags": ["futures_options", "black_model", "settlement"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "The VIX is calculated from SPX option prices as the square root of the 30-day expected variance: VIX = 100 * sqrt((2/T) * sum(delta_Ki/Ki^2 * e^(rT) * mid(Ki)) - (F/K0 - 1)^2 / T). It uses a strip of OTM puts and calls weighted by 1/K^2. VIX of 20 implies expected daily SPX moves of ~1.26% (20/sqrt(252)).",
+    "type": "fact",
+    "tags": ["vix", "implied_volatility", "variance_swap"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Charm (delta decay) measures how delta changes with time: Charm = -dDelta/dT. As expiration approaches, OTM options see delta decay toward 0 and ITM options see delta decay toward 1.0 (calls) or -1.0 (puts). This matters for delta-hedging over weekends: a Friday delta-neutral portfolio may be off-delta by Monday open due to charm alone.",
+    "type": "fact",
+    "tags": ["charm", "higher_order_greeks", "delta_decay"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Vanna measures how delta changes with volatility: Vanna = dDelta/dVol = dVega/dSpot. During volatility crushes (e.g., after earnings), OTM options lose delta rapidly through vanna. Dealer hedging of vanna exposure creates systematic flows: when dealers are short vanna, a vol spike forces them to sell stock (delta decreases on their short puts), amplifying sell-offs.",
+    "type": "learning",
+    "tags": ["vanna", "dealer_hedging", "options_flow"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Volga (vomma) measures how vega changes with volatility: Volga = dVega/dVol. OTM options have high volga because their vega increases sharply as volatility rises. This creates a convexity premium: OTM options are overpriced relative to Black-Scholes because buyers pay for this favorable convexity, contributing to the observed volatility smile.",
+    "type": "fact",
+    "tags": ["volga", "vomma", "volatility_convexity"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Gamma scalping involves buying options (long gamma) and continuously delta-hedging by selling the underlying when it rises and buying when it falls. Profit comes from realized volatility exceeding implied volatility: P&L = 0.5 * Gamma * (RV^2 - IV^2) * S^2 * T. If realized vol > implied vol, gamma scalping profits; otherwise theta decay dominates and the position loses.",
+    "type": "skill",
+    "tags": ["gamma_scalping", "volatility_trading", "delta_hedging"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "The variance risk premium (VRP) is the persistent overpricing of implied volatility vs realized volatility, averaging 3-5 vol points for SPX. This means selling options (short volatility) is profitable on average. The VRP compensates option sellers for bearing jump/crash risk. Strategies exploiting VRP include selling strangles, iron condors, and variance swaps.",
+    "type": "learning",
+    "tags": ["variance_risk_premium", "implied_vs_realized", "vol_selling"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Dispersion trading exploits the correlation risk premium by selling index options (high IV due to correlation premium) and buying component stock options (lower aggregate IV). If realized correlation is lower than implied correlation, index vol declines relative to component vol, profiting the trade. The strategy effectively shorts correlation: profit when stocks move independently, lose when they crash together.",
+    "type": "skill",
+    "tags": ["dispersion_trading", "correlation", "index_vs_components"],
+    "source": "trading_knowledge"
+  }
+]

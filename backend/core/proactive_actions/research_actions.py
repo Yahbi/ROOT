@@ -486,8 +486,7 @@ async def correlate_projects(
                     context={"projects": summary.get("total_projects", 0)},
                 )
             except Exception:
-                pass
-
+                logger.debug("Failed to record cross-project correlation as experience", exc_info=True)
         return f"Project correlator: {correlation[:200]}"
 
     except Exception as exc:

@@ -31,7 +31,8 @@ class TestDeepSeekConfig:
     def test_fast_tier_is_chat(self):
         assert MODEL_TIERS["fast"] == "deepseek-chat"
 
-    def test_requires_api_key(self):
+    def test_requires_api_key(self, monkeypatch):
+        monkeypatch.setattr("backend.services.llm_deepseek.DEEPSEEK_API_KEY", "")
         with pytest.raises(ValueError, match="DEEPSEEK_API_KEY"):
             DeepSeekLLMService(api_key="")
 

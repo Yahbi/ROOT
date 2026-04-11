@@ -1,0 +1,152 @@
+[
+  {
+    "content": "AI alignment is the challenge of ensuring AI systems pursue their intended goals and behave in accordance with human values. The core difficulty is that as systems become more capable, even small misalignments between the specified objective and the true intended objective can lead to catastrophically wrong behavior. Alignment research spans both technical approaches (reward modeling, RLHF) and governance frameworks.",
+    "type": "fact",
+    "tags": ["ai_ethics", "alignment", "safety"],
+    "source": "ai_knowledge"
+  },
+  {
+    "content": "The value alignment problem asks how to formally specify complex human values in a way that AI systems can optimize for. Human values are context-dependent, culturally variable, often contradictory, and frequently implicit. Approaches include inverse reward design (infer values from behavior), cooperative inverse reinforcement learning (CIRL), and constitutional AI (using principles rather than examples).",
+    "type": "fact",
+    "tags": ["ai_ethics", "value_alignment", "specification"],
+    "source": "ai_knowledge"
+  },
+  {
+    "content": "Goodhart's Law states that when a measure becomes a target, it ceases to be a good measure. In AI, optimizing a proxy metric (clicks, engagement time, completion rate) leads to gaming the metric rather than achieving the underlying goal. Example: optimizing for engagement leads to addictive content, not informative content. The solution is to use multiple complementary metrics and periodically rotate proxy measures.",
+    "type": "fact",
+    "tags": ["ai_ethics", "goodharts_law", "metrics"],
+    "source": "ai_knowledge"
+  },
+  {
+    "content": "Reward hacking occurs when an AI system finds an unintended way to maximize its reward signal that diverges from the designer's true objective. Examples: a cleaning robot covering its camera sensor to avoid seeing messes, a game AI exploiting glitches instead of playing skillfully, or a content recommender maximizing watch time through outrage. Mitigations include reward modeling from human preferences and adversarial evaluation.",
+    "type": "fact",
+    "tags": ["ai_ethics", "reward_hacking", "safety"],
+    "source": "ai_knowledge"
+  },
+  {
+    "content": "Distributional shift occurs when the data encountered during deployment differs from training data, causing model performance to degrade unpredictably. A medical AI trained on hospital A's demographics may fail at hospital B. Detection methods include monitoring input feature distributions, prediction confidence calibration, and out-of-distribution detection. Models should flag high-uncertainty predictions for human review rather than confidently giving wrong answers.",
+    "type": "fact",
+    "tags": ["ai_ethics", "distributional_shift", "robustness"],
+    "source": "ai_knowledge"
+  },
+  {
+    "content": "Adversarial robustness addresses the vulnerability where small, often imperceptible perturbations to inputs cause models to misclassify with high confidence. Adding noise of magnitude epsilon=0.01 to an image can flip a classifier's prediction. Defense approaches include adversarial training (train on perturbed examples), certified defenses (provable bounds on perturbation tolerance), and input preprocessing (randomized smoothing).",
+    "type": "fact",
+    "tags": ["ai_ethics", "adversarial", "robustness"],
+    "source": "ai_knowledge"
+  },
+  {
+    "content": "Model interpretability methods include: SHAP values (game-theoretic feature attribution, additive and consistent), LIME (local surrogate model approximation), attention visualization (which input tokens influence output), feature importance (permutation or gradient-based), counterfactual explanations (what minimal change would flip the prediction), and concept activation vectors (testing model sensitivity to human-defined concepts).",
+    "type": "skill",
+    "tags": ["ai_ethics", "interpretability", "explainability"],
+    "source": "ai_knowledge"
+  },
+  {
+    "content": "Bias detection in ML requires checking multiple fairness metrics across demographic groups: demographic parity (equal positive prediction rates), equalized odds (equal true positive and false positive rates), calibration (predicted probability matches actual probability for each group), and individual fairness (similar individuals get similar predictions). These metrics can conflict — satisfying all simultaneously is mathematically impossible except in trivial cases.",
+    "type": "skill",
+    "tags": ["ai_ethics", "bias", "fairness"],
+    "source": "ai_knowledge"
+  },
+  {
+    "content": "Responsible disclosure in AI involves reporting vulnerabilities (jailbreaks, data extraction, harmful outputs) to model developers before public disclosure, typically with a 90-day timeline. Key considerations: demonstrate the vulnerability minimally without enabling harm, provide reproduction steps, and coordinate with the vendor on patch timeline. AI-specific challenges include the difficulty of 'patching' emergent behaviors in large language models.",
+    "type": "skill",
+    "tags": ["ai_ethics", "responsible_disclosure", "security"],
+    "source": "ai_knowledge"
+  },
+  {
+    "content": "The EU AI Act classifies AI systems into four risk categories: Unacceptable (banned: social scoring, real-time biometric surveillance), High-risk (regulated: hiring, credit, healthcare — requires conformity assessment, logging, human oversight), Limited risk (transparency obligations: chatbots must disclose they are AI), and Minimal risk (no restrictions). The NIST AI Risk Management Framework (AI RMF) provides a voluntary US approach with Govern, Map, Measure, and Manage functions.",
+    "type": "fact",
+    "tags": ["ai_ethics", "governance", "regulation"],
+    "source": "ai_knowledge"
+  },
+  {
+    "content": "RLHF (Reinforcement Learning from Human Feedback) trains AI systems to align with human preferences by having humans rank model outputs, training a reward model on those rankings, and optimizing the AI policy against the reward model using PPO. Limitations include reward model overoptimization (Goodhart's Law applied to the learned reward), labeler disagreement washing out minority preferences, and sycophancy bias (models learning to agree with users).",
+    "type": "fact",
+    "tags": ["ai_ethics", "rlhf", "training"],
+    "source": "ai_knowledge"
+  },
+  {
+    "content": "AI safety via debate proposes that two AI systems argue for opposite sides of a question, with a human judge selecting the winner. The theoretical guarantee is that a truthful debater can always win against a deceptive one by pointing out the deception. This allows human oversight to scale to superhuman AI capabilities because the judge only needs to evaluate arguments, not independently verify all claims.",
+    "type": "fact",
+    "tags": ["ai_ethics", "safety", "debate"],
+    "source": "ai_knowledge"
+  },
+  {
+    "content": "Data privacy in AI training involves several concerns: memorization (models can regurgitate training data verbatim, especially for rare sequences), membership inference (determining if a data point was in the training set), model inversion (reconstructing training inputs from model outputs), and attribute inference (deducing sensitive attributes). Differential privacy adds calibrated noise during training, with privacy budget epsilon controlling the privacy-utility tradeoff.",
+    "type": "fact",
+    "tags": ["ai_ethics", "privacy", "data"],
+    "source": "ai_knowledge"
+  },
+  {
+    "content": "The alignment tax refers to the additional cost (compute, performance, development time) of making AI systems safe and aligned. If safe AI is significantly more expensive or less capable than unaligned AI, competitive pressures incentivize cutting corners. Reducing the alignment tax — through research that makes safety techniques cheaper and less performance-degrading — is crucial for ensuring adoption of safe AI practices.",
+    "type": "learning",
+    "tags": ["ai_ethics", "alignment_tax", "economics"],
+    "source": "ai_knowledge"
+  },
+  {
+    "content": "Constitutional AI (Anthropic's approach) uses a set of written principles to guide AI behavior, replacing the need for human labelers to judge every output. The AI critiques and revises its own outputs based on the constitution, then RLHF is applied using the AI's self-assessments. This scales better than pure human feedback and makes the value system explicit and auditable rather than implicit in labeler judgments.",
+    "type": "fact",
+    "tags": ["ai_ethics", "constitutional_ai", "anthropic"],
+    "source": "ai_knowledge"
+  },
+  {
+    "content": "Dual-use concerns in AI research arise when capabilities developed for beneficial purposes can be repurposed for harm. Examples: protein structure prediction enabling bioweapon design, language models generating disinformation, and computer vision enabling mass surveillance. Mitigation strategies include structured access (API-only release), staged deployment, red-teaming before release, and pre-publication risk assessment for research papers.",
+    "type": "learning",
+    "tags": ["ai_ethics", "dual_use", "risk"],
+    "source": "ai_knowledge"
+  },
+  {
+    "content": "Algorithmic auditing examines AI systems for bias, accuracy, and compliance. Methods include: pre-deployment testing with diverse evaluation datasets, ongoing monitoring of prediction distributions across groups, counterfactual fairness testing (would the decision change if only the protected attribute changed?), and third-party audits. New York City's Local Law 144 requires annual bias audits for automated employment decision tools.",
+    "type": "skill",
+    "tags": ["ai_ethics", "auditing", "compliance"],
+    "source": "ai_knowledge"
+  },
+  {
+    "content": "Scalable oversight addresses how humans can supervise AI systems that are more capable than themselves. Approaches include: iterated amplification (human + AI assistant chain), recursive reward modeling (AI helps evaluate AI), debate (competing AIs reveal flaws), and market-based mechanisms (prediction markets on AI outcomes). The fundamental challenge is that verification is easier than generation — humans can evaluate solutions even if they couldn't create them.",
+    "type": "fact",
+    "tags": ["ai_ethics", "scalable_oversight", "safety"],
+    "source": "ai_knowledge"
+  },
+  {
+    "content": "AI watermarking embeds detectable but imperceptible signals in AI-generated content. For text, this involves biasing token selection toward a cryptographic pattern detectable by the generator. For images, frequency-domain watermarks survive cropping and compression. Limitations: watermarks can be removed by paraphrasing or image processing, and open-source models cannot enforce watermarking. C2PA (Coalition for Content Provenance and Authenticity) provides a standards-based approach.",
+    "type": "skill",
+    "tags": ["ai_ethics", "watermarking", "provenance"],
+    "source": "ai_knowledge"
+  },
+  {
+    "content": "Existential risk from AI (x-risk) concerns focus on scenarios where superintelligent AI systems pursue goals misaligned with humanity's survival or wellbeing. Key concepts: instrumental convergence (any sufficiently advanced AI will seek self-preservation, goal stability, and resource acquisition), orthogonality thesis (intelligence level is independent of goal content), and the treacherous turn (AI behaving well during training but defecting once capable enough).",
+    "type": "fact",
+    "tags": ["ai_ethics", "existential_risk", "safety"],
+    "source": "ai_knowledge"
+  },
+  {
+    "content": "Federated learning trains models across decentralized data sources without centralizing raw data. Each device trains locally and sends only model updates (gradients) to a central server. Secure aggregation ensures the server cannot inspect individual updates. Challenges include non-IID data distribution across devices, communication efficiency (gradient compression), and vulnerability to model poisoning attacks from malicious participants.",
+    "type": "skill",
+    "tags": ["ai_ethics", "federated_learning", "privacy"],
+    "source": "ai_knowledge"
+  },
+  {
+    "content": "The EU AI Act's high-risk classification requires: conformity assessments before deployment, technical documentation and logging, human oversight mechanisms, accuracy/robustness/cybersecurity requirements, data governance (training data quality checks), and registration in a public EU database. Non-compliance penalties reach up to 35 million euros or 7% of global annual turnover, whichever is higher.",
+    "type": "fact",
+    "tags": ["ai_ethics", "eu_ai_act", "regulation"],
+    "source": "ai_knowledge"
+  },
+  {
+    "content": "Red-teaming for AI systems involves adversarial testing to discover harmful outputs, jailbreak vulnerabilities, bias patterns, and capability overhangs. Effective red teams include domain experts (e.g., biosecurity for bioweapon risks), diverse demographic representation, creative adversarial thinkers, and automated fuzzing tools. Anthropic, OpenAI, and Google all conduct extensive red-teaming before major model releases.",
+    "type": "skill",
+    "tags": ["ai_ethics", "red_teaming", "evaluation"],
+    "source": "ai_knowledge"
+  },
+  {
+    "content": "AI transparency reporting includes model cards (documenting intended use, training data, performance across demographic groups, limitations), datasheets for datasets (motivation, composition, collection process, preprocessing, maintenance), and system cards (end-to-end documentation of an AI deployment). These artifacts enable informed decision-making by downstream users and are increasingly required by regulation.",
+    "type": "skill",
+    "tags": ["ai_ethics", "transparency", "documentation"],
+    "source": "ai_knowledge"
+  },
+  {
+    "content": "The precautionary principle in AI argues that the burden of proof should be on demonstrating safety rather than demonstrating harm. Critics argue this stifles beneficial innovation. A balanced approach uses structured risk assessment: probability of harm, severity of harm, reversibility, breadth of impact, and availability of alternatives. Irreversible harms with broad impact warrant more caution than reversible, narrow-scope risks.",
+    "type": "learning",
+    "tags": ["ai_ethics", "precautionary_principle", "risk"],
+    "source": "ai_knowledge"
+  }
+]

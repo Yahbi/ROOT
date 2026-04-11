@@ -79,4 +79,7 @@ class ChatMessage(BaseModel):
     timestamp: Optional[str] = None
     total_messages_exchanged: int = 0
     total_tools_executed: int = 0
-    routing_reasoning: str = ""      # ASTRA's reasoning for the route
+    routing_reasoning: str = ""         # ASTRA's short reasoning for the route
+    routing_explanation: str = ""       # Human-readable explanation of routing decision
+    routing_confidence: float = 1.0     # ASTRA's confidence in the routing (0.0–1.0)
+    response_quality_score: float = 0.0 # Self-evaluated quality score (0.0–1.0)

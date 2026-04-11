@@ -13,6 +13,7 @@ ASTRA is LLM-powered with full plugin/tool access.
 from __future__ import annotations
 
 import asyncio
+import hashlib
 import json
 import logging
 import time
@@ -22,6 +23,13 @@ from typing import Any, Optional
 from backend.agents.connectors import sanitize_tool_output
 
 logger = logging.getLogger("root.connectors.astra")
+
+# Minimum routing confidence to trust the LLM route decision.
+# Below this threshold the router falls back to parallel multi-agent dispatch.
+_ROUTING_CONFIDENCE_THRESHOLD = 0.70
+
+# How many seconds a cached route remains valid (same query → same agents)
+_ROUTE_CACHE_TTL_SECONDS = 300  # 5 minutes
 
 _ASTRA_PROMPT = (
     "You are ASTRA — Yohan's AI Team Leader and Strategic Intelligence Core.\n"
@@ -142,6 +150,8 @@ class AstraConnector:
         self._learning: Any = None
         self._ecosystem: Any = None
         self._registry: Any = None
+        # Route cache: query_hash -> (timestamp, route_dict)
+        self._route_cache: dict[str, tuple[float, dict[str, Any]]] = {}
 
     def set_llm(self, llm: Any, plugins: Any) -> None:
         """Late-bind LLM and plugins (set after startup)."""
@@ -225,7 +235,7 @@ class AstraConnector:
                         return {"agent": "astra", "result": final, "messages_exchanged": msg_count + 1,
                                 "tools_executed": tool_count, "tools_used": tools_used}
                     except Exception:
-                        pass
+                        logger.debug("[astra] Final fast completion after timeout also failed", exc_info=True)
                 return {
                     "agent": "astra", "result": "ASTRA analysis timed out — LLM provider may be slow. Try again shortly.",
                     "messages_exchanged": msg_count, "tools_executed": tool_count,
@@ -373,26 +383,99 @@ class AstraConnector:
             logger.debug("Ecosystem routing context failed: %s", e)
             return ""
 
+    # ── Route cache helpers ─────────────────────────────────────
+
+    def _cache_key(self, user_message: str) -> str:
+        """Stable hash key for a user message (first 300 chars, lowercased)."""
+        normalized = user_message.lower().strip()[:300]
+        return hashlib.md5(normalized.encode()).hexdigest()
+
+    def _get_cached_route(self, user_message: str) -> Optional[dict[str, Any]]:
+        """Return a cached route decision if it exists and hasn't expired."""
+        key = self._cache_key(user_message)
+        entry = self._route_cache.get(key)
+        if entry is None:
+            return None
+        ts, route_dict = entry
+        if time.monotonic() - ts > _ROUTE_CACHE_TTL_SECONDS:
+            del self._route_cache[key]
+            return None
+        logger.debug("[astra] Route cache hit for '%s'", user_message[:60])
+        return dict(route_dict)  # return a copy
+
+    def _cache_route(self, user_message: str, route_dict: dict[str, Any]) -> None:
+        """Store a route decision in the cache. Evict oldest if > 200 entries."""
+        if len(self._route_cache) >= 200:
+            # Remove the oldest entry (dict insertion order in Python 3.7+)
+            oldest_key = next(iter(self._route_cache))
+            del self._route_cache[oldest_key]
+        self._route_cache[self._cache_key(user_message)] = (time.monotonic(), route_dict)
+
+    def _build_ambiguous_fallback(self, user_message: str) -> dict[str, Any]:
+        """When confidence is low, dispatch researcher + analyst in parallel."""
+        return {
+            "route": "multi",
+            "agent_ids": ["researcher", "analyst"],
+            "confidence": 0.5,
+            "subtasks": [
+                {"agent_id": "researcher",
+                 "task": f"Research thoroughly: {user_message}. Use web_search with multiple queries."},
+                {"agent_id": "analyst",
+                 "task": f"Analyze and evaluate: {user_message}. Use available tools."},
+            ],
+            "reasoning": "Low-confidence route — dispatching researcher + analyst in parallel for coverage",
+            "routing_explanation": (
+                "Query was ambiguous so ASTRA fell back to parallel researcher + analyst dispatch "
+                "to ensure broad coverage. Researcher gathers raw data while analyst evaluates it."
+            ),
+        }
+
     async def route_request(self, user_message: str, agents_desc: str) -> dict[str, Any]:
         """ASTRA decides how to route a request — which agents to dispatch.
 
-        Returns: {"route": "direct"|"delegate"|"multi", "agent_ids": [...],
-                  "subtasks": [{"agent_id": "...", "task": "..."}], "reasoning": "..."}
+        Enhancements over original:
+        - Route cache: identical queries reuse the last decision for up to 5 min
+        - Confidence score: LLM must return confidence ≥ 0.70 or route is escalated
+        - Ambiguous fallback: low-confidence queries use parallel researcher + analyst
+        - Routing explanation: every decision carries a human-readable explanation
+
+        Returns: {"route": "direct"|"delegate"|"multi"|"pipeline",
+                  "agent_ids": [...], "confidence": 0.0–1.0,
+                  "subtasks": [...], "reasoning": "...", "routing_explanation": "..."}
         """
         if not self._llm:
-            return {"route": "direct", "agent_ids": [], "reasoning": "No LLM"}
+            return {"route": "direct", "agent_ids": [], "confidence": 1.0,
+                    "reasoning": "No LLM", "routing_explanation": "No LLM configured — direct handling."}
+
+        # 1. Cache lookup — skip LLM for repeated identical queries
+        cached = self._get_cached_route(user_message)
+        if cached is not None:
+            cached["routing_explanation"] = (
+                f"[CACHED] {cached.get('routing_explanation', cached.get('reasoning', ''))}"
+            )
+            return cached
 
         routing_prompt = (
             "You are ASTRA, an AI router. Output ONLY valid JSON, no other text.\n\n"
-            "JSON format:\n"
+            "JSON format (ALL fields required):\n"
             '{"route":"multi","agent_ids":["swarm","analyst","researcher"],'
+            '"confidence":0.85,'
             '"subtasks":[{"agent_id":"swarm","task":"TASK1"},{"agent_id":"analyst","task":"TASK2"}],'
-            '"reasoning":"REASON"}\n\n'
+            '"reasoning":"Short reason for this route",'
+            '"routing_explanation":"1-2 sentence human-readable explanation: which agent handles what and why"}\n\n'
             "Routes:\n"
             "  direct   — ONLY for greetings/trivial questions (hi, what time is it)\n"
             "  delegate — single clear task in one domain (e.g. write this email)\n"
             "  multi    — 2+ agents in parallel for complex, multi-domain, or financial tasks\n"
             "  pipeline — sequential chain where each agent's output feeds the next\n\n"
+            "confidence: 0.0–1.0 — how certain you are this is the right routing decision.\n"
+            "  1.0 = crystal clear single-domain task\n"
+            "  0.7 = fairly confident\n"
+            "  0.5 = ambiguous, could be handled multiple ways\n"
+            "  < 0.7 triggers automatic parallel fallback regardless of your route choice\n\n"
+            "routing_explanation: tell Yohan WHICH agent handles WHAT and WHY in plain English.\n"
+            "  Example: 'Dispatching swarm for market signals and analyst to evaluate risk, "
+            "because the request involves both live trading data and financial modeling.'\n\n"
             "IMPORTANT: Output raw JSON only. No markdown, no explanation, no ```.\n\n"
             "Team routing guide (use multi for ALL of these):\n"
             "- Trading/stocks/markets    → [swarm, researcher, analyst, risk_strategist]\n"
@@ -406,7 +489,7 @@ class AstraConnector:
             "- Simple research           → delegate: [researcher]\n"
             "- Simple writing            → delegate: [writer]\n"
             "RULE: Financial, trading, market, or multi-domain tasks ALWAYS use multi or pipeline.\n"
-            "Default for ambiguous requests: delegate to researcher.\n"
+            "Default for truly ambiguous requests: confidence < 0.7 (triggers parallel fallback).\n"
         )
 
         # Inject learned routing weights so ASTRA uses past performance data
@@ -439,7 +522,26 @@ class AstraConnector:
                 text = text[start:end].strip()
             parsed = json.loads(text)
 
-            # Sanitize agent IDs — filter out non-existent agents (LLM hallucinations)
+            # Ensure confidence is present and numeric
+            confidence = float(parsed.get("confidence", 1.0))
+            parsed["confidence"] = round(confidence, 3)
+
+            # Ensure routing_explanation is present
+            if not parsed.get("routing_explanation"):
+                parsed["routing_explanation"] = parsed.get("reasoning", "No explanation provided.")
+
+            # 2. Confidence threshold check — low confidence → parallel fallback
+            if confidence < _ROUTING_CONFIDENCE_THRESHOLD:
+                logger.info(
+                    "[astra] Low routing confidence %.2f for '%s' — escalating to parallel fallback",
+                    confidence, user_message[:60],
+                )
+                fallback = self._build_ambiguous_fallback(user_message)
+                fallback["confidence"] = confidence  # preserve original confidence
+                self._cache_route(user_message, fallback)
+                return fallback
+
+            # 3. Sanitize agent IDs — filter out non-existent agents (LLM hallucinations)
             if self._registry:
                 valid_ids = set()
                 for aid in parsed.get("agent_ids", []):
@@ -464,17 +566,17 @@ class AstraConnector:
                             logger.warning("ASTRA subtask agent '%s' not found, replacing with 'researcher'", aid)
                             st["agent_id"] = "researcher"
 
+            # 4. Cache the valid route
+            self._cache_route(user_message, parsed)
             return parsed
+
         except (json.JSONDecodeError, ValueError) as exc:
             logger.warning("ASTRA routing JSON parse failed: %s. Response: %s", exc, response[:200])
             # Ollama sometimes returns conversational text instead of JSON.
-            # Fall back to "direct" with researcher as safety net.
-            return {
-                "route": "delegate",
-                "agent_ids": ["researcher"],
-                "subtasks": [{"agent_id": "researcher", "task": user_message}],
-                "reasoning": f"JSON parse fallback — dispatching to researcher",
-            }
+            # Fall back to parallel researcher + analyst as safety net.
+            fallback = self._build_ambiguous_fallback(user_message)
+            fallback["reasoning"] = "JSON parse fallback — dispatching researcher + analyst"
+            return fallback
 
     @staticmethod
     def _clean_synthesis(text: str) -> str:
@@ -492,7 +594,7 @@ class AstraConnector:
                     logger.warning("Synthesis returned routing JSON instead of text — discarding")
                     return ""
             except (json.JSONDecodeError, ValueError):
-                pass
+                logger.debug("Synthesis response is not JSON, treating as text", exc_info=True)
         return text
 
     async def synthesize_findings(

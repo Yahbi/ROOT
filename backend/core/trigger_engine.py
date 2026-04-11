@@ -63,10 +63,14 @@ class TriggerEngine:
         self._bus = bus
         self._memory = memory
 
+        self._MAX_FILE_STATES = 5000  # Cap tracked file paths
+        self._MAX_CUSTOM_HANDLERS = 200  # Cap registered custom handlers
+
         self._rules: dict[str, TriggerRule] = {}
         self._file_states: dict[str, float] = {}  # path → last mtime
         self._running = False
         self._tasks: list[asyncio.Task] = []
+        # _custom_handlers: keyed by rule_id — bounded by number of rules
         self._custom_handlers: dict[str, Callable[..., Coroutine]] = {}
         self._failure_count: int = 0
 
@@ -260,6 +264,11 @@ class TriggerEngine:
             if file_key not in self._file_states:
                 # New file detected
                 self._file_states[file_key] = current_mtime
+                # Prune oldest file states if over limit
+                if len(self._file_states) > self._MAX_FILE_STATES:
+                    oldest_keys = sorted(self._file_states, key=self._file_states.get)  # type: ignore[arg-type]
+                    for k in oldest_keys[:len(oldest_keys) // 2]:
+                        del self._file_states[k]
                 logger.info("Trigger '%s': new file detected — %s", rule.name, f.name)
                 await self._fire_action(rule, {"filename": f.name, "path": str(f)})
             elif current_mtime > self._file_states[file_key]:

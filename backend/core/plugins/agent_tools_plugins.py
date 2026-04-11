@@ -400,7 +400,8 @@ def _register_proposal_system(engine, notification_engine, message_bus) -> None:
                     sender=agent_id,
                     payload=record,
                 )
-                asyncio.ensure_future(message_bus.publish(msg))
+                task = asyncio.ensure_future(message_bus.publish(msg))
+                task.add_done_callback(lambda t: t.exception() if not t.cancelled() else None)
             except Exception as e:
                 logger.error("Failed to publish proposal to bus: %s", e)
 
@@ -425,7 +426,7 @@ def _register_proposal_system(engine, notification_engine, message_bus) -> None:
                 else:
                     body += "ℹ️ *FYI — no approval needed, proceeding autonomously.*"
 
-                asyncio.ensure_future(
+                task = asyncio.ensure_future(
                     notification_engine.send(
                         title=f"🧠 Agent Proposal: {proposal[:60]}",
                         body=body,
@@ -433,6 +434,7 @@ def _register_proposal_system(engine, notification_engine, message_bus) -> None:
                         source=f"agent:{agent_id}",
                     )
                 )
+                task.add_done_callback(lambda t: t.exception() if not t.cancelled() else None)
             except Exception as e:
                 logger.error("Failed to send proposal notification: %s", e)
 
@@ -562,7 +564,8 @@ def _register_agent_request(engine, message_bus) -> None:
                         "context": context[:2000],
                     },
                 )
-                asyncio.ensure_future(message_bus.publish(msg))
+                task = asyncio.ensure_future(message_bus.publish(msg))
+                task.add_done_callback(lambda t: t.exception() if not t.cancelled() else None)
                 logger.info("Agent %s requested help from %s: %s", from_agent, to_agent, message[:80])
                 return {
                     "status": "sent",
@@ -597,7 +600,8 @@ def _register_agent_request(engine, message_bus) -> None:
                         "confidence": confidence,
                     },
                 )
-                asyncio.ensure_future(message_bus.publish(msg))
+                task = asyncio.ensure_future(message_bus.publish(msg))
+                task.add_done_callback(lambda t: t.exception() if not t.cancelled() else None)
                 logger.info("Agent %s broadcast finding: %s", agent_id, finding[:80])
                 return {"status": "broadcast", "message": "Finding shared with the civilization."}
             except Exception as e:

@@ -1,0 +1,152 @@
+[
+  {
+    "content": "AWS core services form the foundation of most cloud architectures: EC2 (virtual machines, on-demand/reserved/spot pricing), S3 (object storage, 11 9s durability, $0.023/GB/month), RDS (managed relational databases with Multi-AZ failover), Lambda (serverless functions, pay per 1ms execution), SQS (message queue, at-least-once delivery), SNS (pub/sub notifications), and DynamoDB (NoSQL, single-digit millisecond latency, auto-scaling).",
+    "type": "fact",
+    "tags": ["cloud", "aws", "services"],
+    "source": "infra_knowledge"
+  },
+  {
+    "content": "Serverless tradeoffs include: cold start latency of 100-500ms (mitigated by provisioned concurrency at 2-3x cost), maximum execution time of 15 minutes (Lambda), no persistent local state (use DynamoDB or S3), limited memory (10GB max), and vendor lock-in through proprietary APIs. Serverless excels for bursty, event-driven workloads but becomes expensive above ~1M requests/day for sustained compute loads.",
+    "type": "learning",
+    "tags": ["cloud", "serverless", "tradeoffs"],
+    "source": "infra_knowledge"
+  },
+  {
+    "content": "The monolith-first approach recommends starting with a monolithic architecture and extracting microservices only at specific scaling pain points. Martin Fowler's guidance: microservices are a premium option that should be earned, not a default. Signs to extract a service: independent scaling needs, different deployment cadence, team boundary alignment, or distinct technology requirements. Most successful microservice architectures evolved from monoliths.",
+    "type": "learning",
+    "tags": ["cloud", "architecture", "microservices"],
+    "source": "infra_knowledge"
+  },
+  {
+    "content": "Event-driven architecture treats events as immutable facts that something happened (e.g., OrderPlaced, PaymentReceived). Systems communicate asynchronously through event brokers (Kafka, EventBridge, SNS). Key benefits: loose coupling, independent scaling, and natural audit trail. Eventual consistency is the tradeoff — read-after-write may not reflect the latest state. Use event sourcing to reconstruct state from the event log.",
+    "type": "fact",
+    "tags": ["cloud", "architecture", "event_driven"],
+    "source": "infra_knowledge"
+  },
+  {
+    "content": "CQRS (Command Query Responsibility Segregation) separates the write model (optimized for business logic and consistency) from the read model (optimized for query performance with denormalized views). Write to a normalized database, project events into read-optimized materialized views. This enables independent scaling of reads and writes, but adds complexity: eventual consistency between models, synchronization logic, and more infrastructure to manage.",
+    "type": "skill",
+    "tags": ["cloud", "architecture", "cqrs"],
+    "source": "infra_knowledge"
+  },
+  {
+    "content": "The saga pattern manages distributed transactions across microservices using a sequence of local transactions with compensating actions for rollback. Choreography sagas use events (each service listens and reacts); orchestration sagas use a central coordinator. Example: Order saga = reserve inventory → charge payment → ship order. If payment fails, compensate by releasing inventory. Sagas provide eventual consistency without distributed locks.",
+    "type": "skill",
+    "tags": ["cloud", "architecture", "saga_pattern"],
+    "source": "infra_knowledge"
+  },
+  {
+    "content": "The strangler fig pattern incrementally replaces a legacy monolith by routing specific functionality to new microservices while the old system continues to serve remaining features. Implementation: place a facade (API gateway) in front of the monolith, route specific paths to new services, and gradually migrate until the monolith can be decommissioned. This avoids the risk of a big-bang rewrite while delivering value incrementally.",
+    "type": "skill",
+    "tags": ["cloud", "architecture", "migration"],
+    "source": "infra_knowledge"
+  },
+  {
+    "content": "Feature toggles serve four purposes: release toggles (decouple deployment from release, short-lived), ops toggles (circuit breakers, graceful degradation, long-lived), experiment toggles (A/B testing, medium-lived), and permission toggles (premium features, long-lived). Toggle debt accumulates when old toggles are not cleaned up. Best practice: every toggle has an owner, creation date, expiration date, and removal tracked in the backlog.",
+    "type": "skill",
+    "tags": ["cloud", "deployment", "feature_toggles"],
+    "source": "infra_knowledge"
+  },
+  {
+    "content": "Blue-green deployment maintains two identical production environments. Only one (green) serves live traffic while the other (blue) receives the new version. After testing, traffic is switched (DNS or load balancer) from green to blue. Instant rollback is possible by switching back. The cost is 2x infrastructure during the transition. Blue-green works best for stateless services; database schema changes require extra coordination.",
+    "type": "skill",
+    "tags": ["cloud", "deployment", "blue_green"],
+    "source": "infra_knowledge"
+  },
+  {
+    "content": "Canary releases route a small percentage (1-5%) of traffic to the new version while monitoring error rates, latency, and business metrics. If metrics degrade, the canary is rolled back automatically. Progressive delivery gradually increases canary traffic (5% → 25% → 50% → 100%) with automated analysis at each stage. Tools like Argo Rollouts, Flagger, and AWS CodeDeploy support canary deployments with automated rollback.",
+    "type": "skill",
+    "tags": ["cloud", "deployment", "canary"],
+    "source": "infra_knowledge"
+  },
+  {
+    "content": "The twelve-factor app methodology defines best practices for cloud-native applications: codebase (one repo per app), dependencies (explicitly declared), config (environment variables, not files), backing services (treat as attached resources), build/release/run (strict separation), processes (stateless, share-nothing), port binding (self-contained), concurrency (scale via process model), disposability (fast startup, graceful shutdown), dev/prod parity, logs (treat as event streams), admin processes (one-off tasks).",
+    "type": "fact",
+    "tags": ["cloud", "architecture", "twelve_factor"],
+    "source": "infra_knowledge"
+  },
+  {
+    "content": "Infrastructure as Code (IaC) manages cloud resources through declarative configuration files. Terraform uses HCL for multi-cloud provisioning with state management and plan/apply workflow. AWS CloudFormation is AWS-native. Pulumi uses general-purpose languages (Python, TypeScript). Key practices: store IaC in version control, use modules for reusability, implement CI/CD for infrastructure changes, and never make manual changes to IaC-managed resources.",
+    "type": "skill",
+    "tags": ["cloud", "iac", "terraform"],
+    "source": "infra_knowledge"
+  },
+  {
+    "content": "Container orchestration with Kubernetes manages deployment, scaling, and operations of containerized applications. Key abstractions: Pods (one or more containers), Deployments (declarative updates, rolling restarts), Services (stable networking endpoint), Ingress (HTTP routing), ConfigMaps/Secrets (configuration), and PersistentVolumeClaims (storage). Kubernetes adds operational complexity — use managed services (EKS, GKE, AKS) unless you need custom control plane configuration.",
+    "type": "skill",
+    "tags": ["cloud", "kubernetes", "containers"],
+    "source": "infra_knowledge"
+  },
+  {
+    "content": "The circuit breaker pattern prevents cascading failures in distributed systems. States: Closed (normal, requests pass through), Open (requests fail fast without calling the downstream service, after error threshold exceeded), Half-Open (allow a few test requests to check if the service recovered). Typical thresholds: open after 5 failures in 30 seconds, try half-open after 60 seconds. Libraries: Hystrix (deprecated), Resilience4j, Polly.",
+    "type": "skill",
+    "tags": ["cloud", "resilience", "circuit_breaker"],
+    "source": "infra_knowledge"
+  },
+  {
+    "content": "Observability has three pillars: metrics (numerical measurements over time — Prometheus, CloudWatch), logs (discrete events with context — ELK stack, CloudWatch Logs), and traces (request flow across services — Jaeger, X-Ray, Datadog APT). OpenTelemetry standardizes instrumentation across all three. Key metrics: latency (p50, p95, p99), error rate, throughput (requests/second), and saturation (CPU, memory, disk utilization).",
+    "type": "skill",
+    "tags": ["cloud", "observability", "monitoring"],
+    "source": "infra_knowledge"
+  },
+  {
+    "content": "Multi-region architecture provides disaster recovery and low-latency global access. Active-passive (failover to secondary region on failure, RPO minutes to hours) is simpler; active-active (both regions serve traffic simultaneously, RPO near-zero) is complex. Key challenges: data replication lag (DynamoDB Global Tables: ~1 second), DNS failover latency (30-300 seconds), and conflict resolution for concurrent writes.",
+    "type": "skill",
+    "tags": ["cloud", "architecture", "multi_region"],
+    "source": "infra_knowledge"
+  },
+  {
+    "content": "Database selection criteria: relational (PostgreSQL, MySQL) for ACID transactions and complex queries; document (MongoDB, DynamoDB) for flexible schema and horizontal scaling; key-value (Redis, Memcached) for caching and session storage with sub-millisecond reads; time-series (InfluxDB, TimescaleDB) for metrics and IoT data; graph (Neo4j, Neptune) for relationship-heavy data; and search (Elasticsearch, OpenSearch) for full-text search and analytics.",
+    "type": "skill",
+    "tags": ["cloud", "databases", "selection"],
+    "source": "infra_knowledge"
+  },
+  {
+    "content": "Message queue patterns: point-to-point (SQS — one consumer processes each message, at-least-once delivery), pub/sub (SNS/Kafka — multiple subscribers receive each message), dead letter queue (DLQ — messages that fail processing N times are moved for manual inspection), and FIFO (exactly-once, ordered processing at lower throughput — SQS FIFO supports 3,000 messages/second with batching).",
+    "type": "skill",
+    "tags": ["cloud", "messaging", "queues"],
+    "source": "infra_knowledge"
+  },
+  {
+    "content": "API Gateway patterns include: rate limiting (token bucket per API key), authentication (JWT validation, API key verification), request transformation (header injection, body mapping), response caching (reduce backend load for GET requests), canary routing (percentage-based traffic splitting), and circuit breaking (return cached response when backend is unhealthy). AWS API Gateway, Kong, and Envoy are common implementations.",
+    "type": "skill",
+    "tags": ["cloud", "api_gateway", "patterns"],
+    "source": "infra_knowledge"
+  },
+  {
+    "content": "Cost optimization strategies for cloud: right-size instances (70% of EC2 instances are over-provisioned), use reserved instances or savings plans (40-72% savings over on-demand), leverage spot instances for fault-tolerant workloads (60-90% savings), implement auto-scaling (scale down during off-peak), delete unused resources (EBS snapshots, unattached EIPs, idle load balancers), and set up billing alerts at 50%, 80%, and 100% of budget.",
+    "type": "skill",
+    "tags": ["cloud", "cost_optimization", "finops"],
+    "source": "infra_knowledge"
+  },
+  {
+    "content": "Zero-trust security architecture assumes no implicit trust based on network location. Every request must be authenticated, authorized, and encrypted, regardless of whether it originates inside or outside the network perimeter. Implementation: mTLS between services, identity-aware proxy (BeyondCorp model), micro-segmentation (network policies per service), short-lived credentials (rotate every hour), and continuous verification (device health, user behavior).",
+    "type": "skill",
+    "tags": ["cloud", "security", "zero_trust"],
+    "source": "infra_knowledge"
+  },
+  {
+    "content": "GitOps uses Git as the single source of truth for declarative infrastructure and application configuration. Changes are made via pull requests, reviewed, and automatically applied by a reconciliation operator (ArgoCD, Flux). Benefits: audit trail (Git history), rollback (git revert), consistency (drift detection), and developer-friendly workflow. The reconciliation loop continuously ensures the actual state matches the desired state in Git.",
+    "type": "skill",
+    "tags": ["cloud", "gitops", "deployment"],
+    "source": "infra_knowledge"
+  },
+  {
+    "content": "Chaos engineering proactively injects failures to test system resilience. Netflix's Chaos Monkey randomly terminates instances; Gremlin provides controlled failure injection (CPU stress, network latency, disk fill, process kill). Start with game days (planned exercises), establish steady-state hypotheses (what metrics should remain stable), inject failures in staging first, then production. The goal is to find weaknesses before they cause outages.",
+    "type": "skill",
+    "tags": ["cloud", "chaos_engineering", "resilience"],
+    "source": "infra_knowledge"
+  },
+  {
+    "content": "Data lake architecture stores raw, unstructured, and semi-structured data at scale in object storage (S3). Processing tiers: bronze (raw ingestion), silver (cleaned and enriched), gold (aggregated and business-ready). Query engines like Athena, Presto, and Spark SQL enable schema-on-read. Lakehouse architecture (Delta Lake, Apache Iceberg) adds ACID transactions, schema enforcement, and time travel to data lakes, bridging the gap with data warehouses.",
+    "type": "fact",
+    "tags": ["cloud", "data_lake", "architecture"],
+    "source": "infra_knowledge"
+  },
+  {
+    "content": "Service Level Objectives (SLOs) define target reliability expressed as a percentage over a time window. Example: 99.9% availability over 30 days = 43.2 minutes of allowed downtime. Error budget = 1 - SLO (0.1% = 43.2 minutes). When the error budget is exhausted, freeze deployments and focus on reliability. SLIs (indicators) measure actual performance; SLAs (agreements) are contractual commitments with financial penalties, typically set below SLOs.",
+    "type": "skill",
+    "tags": ["cloud", "sre", "slo"],
+    "source": "infra_knowledge"
+  }
+]

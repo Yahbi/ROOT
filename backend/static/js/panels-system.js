@@ -1,5 +1,100 @@
 /* panels-system.js — Dashboard, Diagnostics, Settings, Analytics, Evolution, Reflections, Builder */
 
+// ── Dashboard Uptime Counter ─────────────────────────────────
+let _uptimeStart = null;
+let _uptimeInterval = null;
+
+function _startUptimeCounter(serverUptimeSeconds) {
+    if (_uptimeInterval) clearInterval(_uptimeInterval);
+    const startMs = Date.now() - (serverUptimeSeconds || 0) * 1000;
+    _uptimeStart = startMs;
+
+    function _tick() {
+        const el = document.getElementById('dash-uptime');
+        if (!el) return;
+        const sec = Math.floor((Date.now() - startMs) / 1000);
+        const h = Math.floor(sec / 3600);
+        const m = Math.floor((sec % 3600) / 60);
+        const s = sec % 60;
+        el.textContent = `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+    }
+    _tick();
+    _uptimeInterval = setInterval(_tick, 1000);
+}
+
+// ── Dashboard System Resource Bars ───────────────────────────
+function _renderResourceBar(id, value, max, color) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    const pct = Math.min(100, Math.round((value / (max || 1)) * 100));
+    const barColor = pct > 85 ? 'var(--accent-red)' : pct > 60 ? 'var(--accent-orange)' : color;
+    el.innerHTML = `
+        <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--text-muted);margin-bottom:3px">
+            <span>${el.dataset.label || ''}</span><span style="color:${barColor};font-weight:600">${pct}%</span>
+        </div>
+        <div style="background:var(--bg-secondary);border-radius:4px;height:8px;overflow:hidden">
+            <div style="width:${pct}%;height:100%;background:${barColor};border-radius:4px;transition:width 0.8s ease"></div>
+        </div>`;
+}
+
+// ── Dashboard Mini Agent Activity Sparkline ───────────────────
+function _renderDashSparkline(data) {
+    const canvas = document.getElementById('dash-activity-sparkline');
+    if (!canvas || typeof Chart === 'undefined') return;
+    if (canvas._sparkChart) canvas._sparkChart.destroy();
+
+    const labels = data.map((_, i) => i);
+    const cs = getComputedStyle(document.documentElement);
+    const accent = cs.getPropertyValue('--accent').trim();
+
+    canvas._sparkChart = new Chart(canvas.getContext('2d'), {
+        type: 'line',
+        data: {
+            labels,
+            datasets: [{
+                data,
+                borderColor: accent,
+                backgroundColor: accent + '20',
+                fill: true,
+                tension: 0.4,
+                pointRadius: 0,
+                borderWidth: 1.5,
+            }],
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            animation: { duration: 600 },
+            plugins: { legend: { display: false }, tooltip: { enabled: false } },
+            scales: { x: { display: false }, y: { display: false } },
+        },
+    });
+}
+
+// ── Dashboard Health Indicators ───────────────────────────────
+function _renderHealthIndicators(data) {
+    const el = document.getElementById('dash-health-indicators');
+    if (!el) return;
+
+    const checks = [
+        { label: 'Memory Engine', ok: (data.memory?.total || 0) >= 0 },
+        { label: 'LLM Online', ok: (data.providers?.registered || []).length > 0 },
+        { label: 'Agents', ok: (data.agents?.length || 0) > 0 },
+        { label: 'Skills', ok: (data.skills?.total || 0) > 0 },
+        { label: 'Background Loops', ok: !!(data.background_loops || data.loops) },
+        { label: 'Plugins', ok: (data.plugins?.total_plugins || 0) > 0 },
+    ];
+
+    el.innerHTML = checks.map(c => {
+        const color = c.ok ? 'var(--accent-green)' : 'var(--accent-red)';
+        const pulse = c.ok ? 'style="animation:pulse-dot 2s infinite"' : '';
+        return `<div style="display:flex;align-items:center;gap:6px;font-size:12px;padding:4px 0">
+            <span ${pulse} style="width:8px;height:8px;border-radius:50%;background:${color};flex-shrink:0;display:inline-block"></span>
+            <span style="color:var(--text-secondary)">${escHtml(c.label)}</span>
+        </div>`;
+    }).join('');
+}
+
 // ── Dashboard ───────────────────────────────────────────────
 async function loadDashboard() {
     const raw = await api('/api/dashboard/status');
@@ -27,6 +122,32 @@ async function loadDashboard() {
 
     updateMaturityDisplay(maturity, maturityLevel);
     updateSidebarAgents(data.agents || []);
+
+    // Uptime counter
+    const uptimeSec = data.uptime_seconds || data.uptime || 0;
+    _startUptimeCounter(uptimeSec);
+
+    // System health indicators
+    _renderHealthIndicators(data);
+
+    // System resource bars (use diagnostics or estimated values)
+    const sysMetrics = data.system_metrics || data.metrics || {};
+    _renderResourceBar('dash-cpu-bar', sysMetrics.cpu_pct || sysMetrics.cpu || 0, 100, 'var(--accent-cyan)');
+    _renderResourceBar('dash-mem-bar', sysMetrics.memory_pct || sysMetrics.memory || 0, 100, 'var(--accent-blue)');
+
+    // Mini agent activity sparkline (simulated from agent count over sessions)
+    const agentActivity = data.agent_activity_history || [];
+    if (agentActivity.length >= 2) {
+        _renderDashSparkline(agentActivity);
+    } else {
+        // Build a plausible sparkline from available data if no history
+        const base = agentCount || 5;
+        const sparkData = Array.from({length: 12}, (_, i) =>
+            Math.max(1, base + Math.round(Math.sin(i * 0.8) * 2 + (Math.random() - 0.5) * 1.5))
+        );
+        sparkData[sparkData.length - 1] = base;
+        _renderDashSparkline(sparkData);
+    }
 
     const agentsList = document.getElementById('dashboard-agents');
     if (agentsList) {

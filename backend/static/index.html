@@ -7,7 +7,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/css/root.css?v=19">
+    <link rel="stylesheet" href="/css/root.css?v=20">
+    <link rel="stylesheet" href="/css/linux-desktop.css?v=1">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@11.9.0/styles/atom-one-dark.min.css">
 </head>
 <body>
@@ -114,6 +115,14 @@
                 </div>
             </div>
 
+            <!-- Bookmarked Conversations -->
+            <div class="sidebar-section" id="bookmarks-section" style="display:none">
+                <div class="section-header">
+                    <span>&#9733; Bookmarks</span>
+                </div>
+                <div id="sidebar-bookmarks" class="conv-bookmarks-section"></div>
+            </div>
+
             <!-- Recent Conversations -->
             <div class="sidebar-section">
                 <div class="section-header">
@@ -184,6 +193,10 @@
                         <span class="theme-dot" style="background:#4a9eff"></span>
                         <span class="theme-label">Night</span>
                     </button>
+                    <button class="theme-btn" data-theme="linux" title="Linux Desktop — Transparency + Windows" onclick="enableDesktopMode()">
+                        <span class="theme-dot" style="background:#7c6aef"></span>
+                        <span class="theme-label">Linux</span>
+                    </button>
                 </div>
                 <div class="sidebar-status">
                     <span class="status-dot" id="global-status"></span>
@@ -241,9 +254,17 @@
                                 <span>Light</span>
                                 <span class="theme-opt-desc">Clean white</span>
                             </button>
+                            <button class="theme-opt" data-theme="linux" onclick="enableDesktopMode()">
+                                <span class="theme-opt-dot" style="background:#7c6aef"></span>
+                                <span>Linux</span>
+                                <span class="theme-opt-desc">Desktop mode</span>
+                            </button>
                         </div>
                     </div>
 
+                    <button class="toolbar-icon-btn" onclick="openShortcutsPanel()" title="Keyboard shortcuts (Ctrl+/)">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M6 10h.01M10 10h.01M14 10h.01M18 10h.01M6 14h12"/></svg>
+                    </button>
                     <div class="notification-bell" onclick="toggleNotifications()" title="Notifications">
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
                         <span class="notif-badge" id="notif-badge" style="display:none">0</span>
@@ -264,7 +285,28 @@
             <div class="panel active" id="panel-chat">
                 <div class="chat-layout" id="chat-layout">
                     <!-- Messages -->
-                    <div class="chat-main">
+                    <div class="chat-main" style="position:relative">
+                        <!-- Message search overlay -->
+                        <div class="msg-search-overlay" id="msg-search-overlay">
+                            <div class="msg-search-header">
+                                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                                <input type="text" id="msg-search-input" placeholder="Search messages..." oninput="msgSearchQuery(this.value)" autocomplete="off">
+                                <div class="msg-search-nav">
+                                    <span id="msg-search-count">0/0</span>
+                                    <button onclick="msgSearchNav(-1)" title="Previous">&#8593;</button>
+                                    <button onclick="msgSearchNav(1)" title="Next">&#8595;</button>
+                                </div>
+                                <button class="msg-search-close" onclick="closeMsgSearch()" title="Close">&times;</button>
+                            </div>
+                        </div>
+                        <!-- Drag & drop zone -->
+                        <div class="chat-drop-zone" id="chat-drop-zone">
+                            <div class="chat-drop-zone-inner">
+                                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                                <p>Drop file to upload</p>
+                                <small>PDF, images, code, data up to 10MB</small>
+                            </div>
+                        </div>
                         <div class="chat-messages" id="chat-scroll">
                             <div class="welcome-msg">
                                 <div class="welcome-icon">R</div>
@@ -351,6 +393,10 @@
                                 <button class="toolbar-icon-btn" onclick="exportConversation()" title="Export conversation">
                                     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
                                 </button>
+                                <!-- Search in current messages -->
+                                <button class="toolbar-icon-btn" onclick="openMsgSearch()" title="Search in chat (Ctrl+F)">
+                                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
+                                </button>
                                 <!-- Search conversations -->
                                 <button class="toolbar-icon-btn" onclick="toggleConvSearch()" title="Search conversations">
                                     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
@@ -360,6 +406,12 @@
                             <div class="conv-search-bar" id="conv-search-bar" style="display:none">
                                 <input type="text" id="conv-search-input" placeholder="Search all conversations..." oninput="searchConversations(this.value)">
                                 <button onclick="toggleConvSearch()" class="conv-search-close">&times;</button>
+                            </div>
+                            <!-- Reply compose indicator -->
+                            <div class="reply-compose-indicator" id="reply-compose-indicator" style="display:none">
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 14 4 9 9 4"/><path d="M20 20v-7a4 4 0 0 0-4-4H4"/></svg>
+                                <span>Replying to <strong id="reply-compose-name">message</strong>: <span id="reply-compose-preview"></span></span>
+                                <button class="reply-compose-close" onclick="cancelReply()" title="Cancel reply">&times;</button>
                             </div>
                             <div id="file-preview" class="file-preview" style="display:none">
                                 <div class="file-preview-inner">
@@ -425,6 +477,31 @@
                         <div class="stat-card"><div class="stat-value" id="stat-evolutions">0</div><div class="stat-label">Evolutions</div></div>
                         <div class="stat-card"><div class="stat-value" id="stat-plugins">0</div><div class="stat-label">Plugins</div></div>
                     </div>
+
+                    <!-- System Status Row -->
+                    <div class="grid-2" style="margin-bottom:16px">
+                        <!-- Resource Usage + Uptime -->
+                        <div class="card">
+                            <div class="card-title" style="display:flex;justify-content:space-between;align-items:center">
+                                System Resources
+                                <span style="font-family:var(--font-mono);font-size:13px;color:var(--accent-green);font-weight:700" id="dash-uptime">00:00:00</span>
+                            </div>
+                            <div id="dash-cpu-bar" data-label="CPU" style="margin-bottom:10px"></div>
+                            <div id="dash-mem-bar" data-label="Memory" style="margin-bottom:10px"></div>
+                            <div style="margin-top:12px">
+                                <div style="font-size:11px;color:var(--text-muted);margin-bottom:6px;text-transform:uppercase;letter-spacing:0.5px">Agent Activity (12 ticks)</div>
+                                <div style="height:48px"><canvas id="dash-activity-sparkline"></canvas></div>
+                            </div>
+                        </div>
+                        <!-- Health Indicators -->
+                        <div class="card">
+                            <div class="card-title">System Health</div>
+                            <div id="dash-health-indicators">
+                                <div style="color:var(--text-muted);font-size:12px">Loading...</div>
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="card"><div class="card-title">Maturity</div>
                         <div style="display:flex;align-items:center;gap:16px;padding:12px 0">
                             <svg width="70" height="70" viewBox="0 0 64 64"><circle cx="32" cy="32" r="27" fill="none" stroke="var(--border)" stroke-width="5"/><circle id="maturity-ring" cx="32" cy="32" r="27" fill="none" stroke="var(--accent)" stroke-width="5" stroke-dasharray="169.6" stroke-dashoffset="169.6" stroke-linecap="round" transform="rotate(-90 32 32)" style="transition:stroke-dashoffset 1s"/></svg>
@@ -504,10 +581,28 @@
                         <div style="display:flex;gap:6px">
                             <button class="btn-secondary agent-view-btn active" id="view-core" onclick="switchAgentView('core')" style="padding:4px 10px;font-size:11px">Core (12)</button>
                             <button class="btn-secondary agent-view-btn" id="view-civilization" onclick="switchAgentView('civilization')" style="padding:4px 10px;font-size:11px">Civilization (150+)</button>
+                            <button class="btn-secondary" onclick="showCreateAgentModal()" style="padding:4px 10px;font-size:11px">+ Create</button>
                         </div>
                     </div>
                     <div class="grid-4" id="agents-stats" style="margin-bottom:16px"></div>
                     <div id="agents-activity"></div>
+
+                    <!-- Search & Filter Bar (core view only) -->
+                    <div id="agents-search-bar" style="display:flex;gap:8px;margin-bottom:14px;align-items:center;flex-wrap:wrap">
+                        <div class="search-box" style="flex:1;min-width:160px">
+                            <input id="agent-search-input" placeholder="Search agents by name, role, capability..."
+                                oninput="_agentSearchQuery=this.value;filterAgents()">
+                            <button onclick="_agentSearchQuery='';document.getElementById('agent-search-input').value='';filterAgents()">✕</button>
+                        </div>
+                        <select id="agent-status-filter" onchange="_agentStatusFilter=this.value;filterAgents()"
+                            style="padding:5px 10px;border-radius:6px;border:1px solid var(--border);background:var(--bg-secondary);color:var(--text-primary);font-size:12px">
+                            <option value="all">All Status</option>
+                            <option value="online">Online</option>
+                            <option value="offline">Offline</option>
+                            <option value="idle">Idle</option>
+                        </select>
+                    </div>
+
                     <div id="agents-list"></div>
                     <div id="agents-civilization" style="display:none"></div>
                 </div>
@@ -667,6 +762,37 @@
                         <div class="card"><div class="card-title">Portfolio Value</div><div class="chart-container"><canvas id="chart-portfolio"></canvas></div></div>
                         <div class="card"><div class="card-title">Trade History</div><div class="chart-container"><canvas id="chart-trades"></canvas></div></div>
                     </div>
+
+                    <!-- Portfolio Allocation + P&L Timeline -->
+                    <div class="grid-2" style="margin-bottom:16px">
+                        <div class="card">
+                            <div class="card-title">Portfolio Allocation</div>
+                            <div class="chart-container" style="height:180px;position:relative">
+                                <canvas id="chart-portfolio-allocation"></canvas>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-title">Cumulative P&amp;L</div>
+                            <div class="chart-container" style="height:180px">
+                                <canvas id="chart-pnl-timeline"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Position Risk Heatmap -->
+                    <div class="card" style="margin-bottom:16px">
+                        <div class="card-title" style="display:flex;justify-content:space-between;align-items:center">
+                            Position Risk Heatmap
+                            <span style="font-size:11px;color:var(--text-muted)">allocation &middot; P&amp;L &middot; risk level</span>
+                        </div>
+                        <div style="display:grid;grid-template-columns:80px 1fr 60px 60px 50px;gap:8px;padding:6px 10px;font-size:10px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;border-bottom:1px solid var(--border)">
+                            <span>Symbol</span><span>Allocation</span><span style="text-align:right">P&amp;L</span><span style="text-align:center">Risk</span><span style="text-align:right">Score</span>
+                        </div>
+                        <div id="risk-heatmap">
+                            <div style="padding:20px;text-align:center;color:var(--text-muted);font-size:12px">Loading positions...</div>
+                        </div>
+                    </div>
+
                     <div class="grid-2">
                         <div class="card"><div class="card-title">Open Positions</div><div id="positions-list"><div class="empty-state">No open positions</div></div></div>
                         <div class="card"><div class="card-title">Recent Signals</div><div id="signals-list"><div class="empty-state">No signals</div></div></div>
@@ -1188,6 +1314,38 @@
     <!-- Slash Command Dropdown -->
     <div class="slash-dropdown" id="slash-dropdown" style="display:none"></div>
 
+    <!-- Keyboard Shortcuts Panel -->
+    <div class="shortcuts-overlay" id="shortcuts-overlay" onclick="if(event.target===this)closeShortcutsPanel()">
+        <div class="shortcuts-panel">
+            <div class="shortcuts-panel-title">
+                Keyboard Shortcuts
+                <button onclick="closeShortcutsPanel()" title="Close">&times;</button>
+            </div>
+            <div class="shortcut-section">
+                <div class="shortcut-section-title">Navigation</div>
+                <div class="shortcut-row"><span>Command Palette</span><div class="shortcut-keys"><kbd>Ctrl</kbd><span class="key-sep">+</span><kbd>K</kbd></div></div>
+                <div class="shortcut-row"><span>Keyboard Shortcuts</span><div class="shortcut-keys"><kbd>Ctrl</kbd><span class="key-sep">+</span><kbd>/</kbd></div></div>
+                <div class="shortcut-row"><span>Focus Chat Input</span><div class="shortcut-keys"><kbd>/</kbd></div></div>
+                <div class="shortcut-row"><span>Chat panel</span><div class="shortcut-keys"><kbd>Ctrl</kbd><span class="key-sep">+</span><kbd>1</kbd></div></div>
+                <div class="shortcut-row"><span>Dashboard</span><div class="shortcut-keys"><kbd>Ctrl</kbd><span class="key-sep">+</span><kbd>2</kbd></div></div>
+                <div class="shortcut-row"><span>Memory</span><div class="shortcut-keys"><kbd>Ctrl</kbd><span class="key-sep">+</span><kbd>3</kbd></div></div>
+            </div>
+            <div class="shortcut-section">
+                <div class="shortcut-section-title">Chat</div>
+                <div class="shortcut-row"><span>Send message</span><div class="shortcut-keys"><kbd>Enter</kbd></div></div>
+                <div class="shortcut-row"><span>New line</span><div class="shortcut-keys"><kbd>Shift</kbd><span class="key-sep">+</span><kbd>Enter</kbd></div></div>
+                <div class="shortcut-row"><span>Search messages</span><div class="shortcut-keys"><kbd>Ctrl</kbd><span class="key-sep">+</span><kbd>F</kbd></div></div>
+                <div class="shortcut-row"><span>New conversation</span><div class="shortcut-keys"><kbd>Ctrl</kbd><span class="key-sep">+</span><kbd>N</kbd></div></div>
+                <div class="shortcut-row"><span>Export conversation</span><div class="shortcut-keys"><kbd>Ctrl</kbd><span class="key-sep">+</span><kbd>E</kbd></div></div>
+            </div>
+            <div class="shortcut-section">
+                <div class="shortcut-section-title">General</div>
+                <div class="shortcut-row"><span>Close panel / dialog</span><div class="shortcut-keys"><kbd>Esc</kbd></div></div>
+                <div class="shortcut-row"><span>Navigate command palette</span><div class="shortcut-keys"><kbd>&uarr;</kbd><span class="key-sep">/</span><kbd>&darr;</kbd></div></div>
+            </div>
+        </div>
+    </div>
+
     <!-- Memory Pin Modal -->
     <div class="pin-modal-overlay" id="pin-modal" style="display:none" onclick="if(event.target===this)closePinModal()">
         <div class="pin-modal">
@@ -1214,13 +1372,196 @@
     <div id="root-modal"></div>
     <div id="toast-container"></div>
 
+    <!-- ══════════════════════════════════════════════════
+         LINUX DESKTOP MODE — Infrastructure
+         ══════════════════════════════════════════════════ -->
+
+    <!-- Desktop Wallpaper (linux theme only) -->
+    <div id="desktop-wallpaper" style="display:none"></div>
+
+    <!-- Desktop Area — windows live here (linux theme only, hidden by default) -->
+    <div id="desktop-area" style="display:none">
+        <!-- Desktop Icons -->
+        <div class="desktop-icons">
+            <div class="desktop-icon" ondblclick="WindowManager.open('chat')">
+                <div class="desktop-icon-img" style="background:rgba(124,106,239,0.15)">></div>
+                <span class="desktop-icon-label">Terminal</span>
+            </div>
+            <div class="desktop-icon" ondblclick="WindowManager.open('dashboard')">
+                <div class="desktop-icon-img" style="background:rgba(80,250,123,0.15);color:#50fa7b">#</div>
+                <span class="desktop-icon-label">System Monitor</span>
+            </div>
+            <div class="desktop-icon" ondblclick="WindowManager.open('agents')">
+                <div class="desktop-icon-img" style="background:rgba(139,233,253,0.15);color:#8be9fd">&</div>
+                <span class="desktop-icon-label">Agents</span>
+            </div>
+            <div class="desktop-icon" ondblclick="WindowManager.open('trading')">
+                <div class="desktop-icon-img" style="background:rgba(255,184,108,0.15);color:#ffb86c">/</div>
+                <span class="desktop-icon-label">Trading</span>
+            </div>
+            <div class="desktop-icon" ondblclick="WindowManager.open('neural')">
+                <div class="desktop-icon-img" style="background:rgba(255,121,198,0.15);color:#ff79c6">*</div>
+                <span class="desktop-icon-label">Neural Galaxy</span>
+            </div>
+            <div class="desktop-icon" ondblclick="WindowManager.open('memory')">
+                <div class="desktop-icon-img" style="background:rgba(189,147,249,0.15);color:#bd93f9">~</div>
+                <span class="desktop-icon-label">Memory</span>
+            </div>
+        </div>
+
+        <!-- System Info Widget -->
+        <div class="desktop-widget" id="desktop-widget">
+            <div class="widget-title">System Status</div>
+            <div class="widget-stat">
+                <span class="widget-stat-label">Agents</span>
+                <span class="widget-stat-value" id="widget-agents">162</span>
+            </div>
+            <div class="widget-stat">
+                <span class="widget-stat-label">Memory</span>
+                <span class="widget-stat-value" id="widget-memory">686</span>
+            </div>
+            <div class="widget-stat">
+                <span class="widget-stat-label">Uptime</span>
+                <span class="widget-stat-value" id="widget-uptime">0:00</span>
+            </div>
+            <div class="widget-bar"><div class="widget-bar-fill" style="width:72%"></div></div>
+            <div class="widget-stat">
+                <span class="widget-stat-label">CPU Load</span>
+                <span class="widget-stat-value">72%</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Taskbar (Bottom, linux theme only, hidden by default) -->
+    <div id="desktop-taskbar" style="display:none">
+        <div class="taskbar-start" onclick="document.querySelector('.app-launcher').classList.toggle('open')">
+            <div class="taskbar-start-icon">R</div>
+            <span>ROOT</span>
+        </div>
+        <div class="taskbar-divider"></div>
+        <div class="taskbar-windows">
+            <!-- Window buttons appear here dynamically -->
+        </div>
+        <div class="taskbar-divider"></div>
+        <div class="taskbar-tray">
+            <div class="tray-item" title="Notifications" onclick="toggleNotifications()">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/></svg>
+            </div>
+            <div class="tray-item" title="Network">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12.55a11 11 0 0 1 14.08 0"/><path d="M1.42 9a16 16 0 0 1 21.16 0"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><line x1="12" y1="20" x2="12.01" y2="20"/></svg>
+            </div>
+            <div class="tray-separator"></div>
+            <div class="tray-clock">00:00</div>
+        </div>
+    </div>
+
+    <!-- App Launcher -->
+    <div class="app-launcher">
+        <div class="launcher-search">
+            <input type="text" placeholder="Search applications...">
+        </div>
+        <div class="launcher-grid">
+            <div class="launcher-app" data-panel="chat">
+                <div class="launcher-app-icon" style="background:rgba(124,106,239,0.15);color:#7c6aef">></div>
+                <span class="launcher-app-name">Terminal</span>
+            </div>
+            <div class="launcher-app" data-panel="dashboard">
+                <div class="launcher-app-icon" style="background:rgba(80,250,123,0.15);color:#50fa7b">#</div>
+                <span class="launcher-app-name">Monitor</span>
+            </div>
+            <div class="launcher-app" data-panel="agents">
+                <div class="launcher-app-icon" style="background:rgba(139,233,253,0.15);color:#8be9fd">&</div>
+                <span class="launcher-app-name">Agents</span>
+            </div>
+            <div class="launcher-app" data-panel="memory">
+                <div class="launcher-app-icon" style="background:rgba(189,147,249,0.15);color:#bd93f9">~</div>
+                <span class="launcher-app-name">Memory</span>
+            </div>
+            <div class="launcher-app" data-panel="trading">
+                <div class="launcher-app-icon" style="background:rgba(255,184,108,0.15);color:#ffb86c">/</div>
+                <span class="launcher-app-name">Trading</span>
+            </div>
+            <div class="launcher-app" data-panel="neural">
+                <div class="launcher-app-icon" style="background:rgba(255,121,198,0.15);color:#ff79c6">*</div>
+                <span class="launcher-app-name">Neural</span>
+            </div>
+            <div class="launcher-app" data-panel="miro">
+                <div class="launcher-app-icon" style="background:rgba(241,250,140,0.15);color:#f1fa8c">+</div>
+                <span class="launcher-app-name">MiRo</span>
+            </div>
+            <div class="launcher-app" data-panel="civilization">
+                <div class="launcher-app-icon" style="background:rgba(255,85,85,0.15);color:#ff5555">|</div>
+                <span class="launcher-app-name">Civilization</span>
+            </div>
+            <div class="launcher-app" data-panel="analytics">
+                <div class="launcher-app-icon" style="background:rgba(124,106,239,0.15);color:#7c6aef">^</div>
+                <span class="launcher-app-name">Analytics</span>
+            </div>
+            <div class="launcher-app" data-panel="goals">
+                <div class="launcher-app-icon" style="background:rgba(80,250,123,0.15);color:#50fa7b">o</div>
+                <span class="launcher-app-name">Goals</span>
+            </div>
+            <div class="launcher-app" data-panel="skills">
+                <div class="launcher-app-icon" style="background:rgba(139,233,253,0.15);color:#8be9fd">K</div>
+                <span class="launcher-app-name">Skills</span>
+            </div>
+            <div class="launcher-app" data-panel="plugins">
+                <div class="launcher-app-icon" style="background:rgba(189,147,249,0.15);color:#bd93f9">%</div>
+                <span class="launcher-app-name">Plugins</span>
+            </div>
+            <div class="launcher-app" data-panel="directives">
+                <div class="launcher-app-icon" style="background:rgba(255,184,108,0.15);color:#ffb86c">!</div>
+                <span class="launcher-app-name">Directives</span>
+            </div>
+            <div class="launcher-app" data-panel="network">
+                <div class="launcher-app-icon" style="background:rgba(255,121,198,0.15);color:#ff79c6">@</div>
+                <span class="launcher-app-name">Network</span>
+            </div>
+            <div class="launcher-app" data-panel="diagnostics">
+                <div class="launcher-app-icon" style="background:rgba(241,250,140,0.15);color:#f1fa8c">=</div>
+                <span class="launcher-app-name">Diagnostics</span>
+            </div>
+            <div class="launcher-app" data-panel="settings">
+                <div class="launcher-app-icon" style="background:rgba(80,80,100,0.3);color:#9090b8">C</div>
+                <span class="launcher-app-name">Settings</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Desktop Context Menu -->
+    <div class="desktop-context-menu">
+        <div class="ctx-item" onclick="WindowManager.tileWindows()">
+            <span class="ctx-item-icon">&#9638;</span> Tile Windows
+        </div>
+        <div class="ctx-item" onclick="WindowManager.cascadeWindows()">
+            <span class="ctx-item-icon">&#9642;</span> Cascade Windows
+        </div>
+        <div class="ctx-item" onclick="WindowManager.showDesktop()">
+            <span class="ctx-item-icon">&#9644;</span> Show Desktop
+        </div>
+        <div class="ctx-separator"></div>
+        <div class="ctx-item" onclick="WindowManager.open('chat')">
+            <span class="ctx-item-icon">></span> Terminal
+        </div>
+        <div class="ctx-item" onclick="WindowManager.open('dashboard')">
+            <span class="ctx-item-icon">#</span> System Monitor
+        </div>
+        <div class="ctx-separator"></div>
+        <div class="ctx-item" onclick="disableDesktopMode()">
+            <span class="ctx-item-icon">&#8617;</span> Exit Desktop Mode
+        </div>
+    </div>
+
+    <!-- Snap Preview -->
+    <div class="snap-preview"></div>
+
     <script defer src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/highlight.js@11.9.0/highlight.min.js"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/three@0.147.0/build/three.min.js"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/three@0.147.0/examples/js/controls/OrbitControls.js"></script>
     <script defer src="/js/neural-galaxy.js?v=8"></script>
     <script defer src="/js/modal-manager.js?v=2"></script>
-    <script defer src="/js/root.js?v=13"></script>
+    <script defer src="/js/root.js?v=14"></script>
     <script defer src="/js/panels-system.js?v=3"></script>
     <script defer src="/js/panels-agents.js?v=2"></script>
     <script defer src="/js/panels-autonomy.js?v=2"></script>
@@ -1228,5 +1569,6 @@
     <script defer src="/js/panels-intelligence.js?v=2"></script>
     <script defer src="/js/miro-panel.js?v=2"></script>
     <script defer src="/js/ws-handlers.js?v=2"></script>
+    <script defer src="/js/window-manager.js?v=1"></script>
 </body>
 </html>

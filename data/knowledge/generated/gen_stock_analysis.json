@@ -1,0 +1,402 @@
+[
+  {
+    "content": "Apple (AAPL) is a Technology company with ~$3000B market cap. Key segments: iPhone, Services, Mac, iPad, Wearables. As a mega-cap, it's a core holding in most index funds (SPY, QQQ) and influences sector-wide moves.",
+    "type": "fact",
+    "tags": [
+      "aapl",
+      "technology",
+      "stock_analysis"
+    ],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "When analyzing AAPL, focus on: revenue growth rate (YoY), operating margin trends, free cash flow yield (FCF/market cap), and forward P/E relative to 5-year average. For Technology stocks, compare against sector ETF (XLT) performance.",
+    "type": "skill",
+    "tags": [
+      "aapl",
+      "fundamental_analysis",
+      "valuation"
+    ],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Microsoft (MSFT) is a Technology company with ~$3100B market cap. Key segments: Azure, Office 365, Windows, Gaming, LinkedIn. As a mega-cap, it's a core holding in most index funds (SPY, QQQ) and influences sector-wide moves.",
+    "type": "fact",
+    "tags": [
+      "msft",
+      "technology",
+      "stock_analysis"
+    ],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "When analyzing MSFT, focus on: revenue growth rate (YoY), operating margin trends, free cash flow yield (FCF/market cap), and forward P/E relative to 5-year average. For Technology stocks, compare against sector ETF (XLT) performance.",
+    "type": "skill",
+    "tags": [
+      "msft",
+      "fundamental_analysis",
+      "valuation"
+    ],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Alphabet (GOOGL) is a Technology company with ~$2000B market cap. Key segments: Search, YouTube, Cloud, Android, Waymo. As a mega-cap, it's a core holding in most index funds (SPY, QQQ) and influences sector-wide moves.",
+    "type": "fact",
+    "tags": [
+      "googl",
+      "technology",
+      "stock_analysis"
+    ],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "When analyzing GOOGL, focus on: revenue growth rate (YoY), operating margin trends, free cash flow yield (FCF/market cap), and forward P/E relative to 5-year average. For Technology stocks, compare against sector ETF (XLT) performance.",
+    "type": "skill",
+    "tags": [
+      "googl",
+      "fundamental_analysis",
+      "valuation"
+    ],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Amazon (AMZN) is a Consumer Discretionary company with ~$1900B market cap. Key segments: AWS, E-commerce, Prime, Advertising. As a mega-cap, it's a core holding in most index funds (SPY, QQQ) and influences sector-wide moves.",
+    "type": "fact",
+    "tags": [
+      "amzn",
+      "consumer_discretionary",
+      "stock_analysis"
+    ],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "When analyzing AMZN, focus on: revenue growth rate (YoY), operating margin trends, free cash flow yield (FCF/market cap), and forward P/E relative to 5-year average. For Consumer Discretionary stocks, compare against sector ETF (XLC) performance.",
+    "type": "skill",
+    "tags": [
+      "amzn",
+      "fundamental_analysis",
+      "valuation"
+    ],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "NVIDIA (NVDA) is a Technology company with ~$3200B market cap. Key segments: GPUs, Data Center, AI/ML, Gaming, Automotive. As a mega-cap, it's a core holding in most index funds (SPY, QQQ) and influences sector-wide moves.",
+    "type": "fact",
+    "tags": [
+      "nvda",
+      "technology",
+      "stock_analysis"
+    ],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "When analyzing NVDA, focus on: revenue growth rate (YoY), operating margin trends, free cash flow yield (FCF/market cap), and forward P/E relative to 5-year average. For Technology stocks, compare against sector ETF (XLT) performance.",
+    "type": "skill",
+    "tags": [
+      "nvda",
+      "fundamental_analysis",
+      "valuation"
+    ],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Meta Platforms (META) is a Technology company with ~$1400B market cap. Key segments: Facebook, Instagram, WhatsApp, Metaverse, AI. As a mega-cap, it's a core holding in most index funds (SPY, QQQ) and influences sector-wide moves.",
+    "type": "fact",
+    "tags": [
+      "meta",
+      "technology",
+      "stock_analysis"
+    ],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "When analyzing META, focus on: revenue growth rate (YoY), operating margin trends, free cash flow yield (FCF/market cap), and forward P/E relative to 5-year average. For Technology stocks, compare against sector ETF (XLT) performance.",
+    "type": "skill",
+    "tags": [
+      "meta",
+      "fundamental_analysis",
+      "valuation"
+    ],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Tesla (TSLA) is a Consumer Discretionary company with ~$800B market cap. Key segments: EVs, Energy Storage, Solar, Autonomy, Robotaxi. As a mega-cap, it's a core holding in most index funds (SPY, QQQ) and influences sector-wide moves.",
+    "type": "fact",
+    "tags": [
+      "tsla",
+      "consumer_discretionary",
+      "stock_analysis"
+    ],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "When analyzing TSLA, focus on: revenue growth rate (YoY), operating margin trends, free cash flow yield (FCF/market cap), and forward P/E relative to 5-year average. For Consumer Discretionary stocks, compare against sector ETF (XLC) performance.",
+    "type": "skill",
+    "tags": [
+      "tsla",
+      "fundamental_analysis",
+      "valuation"
+    ],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Berkshire Hathaway (BRK.B) is a Financials company with ~$900B market cap. Key segments: Insurance, BNSF, Energy, Manufacturing, Investments. As a mega-cap, it's a core holding in most index funds (SPY, QQQ) and influences sector-wide moves.",
+    "type": "fact",
+    "tags": [
+      "brk.b",
+      "financials",
+      "stock_analysis"
+    ],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "When analyzing BRK.B, focus on: revenue growth rate (YoY), operating margin trends, free cash flow yield (FCF/market cap), and forward P/E relative to 5-year average. For Financials stocks, compare against sector ETF (XLF) performance.",
+    "type": "skill",
+    "tags": [
+      "brk.b",
+      "fundamental_analysis",
+      "valuation"
+    ],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "JPMorgan Chase (JPM) is a Financials company with ~$600B market cap. Key segments: Investment Banking, Consumer Banking, Asset Management. As a mega-cap, it's a core holding in most index funds (SPY, QQQ) and influences sector-wide moves.",
+    "type": "fact",
+    "tags": [
+      "jpm",
+      "financials",
+      "stock_analysis"
+    ],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "When analyzing JPM, focus on: revenue growth rate (YoY), operating margin trends, free cash flow yield (FCF/market cap), and forward P/E relative to 5-year average. For Financials stocks, compare against sector ETF (XLF) performance.",
+    "type": "skill",
+    "tags": [
+      "jpm",
+      "fundamental_analysis",
+      "valuation"
+    ],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Visa (V) is a Financials company with ~$550B market cap. Key segments: Payment Processing, Cross-border, Digital Payments. As a mega-cap, it's a core holding in most index funds (SPY, QQQ) and influences sector-wide moves.",
+    "type": "fact",
+    "tags": [
+      "v",
+      "financials",
+      "stock_analysis"
+    ],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "When analyzing V, focus on: revenue growth rate (YoY), operating margin trends, free cash flow yield (FCF/market cap), and forward P/E relative to 5-year average. For Financials stocks, compare against sector ETF (XLF) performance.",
+    "type": "skill",
+    "tags": [
+      "v",
+      "fundamental_analysis",
+      "valuation"
+    ],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Johnson & Johnson (JNJ) is a Healthcare company with ~$400B market cap. Key segments: Pharmaceuticals, MedTech, Consumer Health. As a mega-cap, it's a core holding in most index funds (SPY, QQQ) and influences sector-wide moves.",
+    "type": "fact",
+    "tags": [
+      "jnj",
+      "healthcare",
+      "stock_analysis"
+    ],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "When analyzing JNJ, focus on: revenue growth rate (YoY), operating margin trends, free cash flow yield (FCF/market cap), and forward P/E relative to 5-year average. For Healthcare stocks, compare against sector ETF (XLH) performance.",
+    "type": "skill",
+    "tags": [
+      "jnj",
+      "fundamental_analysis",
+      "valuation"
+    ],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "UnitedHealth Group (UNH) is a Healthcare company with ~$550B market cap. Key segments: Insurance, Optum, Pharmacy, Data Analytics. As a mega-cap, it's a core holding in most index funds (SPY, QQQ) and influences sector-wide moves.",
+    "type": "fact",
+    "tags": [
+      "unh",
+      "healthcare",
+      "stock_analysis"
+    ],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "When analyzing UNH, focus on: revenue growth rate (YoY), operating margin trends, free cash flow yield (FCF/market cap), and forward P/E relative to 5-year average. For Healthcare stocks, compare against sector ETF (XLH) performance.",
+    "type": "skill",
+    "tags": [
+      "unh",
+      "fundamental_analysis",
+      "valuation"
+    ],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Exxon Mobil (XOM) is a Energy company with ~$500B market cap. Key segments: Oil Production, Refining, Chemicals, LNG. As a mega-cap, it's a core holding in most index funds (SPY, QQQ) and influences sector-wide moves.",
+    "type": "fact",
+    "tags": [
+      "xom",
+      "energy",
+      "stock_analysis"
+    ],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "When analyzing XOM, focus on: revenue growth rate (YoY), operating margin trends, free cash flow yield (FCF/market cap), and forward P/E relative to 5-year average. For Energy stocks, compare against sector ETF (XLE) performance.",
+    "type": "skill",
+    "tags": [
+      "xom",
+      "fundamental_analysis",
+      "valuation"
+    ],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Procter & Gamble (PG) is a Consumer Staples company with ~$370B market cap. Key segments: Beauty, Grooming, Healthcare, Fabric, Home Care. As a mega-cap, it's a core holding in most index funds (SPY, QQQ) and influences sector-wide moves.",
+    "type": "fact",
+    "tags": [
+      "pg",
+      "consumer_staples",
+      "stock_analysis"
+    ],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "When analyzing PG, focus on: revenue growth rate (YoY), operating margin trends, free cash flow yield (FCF/market cap), and forward P/E relative to 5-year average. For Consumer Staples stocks, compare against sector ETF (XLC) performance.",
+    "type": "skill",
+    "tags": [
+      "pg",
+      "fundamental_analysis",
+      "valuation"
+    ],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Home Depot (HD) is a Consumer Discretionary company with ~$380B market cap. Key segments: Home Improvement Retail, Pro Customers. As a mega-cap, it's a core holding in most index funds (SPY, QQQ) and influences sector-wide moves.",
+    "type": "fact",
+    "tags": [
+      "hd",
+      "consumer_discretionary",
+      "stock_analysis"
+    ],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "When analyzing HD, focus on: revenue growth rate (YoY), operating margin trends, free cash flow yield (FCF/market cap), and forward P/E relative to 5-year average. For Consumer Discretionary stocks, compare against sector ETF (XLC) performance.",
+    "type": "skill",
+    "tags": [
+      "hd",
+      "fundamental_analysis",
+      "valuation"
+    ],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Mastercard (MA) is a Financials company with ~$430B market cap. Key segments: Payment Technology, Cross-border, Data Services. As a mega-cap, it's a core holding in most index funds (SPY, QQQ) and influences sector-wide moves.",
+    "type": "fact",
+    "tags": [
+      "ma",
+      "financials",
+      "stock_analysis"
+    ],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "When analyzing MA, focus on: revenue growth rate (YoY), operating margin trends, free cash flow yield (FCF/market cap), and forward P/E relative to 5-year average. For Financials stocks, compare against sector ETF (XLF) performance.",
+    "type": "skill",
+    "tags": [
+      "ma",
+      "fundamental_analysis",
+      "valuation"
+    ],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Costco (COST) is a Consumer Staples company with ~$380B market cap. Key segments: Warehouse Retail, Membership Model, Kirkland. As a mega-cap, it's a core holding in most index funds (SPY, QQQ) and influences sector-wide moves.",
+    "type": "fact",
+    "tags": [
+      "cost",
+      "consumer_staples",
+      "stock_analysis"
+    ],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "When analyzing COST, focus on: revenue growth rate (YoY), operating margin trends, free cash flow yield (FCF/market cap), and forward P/E relative to 5-year average. For Consumer Staples stocks, compare against sector ETF (XLC) performance.",
+    "type": "skill",
+    "tags": [
+      "cost",
+      "fundamental_analysis",
+      "valuation"
+    ],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "AbbVie (ABBV) is a Healthcare company with ~$320B market cap. Key segments: Immunology (Humira/Skyrizi), Oncology, Neuroscience. As a mega-cap, it's a core holding in most index funds (SPY, QQQ) and influences sector-wide moves.",
+    "type": "fact",
+    "tags": [
+      "abbv",
+      "healthcare",
+      "stock_analysis"
+    ],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "When analyzing ABBV, focus on: revenue growth rate (YoY), operating margin trends, free cash flow yield (FCF/market cap), and forward P/E relative to 5-year average. For Healthcare stocks, compare against sector ETF (XLH) performance.",
+    "type": "skill",
+    "tags": [
+      "abbv",
+      "fundamental_analysis",
+      "valuation"
+    ],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Salesforce (CRM) is a Technology company with ~$280B market cap. Key segments: CRM, Marketing Cloud, Slack, Data Cloud, AI. As a mega-cap, it's a core holding in most index funds (SPY, QQQ) and influences sector-wide moves.",
+    "type": "fact",
+    "tags": [
+      "crm",
+      "technology",
+      "stock_analysis"
+    ],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "When analyzing CRM, focus on: revenue growth rate (YoY), operating margin trends, free cash flow yield (FCF/market cap), and forward P/E relative to 5-year average. For Technology stocks, compare against sector ETF (XLT) performance.",
+    "type": "skill",
+    "tags": [
+      "crm",
+      "fundamental_analysis",
+      "valuation"
+    ],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Eli Lilly (LLY) is a Healthcare company with ~$800B market cap. Key segments: GLP-1 (Mounjaro/Zepbound), Oncology, Neuroscience. As a mega-cap, it's a core holding in most index funds (SPY, QQQ) and influences sector-wide moves.",
+    "type": "fact",
+    "tags": [
+      "lly",
+      "healthcare",
+      "stock_analysis"
+    ],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "When analyzing LLY, focus on: revenue growth rate (YoY), operating margin trends, free cash flow yield (FCF/market cap), and forward P/E relative to 5-year average. For Healthcare stocks, compare against sector ETF (XLH) performance.",
+    "type": "skill",
+    "tags": [
+      "lly",
+      "fundamental_analysis",
+      "valuation"
+    ],
+    "source": "trading_knowledge"
+  }
+]

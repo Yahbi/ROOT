@@ -1,0 +1,152 @@
+[
+  {
+    "content": "Product-market fit (PMF) signals: day-7 retention flattens above 20-30% (consumer) or 80-90% (SaaS), organic word-of-mouth drives >30% of new users, NPS score exceeds 40, users complain when the product is taken away, and weekly usage frequency exceeds 3x. Sean Ellis test: >40% of users say they'd be 'very disappointed' if the product disappeared.",
+    "type": "learning",
+    "tags": ["PMF", "retention", "NPS", "product_market_fit"],
+    "source": "business_knowledge"
+  },
+  {
+    "content": "Viral growth loop: user joins -> uses product -> invites others -> new user joins. Viral coefficient K = invites_per_user * conversion_rate. K > 1 means exponential growth (each user brings >1 new user). Dropbox achieved K = 1.2 with its referral program (500MB free storage per referral). Doubling time = ln(2) / ln(K) * cycle_time.",
+    "type": "skill",
+    "tags": ["viral_loop", "K_factor", "referral", "growth_mechanics"],
+    "source": "business_knowledge"
+  },
+  {
+    "content": "Content growth loop: create SEO content -> rank on Google -> visitors discover product -> some convert -> product usage generates data/content -> more pages to index. HubSpot grew from 0 to 100K+ monthly organic visitors using this loop. Average time to rank a new page on Google page 1 is 6-12 months. Programmatic SEO can scale to 100K+ pages.",
+    "type": "skill",
+    "tags": ["content_loop", "SEO", "programmatic_SEO", "organic_growth"],
+    "source": "business_knowledge"
+  },
+  {
+    "content": "Paid acquisition loop: spend $X on ads -> acquire users -> users generate revenue -> reinvest revenue into ads. Sustainable when LTV/CAC > 3 and CAC payback < 12 months. Facebook/Google CPMs range $5-$50 depending on industry. B2B SaaS paid CAC: $200-$500 for SMB, $1,000-$5,000 for mid-market, $10,000-$50,000 for enterprise.",
+    "type": "skill",
+    "tags": ["paid_acquisition", "LTV_CAC", "payback_period", "advertising"],
+    "source": "business_knowledge"
+  },
+  {
+    "content": "Sales-led growth loop: SDR outreach -> demo -> trial -> close -> expansion. B2B enterprise sales cycle: 3-9 months. Key metrics: meetings booked per SDR per week (10-15), demo-to-trial conversion (30-50%), trial-to-paid conversion (15-30%), average deal size, and sales cycle length. One SDR can support $500K-$1M ARR generation annually.",
+    "type": "skill",
+    "tags": ["sales_led", "SDR", "enterprise_sales", "conversion_funnel"],
+    "source": "business_knowledge"
+  },
+  {
+    "content": "Unit economics: LTV = ARPU * gross_margin / monthly_churn_rate. For SaaS with $100 ARPU, 80% gross margin, 3% monthly churn: LTV = $100 * 0.80 / 0.03 = $2,667. CAC = total sales & marketing spend / new customers acquired. LTV/CAC ratio >3 indicates healthy unit economics; <1 means you lose money on every customer.",
+    "type": "fact",
+    "tags": ["unit_economics", "LTV", "CAC", "ARPU", "churn"],
+    "source": "business_knowledge"
+  },
+  {
+    "content": "Burn rate = monthly cash outflow - monthly cash inflow. Runway = cash_balance / monthly_burn_rate. A startup with $2M cash and $150K/month burn has 13.3 months runway. Rule of thumb: raise enough to fund 18-24 months of runway. Start fundraising when 6-9 months of runway remain (fundraising takes 3-6 months). Net burn below $50K/month is considered capital-efficient.",
+    "type": "fact",
+    "tags": ["burn_rate", "runway", "cash_management", "fundraising_timing"],
+    "source": "business_knowledge"
+  },
+  {
+    "content": "Series A benchmark metrics (2024): $1M-$2M ARR minimum, 2.5-3x year-over-year revenue growth, net revenue retention >110%, gross margin >65% (SaaS), monthly revenue churn <2%, LTV/CAC >3, and demonstrable go-to-market repeatability. Top quartile Series A companies show $2M+ ARR with >3x growth and <1% monthly churn.",
+    "type": "fact",
+    "tags": ["series_A", "benchmarks", "ARR", "growth_rate", "churn"],
+    "source": "business_knowledge"
+  },
+  {
+    "content": "Pitch deck structure (10-15 slides): 1) Title/one-liner, 2) Problem (pain point with data), 3) Solution (product demo/screenshots), 4) Market size (TAM/SAM/SOM), 5) Business model (pricing, unit economics), 6) Traction (revenue graph, user metrics), 7) Competition (positioning matrix), 8) Team (relevant experience), 9) Financials (projections), 10) Ask (amount, use of funds, milestones).",
+    "type": "skill",
+    "tags": ["pitch_deck", "fundraising", "presentation", "structure"],
+    "source": "business_knowledge"
+  },
+  {
+    "content": "Growth accounting: MRR_end = MRR_start + new_MRR + expansion_MRR - contraction_MRR - churned_MRR. Net new MRR = new + expansion - contraction - churn. Quick ratio = (new + expansion) / (contraction + churn). A quick ratio >4 indicates excellent growth efficiency; 2-4 is good; <1 means the business is shrinking.",
+    "type": "skill",
+    "tags": ["growth_accounting", "MRR", "quick_ratio", "SaaS_metrics"],
+    "source": "business_knowledge"
+  },
+  {
+    "content": "Cohort analysis tracks behavior of user groups acquired in the same period. Month-1 retention of 40% that stabilizes at 15-20% by month-6 indicates a healthy product (consumer). SaaS dollar retention cohorts should show expansion (net retention >100%). If month-12 cohort revenue > month-1 cohort revenue, the product has negative net churn — the holy grail of SaaS.",
+    "type": "skill",
+    "tags": ["cohort_analysis", "retention", "net_churn", "SaaS"],
+    "source": "business_knowledge"
+  },
+  {
+    "content": "T2D3 growth framework for SaaS: triple revenue in year 1 and year 2, then double for years 3, 4, and 5. Starting at $1M ARR: $3M -> $9M -> $18M -> $36M -> $72M. Companies achieving T2D3 trajectory typically reach $100M ARR in 7-8 years. Only ~1% of SaaS companies achieve this pace; median SaaS growth is 30-40% annually.",
+    "type": "learning",
+    "tags": ["T2D3", "growth_framework", "SaaS", "revenue_trajectory"],
+    "source": "business_knowledge"
+  },
+  {
+    "content": "Product-led growth (PLG) metrics: time-to-value <5 minutes (Slack, Notion), free-to-paid conversion rate 2-5% for freemium / 15-25% for free trial, PQL (product-qualified lead) conversion to paid >20%, and expansion revenue >30% of new revenue. PLG companies have 50-70% lower CAC than sales-led peers because the product is the primary acquisition channel.",
+    "type": "learning",
+    "tags": ["PLG", "product_led_growth", "freemium", "conversion", "time_to_value"],
+    "source": "business_knowledge"
+  },
+  {
+    "content": "Magic number measures sales efficiency: (current quarter ARR - previous quarter ARR) * 4 / previous quarter sales & marketing spend. Magic number >1.0 means $1 of S&M generates >$1 of ARR (invest aggressively). Between 0.5-1.0 is moderate efficiency. Below 0.5 signals go-to-market inefficiency requiring optimization before scaling spend.",
+    "type": "skill",
+    "tags": ["magic_number", "sales_efficiency", "unit_economics", "SaaS_metric"],
+    "source": "business_knowledge"
+  },
+  {
+    "content": "Net Revenue Retention (NRR) = (beginning_MRR + expansion - contraction - churn) / beginning_MRR * 100. Top SaaS companies achieve NRR >130% (Snowflake 158%, Datadog 130%, Twilio 131%). NRR >100% means the company grows even without acquiring new customers. For every 1% improvement in NRR, company valuation increases ~0.5x ARR multiple.",
+    "type": "fact",
+    "tags": ["NRR", "net_revenue_retention", "expansion", "SaaS_benchmark"],
+    "source": "business_knowledge"
+  },
+  {
+    "content": "The Rule of 40 states that revenue growth rate + profit margin should exceed 40%. Example: 60% growth + -10% margin = 50% (passes). 20% growth + 15% margin = 35% (fails). Companies above the Rule of 40 trade at ~12x revenue; those below trade at ~5x revenue. The best SaaS companies achieve Rule of 60+ (Datadog, CrowdStrike).",
+    "type": "fact",
+    "tags": ["rule_of_40", "growth_profitability", "SaaS_valuation", "benchmark"],
+    "source": "business_knowledge"
+  },
+  {
+    "content": "Activation rate is the percentage of signups who complete the 'aha moment' action. Examples: Slack (sending 2000 team messages), Facebook (adding 7 friends in 10 days), Dropbox (uploading 1 file). Improving activation from 20% to 30% is equivalent to increasing all top-of-funnel acquisition by 50%. Activation is often the highest-leverage growth metric to optimize.",
+    "type": "learning",
+    "tags": ["activation", "aha_moment", "onboarding", "conversion_optimization"],
+    "source": "business_knowledge"
+  },
+  {
+    "content": "CAC payback period = CAC / (ARPU * gross_margin). For $5,000 CAC, $500/month ARPU, 80% margin: payback = $5,000 / ($500 * 0.80) = 12.5 months. Best-in-class SaaS: <12 months. Acceptable: 12-18 months. Red flag: >24 months. Shorter payback means faster cash recycling into growth. Venture-funded companies can tolerate 18-24 months; bootstrapped need <12.",
+    "type": "skill",
+    "tags": ["CAC_payback", "unit_economics", "cash_efficiency", "SaaS"],
+    "source": "business_knowledge"
+  },
+  {
+    "content": "Pricing strategies: value-based (charge 10-20% of value delivered to customer), competitor-based (match or undercut), cost-plus (cost + margin target). SaaS pricing models: per-seat ($5-$50/user/month for SMB tools), usage-based (Twilio $0.0075/SMS, AWS per-compute-hour), tiered (3-4 tiers, anchoring around mid-tier), and flat-rate (Basecamp $99/month unlimited).",
+    "type": "skill",
+    "tags": ["pricing", "value_based", "usage_based", "SaaS_pricing"],
+    "source": "business_knowledge"
+  },
+  {
+    "content": "North Star Metric (NSM) is the single metric that best captures the value delivered to customers. Examples: Airbnb (nights booked), Spotify (time spent listening), Slack (daily active users sending messages), Shopify (GMV through platform). A good NSM correlates >0.7 with revenue growth and reflects actual user value, not vanity metrics.",
+    "type": "learning",
+    "tags": ["north_star_metric", "product_metrics", "value_metric", "growth"],
+    "source": "business_knowledge"
+  },
+  {
+    "content": "Marketplace metrics: GMV (gross merchandise value), take rate (platform commission 10-30%), liquidity (% of listings that transact within 30 days, target >20%), supply/demand ratio, and time-to-match. Marketplaces face the chicken-and-egg problem: solved by constraining geography (Uber launched city-by-city), subsidizing one side, or single-player mode (OpenTable's reservation tool).",
+    "type": "learning",
+    "tags": ["marketplace", "GMV", "take_rate", "liquidity", "chicken_egg"],
+    "source": "business_knowledge"
+  },
+  {
+    "content": "Churn analysis: logo churn (% of customers lost) vs revenue churn (% of MRR lost). Revenue churn is higher when large customers leave; lower when small customers leave. Gross churn rate = churned_MRR / beginning_MRR. SMB SaaS: 3-7% monthly logo churn is typical. Enterprise SaaS: <1% monthly logo churn. Reducing churn from 5% to 3% monthly doubles average customer lifetime from 20 to 33 months.",
+    "type": "fact",
+    "tags": ["churn", "logo_churn", "revenue_churn", "customer_lifetime"],
+    "source": "business_knowledge"
+  },
+  {
+    "content": "AARRR pirate metrics funnel: Acquisition (how users find you, measure CAC), Activation (first value experience, measure activation rate), Retention (users come back, measure DAU/MAU or weekly retention), Revenue (users pay, measure ARPU and conversion), Referral (users invite others, measure viral coefficient K). Each stage should be measured independently with cohort analysis.",
+    "type": "skill",
+    "tags": ["AARRR", "pirate_metrics", "funnel", "growth_framework"],
+    "source": "business_knowledge"
+  },
+  {
+    "content": "Burn multiple = net burn / net new ARR. If you burned $5M to add $2.5M net new ARR, burn multiple = 2x. Burn multiple <1x is amazing (efficient growth), 1-2x is good, 2-3x is concerning, >3x is poor capital efficiency. David Sacks coined this metric as a simpler efficiency measure than the magic number. High burn multiples are the #1 predictor of startup death.",
+    "type": "fact",
+    "tags": ["burn_multiple", "capital_efficiency", "net_new_ARR", "sustainability"],
+    "source": "business_knowledge"
+  },
+  {
+    "content": "TAM (Total Addressable Market) calculation methods: top-down (industry reports, e.g., 'global CRM market is $80B'), bottom-up (number_of_target_customers * annual_contract_value, e.g., 500K SMBs * $2K/year = $1B), and value-theory (total value created * capture rate). VCs prefer bottom-up with credible assumptions. TAM >$1B is typical threshold for VC-backable startups.",
+    "type": "skill",
+    "tags": ["TAM", "market_sizing", "bottom_up", "top_down"],
+    "source": "business_knowledge"
+  }
+]

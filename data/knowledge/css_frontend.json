@@ -1,0 +1,152 @@
+[
+  {
+    "content": "Flexbox layout: display:flex on container, justify-content controls main axis alignment (flex-start|center|space-between|space-around|space-evenly), align-items controls cross axis (stretch|center|flex-start|flex-end|baseline). flex:1 on children means flex-grow:1 flex-shrink:1 flex-basis:0%. The shorthand flex: 0 0 200px creates a fixed-width flex item that neither grows nor shrinks.",
+    "type": "fact",
+    "tags": ["CSS", "flexbox", "layout", "justify_content", "align_items"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "CSS Grid: display:grid with grid-template-columns: repeat(3, 1fr) creates 3 equal columns. The fr unit distributes remaining space proportionally — 1fr 2fr means 1/3 and 2/3. grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)) creates a responsive grid that auto-wraps items at minimum 250px. grid-gap (or gap) sets spacing; grid-area enables named template layouts for complex page structures.",
+    "type": "skill",
+    "tags": ["CSS", "grid", "layout", "fr_units", "responsive"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Responsive design with media queries: @media (max-width: 768px) targets mobile, @media (min-width: 769px) and (max-width: 1024px) targets tablets. Modern approach uses clamp() for fluid typography: font-size: clamp(1rem, 2.5vw, 2rem) scales between 16px-32px based on viewport. Container queries (@container (min-width: 400px)) respond to parent size, not viewport — supported in all major browsers since 2023.",
+    "type": "skill",
+    "tags": ["CSS", "responsive", "media_queries", "clamp", "container_queries"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "CSS custom properties (variables): declared with --name: value in a selector (usually :root for global), used with var(--name, fallback). Variables cascade and inherit — setting --color: red on a parent applies to all children. Unlike preprocessor variables (Sass $var), CSS variables are runtime-evaluated and can be changed with JavaScript: element.style.setProperty('--color', 'blue'). Supports theming with <40 lines of CSS.",
+    "type": "skill",
+    "tags": ["CSS", "custom_properties", "variables", "theming", "runtime"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "CSS animations: @keyframes slidein { from { transform: translateX(-100%); } to { transform: translateX(0); } } applied with animation: slidein 0.3s ease-out. Transitions are simpler: transition: all 0.2s ease-in-out triggers on any property change. Performance: transform and opacity are GPU-accelerated (compositor-only), while width/height/top/left trigger layout recalculation (60fps vs <30fps). Use will-change: transform to hint GPU promotion.",
+    "type": "skill",
+    "tags": ["CSS", "animations", "keyframes", "transitions", "performance"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "CSS specificity is calculated as (inline, IDs, classes/attributes/pseudo-classes, elements/pseudo-elements). #header .nav a = (0,1,1,1). !important overrides all specificity but creates maintenance nightmares. Specificity conflicts: .btn.btn-primary (0,0,2,0) beats .btn-primary (0,0,1,0). The :where() pseudo-class has zero specificity, while :is() takes the highest specificity of its arguments. Cascade layers (@layer) provide explicit ordering above specificity.",
+    "type": "fact",
+    "tags": ["CSS", "specificity", "cascade", "important", "layers"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "BEM naming convention: Block__Element--Modifier. Examples: .card (block), .card__title (element), .card--featured (modifier), .card__title--large (element + modifier). BEM produces flat specificity (single class selectors, specificity 0,0,1,0) avoiding cascade conflicts. Max nesting: 1 level of elements (.card__title, not .card__header__title). BEM scales to 50K+ line codebases by eliminating naming collisions and specificity wars.",
+    "type": "learning",
+    "tags": ["CSS", "BEM", "naming", "methodology", "scalability"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Tailwind CSS utility-first approach: class=\"flex items-center justify-between p-4 bg-white rounded-lg shadow-md\". Tailwind purges unused CSS at build time — production CSS is typically 10-30KB vs 50-200KB for component-based frameworks. Configuration in tailwind.config.js: extend theme (custom colors, spacing, breakpoints). JIT (Just-In-Time) mode generates classes on demand, supporting arbitrary values like w-[137px] and hover:bg-[#1da1f2].",
+    "type": "skill",
+    "tags": ["CSS", "Tailwind", "utility_first", "JIT", "purge"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Dark mode implementation: @media (prefers-color-scheme: dark) { :root { --bg: #1a1a2e; --text: #e0e0e0; } } detects OS-level preference. Toggle with data attribute: [data-theme='dark'] { --bg: #1a1a2e; }. Store preference in localStorage. Use CSS variables for all colors to enable one-line theme switching. Color contrast: WCAG AA requires 4.5:1 for normal text (#666 on #fff = 5.74:1, passes) and 3:1 for large text (>18px or >14px bold).",
+    "type": "skill",
+    "tags": ["CSS", "dark_mode", "prefers_color_scheme", "theming", "WCAG"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Accessibility in CSS: :focus-visible shows focus ring only for keyboard navigation (not mouse clicks), replacing the old :focus which showed outlines on all clicks. prefers-reduced-motion: reduce disables animations for users with vestibular disorders: @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition-duration: 0.01ms !important; } }. Approximately 30% of users have some form of reduced-motion preference enabled.",
+    "type": "skill",
+    "tags": ["CSS", "accessibility", "focus_visible", "reduced_motion", "a11y"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "CSS-in-JS tradeoffs: styled-components and Emotion generate unique class names at runtime, preventing naming collisions. Downsides: 8-15KB bundle overhead, runtime CSS generation adds 10-30% rendering cost on initial paint, SSR requires additional configuration for critical CSS extraction. Zero-runtime alternatives: vanilla-extract, Linaria, and Panda CSS compile to static CSS at build time, eliminating runtime cost while keeping the DX benefits.",
+    "type": "learning",
+    "tags": ["CSS", "CSS_in_JS", "styled_components", "performance", "zero_runtime"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "CSS Grid named areas create readable layouts: grid-template-areas: 'header header' 'sidebar main' 'footer footer'; with grid-template-columns: 250px 1fr. Children use grid-area: header. For responsive: change grid-template-areas in a media query to stack elements vertically on mobile. Named areas produce self-documenting layout code that is immediately understandable without inspecting child elements.",
+    "type": "skill",
+    "tags": ["CSS", "grid", "named_areas", "layout", "readability"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Modern CSS reset: *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; } ensures consistent sizing across browsers. box-sizing: border-box includes padding and border in the element's width/height (width: 200px with padding: 20px is still 200px total, not 240px). Additional resets: img { max-width: 100%; display: block; } prevents overflow and inline whitespace gap.",
+    "type": "fact",
+    "tags": ["CSS", "reset", "box_sizing", "border_box", "normalization"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "CSS logical properties replace physical directions for internationalization: margin-inline-start (replaces margin-left, becomes margin-right in RTL), padding-block (replaces padding-top/bottom), inline-size (replaces width), block-size (replaces height). Using logical properties makes layouts automatically work in right-to-left languages (Arabic, Hebrew) without separate RTL stylesheets. Browser support: 95%+ as of 2024.",
+    "type": "learning",
+    "tags": ["CSS", "logical_properties", "RTL", "internationalization", "i18n"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "CSS has:() parent selector (2023+): .card:has(.card__image) selects cards that contain an image. .form-group:has(:invalid) styles the parent when a child input is invalid. :has() enables parent selection that was impossible for 25+ years of CSS. Performance consideration: :has() with complex selectors can be expensive — avoid .parent:has(> .child > .grandchild:nth-child(n+3)) in performance-critical renders.",
+    "type": "learning",
+    "tags": ["CSS", "has_selector", "parent_selector", "modern_CSS"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "CSS scroll-snap provides native carousel/paging behavior: scroll-snap-type: x mandatory on container, scroll-snap-align: start on children. Creates smooth snapping without JavaScript libraries. Combined with scroll-behavior: smooth for animated scrolling. Reduces JavaScript carousel libraries (Swiper, Slick) from 30-100KB to 0KB of JS. Works on both touch and mouse wheel scrolling with configurable proximity vs mandatory snapping.",
+    "type": "skill",
+    "tags": ["CSS", "scroll_snap", "carousel", "native", "no_JS"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "CSS subgrid (display: subgrid on a grid child) allows nested elements to align with the parent grid. Without subgrid, a card grid where each card has header/content/footer cannot align headers across cards. With subgrid: .card { display: grid; grid-template-rows: subgrid; grid-row: span 3; } aligns all card sections to the parent's row tracks. Supported in Chrome 117+, Firefox 71+, Safari 16+.",
+    "type": "learning",
+    "tags": ["CSS", "subgrid", "alignment", "grid", "nested"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Performance-critical CSS: avoid repaints/reflows by animating only transform and opacity (compositor properties). will-change: transform promotes element to its own GPU layer. content-visibility: auto skips rendering off-screen elements (can improve initial render 2-5x for long pages). contain: layout style paint isolates an element's rendering from the rest of the document, enabling browser optimizations.",
+    "type": "skill",
+    "tags": ["CSS", "performance", "will_change", "content_visibility", "contain"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "CSS @layer controls cascade order explicitly: @layer reset, base, components, utilities; — later layers override earlier ones regardless of specificity. Tailwind uses layers internally: @layer base, @layer components, @layer utilities. This solves the problem of third-party CSS overriding your styles: @layer third-party { /* all external CSS */ } — your unlayered CSS always wins over layered CSS.",
+    "type": "learning",
+    "tags": ["CSS", "cascade_layers", "layer", "specificity", "architecture"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Modern CSS color functions: oklch(L C H) offers perceptually uniform lightness (L: 0-1), chroma (C: 0-0.4), and hue (H: 0-360). Unlike HSL, oklch maintains perceived brightness across hues — oklch(0.7 0.15 150) and oklch(0.7 0.15 250) look equally bright. color-mix(in oklch, var(--primary) 80%, black) creates consistent tints/shades. P3 wide-gamut colors: color(display-p3 1 0 0) shows ~25% more vivid red than #ff0000.",
+    "type": "fact",
+    "tags": ["CSS", "oklch", "color", "P3", "color_mix"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "CSS aspect-ratio property: aspect-ratio: 16/9 maintains element proportions without the old padding-bottom hack (padding-bottom: 56.25% for 16:9). Works on any element including images, videos, and containers. Combined with object-fit: cover on images, this prevents layout shift (CLS) during image loading. Before aspect-ratio, maintaining ratios required wrapper divs with percentage padding — a notorious CSS workaround.",
+    "type": "fact",
+    "tags": ["CSS", "aspect_ratio", "CLS", "layout_shift", "images"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "CSS nesting (native, 2023+): .card { color: black; & .title { font-size: 1.5rem; } &:hover { background: gray; } @media (width < 768px) { padding: 1rem; } } — eliminates need for Sass/Less nesting preprocessors. The & selector references the parent. Nesting reduces CSS file size by 15-25% by eliminating repeated parent selectors. Supported in Chrome 112+, Firefox 117+, Safari 17.2+.",
+    "type": "fact",
+    "tags": ["CSS", "nesting", "native", "syntax", "preprocessor"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Responsive images with CSS: use srcset and sizes attributes in HTML, then object-fit: cover (fills container, may crop), object-fit: contain (fits within container, may letterbox), or object-fit: fill (stretches to fill). For background images: background-size: cover with background-position: center. image-set() in CSS is the background-image equivalent of srcset: background-image: image-set('img.webp' type('image/webp'), 'img.jpg' type('image/jpeg')).",
+    "type": "skill",
+    "tags": ["CSS", "responsive_images", "object_fit", "srcset", "optimization"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "CSS view transitions API (2023+) enables smooth page transitions: document.startViewTransition(() => updateDOM()). Default: cross-fade between old and new states. Custom animations with view-transition-name on elements for independent transitions. Works for SPAs natively and MPAs with @view-transition { navigation: auto; }. Replaces complex JavaScript animation libraries (FLIP, Framer Motion) for page-level transitions with ~5 lines of CSS.",
+    "type": "learning",
+    "tags": ["CSS", "view_transitions", "SPA", "animation", "page_transition"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "CSS typography best practices: system font stack: font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, sans-serif avoids web font loading (saves 50-150KB). Line height: 1.5-1.7 for body text, 1.1-1.3 for headings. Max line length: max-width: 65ch (65 characters) for optimal readability. Font loading: font-display: swap shows fallback immediately, font-display: optional drops web font if not cached (best for performance).",
+    "type": "skill",
+    "tags": ["CSS", "typography", "font_loading", "readability", "performance"],
+    "source": "engineering_knowledge"
+  }
+]

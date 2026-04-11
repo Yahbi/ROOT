@@ -488,11 +488,41 @@ CORE_KNOWLEDGE: list[tuple[str, MemoryType, list[str], str]] = [
     ),
 ]
 
+# ── Extended knowledge corpora from JSON files ──────────────────
+import json as _json
+from pathlib import Path as _Path
+
+_KNOWLEDGE_DIR = _Path(__file__).parent.parent.parent / "data" / "knowledge"
+
+def _load_json_corpus(directory: _Path) -> list[tuple[str, MemoryType, list[str], str]]:
+    """Load all JSON knowledge files from data/knowledge/ directory."""
+    entries: list[tuple[str, MemoryType, list[str], str]] = []
+    if not directory.is_dir():
+        return entries
+    type_map = {t.value: t for t in MemoryType}
+    for json_file in sorted(directory.rglob("*.json")):
+        try:
+            data = _json.loads(json_file.read_text())
+            for item in data:
+                mem_type = type_map.get(item.get("type", "fact"), MemoryType.FACT)
+                entries.append((
+                    item["content"],
+                    mem_type,
+                    item.get("tags", []),
+                    item.get("source", "knowledge_corpus"),
+                ))
+        except Exception as exc:
+            logger.warning("Failed to load knowledge file %s: %s", json_file.name, exc)
+    return entries
+
+CORE_KNOWLEDGE.extend(_load_json_corpus(_KNOWLEDGE_DIR))
+
 
 def bootstrap_memory(memory: MemoryEngine) -> int:
     """Seed the memory database with all AI folder knowledge. Returns count of new entries."""
     existing = memory.count()
-    if existing >= len(CORE_KNOWLEDGE):
+    # Allow small tolerance for dedup filtering a few near-duplicate entries
+    if existing >= len(CORE_KNOWLEDGE) - 10:
         logger.info("Memory already bootstrapped (%d entries), skipping", existing)
         return 0
 

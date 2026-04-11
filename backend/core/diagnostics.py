@@ -199,6 +199,7 @@ class DiagnosticsEngine:
                     continue
 
                 conn = sqlite3.connect(str(db_path), timeout=5)
+                conn.execute("PRAGMA journal_mode=WAL")
                 # Integrity check
                 result = conn.execute("PRAGMA integrity_check").fetchone()
                 tables = conn.execute(

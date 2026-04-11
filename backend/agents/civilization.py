@@ -1,5 +1,5 @@
 """
-Agent Civilization — 160 specialized agents across 10 divisions.
+Agent Civilization — 210 specialized agents across 10 divisions.
 
 Thin wrapper that re-exports from backend.agents.divisions.
 All agent definitions live in per-division files under divisions/.
@@ -25,7 +25,7 @@ from backend.agents.divisions import (
 
 
 def get_all_civilization_agents() -> list[AgentProfile]:
-    """Return all 160 civilization agents."""
+    """Return all 210 civilization agents."""
     agents: list[AgentProfile] = []
     for division in ALL_DIVISIONS.values():
         agents.extend(division)

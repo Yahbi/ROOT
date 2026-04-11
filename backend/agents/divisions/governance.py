@@ -1,4 +1,4 @@
-"""Governance & Safety — 10 oversight, compliance, and safety agents."""
+"""Governance & Safety — 15 oversight, compliance, and safety agents."""
 
 from __future__ import annotations
 
@@ -121,5 +121,70 @@ GOVERNANCE_SAFETY: list[AgentProfile] = [
             _cap("risk_assessment", "Assess blast radius and recovery priority"),
             _cap("decision_making", "Decide between auto-recovery and escalation"),
         ],
+    ),
+    AgentProfile(
+        id="bias_detector", name="Bias Detector",
+        role="Bias Detection", tier=1, connector_type="internal",
+        description="Detects statistical and cognitive biases in AI outputs, decisions, and data pipelines",
+        capabilities=[
+            _cap("anomaly_detection", "Detect demographic, selection, and confirmation biases"),
+            _cap("statistical_analysis", "Apply fairness metrics across protected groups"),
+            _cap("compliance", "Enforce bias thresholds mandated by policy or regulation"),
+            _cap("risk_assessment", "Assess downstream harm potential of detected biases"),
+            _cap("evaluation", "Evaluate model outputs for disparate impact and fairness"),
+        ],
+        metadata={"priority": 1},
+    ),
+    AgentProfile(
+        id="privacy_auditor", name="Privacy Auditor",
+        role="Privacy Audit", tier=1, connector_type="internal",
+        description="Audits data handling practices for privacy compliance with GDPR, CCPA, and internal policies",
+        capabilities=[
+            _cap("security_audit", "Audit data collection, storage, and processing for PII exposure"),
+            _cap("compliance", "Verify adherence to GDPR, CCPA, and relevant privacy regulations"),
+            _cap("anomaly_detection", "Detect unauthorized PII access and retention violations"),
+            _cap("risk_assessment", "Assess privacy risk of new features and data flows"),
+            _cap("decision_making", "Advise on privacy-by-design implementation requirements"),
+        ],
+        metadata={"priority": 1},
+    ),
+    AgentProfile(
+        id="compliance_checker", name="Compliance Checker",
+        role="Compliance Verification", tier=1, connector_type="internal",
+        description="Continuously verifies system and operational compliance against regulatory and policy requirements",
+        capabilities=[
+            _cap("compliance", "Run automated compliance checks against defined control frameworks"),
+            _cap("security_audit", "Review configurations for SOC2, ISO 27001, and HIPAA controls"),
+            _cap("anomaly_detection", "Flag compliance drift and policy violations"),
+            _cap("risk_assessment", "Prioritize compliance gaps by regulatory exposure"),
+            _cap("decision_making", "Recommend remediation actions and escalation paths"),
+        ],
+        metadata={"priority": 1},
+    ),
+    AgentProfile(
+        id="sla_monitor", name="SLA Monitor",
+        role="SLA Monitoring", tier=1, connector_type="internal",
+        description="Monitors SLA compliance across all services and escalates at-risk commitments before breach",
+        capabilities=[
+            _cap("health_monitoring", "Track SLA metrics in real time across all service tiers"),
+            _cap("monitoring", "Measure availability, latency, and error rate against SLA targets"),
+            _cap("system_reliability", "Enforce error budgets and trigger burn-rate alerts"),
+            _cap("risk_assessment", "Forecast SLA breach risk based on current burn rates"),
+            _cap("decision_making", "Trigger escalation when SLA breach is imminent"),
+        ],
+        metadata={"priority": 1},
+    ),
+    AgentProfile(
+        id="incident_reporter", name="Incident Reporter",
+        role="Incident Reporting", tier=1, connector_type="internal",
+        description="Documents incidents, coordinates post-mortems, and tracks corrective action closure",
+        capabilities=[
+            _cap("health_monitoring", "Detect and classify incident severity during events"),
+            _cap("decision_making", "Coordinate incident response team assignment and escalation"),
+            _cap("compliance", "Ensure incident documentation meets regulatory and contractual requirements"),
+            _cap("risk_assessment", "Assess incident impact on SLAs, data, and reputation"),
+            _cap("knowledge_expansion", "Convert post-mortem findings into reusable runbooks and lessons"),
+        ],
+        metadata={"priority": 1},
     ),
 ]

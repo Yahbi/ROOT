@@ -398,7 +398,7 @@ def _parse_json_response(text: str) -> dict:
             try:
                 return json.loads(match.group())
             except json.JSONDecodeError:
-                pass
+                logger.debug("Failed to extract JSON object from LLM response text", exc_info=True)
         logger.warning("Failed to parse JSON from LLM response, returning empty dict")
         return {}
 

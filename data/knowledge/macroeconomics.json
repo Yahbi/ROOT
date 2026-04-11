@@ -1,0 +1,152 @@
+[
+  {
+    "content": "GDP is measured by the expenditure approach: Y = C + I + G + (X - M), where C is personal consumption (~68% of US GDP), I is gross private domestic investment (~18%), G is government spending (~17%), and net exports X-M is typically negative for the US (-3%). GDP growth above 3% is strong, 1-2% is moderate, and two consecutive quarters of negative growth signals recession.",
+    "type": "fact",
+    "tags": ["gdp", "expenditure_approach", "national_accounts"],
+    "source": "economics_knowledge"
+  },
+  {
+    "content": "CPI is calculated as a fixed-basket Laspeyres index: CPI_t = (cost of basket at time t / cost of basket in base period) * 100. The basket contains ~80,000 items across 8 categories, with shelter comprising ~36% of the weight. CPI suffers from substitution bias (consumers switch to cheaper alternatives), quality bias (improvements not fully captured), and new product bias.",
+    "type": "fact",
+    "tags": ["cpi", "inflation_measurement", "price_index"],
+    "source": "economics_knowledge"
+  },
+  {
+    "content": "PCE (Personal Consumption Expenditures) is the Fed's preferred inflation measure. Unlike CPI's fixed basket, PCE uses a Fisher Ideal chain-weighted index that adjusts for substitution effects. PCE typically runs 0.3-0.5% below CPI because of different weights (shelter is ~16% in PCE vs ~36% in CPI) and the substitution adjustment. The Fed targets 2% core PCE.",
+    "type": "fact",
+    "tags": ["pce", "fed_target", "inflation_measurement"],
+    "source": "economics_knowledge"
+  },
+  {
+    "content": "The Phillips curve posits an inverse relationship between unemployment and inflation: pi = pi_expected - beta*(u - u*), where pi is inflation, u is unemployment, u* is the natural rate (NAIRU, estimated ~4.0-4.5% for the US), and beta is the slope. The curve has flattened since the 1990s, meaning large unemployment changes produce smaller inflation movements, possibly due to anchored expectations.",
+    "type": "fact",
+    "tags": ["phillips_curve", "nairu", "inflation_unemployment"],
+    "source": "economics_knowledge"
+  },
+  {
+    "content": "The Taylor Rule prescribes the federal funds rate as: r = r* + pi + 0.5*(pi - pi*) + 0.5*(y - y*), where r* is the neutral real rate (~0.5-1.0%), pi is current inflation, pi* is the target (2%), and (y - y*) is the output gap. When inflation is 1% above target and output gap is zero, the Taylor Rule suggests rates should be 0.5% above neutral. The rule has historically tracked Fed actions well but is not followed mechanically.",
+    "type": "fact",
+    "tags": ["taylor_rule", "monetary_policy", "interest_rates"],
+    "source": "economics_knowledge"
+  },
+  {
+    "content": "A normal yield curve slopes upward (10Y > 2Y) reflecting term premium for duration risk. An inverted curve (2Y > 10Y) has preceded every US recession since 1955 with a 12-24 month lead time, though with two false positives. The 2s10s spread turning negative indicates the market expects future rate cuts due to economic weakness. The un-inversion (re-steepening) often signals the recession is imminent, not past.",
+    "type": "learning",
+    "tags": ["yield_curve", "recession_indicator", "term_structure"],
+    "source": "economics_knowledge"
+  },
+  {
+    "content": "Open market operations (OMO) are the Fed's primary tool: buying treasuries injects reserves into the banking system (expansionary), selling drains reserves (contractionary). The fed funds rate is the overnight interbank lending rate, targeted within a 25bp range. The Fed uses the interest on reserves (IOR) as the floor and the overnight reverse repo (ON RRP) rate as the effective floor of the corridor.",
+    "type": "fact",
+    "tags": ["open_market_operations", "fed_funds", "monetary_tools"],
+    "source": "economics_knowledge"
+  },
+  {
+    "content": "Reserve requirements traditionally required banks to hold a fraction of deposits as reserves at the Fed (0-10% depending on deposit size). In March 2020, the Fed reduced reserve requirements to 0%, transitioning to an ample-reserves regime where the IOR rate (not reserve scarcity) controls the fed funds rate. This rendered reserve requirements irrelevant as a monetary policy tool.",
+    "type": "fact",
+    "tags": ["reserve_requirements", "ample_reserves", "monetary_framework"],
+    "source": "economics_knowledge"
+  },
+  {
+    "content": "The discount rate is the rate charged on loans from the Fed's discount window to banks, set 50bp above the fed funds target as a penalty rate. Borrowing from the discount window carries stigma: markets interpret it as a sign of distress. During crises, the Fed narrows the spread and encourages use to reduce stigma, as in the 2023 Bank Term Funding Program (BTFP) at par value.",
+    "type": "fact",
+    "tags": ["discount_rate", "discount_window", "lender_of_last_resort"],
+    "source": "economics_knowledge"
+  },
+  {
+    "content": "Quantitative easing (QE) involves the central bank purchasing long-term securities (treasuries, MBS) to lower long-term interest rates when the policy rate is at the zero lower bound. The Fed's balance sheet grew from $900B (2008) to $9T (2022) through QE. Transmission: portfolio rebalancing (forces investors into riskier assets), signaling (commitment to low rates), and wealth effects (asset price appreciation).",
+    "type": "fact",
+    "tags": ["quantitative_easing", "unconventional_policy", "balance_sheet"],
+    "source": "economics_knowledge"
+  },
+  {
+    "content": "Quantitative tightening (QT) reduces the balance sheet by not reinvesting maturing securities. The Fed's QT pace reached $95B/month ($60B treasuries + $35B MBS) in 2022. QT drains reserves from the banking system, tightening financial conditions. The 2019 repo spike showed QT can overshoot: reserves fell below the minimum comfortable level, causing overnight rates to spike to 10%.",
+    "type": "learning",
+    "tags": ["quantitative_tightening", "balance_sheet_reduction", "reserves"],
+    "source": "economics_knowledge"
+  },
+  {
+    "content": "The fiscal multiplier measures GDP impact per dollar of government spending. Infrastructure spending has the highest multiplier (~1.5-2.0x) because it creates jobs and improves productivity. Tax cuts for high-income earners have the lowest (~0.3-0.5x) due to high savings rates. Transfer payments to low-income households have multipliers of ~1.0-1.5x because they are spent immediately.",
+    "type": "fact",
+    "tags": ["fiscal_multiplier", "government_spending", "fiscal_policy"],
+    "source": "economics_knowledge"
+  },
+  {
+    "content": "The balance of payments has two main accounts: the current account (trade in goods/services + income + transfers) and the capital/financial account (FDI + portfolio investment + reserves). They must sum to zero by accounting identity. A current account deficit means the country imports more than exports, financed by capital inflows. The US runs persistent ~3-4% of GDP current account deficits funded by foreign demand for dollar-denominated assets.",
+    "type": "fact",
+    "tags": ["balance_of_payments", "current_account", "capital_flows"],
+    "source": "economics_knowledge"
+  },
+  {
+    "content": "The carry trade borrows in a low-interest-rate currency and invests in a high-interest-rate currency, profiting from the interest rate differential. Example: borrow JPY at 0.1%, convert to AUD, invest at 4.5%, earning 4.4% annualized. The risk is currency depreciation of the high-yield currency wiping out the carry. Carry trades tend to unwind violently during risk-off events, causing sharp appreciation of funding currencies (JPY, CHF).",
+    "type": "learning",
+    "tags": ["carry_trade", "interest_rate_differential", "currency"],
+    "source": "economics_knowledge"
+  },
+  {
+    "content": "Purchasing Power Parity (PPP) states that exchange rates should adjust so identical goods cost the same across countries: S = P_domestic / P_foreign. The Big Mac Index is an informal PPP measure. In practice, PPP holds only over very long horizons (5-10 years) and deviates due to trade barriers, transportation costs, non-tradable goods (services, real estate), and Balassa-Samuelson effect (higher productivity countries have higher price levels).",
+    "type": "fact",
+    "tags": ["purchasing_power_parity", "exchange_rates", "big_mac_index"],
+    "source": "economics_knowledge"
+  },
+  {
+    "content": "Okun's Law states that for every 1% increase in unemployment above the natural rate, GDP falls approximately 2% below potential. The coefficient (~2) reflects that during downturns, firms also cut hours, reduce productivity growth, and discourage labor force participation, amplifying the output loss beyond the direct unemployment effect.",
+    "type": "fact",
+    "tags": ["okuns_law", "output_gap", "unemployment"],
+    "source": "economics_knowledge"
+  },
+  {
+    "content": "The IS-LM model combines the goods market (IS curve: Y = C(Y-T) + I(r) + G, downward sloping in r-Y space) and the money market (LM curve: M/P = L(r,Y), upward sloping). Their intersection determines equilibrium output and interest rate. Expansionary fiscal policy shifts IS right (higher Y, higher r); expansionary monetary policy shifts LM right (higher Y, lower r). Crowding out occurs when fiscal expansion raises rates enough to reduce private investment.",
+    "type": "fact",
+    "tags": ["is_lm", "macroeconomic_model", "equilibrium"],
+    "source": "economics_knowledge"
+  },
+  {
+    "content": "The money multiplier in fractional reserve banking is m = 1/rr, where rr is the reserve ratio. With rr = 10%, $1 of base money creates up to $10 of M2 money supply. In the ample-reserves regime, the multiplier is less relevant because banks are not reserve-constrained. M2 money supply growth has correlated with inflation with a 12-18 month lag historically.",
+    "type": "fact",
+    "tags": ["money_multiplier", "money_supply", "fractional_reserve"],
+    "source": "economics_knowledge"
+  },
+  {
+    "content": "The Mundell-Fleming trilemma states a country can only maintain two of three: fixed exchange rate, independent monetary policy, and free capital mobility. The US chooses floating exchange rate + independent monetary policy + free capital flows. China manages capital controls + semi-fixed exchange rate + some monetary independence. The EU chose fixed exchange rates (euro) + free capital flows, sacrificing independent monetary policy per member state.",
+    "type": "fact",
+    "tags": ["mundell_fleming", "trilemma", "exchange_rate_regimes"],
+    "source": "economics_knowledge"
+  },
+  {
+    "content": "The natural rate of interest (r*) is the real interest rate consistent with full employment and stable inflation. Estimates have declined from ~2.5% in the 1990s to ~0.5-1.0% in the 2020s, driven by demographics (aging population saves more), productivity slowdown, and global savings glut. If the Fed sets rates below r*, policy is stimulative; above r*, restrictive. The uncertainty around r* estimation is ~1-2%, making real-time calibration difficult.",
+    "type": "learning",
+    "tags": ["natural_rate", "r_star", "neutral_rate"],
+    "source": "economics_knowledge"
+  },
+  {
+    "content": "The Sahm Rule identifies recession starts when the 3-month moving average of the unemployment rate rises 0.5 percentage points above its 12-month low. It has signaled every US recession since 1970 with no false positives. The rule was triggered in July 2024 at 0.53pp, although the economic context (immigration-driven labor force expansion) may have generated an atypical signal.",
+    "type": "learning",
+    "tags": ["sahm_rule", "recession_indicator", "unemployment"],
+    "source": "economics_knowledge"
+  },
+  {
+    "content": "The twin deficit hypothesis links the fiscal deficit (G - T) and the current account deficit (M - X) through the national saving identity: (S - I) = (G - T) + (X - M). When government spending exceeds tax revenue and private saving is stable, the current account deficit must widen. Empirically, the US twin deficits tend to co-move but with inconsistent timing, suggesting other factors (exchange rates, foreign demand) mediate the relationship.",
+    "type": "fact",
+    "tags": ["twin_deficits", "fiscal_deficit", "current_account"],
+    "source": "economics_knowledge"
+  },
+  {
+    "content": "The liquidity trap occurs when interest rates are at or near zero and monetary policy becomes ineffective because people hoard cash rather than invest. In this situation, increasing the money supply does not lower rates further (LM curve becomes horizontal). Japan experienced a liquidity trap for decades (1990s-2010s). Solutions include fiscal stimulus, forward guidance (committing to keep rates low for extended periods), and quantitative easing to affect long-term rates directly.",
+    "type": "fact",
+    "tags": ["liquidity_trap", "zero_lower_bound", "monetary_ineffectiveness"],
+    "source": "economics_knowledge"
+  },
+  {
+    "content": "The debt-to-GDP ratio measures fiscal sustainability. The dynamics follow: delta(D/Y) = (r - g) * (D/Y) + primary_deficit/Y, where r is the interest rate on debt and g is nominal GDP growth. When g > r, the debt ratio declines even with small primary deficits (the denominator grows faster). When r > g, primary surpluses are needed to stabilize debt. The US ratio reached 120%+ in 2024, with interest payments exceeding defense spending.",
+    "type": "fact",
+    "tags": ["debt_sustainability", "fiscal_dynamics", "debt_to_gdp"],
+    "source": "economics_knowledge"
+  },
+  {
+    "content": "The term premium is the extra yield investors demand for holding long-term bonds instead of rolling short-term bonds. It compensates for duration risk, inflation uncertainty, and supply/demand imbalances. The ACM model (Adrian-Crump-Moench) estimates the 10Y term premium, which was negative (-0.5%) during QE peak and rose to +0.5% during QT. Central bank bond purchases compress the term premium; QT expands it.",
+    "type": "fact",
+    "tags": ["term_premium", "bond_yields", "duration_risk"],
+    "source": "economics_knowledge"
+  }
+]

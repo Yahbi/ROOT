@@ -1,4 +1,4 @@
-"""Learning & Improvement Division — 20 self-evolution agents."""
+"""Learning & Improvement Division — 25 self-evolution agents."""
 
 from __future__ import annotations
 
@@ -240,5 +240,70 @@ LEARNING_DIVISION: list[AgentProfile] = [
             _cap("statistical_analysis", "Run significance tests on experiment data"),
             _cap("benchmark_analysis", "Compare results to expected baselines"),
         ],
+    ),
+    AgentProfile(
+        id="feedback_collector", name="Feedback Collector",
+        role="Feedback Collection", tier=2, connector_type="internal",
+        description="Collects, categorizes, and routes user and system feedback for continuous improvement",
+        capabilities=[
+            _cap("data_collection", "Collect feedback from user interactions and system events"),
+            _cap("pattern_recognition", "Categorize feedback into themes and priority buckets"),
+            _cap("data_analysis", "Analyze feedback sentiment and urgency"),
+            _cap("knowledge_expansion", "Convert feedback insights into learning objectives"),
+            _cap("summarization", "Produce feedback digests for review cycles"),
+        ],
+        metadata={"priority": 2},
+    ),
+    AgentProfile(
+        id="ab_test_analyzer", name="A/B Test Analyzer",
+        role="A/B Testing", tier=2, connector_type="internal",
+        description="Designs and analyzes A/B tests to make data-driven improvement decisions",
+        capabilities=[
+            _cap("experiment_design", "Design statistically valid A/B and multivariate tests"),
+            _cap("statistical_analysis", "Calculate significance, power, and confidence intervals"),
+            _cap("hypothesis_testing", "Determine winner variants from test results"),
+            _cap("evaluation", "Evaluate secondary and guardrail metrics alongside primary"),
+            _cap("benchmark_analysis", "Compare A/B results against historical baselines"),
+        ],
+        metadata={"priority": 2},
+    ),
+    AgentProfile(
+        id="curriculum_designer", name="Curriculum Designer",
+        role="Curriculum Design", tier=2, connector_type="internal",
+        description="Designs structured learning curricula for agents and system capability expansion",
+        capabilities=[
+            _cap("learning_strategy", "Design progressive learning sequences and skill ladders"),
+            _cap("gap_analysis", "Identify knowledge gaps that curricula should address"),
+            _cap("skill_creation", "Create skill modules aligned with curriculum objectives"),
+            _cap("evaluation", "Evaluate curriculum effectiveness and completion rates"),
+            _cap("knowledge_expansion", "Research best curriculum design frameworks and methods"),
+        ],
+        metadata={"priority": 2},
+    ),
+    AgentProfile(
+        id="benchmark_runner", name="Benchmark Runner",
+        role="Benchmark Execution", tier=2, connector_type="internal",
+        description="Executes benchmark suites on schedule and tracks performance over time",
+        capabilities=[
+            _cap("benchmark_analysis", "Run standard and custom benchmarks against system components"),
+            _cap("automation", "Schedule and automate benchmark execution pipelines"),
+            _cap("monitoring", "Track benchmark score trends and regressions over time"),
+            _cap("performance_metrics", "Collect and store performance metric time series"),
+            _cap("summarization", "Produce benchmark run reports with trend analysis"),
+        ],
+        metadata={"priority": 2},
+    ),
+    AgentProfile(
+        id="regression_detector", name="Regression Detector",
+        role="Regression Detection", tier=2, connector_type="internal",
+        description="Detects performance and quality regressions in code, models, and system metrics",
+        capabilities=[
+            _cap("benchmark_analysis", "Compare current and baseline benchmark scores"),
+            _cap("anomaly_detection", "Flag statistically significant regressions"),
+            _cap("monitoring", "Continuously monitor key metrics for degradation"),
+            _cap("evaluation", "Triage regressions by severity and business impact"),
+            _cap("debugging", "Investigate root causes of detected regressions"),
+        ],
+        metadata={"priority": 1},
     ),
 ]

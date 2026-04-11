@@ -20,6 +20,7 @@ def _query_db(db_path: str, sql: str, params: tuple = ()) -> list[dict]:
     """Execute a read query and return rows as dicts."""
     try:
         conn = sqlite3.connect(str(db_path))
+        conn.execute("PRAGMA journal_mode=WAL")
         conn.row_factory = sqlite3.Row
         rows = conn.execute(sql, params).fetchall()
         conn.close()

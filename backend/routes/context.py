@@ -5,7 +5,11 @@ compression and windowing stats.
 
 from __future__ import annotations
 
+import logging
+
 from fastapi import APIRouter, HTTPException, Request
+
+logger = logging.getLogger("root.routes.context")
 
 router = APIRouter(prefix="/api/context", tags=["context"])
 
@@ -35,6 +39,6 @@ async def reset_context(request: Request):
     try:
         cm._compression_count = 0
     except AttributeError:
-        pass  # Guard against internal layout changes
+        logger.debug("Context manager internal layout change — compression_count reset skipped")
 
     return {"reset": True, "stats": cm.stats()}

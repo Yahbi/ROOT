@@ -1,4 +1,4 @@
-"""Infrastructure Operations — 10 infrastructure and cloud management agents."""
+"""Infrastructure Operations — 15 infrastructure and cloud management agents."""
 
 from __future__ import annotations
 
@@ -121,5 +121,70 @@ INFRASTRUCTURE_OPS: list[AgentProfile] = [
             _cap("infrastructure", "Recommend hardware replacements and upgrades"),
             _cap("system_reliability", "Predict hardware failures before they occur"),
         ],
+    ),
+    AgentProfile(
+        id="log_aggregator", name="Log Aggregator",
+        role="Log Aggregation", tier=2, connector_type="internal",
+        description="Aggregates logs from all services into centralized stores for search and analysis",
+        capabilities=[
+            _cap("monitoring", "Collect and centralize logs from all service components"),
+            _cap("infrastructure", "Deploy and configure log aggregation stacks"),
+            _cap("indexing", "Index log entries for fast full-text and structured search"),
+            _cap("optimization", "Optimize log ingestion rates and storage costs"),
+            _cap("data_analysis", "Analyze log volume trends and error rate distributions"),
+        ],
+        metadata={"priority": 2},
+    ),
+    AgentProfile(
+        id="metric_collector", name="Metric Collector",
+        role="Metric Collection", tier=2, connector_type="internal",
+        description="Collects, stores, and manages system and business metrics across all infrastructure",
+        capabilities=[
+            _cap("monitoring", "Instrument services and collect time-series metrics"),
+            _cap("infrastructure", "Deploy metric collection agents and exporters"),
+            _cap("data_pipeline", "Build metric ingestion and aggregation pipelines"),
+            _cap("optimization", "Optimize metric cardinality and storage efficiency"),
+            _cap("data_analysis", "Analyze metric trends for capacity and performance insights"),
+        ],
+        metadata={"priority": 2},
+    ),
+    AgentProfile(
+        id="alert_manager", name="Alert Manager",
+        role="Alert Management", tier=2, connector_type="internal",
+        description="Manages alerting rules, routing, silencing, and on-call escalation for all systems",
+        capabilities=[
+            _cap("monitoring", "Define and manage alerting rules and thresholds"),
+            _cap("automation", "Route alerts to appropriate teams via PagerDuty, Slack, or SMS"),
+            _cap("health_monitoring", "Suppress flapping alerts and manage maintenance windows"),
+            _cap("optimization", "Tune alert signal-to-noise ratio to reduce alert fatigue"),
+            _cap("system_reliability", "Ensure critical alerts reach on-call within SLA"),
+        ],
+        metadata={"priority": 1},
+    ),
+    AgentProfile(
+        id="backup_validator", name="Backup Validator",
+        role="Backup Validation", tier=2, connector_type="internal",
+        description="Validates backup integrity through automated restore testing and checksum verification",
+        capabilities=[
+            _cap("backup_management", "Run automated restore drills on backup snapshots"),
+            _cap("disaster_recovery", "Verify backup RPO and RTO compliance through testing"),
+            _cap("data_quality", "Validate backup checksums and data completeness"),
+            _cap("monitoring", "Track backup validation coverage and last-tested timestamps"),
+            _cap("system_reliability", "Alert on backup failures and integrity mismatches"),
+        ],
+        metadata={"priority": 1},
+    ),
+    AgentProfile(
+        id="cost_analyzer", name="Cost Analyzer",
+        role="Cost Analysis", tier=2, connector_type="internal",
+        description="Analyzes infrastructure costs in depth and surfaces actionable savings opportunities",
+        capabilities=[
+            _cap("cost_optimization", "Perform detailed cost attribution and allocation analysis"),
+            _cap("data_analysis", "Identify cost anomalies and underutilized resources"),
+            _cap("optimization", "Recommend reserved instances, spot usage, and right-sizing"),
+            _cap("monitoring", "Track unit economics per service, feature, and customer"),
+            _cap("financial_analysis", "Model cost impact of architectural and configuration changes"),
+        ],
+        metadata={"priority": 2},
     ),
 ]

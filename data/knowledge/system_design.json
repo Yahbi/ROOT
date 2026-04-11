@@ -1,0 +1,152 @@
+[
+  {
+    "content": "Load estimation converts DAU to QPS: 100M DAU with each user making 10 requests/day = 1B requests/day = ~11,574 QPS average. Peak traffic is typically 2-3x average, so ~30,000 QPS peak. Rule of thumb: 1M DAU ~ 12 QPS average, 36 QPS peak.",
+    "type": "skill",
+    "tags": ["load_estimation", "qps", "capacity_planning"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Database selection heuristics: SQL (PostgreSQL, MySQL) for relational data with ACID transactions and complex joins. NoSQL document stores (MongoDB) for flexible schemas and horizontal scaling. Key-value stores (Redis, DynamoDB) for low-latency lookups. Time-series databases (InfluxDB, TimescaleDB) for metrics with time-based queries and automatic downsampling.",
+    "type": "skill",
+    "tags": ["database_selection", "sql", "nosql", "time_series"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Caching operates in layers: L1 in-process cache (Python dict, guava) with ~1ms latency and process-local scope, L2 distributed cache (Redis, Memcached) with ~1-5ms latency shared across instances, L3 CDN (CloudFront, Cloudflare) at edge locations with ~10-50ms for static content. Cache hit rates above 90% typically reduce database load by 10x.",
+    "type": "skill",
+    "tags": ["caching", "redis", "cdn", "cache_layers"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Consistent hashing maps both servers and keys to positions on a hash ring. When a server is added/removed, only K/N keys need remapping (K=total keys, N=servers). Virtual nodes (100-200 per physical server) improve load balance by distributing each server to multiple ring positions, reducing variance from O(log N) to O(1/sqrt(V*N)).",
+    "type": "skill",
+    "tags": ["consistent_hashing", "virtual_nodes", "distributed_systems"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Message queue delivery semantics: at-most-once (fire and forget, possible message loss), at-least-once (acknowledge after processing, possible duplicates requiring idempotent consumers), exactly-once (transactional outbox + idempotent consumer, highest complexity). Kafka achieves exactly-once via idempotent producers + transactional APIs.",
+    "type": "fact",
+    "tags": ["message_queue", "delivery_semantics", "kafka"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "CAP theorem states a distributed system can guarantee at most 2 of 3: Consistency (every read returns the latest write), Availability (every request receives a response), Partition tolerance (system operates despite network splits). Since partitions are inevitable, the real choice is CP (reject requests during partition) vs AP (serve stale data during partition).",
+    "type": "fact",
+    "tags": ["cap_theorem", "consistency", "availability", "partition_tolerance"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Eventual consistency patterns: Last-Write-Wins (LWW) uses timestamps to resolve conflicts but can lose writes. Vector clocks track causal ordering across replicas to detect concurrent writes. CRDTs (Conflict-free Replicated Data Types) are data structures that always converge: G-Counter, PN-Counter, OR-Set, LWW-Register.",
+    "type": "skill",
+    "tags": ["eventual_consistency", "vector_clocks", "crdt"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Back-of-envelope calculations: 1M users * 1KB profile = 1GB storage. 1 photo (500KB) * 10M uploads/day = 5TB/day. 1 server handles ~10K concurrent TCP connections (C10K problem solved). SSD random read: 100 microseconds. Network round-trip within datacenter: 0.5ms. Cross-continent: 150ms.",
+    "type": "skill",
+    "tags": ["estimation", "back_of_envelope", "latency_numbers"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Horizontal scaling (adding more machines) vs vertical scaling (bigger machine): horizontal provides near-linear throughput scaling and fault tolerance but adds distributed system complexity (consistency, coordination). Vertical scaling is simpler but has hardware limits (~256 cores, 24TB RAM for high-end servers in 2026) and is a single point of failure.",
+    "type": "fact",
+    "tags": ["horizontal_scaling", "vertical_scaling", "tradeoffs"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Read/write ratio optimization: for 90/10 read-heavy workloads, use read replicas (3-5 replicas per primary), caching layers, and materialized views. For 50/50 balanced workloads, use write-behind caching and sharding. For write-heavy workloads (logging, metrics), use append-only stores (Kafka, LSM-tree databases like RocksDB/Cassandra).",
+    "type": "skill",
+    "tags": ["read_write_ratio", "read_replicas", "optimization"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Database sharding strategies: range-based (shard by date range or ID range, risk of hotspots), hash-based (consistent hashing on shard key, even distribution but no range queries), directory-based (lookup table maps keys to shards, flexible but adds a bottleneck). Choose shard key carefully: high cardinality, even distribution, and locality for common queries.",
+    "type": "skill",
+    "tags": ["sharding", "database", "partition_strategy"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "The write-ahead log (WAL) ensures durability by writing changes to a sequential log before applying them to the data file. On crash, uncommitted changes are replayed from the WAL. PostgreSQL, SQLite (WAL mode), and all LSM-tree databases use this pattern. WAL writes are sequential, making them 100x faster than random writes on spinning disks.",
+    "type": "fact",
+    "tags": ["wal", "write_ahead_log", "durability"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "API design principles: use nouns not verbs in URLs (GET /users/123 not GET /getUser?id=123), use HTTP methods correctly (GET=read, POST=create, PUT=full update, PATCH=partial update, DELETE=remove), version APIs (v1/v2 in URL or Accept header), paginate collections (cursor-based for real-time data, offset-based for static).",
+    "type": "skill",
+    "tags": ["api_design", "rest", "pagination"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Circuit breaker pattern prevents cascading failures: Closed state (requests pass through, track failures), Open state (requests fail immediately after failure threshold, e.g., 5 failures in 60 seconds), Half-Open state (after timeout, allow one test request). If test succeeds, return to Closed; if fails, return to Open. Libraries: resilience4j, pybreaker, tenacity.",
+    "type": "skill",
+    "tags": ["circuit_breaker", "resilience", "cascading_failure"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Event sourcing stores state changes as an immutable sequence of events rather than mutable current state. The current state is derived by replaying events. Benefits: complete audit trail, temporal queries, event replay for debugging. Drawbacks: eventual consistency, complex read models (CQRS), growing event store requiring snapshotting.",
+    "type": "fact",
+    "tags": ["event_sourcing", "cqrs", "immutable_events"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Bloom filters are space-efficient probabilistic data structures that test set membership. They can return false positives but never false negatives. With m bits and k hash functions for n elements, false positive rate is approximately (1 - e^(-kn/m))^k. Optimal k = (m/n) * ln(2). Used in databases to skip disk reads for non-existent keys.",
+    "type": "skill",
+    "tags": ["bloom_filter", "probabilistic", "data_structure"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Leader election in distributed systems uses algorithms like Raft (majority quorum, heartbeat-based), Bully (highest ID wins), or ZooKeeper's ZAB protocol. Raft requires majority (N/2 + 1) of nodes for leader election and log replication, so a 5-node cluster tolerates 2 failures while maintaining availability.",
+    "type": "fact",
+    "tags": ["leader_election", "raft", "consensus"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Content Delivery Networks (CDNs) cache content at edge locations (200+ PoPs globally). Cache invalidation strategies: TTL-based (set max-age in Cache-Control header), purge API (instant invalidation), versioned URLs (append hash to filename for immutable caching). Cache-Control: public, max-age=31536000, immutable for static assets with content hashes.",
+    "type": "skill",
+    "tags": ["cdn", "cache_invalidation", "cache_control"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Database indexing: B-tree indexes support equality and range queries with O(log N) lookup. Hash indexes support only equality with O(1) lookup. Composite indexes follow the leftmost prefix rule: index on (a, b, c) supports queries on (a), (a, b), and (a, b, c) but not (b) or (c) alone. Covering indexes include all queried columns, eliminating table lookups.",
+    "type": "skill",
+    "tags": ["database_index", "btree", "composite_index"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Microservices communication: synchronous (REST, gRPC with protobuf for 10x smaller payloads and code generation) vs asynchronous (message queues for decoupling, event streaming for real-time). Service mesh (Istio, Linkerd) provides mTLS, load balancing, circuit breaking, and observability without application code changes.",
+    "type": "skill",
+    "tags": ["microservices", "grpc", "service_mesh"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Idempotency in distributed systems prevents duplicate processing. Use idempotency keys: client generates a unique request ID, server checks if that ID was already processed before executing. Store processed IDs in Redis with TTL (24 hours). For payments, idempotency is critical to prevent double-charging.",
+    "type": "skill",
+    "tags": ["idempotency", "distributed_systems", "deduplication"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Rate limiting at scale uses distributed counters in Redis. Fixed window: INCR key with EXPIRE. Sliding window log: ZADD with timestamp scores, ZRANGEBYSCORE to count. Sliding window counter: weighted average of current and previous fixed windows. Token bucket with Redis: MULTI/EXEC atomic decrement and refill.",
+    "type": "skill",
+    "tags": ["rate_limiting", "redis", "distributed_counter"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Data replication strategies: single-leader (one write node, multiple read replicas, simple but write bottleneck), multi-leader (multiple write nodes, conflict resolution needed, useful for multi-datacenter), leaderless (quorum reads/writes with W + R > N, Dynamo-style, highest availability). Replication lag in single-leader typically ranges from milliseconds to seconds.",
+    "type": "fact",
+    "tags": ["replication", "single_leader", "multi_leader", "leaderless"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Observability comprises three pillars: metrics (aggregated numerical measurements via Prometheus/Grafana), logs (structured event records via ELK/Loki), and traces (distributed request flow via Jaeger/Zipkin). OpenTelemetry provides a unified SDK for all three. Golden signals to monitor: latency, traffic, errors, saturation.",
+    "type": "skill",
+    "tags": ["observability", "metrics", "traces", "opentelemetry"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Load balancing algorithms: round-robin (simple, ignores server health), weighted round-robin (accounts for server capacity), least connections (routes to least busy server), consistent hashing (session affinity without sticky sessions), random with two choices (power of two choices: pick 2 random servers, choose less loaded one, near-optimal distribution).",
+    "type": "skill",
+    "tags": ["load_balancing", "algorithms", "least_connections"],
+    "source": "engineering_knowledge"
+  }
+]

@@ -1,0 +1,1002 @@
+[
+  {
+    "content": "Relative Strength Index (RSI) is calculated as 100 - 100/(1+RS) with default period 14. Standard interpretation: >70 overbought, <30 oversold. Best used with confirming indicators to reduce false signals.",
+    "type": "fact",
+    "tags": [
+      "rsi",
+      "technical_analysis",
+      "indicator"
+    ],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "RSI on daily timeframe: use period 14 for standard signals. On daily charts, RSI is most reliable when combined with volume confirmation and trend direction from higher timeframe.",
+    "type": "skill",
+    "tags": [
+      "rsi",
+      "daily",
+      "technical_analysis"
+    ],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "RSI on weekly timeframe: use period 14 for standard signals. On weekly charts, RSI is most reliable when combined with volume confirmation and trend direction from higher timeframe.",
+    "type": "skill",
+    "tags": [
+      "rsi",
+      "weekly",
+      "technical_analysis"
+    ],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "RSI on 1hour timeframe: use period 14 for standard signals. On 1hour charts, RSI is most reliable when combined with volume confirmation and trend direction from higher timeframe.",
+    "type": "skill",
+    "tags": [
+      "rsi",
+      "1hour",
+      "technical_analysis"
+    ],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "RSI divergence: when price makes new high but RSI makes lower high (bearish divergence) or price makes new low but RSI makes higher low (bullish divergence). Divergence signals are strongest on daily/weekly timeframes and often precede trend reversals by 2-5 bars.",
+    "type": "learning",
+    "tags": [
+      "rsi",
+      "divergence",
+      "reversal"
+    ],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Moving Average Convergence Divergence (MACD) is calculated as 12EMA - 26EMA with default period 12,26,9. Standard interpretation: signal crossover. Best used with confirming indicators to reduce false signals.",
+    "type": "fact",
+    "tags": [
+      "macd",
+      "technical_analysis",
+      "indicator"
+    ],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "MACD on daily timeframe: use period 12,26,9 for standard signals. On daily charts, MACD is most reliable when combined with volume confirmation and trend direction from higher timeframe.",
+    "type": "skill",
+    "tags": [
+      "macd",
+      "daily",
+      "technical_analysis"
+    ],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "MACD on weekly timeframe: use period 12,26,9 for standard signals. On weekly charts, MACD is most reliable when combined with volume confirmation and trend direction from higher timeframe.",
+    "type": "skill",
+    "tags": [
+      "macd",
+      "weekly",
+      "technical_analysis"
+    ],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "MACD on 1hour timeframe: use period 12,26,9 for standard signals. On 1hour charts, MACD is most reliable when combined with volume confirmation and trend direction from higher timeframe.",
+    "type": "skill",
+    "tags": [
+      "macd",
+      "1hour",
+      "technical_analysis"
+    ],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "MACD divergence: when price makes new high but MACD makes lower high (bearish divergence) or price makes new low but MACD makes higher low (bullish divergence). Divergence signals are strongest on daily/weekly timeframes and often precede trend reversals by 2-5 bars.",
+    "type": "learning",
+    "tags": [
+      "macd",
+      "divergence",
+      "reversal"
+    ],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Bollinger Bands (Bollinger Bands) is calculated as SMA(20) \u00b1 2\u03c3 with default period 20,2. Standard interpretation: squeeze = low volatility. Best used with confirming indicators to reduce false signals.",
+    "type": "fact",
+    "tags": [
+      "bollinger_bands",
+      "technical_analysis",
+      "indicator"
+    ],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Bollinger Bands on daily timeframe: use period 20,2 for standard signals. On daily charts, Bollinger Bands is most reliable when combined with volume confirmation and trend direction from higher timeframe.",
+    "type": "skill",
+    "tags": [
+      "bollinger_bands",
+      "daily",
+      "technical_analysis"
+    ],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Bollinger Bands on weekly timeframe: use period 20,2 for standard signals. On weekly charts, Bollinger Bands is most reliable when combined with volume confirmation and trend direction from higher timeframe.",
+    "type": "skill",
+    "tags": [
+      "bollinger_bands",
+      "weekly",
+      "technical_analysis"
+    ],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Bollinger Bands on 1hour timeframe: use period 20,2 for standard signals. On 1hour charts, Bollinger Bands is most reliable when combined with volume confirmation and trend direction from higher timeframe.",
+    "type": "skill",
+    "tags": [
+      "bollinger_bands",
+      "1hour",
+      "technical_analysis"
+    ],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Bollinger Bands divergence: when price makes new high but Bollinger Bands makes lower high (bearish divergence) or price makes new low but Bollinger Bands makes higher low (bullish divergence). Divergence signals are strongest on daily/weekly timeframes and often precede trend reversals by 2-5 bars.",
+    "type": "learning",
+    "tags": [
+      "bollinger_bands",
+      "divergence",
+      "reversal"
+    ],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Stochastic Oscillator (Stochastic) is calculated as %K = (C-L14)/(H14-L14)*100 with default period 14,3,3. Standard interpretation: >80 overbought, <20 oversold. Best used with confirming indicators to reduce false signals.",
+    "type": "fact",
+    "tags": [
+      "stochastic",
+      "technical_analysis",
+      "indicator"
+    ],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Stochastic on daily timeframe: use period 14,3,3 for standard signals. On daily charts, Stochastic is most reliable when combined with volume confirmation and trend direction from higher timeframe.",
+    "type": "skill",
+    "tags": [
+      "stochastic",
+      "daily",
+      "technical_analysis"
+    ],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Stochastic on weekly timeframe: use period 14,3,3 for standard signals. On weekly charts, Stochastic is most reliable when combined with volume confirmation and trend direction from higher timeframe.",
+    "type": "skill",
+    "tags": [
+      "stochastic",
+      "weekly",
+      "technical_analysis"
+    ],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Stochastic on 1hour timeframe: use period 14,3,3 for standard signals. On 1hour charts, Stochastic is most reliable when combined with volume confirmation and trend direction from higher timeframe.",
+    "type": "skill",
+    "tags": [
+      "stochastic",
+      "1hour",
+      "technical_analysis"
+    ],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Stochastic divergence: when price makes new high but Stochastic makes lower high (bearish divergence) or price makes new low but Stochastic makes higher low (bullish divergence). Divergence signals are strongest on daily/weekly timeframes and often precede trend reversals by 2-5 bars.",
+    "type": "learning",
+    "tags": [
+      "stochastic",
+      "divergence",
+      "reversal"
+    ],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Commodity Channel Index (CCI) is calculated as (TP-SMA(TP))/(0.015*MD) with default period 20. Standard interpretation: >100 bullish, <-100 bearish. Best used with confirming indicators to reduce false signals.",
+    "type": "fact",
+    "tags": [
+      "cci",
+      "technical_analysis",
+      "indicator"
+    ],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "CCI on daily timeframe: use period 20 for standard signals. On daily charts, CCI is most reliable when combined with volume confirmation and trend direction from higher timeframe.",
+    "type": "skill",
+    "tags": [
+      "cci",
+      "daily",
+      "technical_analysis"
+    ],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "CCI on weekly timeframe: use period 20 for standard signals. On weekly charts, CCI is most reliable when combined with volume confirmation and trend direction from higher timeframe.",
+    "type": "skill",
+    "tags": [
+      "cci",
+      "weekly",
+      "technical_analysis"
+    ],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "CCI on 1hour timeframe: use period 20 for standard signals. On 1hour charts, CCI is most reliable when combined with volume confirmation and trend direction from higher timeframe.",
+    "type": "skill",
+    "tags": [
+      "cci",
+      "1hour",
+      "technical_analysis"
+    ],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "CCI divergence: when price makes new high but CCI makes lower high (bearish divergence) or price makes new low but CCI makes higher low (bullish divergence). Divergence signals are strongest on daily/weekly timeframes and often precede trend reversals by 2-5 bars.",
+    "type": "learning",
+    "tags": [
+      "cci",
+      "divergence",
+      "reversal"
+    ],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Williams Percent Range (Williams %R) is calculated as (HH-C)/(HH-LL)*-100 with default period 14. Standard interpretation: >-20 overbought, <-80 oversold. Best used with confirming indicators to reduce false signals.",
+    "type": "fact",
+    "tags": [
+      "williams_%r",
+      "technical_analysis",
+      "indicator"
+    ],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Williams %R on daily timeframe: use period 14 for standard signals. On daily charts, Williams %R is most reliable when combined with volume confirmation and trend direction from higher timeframe.",
+    "type": "skill",
+    "tags": [
+      "williams_%r",
+      "daily",
+      "technical_analysis"
+    ],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Williams %R on weekly timeframe: use period 14 for standard signals. On weekly charts, Williams %R is most reliable when combined with volume confirmation and trend direction from higher timeframe.",
+    "type": "skill",
+    "tags": [
+      "williams_%r",
+      "weekly",
+      "technical_analysis"
+    ],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Williams %R on 1hour timeframe: use period 14 for standard signals. On 1hour charts, Williams %R is most reliable when combined with volume confirmation and trend direction from higher timeframe.",
+    "type": "skill",
+    "tags": [
+      "williams_%r",
+      "1hour",
+      "technical_analysis"
+    ],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Williams %R divergence: when price makes new high but Williams %R makes lower high (bearish divergence) or price makes new low but Williams %R makes higher low (bullish divergence). Divergence signals are strongest on daily/weekly timeframes and often precede trend reversals by 2-5 bars.",
+    "type": "learning",
+    "tags": [
+      "williams_%r",
+      "divergence",
+      "reversal"
+    ],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Money Flow Index (MFI) is calculated as 100 - 100/(1+MFR) with default period 14. Standard interpretation: >80 overbought, <20 oversold. Best used with confirming indicators to reduce false signals.",
+    "type": "fact",
+    "tags": [
+      "mfi",
+      "technical_analysis",
+      "indicator"
+    ],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "MFI on daily timeframe: use period 14 for standard signals. On daily charts, MFI is most reliable when combined with volume confirmation and trend direction from higher timeframe.",
+    "type": "skill",
+    "tags": [
+      "mfi",
+      "daily",
+      "technical_analysis"
+    ],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "MFI on weekly timeframe: use period 14 for standard signals. On weekly charts, MFI is most reliable when combined with volume confirmation and trend direction from higher timeframe.",
+    "type": "skill",
+    "tags": [
+      "mfi",
+      "weekly",
+      "technical_analysis"
+    ],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "MFI on 1hour timeframe: use period 14 for standard signals. On 1hour charts, MFI is most reliable when combined with volume confirmation and trend direction from higher timeframe.",
+    "type": "skill",
+    "tags": [
+      "mfi",
+      "1hour",
+      "technical_analysis"
+    ],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "MFI divergence: when price makes new high but MFI makes lower high (bearish divergence) or price makes new low but MFI makes higher low (bullish divergence). Divergence signals are strongest on daily/weekly timeframes and often precede trend reversals by 2-5 bars.",
+    "type": "learning",
+    "tags": [
+      "mfi",
+      "divergence",
+      "reversal"
+    ],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Average Directional Index (ADX) is calculated as smoothed(|+DI - -DI|/(+DI + -DI))*100 with default period 14. Standard interpretation: >25 trending, <20 ranging. Best used with confirming indicators to reduce false signals.",
+    "type": "fact",
+    "tags": [
+      "adx",
+      "technical_analysis",
+      "indicator"
+    ],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "ADX on daily timeframe: use period 14 for standard signals. On daily charts, ADX is most reliable when combined with volume confirmation and trend direction from higher timeframe.",
+    "type": "skill",
+    "tags": [
+      "adx",
+      "daily",
+      "technical_analysis"
+    ],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "ADX on weekly timeframe: use period 14 for standard signals. On weekly charts, ADX is most reliable when combined with volume confirmation and trend direction from higher timeframe.",
+    "type": "skill",
+    "tags": [
+      "adx",
+      "weekly",
+      "technical_analysis"
+    ],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "ADX on 1hour timeframe: use period 14 for standard signals. On 1hour charts, ADX is most reliable when combined with volume confirmation and trend direction from higher timeframe.",
+    "type": "skill",
+    "tags": [
+      "adx",
+      "1hour",
+      "technical_analysis"
+    ],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "ADX divergence: when price makes new high but ADX makes lower high (bearish divergence) or price makes new low but ADX makes higher low (bullish divergence). Divergence signals are strongest on daily/weekly timeframes and often precede trend reversals by 2-5 bars.",
+    "type": "learning",
+    "tags": [
+      "adx",
+      "divergence",
+      "reversal"
+    ],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Average True Range (ATR) is calculated as SMA(max(H-L, |H-Cp|, |L-Cp|), 14) with default period 14. Standard interpretation: volatility measure, stop placement. Best used with confirming indicators to reduce false signals.",
+    "type": "fact",
+    "tags": [
+      "atr",
+      "technical_analysis",
+      "indicator"
+    ],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "ATR on daily timeframe: use period 14 for standard signals. On daily charts, ATR is most reliable when combined with volume confirmation and trend direction from higher timeframe.",
+    "type": "skill",
+    "tags": [
+      "atr",
+      "daily",
+      "technical_analysis"
+    ],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "ATR on weekly timeframe: use period 14 for standard signals. On weekly charts, ATR is most reliable when combined with volume confirmation and trend direction from higher timeframe.",
+    "type": "skill",
+    "tags": [
+      "atr",
+      "weekly",
+      "technical_analysis"
+    ],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "ATR on 1hour timeframe: use period 14 for standard signals. On 1hour charts, ATR is most reliable when combined with volume confirmation and trend direction from higher timeframe.",
+    "type": "skill",
+    "tags": [
+      "atr",
+      "1hour",
+      "technical_analysis"
+    ],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "ATR divergence: when price makes new high but ATR makes lower high (bearish divergence) or price makes new low but ATR makes higher low (bullish divergence). Divergence signals are strongest on daily/weekly timeframes and often precede trend reversals by 2-5 bars.",
+    "type": "learning",
+    "tags": [
+      "atr",
+      "divergence",
+      "reversal"
+    ],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "On-Balance Volume (OBV) is calculated as cumulative(vol if C>Cp else -vol) with default period n/a. Standard interpretation: divergence = reversal signal. Best used with confirming indicators to reduce false signals.",
+    "type": "fact",
+    "tags": [
+      "obv",
+      "technical_analysis",
+      "indicator"
+    ],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "OBV on daily timeframe: use period n/a for standard signals. On daily charts, OBV is most reliable when combined with volume confirmation and trend direction from higher timeframe.",
+    "type": "skill",
+    "tags": [
+      "obv",
+      "daily",
+      "technical_analysis"
+    ],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "OBV on weekly timeframe: use period n/a for standard signals. On weekly charts, OBV is most reliable when combined with volume confirmation and trend direction from higher timeframe.",
+    "type": "skill",
+    "tags": [
+      "obv",
+      "weekly",
+      "technical_analysis"
+    ],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "OBV on 1hour timeframe: use period n/a for standard signals. On 1hour charts, OBV is most reliable when combined with volume confirmation and trend direction from higher timeframe.",
+    "type": "skill",
+    "tags": [
+      "obv",
+      "1hour",
+      "technical_analysis"
+    ],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "OBV divergence: when price makes new high but OBV makes lower high (bearish divergence) or price makes new low but OBV makes higher low (bullish divergence). Divergence signals are strongest on daily/weekly timeframes and often precede trend reversals by 2-5 bars.",
+    "type": "learning",
+    "tags": [
+      "obv",
+      "divergence",
+      "reversal"
+    ],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Volume Weighted Average Price (VWAP) is calculated as \u03a3(P\u00d7V)/\u03a3V with default period session. Standard interpretation: institutional benchmark. Best used with confirming indicators to reduce false signals.",
+    "type": "fact",
+    "tags": [
+      "vwap",
+      "technical_analysis",
+      "indicator"
+    ],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "VWAP on daily timeframe: use period session for standard signals. On daily charts, VWAP is most reliable when combined with volume confirmation and trend direction from higher timeframe.",
+    "type": "skill",
+    "tags": [
+      "vwap",
+      "daily",
+      "technical_analysis"
+    ],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "VWAP on weekly timeframe: use period session for standard signals. On weekly charts, VWAP is most reliable when combined with volume confirmation and trend direction from higher timeframe.",
+    "type": "skill",
+    "tags": [
+      "vwap",
+      "weekly",
+      "technical_analysis"
+    ],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "VWAP on 1hour timeframe: use period session for standard signals. On 1hour charts, VWAP is most reliable when combined with volume confirmation and trend direction from higher timeframe.",
+    "type": "skill",
+    "tags": [
+      "vwap",
+      "1hour",
+      "technical_analysis"
+    ],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "VWAP divergence: when price makes new high but VWAP makes lower high (bearish divergence) or price makes new low but VWAP makes higher low (bullish divergence). Divergence signals are strongest on daily/weekly timeframes and often precede trend reversals by 2-5 bars.",
+    "type": "learning",
+    "tags": [
+      "vwap",
+      "divergence",
+      "reversal"
+    ],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Ichimoku Cloud (Ichimoku) is calculated as Tenkan(9)+Kijun(26)+Senkou A/B+Chikou with default period 9,26,52. Standard interpretation: cloud = support/resistance. Best used with confirming indicators to reduce false signals.",
+    "type": "fact",
+    "tags": [
+      "ichimoku",
+      "technical_analysis",
+      "indicator"
+    ],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Ichimoku on daily timeframe: use period 9,26,52 for standard signals. On daily charts, Ichimoku is most reliable when combined with volume confirmation and trend direction from higher timeframe.",
+    "type": "skill",
+    "tags": [
+      "ichimoku",
+      "daily",
+      "technical_analysis"
+    ],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Ichimoku on weekly timeframe: use period 9,26,52 for standard signals. On weekly charts, Ichimoku is most reliable when combined with volume confirmation and trend direction from higher timeframe.",
+    "type": "skill",
+    "tags": [
+      "ichimoku",
+      "weekly",
+      "technical_analysis"
+    ],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Ichimoku on 1hour timeframe: use period 9,26,52 for standard signals. On 1hour charts, Ichimoku is most reliable when combined with volume confirmation and trend direction from higher timeframe.",
+    "type": "skill",
+    "tags": [
+      "ichimoku",
+      "1hour",
+      "technical_analysis"
+    ],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Ichimoku divergence: when price makes new high but Ichimoku makes lower high (bearish divergence) or price makes new low but Ichimoku makes higher low (bullish divergence). Divergence signals are strongest on daily/weekly timeframes and often precede trend reversals by 2-5 bars.",
+    "type": "learning",
+    "tags": [
+      "ichimoku",
+      "divergence",
+      "reversal"
+    ],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Parabolic Stop and Reverse (Parabolic SAR) is calculated as SAR(n+1) = SAR(n) + AF*(EP-SAR(n)) with default period 0.02,0.2. Standard interpretation: trend following stops. Best used with confirming indicators to reduce false signals.",
+    "type": "fact",
+    "tags": [
+      "parabolic_sar",
+      "technical_analysis",
+      "indicator"
+    ],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Parabolic SAR on daily timeframe: use period 0.02,0.2 for standard signals. On daily charts, Parabolic SAR is most reliable when combined with volume confirmation and trend direction from higher timeframe.",
+    "type": "skill",
+    "tags": [
+      "parabolic_sar",
+      "daily",
+      "technical_analysis"
+    ],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Parabolic SAR on weekly timeframe: use period 0.02,0.2 for standard signals. On weekly charts, Parabolic SAR is most reliable when combined with volume confirmation and trend direction from higher timeframe.",
+    "type": "skill",
+    "tags": [
+      "parabolic_sar",
+      "weekly",
+      "technical_analysis"
+    ],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Parabolic SAR on 1hour timeframe: use period 0.02,0.2 for standard signals. On 1hour charts, Parabolic SAR is most reliable when combined with volume confirmation and trend direction from higher timeframe.",
+    "type": "skill",
+    "tags": [
+      "parabolic_sar",
+      "1hour",
+      "technical_analysis"
+    ],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Parabolic SAR divergence: when price makes new high but Parabolic SAR makes lower high (bearish divergence) or price makes new low but Parabolic SAR makes higher low (bullish divergence). Divergence signals are strongest on daily/weekly timeframes and often precede trend reversals by 2-5 bars.",
+    "type": "learning",
+    "tags": [
+      "parabolic_sar",
+      "divergence",
+      "reversal"
+    ],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Keltner Channel (Keltner) is calculated as EMA(20) \u00b1 2*ATR(10) with default period 20,10,2. Standard interpretation: narrower than Bollinger. Best used with confirming indicators to reduce false signals.",
+    "type": "fact",
+    "tags": [
+      "keltner",
+      "technical_analysis",
+      "indicator"
+    ],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Keltner on daily timeframe: use period 20,10,2 for standard signals. On daily charts, Keltner is most reliable when combined with volume confirmation and trend direction from higher timeframe.",
+    "type": "skill",
+    "tags": [
+      "keltner",
+      "daily",
+      "technical_analysis"
+    ],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Keltner on weekly timeframe: use period 20,10,2 for standard signals. On weekly charts, Keltner is most reliable when combined with volume confirmation and trend direction from higher timeframe.",
+    "type": "skill",
+    "tags": [
+      "keltner",
+      "weekly",
+      "technical_analysis"
+    ],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Keltner on 1hour timeframe: use period 20,10,2 for standard signals. On 1hour charts, Keltner is most reliable when combined with volume confirmation and trend direction from higher timeframe.",
+    "type": "skill",
+    "tags": [
+      "keltner",
+      "1hour",
+      "technical_analysis"
+    ],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Keltner divergence: when price makes new high but Keltner makes lower high (bearish divergence) or price makes new low but Keltner makes higher low (bullish divergence). Divergence signals are strongest on daily/weekly timeframes and often precede trend reversals by 2-5 bars.",
+    "type": "learning",
+    "tags": [
+      "keltner",
+      "divergence",
+      "reversal"
+    ],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Donchian Channel (Donchian) is calculated as highest high(20) / lowest low(20) with default period 20. Standard interpretation: turtle trading breakout. Best used with confirming indicators to reduce false signals.",
+    "type": "fact",
+    "tags": [
+      "donchian",
+      "technical_analysis",
+      "indicator"
+    ],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Donchian on daily timeframe: use period 20 for standard signals. On daily charts, Donchian is most reliable when combined with volume confirmation and trend direction from higher timeframe.",
+    "type": "skill",
+    "tags": [
+      "donchian",
+      "daily",
+      "technical_analysis"
+    ],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Donchian on weekly timeframe: use period 20 for standard signals. On weekly charts, Donchian is most reliable when combined with volume confirmation and trend direction from higher timeframe.",
+    "type": "skill",
+    "tags": [
+      "donchian",
+      "weekly",
+      "technical_analysis"
+    ],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Donchian on 1hour timeframe: use period 20 for standard signals. On 1hour charts, Donchian is most reliable when combined with volume confirmation and trend direction from higher timeframe.",
+    "type": "skill",
+    "tags": [
+      "donchian",
+      "1hour",
+      "technical_analysis"
+    ],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Donchian divergence: when price makes new high but Donchian makes lower high (bearish divergence) or price makes new low but Donchian makes higher low (bullish divergence). Divergence signals are strongest on daily/weekly timeframes and often precede trend reversals by 2-5 bars.",
+    "type": "learning",
+    "tags": [
+      "donchian",
+      "divergence",
+      "reversal"
+    ],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Rate of Change (ROC) is calculated as (C - C_n)/C_n * 100 with default period 12. Standard interpretation: momentum oscillator. Best used with confirming indicators to reduce false signals.",
+    "type": "fact",
+    "tags": [
+      "roc",
+      "technical_analysis",
+      "indicator"
+    ],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "ROC on daily timeframe: use period 12 for standard signals. On daily charts, ROC is most reliable when combined with volume confirmation and trend direction from higher timeframe.",
+    "type": "skill",
+    "tags": [
+      "roc",
+      "daily",
+      "technical_analysis"
+    ],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "ROC on weekly timeframe: use period 12 for standard signals. On weekly charts, ROC is most reliable when combined with volume confirmation and trend direction from higher timeframe.",
+    "type": "skill",
+    "tags": [
+      "roc",
+      "weekly",
+      "technical_analysis"
+    ],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "ROC on 1hour timeframe: use period 12 for standard signals. On 1hour charts, ROC is most reliable when combined with volume confirmation and trend direction from higher timeframe.",
+    "type": "skill",
+    "tags": [
+      "roc",
+      "1hour",
+      "technical_analysis"
+    ],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "ROC divergence: when price makes new high but ROC makes lower high (bearish divergence) or price makes new low but ROC makes higher low (bullish divergence). Divergence signals are strongest on daily/weekly timeframes and often precede trend reversals by 2-5 bars.",
+    "type": "learning",
+    "tags": [
+      "roc",
+      "divergence",
+      "reversal"
+    ],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Triple Exponential Average (TRIX) is calculated as 1-period ROC of triple-smoothed EMA with default period 15. Standard interpretation: filter noise, signal crossover. Best used with confirming indicators to reduce false signals.",
+    "type": "fact",
+    "tags": [
+      "trix",
+      "technical_analysis",
+      "indicator"
+    ],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "TRIX on daily timeframe: use period 15 for standard signals. On daily charts, TRIX is most reliable when combined with volume confirmation and trend direction from higher timeframe.",
+    "type": "skill",
+    "tags": [
+      "trix",
+      "daily",
+      "technical_analysis"
+    ],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "TRIX on weekly timeframe: use period 15 for standard signals. On weekly charts, TRIX is most reliable when combined with volume confirmation and trend direction from higher timeframe.",
+    "type": "skill",
+    "tags": [
+      "trix",
+      "weekly",
+      "technical_analysis"
+    ],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "TRIX on 1hour timeframe: use period 15 for standard signals. On 1hour charts, TRIX is most reliable when combined with volume confirmation and trend direction from higher timeframe.",
+    "type": "skill",
+    "tags": [
+      "trix",
+      "1hour",
+      "technical_analysis"
+    ],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "TRIX divergence: when price makes new high but TRIX makes lower high (bearish divergence) or price makes new low but TRIX makes higher low (bullish divergence). Divergence signals are strongest on daily/weekly timeframes and often precede trend reversals by 2-5 bars.",
+    "type": "learning",
+    "tags": [
+      "trix",
+      "divergence",
+      "reversal"
+    ],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Elder Ray Index (Elder Ray) is calculated as Bull Power=H-EMA(13), Bear Power=L-EMA(13) with default period 13. Standard interpretation: trend strength. Best used with confirming indicators to reduce false signals.",
+    "type": "fact",
+    "tags": [
+      "elder_ray",
+      "technical_analysis",
+      "indicator"
+    ],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Elder Ray on daily timeframe: use period 13 for standard signals. On daily charts, Elder Ray is most reliable when combined with volume confirmation and trend direction from higher timeframe.",
+    "type": "skill",
+    "tags": [
+      "elder_ray",
+      "daily",
+      "technical_analysis"
+    ],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Elder Ray on weekly timeframe: use period 13 for standard signals. On weekly charts, Elder Ray is most reliable when combined with volume confirmation and trend direction from higher timeframe.",
+    "type": "skill",
+    "tags": [
+      "elder_ray",
+      "weekly",
+      "technical_analysis"
+    ],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Elder Ray on 1hour timeframe: use period 13 for standard signals. On 1hour charts, Elder Ray is most reliable when combined with volume confirmation and trend direction from higher timeframe.",
+    "type": "skill",
+    "tags": [
+      "elder_ray",
+      "1hour",
+      "technical_analysis"
+    ],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Elder Ray divergence: when price makes new high but Elder Ray makes lower high (bearish divergence) or price makes new low but Elder Ray makes higher low (bullish divergence). Divergence signals are strongest on daily/weekly timeframes and often precede trend reversals by 2-5 bars.",
+    "type": "learning",
+    "tags": [
+      "elder_ray",
+      "divergence",
+      "reversal"
+    ],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Chaikin Money Flow (Chaikin MF) is calculated as \u03a3(((C-L)-(H-C))/(H-L)*V)/\u03a3(V) with default period 20. Standard interpretation: >0.1 buying, <-0.1 selling. Best used with confirming indicators to reduce false signals.",
+    "type": "fact",
+    "tags": [
+      "chaikin_mf",
+      "technical_analysis",
+      "indicator"
+    ],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Chaikin MF on daily timeframe: use period 20 for standard signals. On daily charts, Chaikin MF is most reliable when combined with volume confirmation and trend direction from higher timeframe.",
+    "type": "skill",
+    "tags": [
+      "chaikin_mf",
+      "daily",
+      "technical_analysis"
+    ],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Chaikin MF on weekly timeframe: use period 20 for standard signals. On weekly charts, Chaikin MF is most reliable when combined with volume confirmation and trend direction from higher timeframe.",
+    "type": "skill",
+    "tags": [
+      "chaikin_mf",
+      "weekly",
+      "technical_analysis"
+    ],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Chaikin MF on 1hour timeframe: use period 20 for standard signals. On 1hour charts, Chaikin MF is most reliable when combined with volume confirmation and trend direction from higher timeframe.",
+    "type": "skill",
+    "tags": [
+      "chaikin_mf",
+      "1hour",
+      "technical_analysis"
+    ],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Chaikin MF divergence: when price makes new high but Chaikin MF makes lower high (bearish divergence) or price makes new low but Chaikin MF makes higher low (bullish divergence). Divergence signals are strongest on daily/weekly timeframes and often precede trend reversals by 2-5 bars.",
+    "type": "learning",
+    "tags": [
+      "chaikin_mf",
+      "divergence",
+      "reversal"
+    ],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Aroon Indicator (Aroon) is calculated as Aroon Up = ((n - periods since n-high)/n)*100 with default period 25. Standard interpretation: >70 strong trend. Best used with confirming indicators to reduce false signals.",
+    "type": "fact",
+    "tags": [
+      "aroon",
+      "technical_analysis",
+      "indicator"
+    ],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Aroon on daily timeframe: use period 25 for standard signals. On daily charts, Aroon is most reliable when combined with volume confirmation and trend direction from higher timeframe.",
+    "type": "skill",
+    "tags": [
+      "aroon",
+      "daily",
+      "technical_analysis"
+    ],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Aroon on weekly timeframe: use period 25 for standard signals. On weekly charts, Aroon is most reliable when combined with volume confirmation and trend direction from higher timeframe.",
+    "type": "skill",
+    "tags": [
+      "aroon",
+      "weekly",
+      "technical_analysis"
+    ],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Aroon on 1hour timeframe: use period 25 for standard signals. On 1hour charts, Aroon is most reliable when combined with volume confirmation and trend direction from higher timeframe.",
+    "type": "skill",
+    "tags": [
+      "aroon",
+      "1hour",
+      "technical_analysis"
+    ],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Aroon divergence: when price makes new high but Aroon makes lower high (bearish divergence) or price makes new low but Aroon makes higher low (bullish divergence). Divergence signals are strongest on daily/weekly timeframes and often precede trend reversals by 2-5 bars.",
+    "type": "learning",
+    "tags": [
+      "aroon",
+      "divergence",
+      "reversal"
+    ],
+    "source": "trading_knowledge"
+  }
+]

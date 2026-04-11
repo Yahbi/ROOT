@@ -1,0 +1,152 @@
+[
+  {
+    "content": "Charm pricing ending in 9 ($29 vs $30) increases conversion by 8-24% across studies. The left-digit effect means $29 is perceived as 'in the twenties' while $30 is 'in the thirties.' For SaaS, the optimal prices cluster at $9, $29, $49, $99, $199, $499. Ending in 7 ($47, $97) signals info-products and coaching. Round numbers ($50, $100) signal premium/luxury positioning.",
+    "type": "fact",
+    "tags": ["pricing_psychology", "charm_pricing", "conversion"],
+    "source": "business_knowledge"
+  },
+  {
+    "content": "The decoy effect (asymmetric dominance) uses a third pricing option to steer buyers. Classic pattern: Basic ($10/mo), Pro ($25/mo), Enterprise ($30/mo). Enterprise is slightly more than Pro but with significantly more features, making Pro look like a bad deal and Enterprise like a bargain. The Economist case study: adding a print-only option (dominated by print+digital at same price) shifted 62% of buyers to the combo plan from 32%.",
+    "type": "learning",
+    "tags": ["decoy_effect", "pricing_tiers", "behavioral_pricing"],
+    "source": "business_knowledge"
+  },
+  {
+    "content": "Annual billing discounts of 15-20% (advertised as '2 months free') improve cash flow and reduce churn. Companies offering annual plans report 30-40% of subscribers choosing annual. Annual subscribers have 5-8% annual churn vs 4-7% monthly churn (per month). The breakeven: a 20% annual discount is profitable if monthly churn exceeds 1.8%. Offering monthly + annual + 2-year tiers captures different willingness-to-commit segments.",
+    "type": "fact",
+    "tags": ["annual_pricing", "billing_period", "churn_reduction"],
+    "source": "business_knowledge"
+  },
+  {
+    "content": "Freemium conversion rates: 2-5% is typical across SaaS (Dropbox ~4%, Slack ~3%, Spotify ~3.5%). 10%+ is exceptional (Zoom achieved ~10% pre-pandemic). The key metric is time-to-value: users who experience core value within the first session convert 3-5x higher than those who don't. Effective freemium limits should create friction at the point of maximum value realization, not before (usage limits > feature limits for bottom-up SaaS).",
+    "type": "fact",
+    "tags": ["freemium", "conversion_rates", "time_to_value"],
+    "source": "business_knowledge"
+  },
+  {
+    "content": "Product Qualified Leads (PQLs) score users based on product usage signals rather than marketing engagement. PQL scoring model: activation events (completed onboarding = +20pts), engagement depth (used feature X 5+ times = +15pts), collaboration signals (invited team member = +30pts), expansion signals (hit plan limit = +25pts). PQLs convert to paid at 5-8x the rate of Marketing Qualified Leads (MQLs) because they've already experienced product value.",
+    "type": "skill",
+    "tags": ["pql", "lead_scoring", "product_led_growth"],
+    "source": "business_knowledge"
+  },
+  {
+    "content": "Activation rate measures the percentage of signups who reach the 'aha moment' — the first experience of core product value. Benchmark: 20-40% activation is average, 40-60% is good, 60%+ is excellent. Improving activation from 20% to 40% doubles the effective top of the funnel. Tactics: reduce time-to-value (pre-fill data, templates, AI-assisted setup), progressive onboarding (just-in-time feature education), and email drip sequences targeting non-activated users within 48 hours.",
+    "type": "learning",
+    "tags": ["activation_rate", "onboarding", "aha_moment"],
+    "source": "business_knowledge"
+  },
+  {
+    "content": "The viral coefficient K = invites_per_user * conversion_rate_per_invite. K > 1 means each user brings more than one new user, creating exponential growth. Dropbox achieved K ~1.2 with its double-sided referral (500MB for inviter and invitee). Viral cycle time matters equally: K=0.9 with a 1-day cycle grows faster than K=1.5 with a 30-day cycle over 6 months. Natural virality (product requires sharing) > incentivized virality (referral rewards).",
+    "type": "fact",
+    "tags": ["viral_coefficient", "growth_loops", "referral"],
+    "source": "business_knowledge"
+  },
+  {
+    "content": "Double-sided referral incentives outperform single-sided by 2-3x. PayPal's original $10/$10 referral achieved massive growth. Optimal structure: reward the referrer with account credit (high perceived value, low marginal cost) and the referee with a trial extension or feature unlock (reduces friction). Cap referrals to prevent gaming (10-20 per user). Track attribution via unique referral codes with 30-day cookie windows. Referral programs cost 15-25% of the equivalent paid acquisition cost.",
+    "type": "skill",
+    "tags": ["referral_program", "double_sided", "customer_acquisition"],
+    "source": "business_knowledge"
+  },
+  {
+    "content": "The content flywheel creates a self-reinforcing growth loop: SEO-optimized content drives organic traffic → traffic generates leads → leads convert to customers → customers provide data/case studies → data enables more targeted content. HubSpot generates 6M+ monthly organic visits from this flywheel. Key metric: organic traffic should compound 5-10% monthly. Content payback period is 6-12 months vs 0-day for paid ads, but marginal cost approaches zero at scale.",
+    "type": "learning",
+    "tags": ["content_flywheel", "seo", "organic_growth"],
+    "source": "business_knowledge"
+  },
+  {
+    "content": "Marketplace dynamics face the chicken-and-egg problem: supply attracts demand and demand attracts supply, but neither comes without the other. Solutions: single-player mode (provide value to one side without the other — Yelp started as a review site), seeding supply (Uber guaranteed driver earnings, DoorDash did deliveries themselves), geographic focus (dense local market before expanding), and subsidizing the hard side (usually supply for services, demand for products).",
+    "type": "learning",
+    "tags": ["marketplace", "chicken_and_egg", "cold_start"],
+    "source": "business_knowledge"
+  },
+  {
+    "content": "Marketplace take rates (commission percentage) range from 10-30% depending on the market. Ride-sharing: 20-30%. Food delivery: 15-30%. Freelancing (Upwork/Fiverr): 20%. Real estate (Zillow): 1-3%. App stores: 15-30%. The equilibrium take rate depends on: how much value the platform adds, supply alternatives, demand price sensitivity, and competition. Increasing take rate above the value-add threshold causes disintermediation (users transact off-platform).",
+    "type": "fact",
+    "tags": ["take_rate", "marketplace_economics", "commission"],
+    "source": "business_knowledge"
+  },
+  {
+    "content": "API monetization models: per-call pricing (Twilio: $0.0075/SMS) works for transactional use with variable volume. Subscription tiers with included calls (Stripe: percentage + fixed fee per transaction) provide revenue predictability. Hybrid models (OpenAI: subscription + per-token overage) capture both base commitment and usage growth. Metered billing with committed use discounts (AWS: on-demand + reserved + savings plans) maximizes revenue across customer segments.",
+    "type": "fact",
+    "tags": ["api_monetization", "pricing_models", "usage_billing"],
+    "source": "business_knowledge"
+  },
+  {
+    "content": "White-label vs branded SaaS tradeoffs: white-label allows partners to resell under their brand, expanding distribution but hiding your brand equity. Typical white-label pricing: 40-60% discount off retail for volume commitment. Branded SaaS maintains direct customer relationship and brand awareness but requires your own distribution. Hybrid approach: 'powered by [YourBrand]' badge preserves some brand visibility. White-label revenue is more predictable (contracts) but lower margin than direct.",
+    "type": "learning",
+    "tags": ["white_label", "distribution", "branding_strategy"],
+    "source": "business_knowledge"
+  },
+  {
+    "content": "Net Revenue Retention (NRR) > 120% is best-in-class, meaning existing customers spend 20%+ more each year even after accounting for churn and contraction. Snowflake achieved 158% NRR through usage-based pricing. Components: expansion revenue (upsells, cross-sells, usage growth) minus gross churn minus contraction (downgrades). NRR > 100% means the company can grow revenue with zero new customers. Public SaaS median NRR is ~110%; top quartile is ~125%.",
+    "type": "fact",
+    "tags": ["nrr", "expansion_revenue", "retention"],
+    "source": "business_knowledge"
+  },
+  {
+    "content": "Usage-based pricing (UBP) aligns cost with value and reduces friction for new customers starting small. Twilio, Snowflake, and Datadog use UBP. Advantages: lower barrier to entry, natural expansion revenue, fairer perceived value. Disadvantages: revenue unpredictability (usage drops in downturns), harder to forecast, and risk of bill shock. Hybrid UBP: base platform fee ($X/mo) + usage overage charges combines predictability with growth upside.",
+    "type": "learning",
+    "tags": ["usage_based_pricing", "revenue_model", "hybrid_pricing"],
+    "source": "business_knowledge"
+  },
+  {
+    "content": "The Rule of 40 states healthy SaaS companies should have revenue growth rate + profit margin >= 40%. A company growing 60% with -20% margins (40%) is equally valued as one growing 20% with 20% margins (40%). Investors weigh growth more when >30% and profitability more when growth decelerates. The top 25% of public SaaS companies exceed Rule of 55. Below Rule of 20 signals structural problems requiring immediate correction.",
+    "type": "fact",
+    "tags": ["rule_of_40", "saas_health", "growth_profitability"],
+    "source": "business_knowledge"
+  },
+  {
+    "content": "Negative churn occurs when expansion revenue from existing customers exceeds lost revenue from churned customers. Formula: net_churn = (churned_MRR - expansion_MRR) / starting_MRR. If expansion > churn, net churn is negative. Strategies: usage-based pricing tiers (customers naturally grow into higher tiers), seat-based pricing (growing teams pay more), feature-gated upsells (premium features), and cross-sell complementary products. Negative churn is the hallmark of product-market fit.",
+    "type": "learning",
+    "tags": ["negative_churn", "expansion_revenue", "product_market_fit"],
+    "source": "business_knowledge"
+  },
+  {
+    "content": "Micro-SaaS businesses target narrow niches with <$5M TAM that larger competitors ignore. Characteristics: solo founder or small team (1-5 people), $10K-$100K MRR, 80%+ gross margins, bootstrapped (no VC needed), and often built on top of platforms (Shopify apps, Chrome extensions, Slack bots). Success factors: extreme focus on one persona's one problem, SEO/community-based acquisition (no sales team), and high NPS driving word-of-mouth. 47% of indie hackers earn >$1K/mo; top 5% earn >$10K/mo.",
+    "type": "fact",
+    "tags": ["micro_saas", "indie_hacking", "bootstrapping"],
+    "source": "business_knowledge"
+  },
+  {
+    "content": "Product-led sales (PLS) uses product usage data to identify and prioritize sales opportunities. Signals that trigger sales outreach: hitting usage limits, inviting team members, viewing pricing page 3+ times, using enterprise features in trial. Atlassian pioneered PLS: free/self-serve for small teams, sales-assisted for enterprise. PLS companies report 30-50% lower CAC than traditional sales-led models because the product does the initial qualification and education.",
+    "type": "skill",
+    "tags": ["product_led_sales", "signal_based_selling", "plg"],
+    "source": "business_knowledge"
+  },
+  {
+    "content": "Cohort analysis tracks groups of customers acquired in the same period to measure true retention and revenue patterns. Monthly cohort retention table: row = acquisition month, column = months since acquisition, cell = % still active. Healthy patterns: retention curve flattens (stabilizes at 40-60% by month 6-12). Unhealthy: retention keeps declining without flattening. Revenue cohorts should show expanding curves (each cohort spends more over time) due to expansion revenue.",
+    "type": "skill",
+    "tags": ["cohort_analysis", "retention_curves", "metrics"],
+    "source": "business_knowledge"
+  },
+  {
+    "content": "SEO-led content strategy for SaaS: target bottom-of-funnel keywords first (higher conversion despite lower volume). Map content to buyer journey: awareness (problem-focused blog posts, DR 0-30 difficulty), consideration (comparison pages 'X vs Y', 'best X tools', DR 30-50), decision (landing pages, case studies, ROI calculators). Programmatic SEO creates 1000s of pages from templates + data (Zapier's app integration pages, G2's product comparison pages). Average organic CAC is $200-500 vs $500-2000 for paid.",
+    "type": "skill",
+    "tags": ["seo_strategy", "content_marketing", "buyer_journey"],
+    "source": "business_knowledge"
+  },
+  {
+    "content": "The magic number measures sales efficiency: Magic Number = (QoQ ARR growth * 4) / previous quarter S&M spend. >0.75 means efficient growth (invest more), 0.5-0.75 is moderate efficiency, <0.5 means sales spend is inefficient. CAC payback period (months to recover acquisition cost) should be <12 months for SMB, <18 months for mid-market, <24 months for enterprise. LTV:CAC > 3:1 across the customer base is the minimum for sustainable unit economics.",
+    "type": "fact",
+    "tags": ["magic_number", "sales_efficiency", "unit_economics"],
+    "source": "business_knowledge"
+  },
+  {
+    "content": "Reverse trial starts users on a full-featured paid plan for 14-30 days, then downgrades to free (not cancellation). This gives users the maximum value experience upfront, creating loss aversion when features are removed. Ahrefs reported 2x higher conversion from reverse trial vs traditional free-first freemium. The key psychological lever: people value what they have (endowment effect) more than what they might get, making the downgrade feel like a loss.",
+    "type": "learning",
+    "tags": ["reverse_trial", "conversion_strategy", "endowment_effect"],
+    "source": "business_knowledge"
+  },
+  {
+    "content": "Land-and-expand sales motion: land with a small deal (single team/department, limited seats) at low ACV ($5K-$20K), then expand across the organization through demonstrated value. Expansion tactics: usage dashboards showing ROI, champion-building programs, executive business reviews (QBRs), and cross-departmental use case workshops. Slack's land-and-expand: teams self-serve for free → prove value → company-wide deal. Average expansion from land to full deployment: 3-5x initial contract value over 24 months.",
+    "type": "skill",
+    "tags": ["land_and_expand", "sales_motion", "expansion"],
+    "source": "business_knowledge"
+  },
+  {
+    "content": "AI consulting as a revenue stream: discovery workshops ($2K-$10K, identify AI opportunities), proof-of-concept builds ($10K-$50K, validate feasibility in 2-4 weeks), full implementation ($50K-$500K, 3-6 month engagements), and ongoing AI operations retainers ($5K-$20K/month for monitoring, retraining, and optimization). Position as 'AI strategy' not 'development' to command premium rates. Target: non-tech companies with $10M+ revenue wanting AI capabilities but lacking in-house ML teams.",
+    "type": "skill",
+    "tags": ["ai_consulting", "service_pricing", "revenue_stream"],
+    "source": "business_knowledge"
+  }
+]

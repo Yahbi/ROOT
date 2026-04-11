@@ -103,6 +103,9 @@ class AgentCollaboration:
     redundancy detection and multi-agent consensus.
     """
 
+    _MAX_WORKFLOWS = 500
+    _MAX_CIRCUIT_ENTRIES = 200  # Bounded by number of distinct agents
+
     def __init__(self, orchestrator=None, bus=None, registry=None, network=None,
                  verification=None) -> None:
         self._orchestrator = orchestrator
@@ -114,6 +117,7 @@ class AgentCollaboration:
         self._workflows: dict[str, CollabWorkflow] = {}
         self._history: list[CollabWorkflow] = []
         # Circuit breaker: {agent_id: {"failures": int, "last_failure": float|None, "open_until": float|None}}
+        # Bounded by number of distinct agents in the system (162+ but finite).
         self._circuit_state: dict[str, dict] = {}
 
     async def delegate(
@@ -143,6 +147,7 @@ class AgentCollaboration:
             )
             self._workflows[wf_id] = failed_wf
             self._history = [*self._history[-199:], failed_wf]
+            self._prune_workflows()
             return failed_wf
 
         workflow = CollabWorkflow(
@@ -202,6 +207,7 @@ class AgentCollaboration:
 
         self._workflows[wf_id] = completed
         self._history = [*self._history[-199:], completed]
+        self._prune_workflows()
 
         # Notify completion
         if self._bus:
@@ -306,6 +312,7 @@ class AgentCollaboration:
 
         self._workflows[wf_id] = completed
         self._history = [*self._history[-199:], completed]
+        self._prune_workflows()
         return completed
 
     async def fanout(
@@ -379,6 +386,7 @@ class AgentCollaboration:
 
         self._workflows[wf_id] = completed
         self._history = [*self._history[-199:], completed]
+        self._prune_workflows()
         return completed
 
     async def council(
@@ -496,6 +504,7 @@ class AgentCollaboration:
         )
         self._workflows[wf_id] = wf
         self._history = [*self._history[-199:], wf]
+        self._prune_workflows()
 
         return loop_result
 
@@ -572,8 +581,26 @@ class AgentCollaboration:
         )
         self._workflows[wf_id] = wf
         self._history = [*self._history[-199:], wf]
+        self._prune_workflows()
 
         return cond_result
+
+    # ── Workflow pruning ─────────────────────────────────────────
+
+    def _prune_workflows(self) -> None:
+        """Remove oldest completed/failed workflows when dict exceeds bound."""
+        if len(self._workflows) <= self._MAX_WORKFLOWS:
+            return
+        # Keep running workflows; remove oldest completed/failed first
+        removable = [
+            wf_id for wf_id, wf in self._workflows.items()
+            if wf.status in (WorkflowStatus.COMPLETED, WorkflowStatus.FAILED)
+        ]
+        # Sort by created_at ascending (oldest first)
+        removable.sort(key=lambda wid: self._workflows[wid].created_at)
+        to_remove = len(self._workflows) - self._MAX_WORKFLOWS
+        for wf_id in removable[:to_remove]:
+            del self._workflows[wf_id]
 
     # ── Circuit Breaker ──────────────────────────────────────────
 
@@ -620,6 +647,16 @@ class AgentCollaboration:
             "open_until": open_until,
         }
         self._circuit_state = {**self._circuit_state, agent_id: updated}
+
+        # Prune circuit state if it grows beyond agent count bounds
+        if len(self._circuit_state) > self._MAX_CIRCUIT_ENTRIES:
+            # Remove entries with zero failures (healthy agents don't need tracking)
+            keys = list(self._circuit_state.keys())
+            for k in keys:
+                if self._circuit_state[k]["failures"] == 0:
+                    del self._circuit_state[k]
+                if len(self._circuit_state) <= self._MAX_CIRCUIT_ENTRIES:
+                    break
 
     def _record_success(self, agent_id: str) -> None:
         """Reset failure count and close circuit on success."""

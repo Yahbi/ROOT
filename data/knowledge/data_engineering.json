@@ -1,0 +1,152 @@
+[
+  {
+    "content": "ETL (Extract, Transform, Load) transforms data before loading into the warehouse, requiring upfront schema design. ELT (Extract, Load, Transform) loads raw data first and transforms in-warehouse using SQL. ELT dominates modern stacks because cloud warehouses (BigQuery, Snowflake) provide cheap compute — Snowflake can transform 1TB in minutes for ~$5. ETL is still preferred when data must be cleaned/anonymized before landing (GDPR compliance).",
+    "type": "fact",
+    "tags": ["etl", "elt", "data-pipeline"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Data lake stores raw, unstructured data in object storage (S3/GCS) at $0.023/GB/month. Data warehouse stores structured, query-optimized data (Snowflake/BigQuery) at $23-40/TB/month for storage plus compute costs. Data lakehouse (Delta Lake, Apache Iceberg) combines both: raw storage costs with ACID transactions, schema enforcement, and SQL query performance within 2-3x of a dedicated warehouse.",
+    "type": "fact",
+    "tags": ["data-lake", "data-warehouse", "lakehouse"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Apache Spark processes data through 3 APIs: RDDs (low-level, typed, functional transformations), DataFrames (structured, SQL-optimized, 10-100x faster than RDDs via Catalyst optimizer), and Spark SQL (ANSI SQL on DataFrames). Spark uses lazy evaluation — transformations build a DAG, only executing on actions (collect, count, write). A single Spark cluster can process 100TB+ with 1000 executors in under an hour.",
+    "type": "skill",
+    "tags": ["apache-spark", "rdd", "dataframe", "spark-sql"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "dbt (data build tool) transforms data inside the warehouse using SELECT statements — no Python/Java required. Models are SQL files with ref() for dependencies. dbt builds a DAG, runs tests (not_null, unique, accepted_values, relationships), and generates documentation automatically. Incremental models process only new/changed rows using merge statements, reducing run time by 80-95% for large tables (100M+ rows).",
+    "type": "skill",
+    "tags": ["dbt", "data-transformation", "sql", "warehouse"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Apache Airflow orchestrates data pipelines as Directed Acyclic Graphs (DAGs). Each DAG defines tasks (Python/Bash/SQL operators) and their dependencies. Airflow uses a scheduler (checks every 5 seconds by default), workers (Celery/Kubernetes executor for parallelism), and a metadata database (PostgreSQL). Production deployments handle 1000+ DAGs with 10K+ daily task runs. Key settings: max_active_runs_per_dag=16, parallelism=32.",
+    "type": "skill",
+    "tags": ["airflow", "orchestration", "dag", "scheduling"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Great Expectations is a data quality framework that validates data against expectations (rules). Example: expect_column_values_to_be_between(column='age', min_value=0, max_value=150). It generates data docs (HTML reports) and integrates with Airflow/dbt. Typical quality suite has 50-200 expectations per table. Running 100 expectations on 1M rows takes 10-30 seconds. Catches 95%+ of data quality issues before they propagate downstream.",
+    "type": "skill",
+    "tags": ["great-expectations", "data-quality", "validation"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Schema evolution in data systems must maintain compatibility. Backward compatible: new schema can read old data (safe to upgrade readers first). Forward compatible: old schema can read new data (safe to upgrade writers first). Full compatible: both directions. Avro supports all 3 types. Rules: adding fields with defaults is backward compatible; removing optional fields is forward compatible. Breaking changes require a new topic/table version.",
+    "type": "fact",
+    "tags": ["schema-evolution", "backward-compatible", "forward-compatible", "avro"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Change Data Capture (CDC) streams database changes (INSERT/UPDATE/DELETE) in real-time. Debezium reads MySQL binlog, PostgreSQL WAL, or MongoDB oplog and publishes events to Kafka. Latency is typically 100-500ms from commit to Kafka. Log-based CDC has zero impact on source database performance (reads the WAL, not the tables). Debezium handles 50K+ events/second per connector. Alternative: polling-based CDC checks timestamps every 5-60 seconds but misses deletes.",
+    "type": "skill",
+    "tags": ["cdc", "debezium", "change-data-capture", "kafka"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Data partitioning strategies: time-based partitioning (partition by day/month) is ideal for append-heavy time-series data — queries filtering by date scan only relevant partitions, often 100x faster. Hash partitioning (hash(key) mod N) distributes evenly but breaks range queries. BigQuery auto-partitions by ingestion time; Hive supports both time and hash. Optimal partition size is 256MB-1GB; too many small partitions create metadata overhead.",
+    "type": "skill",
+    "tags": ["data-partitioning", "time-based", "hash-partitioning"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Columnar storage formats (Parquet, ORC) store data by column rather than row, enabling 10-100x compression ratios for analytical queries. Parquet uses dictionary encoding, run-length encoding, and delta encoding. A 1TB CSV file compresses to ~100-200GB in Parquet with Snappy. Queries reading 5 of 200 columns skip 97.5% of data via column pruning. ORC adds built-in indexes and ACID support; Parquet has broader ecosystem support (Spark, Hive, Presto, BigQuery).",
+    "type": "fact",
+    "tags": ["parquet", "orc", "columnar-storage", "compression"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Data lineage tracking records the origin, transformation, and destination of every data element. Tools like Apache Atlas, Marquez, and DataHub automatically catalog lineage from Airflow DAGs, dbt models, and Spark jobs. When a source column changes, lineage shows all 50+ downstream tables/reports affected. Regulatory requirements (GDPR Article 30, SOX) mandate lineage tracking. Column-level lineage identifies that report_field_X derives from source_table_A.column_Y through 3 transformations.",
+    "type": "fact",
+    "tags": ["data-lineage", "data-governance", "atlas", "datahub"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Slowly Changing Dimensions (SCD): Type 1 overwrites the old value (loses history, simplest). Type 2 adds a new row with effective_date, end_date, and is_current flag (preserves full history, most common). Type 3 adds a previous_value column (tracks only one change). Type 2 tables grow ~10-20% annually; a customer dimension with 1M customers and 15% annual change rate reaches 2.5M rows after 10 years. dbt implements SCD Type 2 via snapshots.",
+    "type": "skill",
+    "tags": ["scd", "slowly-changing-dimensions", "data-warehouse"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Apache Kafka is a distributed event streaming platform achieving 1M+ messages/second per broker. Topics are split into partitions (parallelism unit); each partition is an ordered, append-only log. Consumer groups enable parallel processing: each partition is consumed by exactly one consumer in the group. Retention is time-based (default 7 days) or size-based. Kafka guarantees at-least-once delivery; exactly-once requires idempotent producers + transactional consumers.",
+    "type": "fact",
+    "tags": ["kafka", "event-streaming", "messaging"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Star schema is the standard dimensional modeling pattern: a central fact table (events/transactions with measures) surrounded by dimension tables (descriptive attributes). A sales fact table might have 1B rows with foreign keys to date_dim, product_dim, store_dim, customer_dim. Star schema queries are 5-10x faster than normalized schemas for analytics because they minimize joins (1 join per dimension vs 5-10 in 3NF).",
+    "type": "skill",
+    "tags": ["star-schema", "dimensional-modeling", "data-warehouse"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Apache Iceberg is an open table format for data lakehouses providing ACID transactions, schema evolution, time travel (query data as of any snapshot), and hidden partitioning. Iceberg metadata tracks file-level statistics (min/max per column), enabling data skipping that avoids reading 90%+ of files. Partition evolution allows changing partitioning strategy without rewriting data. Netflix manages 10PB+ on Iceberg across 100K+ tables.",
+    "type": "fact",
+    "tags": ["iceberg", "lakehouse", "table-format", "acid"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Data mesh is an organizational approach where domain teams own their data products end-to-end, rather than a central data team. Four principles: domain-oriented ownership, data as a product (SLOs, documentation, discoverability), self-serve data platform, and federated computational governance. Organizations adopting data mesh report 40-60% reduction in data team bottlenecks but require 6-18 months of platform investment before seeing benefits.",
+    "type": "fact",
+    "tags": ["data-mesh", "data-architecture", "organizational"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Stream processing with Apache Flink provides exactly-once semantics using distributed snapshots (Chandy-Lamport algorithm). Flink checkpoints state every 10 seconds by default, enabling recovery within seconds. Windowing types: tumbling (fixed, non-overlapping), sliding (overlapping), session (gap-based). Flink processes 1B+ events/day at companies like Alibaba, handling late data with watermarks (event_time - allowed_lateness).",
+    "type": "skill",
+    "tags": ["flink", "stream-processing", "windowing", "exactly-once"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Data observability monitors pipeline health using 5 pillars: freshness (is data arriving on time?), volume (row counts within expected range?), schema (any unexpected column changes?), distribution (are values within normal ranges?), and lineage (what broke upstream?). Monte Carlo, Bigeye, and Elementary automate detection with ML-based anomaly thresholds. Typical SLA: critical tables must refresh within 2 hours with <0.1% row-level error rate.",
+    "type": "skill",
+    "tags": ["data-observability", "data-quality", "monitoring"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Medallion architecture organizes a lakehouse in 3 layers: Bronze (raw ingestion, append-only, schema-on-read), Silver (cleansed, deduplicated, typed, conformed), Gold (business-level aggregates, dimensional models, ready for BI). Data flows Bronze-to-Silver via dbt/Spark cleaning jobs; Silver-to-Gold via aggregation models. Typical latency: Bronze <1 minute (streaming), Silver <15 minutes (micro-batch), Gold <1 hour (batch).",
+    "type": "skill",
+    "tags": ["medallion-architecture", "lakehouse", "data-layers"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Apache Beam provides a unified programming model for batch and streaming. Write once, run on any engine (Spark, Flink, Dataflow). Core abstractions: PCollection (data), PTransform (operation), Pipeline (DAG). Beam's windowing and triggering model handles late data with accumulation modes (discarding, accumulating, retracting). Google Dataflow (managed Beam) auto-scales workers 1-1000 based on backlog, charging $0.056/vCPU-hour.",
+    "type": "fact",
+    "tags": ["apache-beam", "unified-processing", "dataflow"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Data contracts define the interface between data producers and consumers: schema (column names, types, constraints), SLAs (freshness, completeness, accuracy targets), semantics (business meaning of each field), and ownership (team contact, escalation path). A contract might specify: orders table refreshes every 30 minutes, 99.9% completeness, amount is USD cents as integer. Breaking changes require a 2-week deprecation notice.",
+    "type": "skill",
+    "tags": ["data-contracts", "data-quality", "data-governance"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Materialized views pre-compute and store query results, trading storage for speed. A complex 10-table join aggregation taking 30 seconds can be served in <100ms from a materialized view. Refresh strategies: full refresh (recompute everything, simple but slow), incremental refresh (only process changes, 10-100x faster but complex). Snowflake dynamic tables auto-refresh materialized views with configurable lag (1 minute to 1 day).",
+    "type": "skill",
+    "tags": ["materialized-views", "query-optimization", "data-warehouse"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Data deduplication strategies: exact deduplication uses unique keys or hashes (MD5/SHA256 of concatenated columns); fuzzy deduplication uses similarity metrics (Jaro-Winkler >0.85, Levenshtein distance <3). At scale, blocking reduces comparison pairs: instead of N*(N-1)/2 comparisons (500B for 1M records), block by zip code or first 3 letters of name to reduce to ~1M comparisons. Dedupe libraries achieve 95%+ F1 score with supervised learning on labeled pairs.",
+    "type": "skill",
+    "tags": ["deduplication", "data-quality", "entity-resolution"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Feature stores (Feast, Tecton, Hopsworks) manage ML features with dual-serving: offline store (historical data for training, typically Parquet/BigQuery) and online store (low-latency serving, typically Redis/DynamoDB, <10ms p99). Feature stores ensure training-serving consistency (no training-serving skew), enable feature reuse across teams (reducing feature engineering time by 50%), and provide point-in-time correct joins to prevent data leakage.",
+    "type": "fact",
+    "tags": ["feature-store", "ml-engineering", "feast"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Cost optimization in cloud data warehouses: Snowflake charges by compute-second (warehouse size XS=$1/hr to 4XL=$128/hr); auto-suspend after 5 minutes of inactivity saves 60-80% on intermittent workloads. BigQuery on-demand charges $6.25/TB scanned; partitioning + clustering reduces scanned data by 90%+. Columnar format + predicate pushdown avoids full table scans. Typical optimization reduces monthly bills by 40-70% without performance loss.",
+    "type": "skill",
+    "tags": ["cost-optimization", "snowflake", "bigquery", "cloud-warehouse"],
+    "source": "engineering_knowledge"
+  }
+]

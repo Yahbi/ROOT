@@ -1,0 +1,152 @@
+[
+  {
+    "content": "The Augmented Dickey-Fuller (ADF) test has null hypothesis H0: the series has a unit root (non-stationary). A p-value < 0.05 rejects H0, indicating stationarity. The test regression is delta_y_t = alpha + beta*t + gamma*y_{t-1} + sum(delta_i * delta_y_{t-i}) + epsilon_t, where gamma < 0 implies stationarity.",
+    "type": "fact",
+    "tags": ["adf_test", "stationarity", "unit_root"],
+    "source": "data_science"
+  },
+  {
+    "content": "The KPSS test has the opposite null hypothesis from ADF: H0 is that the series IS stationary. If KPSS rejects but ADF does not reject, the series is non-stationary. If both reject, the series may be trend-stationary (stationary around a deterministic trend). Using both tests together gives a more reliable stationarity assessment than either alone.",
+    "type": "fact",
+    "tags": ["kpss_test", "stationarity", "trend_stationary"],
+    "source": "data_science"
+  },
+  {
+    "content": "Differencing transforms a non-stationary series into a stationary one. First differencing (d=1) removes linear trends: y'_t = y_t - y_{t-1}. Second differencing (d=2) removes quadratic trends or acceleration: y''_t = y'_t - y'_{t-1}. Seasonal differencing removes periodic patterns: y_t - y_{t-s} where s is the seasonal period. Over-differencing introduces unnecessary MA terms.",
+    "type": "skill",
+    "tags": ["differencing", "trend_removal", "stationarity"],
+    "source": "data_science"
+  },
+  {
+    "content": "ARIMA(p,d,q) model selection uses information criteria: AIC = -2*log(L) + 2*k favors fit, BIC = -2*log(L) + k*log(n) penalizes complexity more heavily. The Box-Jenkins methodology is: (1) identify d via ADF/KPSS, (2) examine ACF/PACF to estimate p and q, (3) fit candidate models, (4) select by AIC/BIC, (5) validate residuals are white noise via Ljung-Box test.",
+    "type": "skill",
+    "tags": ["arima", "aic", "bic", "model_selection"],
+    "source": "data_science"
+  },
+  {
+    "content": "SARIMA(p,d,q)(P,D,Q,s) extends ARIMA with seasonal components. P is seasonal AR order, D is seasonal differencing, Q is seasonal MA order, and s is the period (12 for monthly, 4 for quarterly, 7 for daily-weekly). A common starting model for monthly data with yearly cycles is SARIMA(1,1,1)(1,1,1,12). Auto-arima uses stepwise AIC search to find optimal orders.",
+    "type": "skill",
+    "tags": ["sarima", "seasonal", "auto_arima"],
+    "source": "data_science"
+  },
+  {
+    "content": "Facebook Prophet decomposes time series as y(t) = g(t) + s(t) + h(t) + epsilon where g(t) is piecewise linear or logistic growth trend with automatic changepoint detection, s(t) is Fourier-based seasonality (yearly: 10 Fourier terms, weekly: 3 terms), and h(t) captures holiday effects. Additional regressors can be added as linear terms. Prophet handles missing data and outliers gracefully.",
+    "type": "skill",
+    "tags": ["prophet", "decomposition", "forecasting"],
+    "source": "data_science"
+  },
+  {
+    "content": "Exponential smoothing has three variants: Simple (SES) for level only with smoothing parameter alpha, Double (Holt's) adding trend with parameter beta, and Triple (Holt-Winters) adding seasonality with parameter gamma. Holt-Winters can be additive (y = level + trend + season) or multiplicative (y = level * trend * season). ETS(Error,Trend,Seasonal) is the state space formulation enabling automatic model selection.",
+    "type": "skill",
+    "tags": ["exponential_smoothing", "holt_winters", "ets"],
+    "source": "data_science"
+  },
+  {
+    "content": "GARCH(1,1) models time-varying volatility as sigma^2_t = omega + alpha*epsilon^2_{t-1} + beta*sigma^2_{t-1} where omega > 0, alpha >= 0, beta >= 0, and alpha + beta < 1 for stationarity. The unconditional variance is omega/(1-alpha-beta). Typical equity values are alpha ~ 0.05-0.10 and beta ~ 0.85-0.95, showing strong volatility persistence (half-life of a shock ~ 20-60 days).",
+    "type": "skill",
+    "tags": ["garch", "volatility", "heteroskedasticity"],
+    "source": "data_science"
+  },
+  {
+    "content": "Hamilton's regime-switching model allows parameters to change between K regimes governed by a hidden Markov chain. For a 2-regime model of returns: r_t = mu_{s_t} + sigma_{s_t}*epsilon_t where s_t in {1,2}. Transition probabilities P(s_t=j|s_{t-1}=i) = p_ij are estimated via the EM algorithm. Typical result: bull regime (mu=0.8%/month, sigma=3%) and bear regime (mu=-1.5%/month, sigma=6%).",
+    "type": "skill",
+    "tags": ["regime_switching", "hamilton", "hidden_markov"],
+    "source": "data_science"
+  },
+  {
+    "content": "The Engle-Granger cointegration test is a 2-step procedure: (1) regress y_t = alpha + beta*x_t + epsilon_t by OLS, (2) test residuals epsilon_t for stationarity using ADF with special critical values (Engle-Granger tables, not standard ADF tables). If residuals are stationary, the series are cointegrated with cointegrating vector [1, -beta]. This only works for bivariate cases.",
+    "type": "skill",
+    "tags": ["cointegration", "engle_granger", "pairs_trading"],
+    "source": "data_science"
+  },
+  {
+    "content": "The Johansen cointegration test handles multivariate systems using a VAR framework. It tests for the number of cointegrating relationships (rank r) using trace statistic (lambda_trace) and maximum eigenvalue statistic (lambda_max). For N series, there can be 0 to N-1 cointegrating vectors. This is essential for pairs/basket trading with more than 2 assets.",
+    "type": "skill",
+    "tags": ["johansen", "cointegration", "var", "multivariate"],
+    "source": "data_science"
+  },
+  {
+    "content": "Granger causality tests whether past values of X help predict Y beyond Y's own past values. The test compares restricted (Y_t = sum(a_i*Y_{t-i}) + e_t) vs unrestricted (Y_t = sum(a_i*Y_{t-i}) + sum(b_j*X_{t-j}) + e_t). An F-test on the b_j coefficients determines significance. Granger causality implies predictive power, not true causation; both series may be driven by a common unobserved factor.",
+    "type": "fact",
+    "tags": ["granger_causality", "predictive_power", "var"],
+    "source": "data_science"
+  },
+  {
+    "content": "Spectral analysis using FFT decomposes a time series into frequency components. The periodogram I(f) = |sum(x_t * e^{-2*pi*i*f*t})|^2 / T identifies dominant cycles at each frequency. A peak at frequency f corresponds to a cycle of period 1/f. Welch's method averages periodograms over overlapping segments (50% overlap, Hanning window) for smoother spectral estimates with reduced variance.",
+    "type": "skill",
+    "tags": ["spectral_analysis", "fft", "periodogram", "cycles"],
+    "source": "data_science"
+  },
+  {
+    "content": "CUSUM (Cumulative Sum) change point detection tracks S_t = sum_{i=1}^{t}(x_i - mu_0). A change point is detected when |S_t| exceeds a threshold h. Bayesian Online Changepoint Detection (BOCPD) by Adams and MacKay computes the run length distribution P(r_t|x_{1:t}) in O(T) time per step, providing probabilistic real-time change point estimates without requiring the full series.",
+    "type": "skill",
+    "tags": ["change_point", "cusum", "bayesian", "bocpd"],
+    "source": "data_science"
+  },
+  {
+    "content": "The ACF (autocorrelation function) shows correlation between y_t and y_{t-k} for all lags k. The PACF (partial autocorrelation) shows the direct correlation at lag k after removing effects of intermediate lags. AR(p) signature: PACF cuts off at lag p, ACF tails off. MA(q) signature: ACF cuts off at lag q, PACF tails off. ARMA: both tail off.",
+    "type": "skill",
+    "tags": ["acf", "pacf", "arma", "identification"],
+    "source": "data_science"
+  },
+  {
+    "content": "Vector Autoregression (VAR) models multiple interrelated time series simultaneously: Y_t = c + A_1*Y_{t-1} + ... + A_p*Y_{t-p} + epsilon_t where Y_t is an N-dimensional vector. VAR captures cross-series dynamics and is the basis for impulse response functions (IRF) showing how a one-standard-deviation shock to variable i propagates through the system over time.",
+    "type": "skill",
+    "tags": ["var", "vector_autoregression", "impulse_response"],
+    "source": "data_science"
+  },
+  {
+    "content": "EGARCH (Exponential GARCH) models asymmetric volatility effects: log(sigma^2_t) = omega + alpha*(|z_{t-1}| - E|z|) + gamma*z_{t-1} + beta*log(sigma^2_{t-1}). The gamma parameter captures leverage effect: negative returns (gamma < 0) increase volatility more than positive returns of equal magnitude. Unlike GARCH, EGARCH has no positivity constraints since it models log-variance.",
+    "type": "skill",
+    "tags": ["egarch", "asymmetric_volatility", "leverage_effect"],
+    "source": "data_science"
+  },
+  {
+    "content": "The Ljung-Box test checks if residuals are white noise: Q = n*(n+2) * sum_{k=1}^{h}(r_k^2 / (n-k)) follows chi-squared with h-p-q degrees of freedom. P-value > 0.05 means residuals have no remaining autocorrelation, validating the fitted ARIMA model. Test at multiple lag values (h = 10, 20, 30) since autocorrelation may appear only at specific lags.",
+    "type": "skill",
+    "tags": ["ljung_box", "residual_diagnostics", "white_noise"],
+    "source": "data_science"
+  },
+  {
+    "content": "Wavelet decomposition splits a time series into time-frequency components using a mother wavelet (e.g., Daubechies db4, Morlet). Unlike FFT which loses time information, wavelets provide time-localized frequency analysis via sliding windows at multiple scales. Discrete wavelet transform (DWT) decomposes into approximation (low-frequency trend) and detail (high-frequency noise) coefficients at each level.",
+    "type": "skill",
+    "tags": ["wavelet", "time_frequency", "multiresolution"],
+    "source": "data_science"
+  },
+  {
+    "content": "Cross-validation for time series must respect temporal ordering. Rolling window (train on [t-w,t], test on [t+1,t+h]) or expanding window (train on [1,t], test on [t+1,t+h]) are valid approaches. Standard k-fold CV is invalid because it leaks future data into training. TimeSeriesSplit in scikit-learn and Optuna's time-series CV implement this correctly.",
+    "type": "learning",
+    "tags": ["cross_validation", "temporal_ordering", "backtesting"],
+    "source": "data_science"
+  },
+  {
+    "content": "Stochastic volatility (SV) models treat volatility as a latent process: log(sigma^2_t) = mu + phi*(log(sigma^2_{t-1}) - mu) + eta_t where eta_t ~ N(0, sigma_eta^2). Unlike GARCH where volatility is deterministic given past data, SV models allow independent volatility shocks. Estimation requires MCMC or particle filters since the likelihood is intractable due to the latent volatility states.",
+    "type": "fact",
+    "tags": ["stochastic_volatility", "latent_process", "mcmc"],
+    "source": "data_science"
+  },
+  {
+    "content": "Structural time series models (state space models) decompose as y_t = mu_t + gamma_t + epsilon_t where mu_t is the trend (local level + local linear slope), gamma_t is trigonometric seasonality, and epsilon_t is irregular component. The Kalman filter recursively estimates latent states. These models handle missing data naturally and provide interpretable uncertainty bands for each component.",
+    "type": "skill",
+    "tags": ["state_space", "kalman_filter", "structural"],
+    "source": "data_science"
+  },
+  {
+    "content": "Long memory processes have autocorrelations that decay hyperbolically (r_k ~ k^{2d-1}) rather than exponentially. ARFIMA(p,d,q) allows fractional differencing parameter 0 < d < 0.5 for long memory. The Hurst exponent H relates as d = H - 0.5. H > 0.5 indicates persistence (trending), H < 0.5 indicates anti-persistence (mean-reverting), H = 0.5 is random walk.",
+    "type": "fact",
+    "tags": ["long_memory", "arfima", "hurst_exponent"],
+    "source": "data_science"
+  },
+  {
+    "content": "Neural network approaches to time series include LSTM (gates control information flow through cell state for long-range dependencies), Temporal Convolutional Networks (dilated causal convolutions with exponentially increasing receptive field), and Transformers adapted for time series (PatchTST patches the series into tokens, iTransformer inverts attention to the channel dimension). N-BEATS uses backward/forward residual stacking for interpretable trend/seasonality decomposition.",
+    "type": "fact",
+    "tags": ["deep_learning", "lstm", "transformer", "time_series"],
+    "source": "data_science"
+  },
+  {
+    "content": "DCC-GARCH (Dynamic Conditional Correlation) models time-varying correlations between multiple series. Individual GARCH volatilities are estimated first, then correlation dynamics are modeled as Q_t = (1-a-b)*Q_bar + a*z_{t-1}*z_{t-1}^T + b*Q_{t-1}, where z_t are standardized residuals. The correlation matrix is R_t = diag(Q_t)^{-1/2} * Q_t * diag(Q_t)^{-1/2}. Essential for dynamic portfolio allocation.",
+    "type": "skill",
+    "tags": ["dcc_garch", "dynamic_correlation", "multivariate_volatility"],
+    "source": "data_science"
+  }
+]

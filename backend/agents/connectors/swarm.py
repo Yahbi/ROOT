@@ -131,7 +131,7 @@ class SwarmConnector:
                         return {"agent": "swarm", "result": final, "messages_exchanged": msg_count + 1,
                                 "tools_executed": tool_count, "tools_used": tools_used}
                     except Exception:
-                        pass
+                        logger.debug("[swarm] Final fast completion after timeout also failed", exc_info=True)
                 return {
                     "agent": "swarm", "result": "Trading Swarm analysis timed out — LLM provider may be slow. Try again shortly.",
                     "messages_exchanged": msg_count, "tools_executed": tool_count,

@@ -1,0 +1,152 @@
+[
+  {
+    "content": "Bond price = sum of PV(coupons) + PV(par value) = C * [1 - (1+y)^(-n)] / y + F * (1+y)^(-n), where C = coupon payment, y = yield per period, n = periods to maturity, F = face value. A 10-year bond with 5% coupon at 6% yield prices at $92.64 per $100 face.",
+    "type": "fact",
+    "tags": ["bond_pricing", "present_value", "coupon", "yield"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Modified duration = Macaulay duration / (1 + y/m), where y = yield-to-maturity and m = compounding frequency. A bond with Macaulay duration of 7.5 years and YTM of 4% (semi-annual) has modified duration = 7.5 / (1 + 0.04/2) = 7.35. A 1% rate increase drops the bond price by approximately 7.35%.",
+    "type": "fact",
+    "tags": ["duration", "modified_duration", "macaulay", "interest_rate_risk"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Convexity measures the curvature of price-yield relationship: price change ~ -Duration * dy + 0.5 * Convexity * dy^2. Positive convexity means bonds gain more from rate drops than they lose from rate rises. A 30-year Treasury with convexity of 200 gains an extra 2% for a 2% rate decline beyond what duration predicts.",
+    "type": "fact",
+    "tags": ["convexity", "price_yield", "interest_rate_risk", "formula"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "The yield curve is constructed from Treasury securities at key tenors: 1M, 3M, 6M, 1Y, 2Y, 3Y, 5Y, 7Y, 10Y, 20Y, 30Y. Bootstrapping derives zero-coupon rates from par yields. An inverted curve (2Y yield > 10Y yield) has preceded every US recession since 1969, with a median lead time of 14 months.",
+    "type": "learning",
+    "tags": ["yield_curve", "bootstrapping", "inversion", "recession"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Credit spreads measure default risk premium over Treasuries. Investment grade (IG) spreads: AAA ~50-80bps, AA ~70-110bps, A ~90-150bps, BBB ~130-250bps. High yield (HY) spreads: BB ~200-400bps, B ~350-600bps, CCC ~600-1500bps. IG average spread is ~120bps; HY average is ~400bps in normal markets.",
+    "type": "fact",
+    "tags": ["credit_spreads", "investment_grade", "high_yield", "default_risk"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "The three major rating agencies (Moody's, S&P, Fitch) rate from AAA/Aaa (highest) to D (default). The 10-year cumulative default rate for AAA is 0.07%, BBB is 3.39%, BB is 11.17%, B is 26.79%, CCC is 52.31%. Investment grade is BBB-/Baa3 or above; below that is high yield/junk.",
+    "type": "fact",
+    "tags": ["rating_agencies", "credit_ratings", "default_rates", "AAA"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Municipal bonds provide federal tax-exempt interest income (and often state tax-exempt for in-state residents). Tax-equivalent yield = muni yield / (1 - marginal tax rate). A 3.5% muni yield for a 37% tax bracket investor has a tax-equivalent yield of 3.5 / (1 - 0.37) = 5.56%. Munis default at ~0.1% rate (10x lower than corporate bonds).",
+    "type": "fact",
+    "tags": ["municipal_bonds", "tax_exempt", "tax_equivalent_yield", "formula"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "TIPS (Treasury Inflation-Protected Securities) adjust principal by CPI-U index. Real yield = nominal yield - breakeven inflation. If 10Y nominal Treasury yields 4.5% and 10Y TIPS yields 2.0%, breakeven inflation = 2.5%. If actual inflation exceeds 2.5%, TIPS outperform nominal Treasuries. TIPS accrue inflation adjustment that is taxable annually.",
+    "type": "fact",
+    "tags": ["TIPS", "inflation_protection", "real_yield", "breakeven"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Corporate bond covenants protect bondholders: affirmative (maintain insurance, pay taxes, provide financials), negative (limit debt/leverage ratio <4x, restrict dividends if coverage <2x, limit asset sales), and financial (minimum interest coverage ratio, maximum debt-to-EBITDA). HY bonds have more restrictive covenants than IG bonds.",
+    "type": "learning",
+    "tags": ["covenants", "corporate_bonds", "bondholder_protection", "leverage"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "CLO (Collateralized Loan Obligation) tranches from senior to equity: AAA (60-65% of structure, spread L+120-160bps), AA (10-12%, L+180-250bps), A (7-8%, L+250-350bps), BBB (4-5%, L+400-550bps), BB (2-3%, L+650-900bps), equity (8-10%, targets 12-18% IRR). The waterfall pays senior tranches first, equity absorbs first losses.",
+    "type": "fact",
+    "tags": ["CLO", "tranches", "waterfall", "structured_credit"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Mortgage-backed securities (MBS) face prepayment risk measured by CPR (Conditional Prepayment Rate). When rates drop 100bps, CPR can jump from 6% to 25%+ as homeowners refinance. This negative convexity means MBS investors get their principal back early and must reinvest at lower rates. The PSA model assumes CPR ramps to 6% over 30 months.",
+    "type": "learning",
+    "tags": ["MBS", "prepayment", "CPR", "negative_convexity", "PSA"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Bond ladder strategy: spread equal investments across maturities (e.g., $10K each in 1, 2, 3, 4, 5-year bonds). As each bond matures, reinvest at the longest rung. Benefits: reduces reinvestment risk, provides liquidity annually, captures the average of the yield curve. In a 3% flat curve, ladder yields ~3% with lower volatility than a single 5Y bond.",
+    "type": "skill",
+    "tags": ["bond_ladder", "strategy", "reinvestment_risk", "portfolio"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "DV01 (Dollar Value of 01) measures the dollar price change for a 1 basis point yield change: DV01 = -(dP/dy) * 0.0001 ~ Modified Duration * Price * 0.0001. A $1M face bond with modified duration 5.0 priced at 98 has DV01 = 5.0 * 980,000 * 0.0001 = $490. Used for hedging rate risk with Treasury futures.",
+    "type": "skill",
+    "tags": ["DV01", "basis_point_value", "hedging", "formula"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "The Fed Funds rate directly sets the overnight rate, but the transmission to longer maturities follows expectations theory: long-term rate ~ average of expected future short-term rates + term premium. The 10-year yield is approximately the average of expected Fed Funds rates over the next 10 years plus a term premium of 0-100bps.",
+    "type": "learning",
+    "tags": ["fed_funds", "expectations_theory", "term_premium", "transmission"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Callable bonds have embedded options that give the issuer the right to redeem before maturity, typically after a non-call period (e.g., 10NC5 = 10-year maturity, callable after 5 years). Yield-to-worst = min(yield-to-maturity, yield-to-call). Callable bonds trade at lower prices (higher yields) than non-callable equivalents, with the spread = option cost.",
+    "type": "fact",
+    "tags": ["callable_bonds", "yield_to_worst", "embedded_options", "call_provision"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "High yield bond market is approximately $1.5 trillion outstanding in the US. HY spreads above 600bps historically signal recession risk; above 1000bps signals crisis (2008 hit 2000bps, 2020 hit 1100bps). The ICE BofA HY index (HY00) is the standard benchmark. Average recovery rate on defaulted HY bonds is ~40 cents on the dollar.",
+    "type": "fact",
+    "tags": ["high_yield", "spread_levels", "recovery_rate", "recession_signal"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Zero-coupon bonds pay no periodic interest and trade at a discount: price = face / (1+y)^n. A 10-year zero at 5% yield trades at $100/(1.05)^10 = $61.39. Zeros have the highest duration for their maturity (duration = maturity for zeros) and therefore the most price sensitivity to rate changes.",
+    "type": "fact",
+    "tags": ["zero_coupon", "discount_bond", "duration", "pricing"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Treasury futures (ZN for 10Y, ZB for 30Y) are the most liquid interest rate derivatives. The cheapest-to-deliver (CTD) bond determines which Treasury to deliver against the futures contract. Conversion factors normalize different coupons/maturities to a 6% coupon equivalent. One ZN contract has ~$70 DV01 notional.",
+    "type": "skill",
+    "tags": ["treasury_futures", "CTD", "conversion_factor", "hedging"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Spread duration measures sensitivity to credit spread changes (not Treasury rates). A corporate bond portfolio with spread duration of 4.5 and $100M market value would lose $4.5M if credit spreads widen by 100bps. During the 2020 COVID selloff, IG spreads widened from 95bps to 373bps in 3 weeks.",
+    "type": "learning",
+    "tags": ["spread_duration", "credit_risk", "portfolio_sensitivity", "spread_widening"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Floating rate notes (FRNs) pay coupons tied to a reference rate (SOFR replaced LIBOR in 2023) plus a spread: coupon = SOFR + 150bps, reset quarterly. FRNs have near-zero duration because coupons adjust with rates, making them ideal for rising-rate environments. US Treasury FRNs (2Y maturity) are the safest floaters.",
+    "type": "fact",
+    "tags": ["floating_rate", "SOFR", "LIBOR_transition", "rate_risk"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "The butterfly spread in bonds: short 2x the belly (5Y) and long equal amounts of wings (2Y and 10Y). Profit if the yield curve flattens or steepens. The 2s5s10s butterfly spread = 2 * yield(5Y) - yield(2Y) - yield(10Y). A positive value means the belly is cheap; negative means expensive. Used for relative value trading.",
+    "type": "skill",
+    "tags": ["butterfly_spread", "yield_curve", "relative_value", "trading_strategy"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Fallen angels are bonds downgraded from IG to HY (BBB- to BB+). They are forced sellers because many IG funds cannot hold HY bonds, creating temporary dislocations. Fallen angels outperform original-issue HY by ~2% annually because they trade at depressed prices from forced selling and tend to recover or get upgraded back.",
+    "type": "learning",
+    "tags": ["fallen_angels", "downgrade", "forced_selling", "alpha"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Yield spread = bond yield - Treasury yield of same maturity. OAS (Option-Adjusted Spread) removes the value of embedded options (call, put) from the spread. For a callable corporate bond trading at 250bps spread with a 50bps call option value, OAS = 200bps. OAS enables apples-to-apples comparison across bonds with different embedded options.",
+    "type": "skill",
+    "tags": ["OAS", "option_adjusted_spread", "yield_spread", "valuation"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Asset-backed securities (ABS) are backed by pools of consumer loans: auto ABS (~$300B outstanding, WAL 1-3 years), credit card ABS (~$100B, revolving), student loan ABS (~$150B, long WAL). Auto ABS AAA tranches yield T+50-80bps with 30-35% credit enhancement. Subprime auto ABS (borrower FICO <620) defaults run 8-15% annualized.",
+    "type": "fact",
+    "tags": ["ABS", "auto_loans", "credit_enhancement", "securitization"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Interest rate swaps exchange fixed for floating payments. The swap rate for a 5-year USD swap is the fixed rate that equates PV(fixed leg) = PV(floating leg). The swap spread = swap rate - Treasury yield, typically 10-30bps for 5Y. Negative swap spreads (occurred in 2015 for 30Y) signal dealer balance sheet constraints and regulatory pressure.",
+    "type": "fact",
+    "tags": ["interest_rate_swap", "swap_spread", "fixed_floating", "derivatives"],
+    "source": "trading_knowledge"
+  }
+]

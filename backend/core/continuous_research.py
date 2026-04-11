@@ -764,8 +764,7 @@ class ContinuousResearch:
                     ))
                     stored_facts += 1
                 except Exception:
-                    pass
-
+                    logger.debug("Failed to store research fact in memory", exc_info=True)
             for pattern in patterns[:5]:
                 if len(pattern) < 15:
                     continue
@@ -779,8 +778,7 @@ class ContinuousResearch:
                     ))
                     stored_patterns += 1
                 except Exception:
-                    pass
-
+                    logger.debug("Failed to store research pattern in memory", exc_info=True)
             for insight in insights[:5]:
                 if len(insight) < 15:
                     continue
@@ -794,8 +792,7 @@ class ContinuousResearch:
                     ))
                     stored_insights += 1
                 except Exception:
-                    pass
-
+                    logger.debug("Failed to store research insight in memory", exc_info=True)
         total = stored_facts + stored_patterns + stored_insights
         self._knowledge_stored += total
         logger.info(
@@ -828,7 +825,7 @@ class ContinuousResearch:
                 try:
                     return json.loads(text[start:end])
                 except json.JSONDecodeError:
-                    pass
+                    logger.debug("Failed to extract JSON object from LLM response", exc_info=True)
         logger.debug("Failed to parse JSON from LLM response")
         return {}
 

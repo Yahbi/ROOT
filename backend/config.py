@@ -80,7 +80,13 @@ OPENCLAW_URL = os.getenv("OPENCLAW_URL", "http://localhost:3000")
 # Security
 API_KEY = os.getenv("ROOT_API_KEY", "")  # Empty = no auth (dev mode)
 RATE_LIMIT_RPM = int(os.getenv("ROOT_RATE_LIMIT", "600"))
-CORS_ORIGINS = os.getenv("ROOT_CORS_ORIGINS", "http://localhost:9000,http://127.0.0.1:9000").split(",")
+CORS_ORIGINS = os.getenv(
+    "ROOT_CORS_ORIGINS",
+    # Default: self + common frontend dev ports (Vite, CRA, Next.js, Nuxt)
+    "http://localhost:9000,http://127.0.0.1:9000,"
+    "http://localhost:3000,http://localhost:5173,"
+    "http://localhost:8080,http://localhost:4173",
+).split(",")
 
 # Notifications
 TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN", "")
@@ -137,6 +143,10 @@ PROACTIVE_INTERVALS = {
     "miro_world_intelligence": int(os.getenv("ROOT_MIRO_WORLD_INTERVAL", "14400")),
     "miro_daily_briefing": int(os.getenv("ROOT_MIRO_BRIEFING_INTERVAL", "86400")),
 }
+
+# LLM Cost Budget (empty/0 = unlimited)
+LLM_DAILY_BUDGET = float(os.getenv("ROOT_DAILY_BUDGET", "0"))
+LLM_MONTHLY_BUDGET = float(os.getenv("ROOT_MONTHLY_BUDGET", "0"))
 
 # Financial thresholds
 SURVIVAL_BUDGET = float(os.getenv("ROOT_SURVIVAL_BUDGET", "400.0"))

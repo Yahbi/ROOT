@@ -43,6 +43,7 @@ class MemoryQuery(BaseModel):
     tags: list[str] = Field(default_factory=list)
     min_confidence: float = Field(default=0.0, ge=0.0, le=1.0)
     limit: int = 20
+    hybrid: bool = True  # Use hybrid FTS5+vector search when vector store is available
 
 
 class Reflection(BaseModel):
@@ -55,3 +56,15 @@ class Reflection(BaseModel):
     action: Optional[str] = None     # What ROOT will do differently
     memories_referenced: list[str] = Field(default_factory=list)
     created_at: str = Field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
+
+    # Enhanced fields added in v1.1
+    topic: Optional[str] = None                   # Reflection topic/domain
+    depth: str = "standard"                       # "standard" | "deep"
+    quality_score: Optional[float] = None         # 0.0–1.0 actionability+impact rating
+    quality_rationale: Optional[str] = None       # Why this score was given
+    evidence: list[str] = Field(default_factory=list)   # Evidence items gathered (deep mode)
+    parent_reflection_id: Optional[str] = None    # Previous reflection this chains from
+    chain_depth: int = 0                          # How deep in a reflection chain
+    archived: bool = False                        # Whether this has been archived
+    key_takeaway: Optional[str] = None            # Summary takeaway for archive
+    trend_tags: list[str] = Field(default_factory=list)  # Detected trend labels

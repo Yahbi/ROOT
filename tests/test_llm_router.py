@@ -271,6 +271,70 @@ class TestMultiProviderLLMRouter:
         assert router.provider == "offline"
 
     @pytest.mark.asyncio
+    async def test_background_flag_uses_background_priority(self):
+        svc_cheap = MockLLMService("ollama", response="cheap_response")
+        svc_expensive = MockLLMService("anthropic", response="expensive_response")
+        router = MultiProviderLLMRouter(
+            providers={"ollama": svc_cheap, "anthropic": svc_expensive},
+            priority=["anthropic", "ollama"],
+            background_priority=["ollama", "anthropic"],
+        )
+        # Normal method but background=True should use background priority
+        result = await router.complete(
+            messages=[{"role": "user", "content": "hi"}],
+            method="complete",
+            background=True,
+        )
+        assert result == "cheap_response"
+        assert svc_cheap.call_count == 1
+        assert svc_expensive.call_count == 0
+
+    @pytest.mark.asyncio
+    async def test_background_false_uses_default_priority(self):
+        svc_cheap = MockLLMService("ollama", response="cheap_response")
+        svc_expensive = MockLLMService("anthropic", response="expensive_response")
+        router = MultiProviderLLMRouter(
+            providers={"ollama": svc_cheap, "anthropic": svc_expensive},
+            priority=["anthropic", "ollama"],
+            background_priority=["ollama", "anthropic"],
+        )
+        result = await router.complete(
+            messages=[{"role": "user", "content": "hi"}],
+            method="complete",
+            background=False,
+        )
+        assert result == "expensive_response"
+        assert svc_expensive.call_count == 1
+
+    @pytest.mark.asyncio
+    async def test_complete_with_tools_background_flag(self):
+        class MockToolService:
+            def __init__(self, name, response="ok"):
+                self.provider = name
+                self._response = response
+                self.call_count = 0
+
+            async def complete_with_tools(self, **kwargs):
+                self.call_count += 1
+                return self._response, []
+
+        svc_cheap = MockToolService("ollama", response="cheap")
+        svc_expensive = MockToolService("anthropic", response="expensive")
+        router = MultiProviderLLMRouter(
+            providers={"ollama": svc_cheap, "anthropic": svc_expensive},
+            priority=["anthropic", "ollama"],
+            background_priority=["ollama", "anthropic"],
+        )
+        text, tools = await router.complete_with_tools(
+            messages=[{"role": "user", "content": "hi"}],
+            tools=[],
+            background=True,
+        )
+        assert text == "cheap"
+        assert svc_cheap.call_count == 1
+        assert svc_expensive.call_count == 0
+
+    @pytest.mark.asyncio
     async def test_rate_limit_error_triggers_backoff_on_health(self):
         svc_rl = RateLimitLLMService("rl")
         svc_ok = MockLLMService("ok", response="ok")

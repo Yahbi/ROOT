@@ -1,0 +1,152 @@
+[
+  {
+    "content": "Slippage is the difference between expected execution price and actual fill price. For liquid large-cap stocks (SPY, AAPL), slippage is typically 0.01-0.05% per trade. Mid-cap stocks see 0.1-0.5%. Small-cap and micro-cap stocks can experience 1-5% slippage due to thin order books. Always factor expected slippage into strategy backtest results.",
+    "type": "fact",
+    "tags": ["slippage", "execution_cost", "liquidity"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "The square root law of market impact models temporary price impact as: impact = sigma * sqrt(Q/V) * constant, where sigma is daily volatility, Q is order quantity, and V is average daily volume (ADV). For an order that is 1% of ADV with sigma=2%, impact is approximately 0.2%. This relationship holds empirically across asset classes and time periods.",
+    "type": "fact",
+    "tags": ["market_impact", "square_root_law", "price_impact"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "TWAP (Time-Weighted Average Price) execution splits a large order into equal-sized child orders at regular intervals over a specified duration. TWAP targets the time-weighted average price as the benchmark. It is simple, predictable, and effective when volume patterns are unknown. Weakness: it does not adapt to real-time volume or price movements.",
+    "type": "skill",
+    "tags": ["twap", "algorithmic_execution", "order_splitting"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "VWAP (Volume-Weighted Average Price) execution distributes child orders proportionally to historical intraday volume profiles. More shares are traded during high-volume periods (open, close) and fewer during low-volume periods (midday). VWAP aims to match or beat the day's volume-weighted average price. It is the most common institutional execution benchmark.",
+    "type": "skill",
+    "tags": ["vwap", "volume_profile", "institutional"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Implementation Shortfall (IS) algorithm minimizes the difference between the decision price (when the trade was decided) and the actual execution price. IS trades aggressively early to reduce timing risk (the risk of adverse price moves during execution), then slows down to reduce market impact. The tradeoff parameter 'urgency' controls the speed-vs-impact balance.",
+    "type": "skill",
+    "tags": ["implementation_shortfall", "urgency", "timing_risk"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Percentage of Volume (POV) algorithm participates at a target percentage of real-time market volume (e.g., 10% of traded volume). It accelerates in high-volume periods and decelerates in low-volume, minimizing market impact by never dominating the order book. POV is preferred when the trader wants to limit their footprint to a fixed share of market activity.",
+    "type": "skill",
+    "tags": ["pov", "participation_rate", "volume"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Dark pool routing sends orders to alternative trading systems (ATS) where order book is not displayed, reducing information leakage. Large institutional orders benefit from dark pool execution because other participants cannot see and front-run the order. However, dark pools may have adverse selection (informed traders picking off stale quotes). Common dark pools: Crossfinder, SIGMA X, Instinet.",
+    "type": "fact",
+    "tags": ["dark_pool", "information_leakage", "ats"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Order types for execution control: limit order (execute at specified price or better, no fill guarantee), market order (immediate fill at best available price, guaranteed fill but price uncertain), stop order (becomes market order when trigger price hit), stop-limit (becomes limit order at trigger), trailing stop (stop price trails market by fixed amount/percentage), iceberg (shows only a fraction of total size), bracket (entry + stop-loss + take-profit as a single unit).",
+    "type": "skill",
+    "tags": ["order_types", "limit", "market", "stop", "bracket"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Fill probability for limit orders depends on the distance from mid-price: at the bid/ask, fill probability is ~70-80% within minutes; 1 tick away drops to ~40-50%; 2+ ticks away drops to ~10-20%. Tighter limits get better prices but lower fill rates. The maker-taker fee structure rewards limit orders (maker rebate ~$0.002/share) and charges market orders (taker fee ~$0.003/share).",
+    "type": "fact",
+    "tags": ["fill_probability", "limit_order", "maker_taker"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Post-trade analysis uses the arrival price benchmark to decompose execution costs. Implementation Shortfall = (actual avg price - arrival price) * shares = timing cost (delay from decision to first fill) + impact cost (price movement caused by trading) + spread cost (bid-ask crossing cost). This decomposition identifies which execution component needs improvement.",
+    "type": "skill",
+    "tags": ["post_trade_analysis", "implementation_shortfall", "cost_decomposition"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Trade cost analysis (TCA) separates explicit costs (commissions: $0.001-0.005/share for institutional, exchange fees: $0.003/share, clearing fees: $0.0002/share, SEC fee: $0.000008 * dollar volume) from implicit costs (half-spread: 0.01-0.10%, market impact: 0.05-0.50%, opportunity cost of unfilled orders). Total cost for a typical institutional equity trade is 0.10-0.50% round-trip.",
+    "type": "fact",
+    "tags": ["tca", "explicit_costs", "implicit_costs"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Best execution obligations require brokers to seek the most favorable terms for client orders, considering price, speed, likelihood of execution, order size, and transaction costs. MiFID II in Europe requires detailed best execution reports. Reg NMS in the US mandates routing to the venue with the best displayed price (NBBO protection).",
+    "type": "fact",
+    "tags": ["best_execution", "reg_nms", "mifid2"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Smart order routing (SOR) automatically routes orders across multiple venues (exchanges, dark pools, ECNs) to find the best execution. SOR evaluates: NBBO prices across venues, displayed vs hidden liquidity, historical fill rates per venue, exchange fee schedules, and latency to each venue. The router splits orders across venues to minimize total cost.",
+    "type": "skill",
+    "tags": ["smart_order_routing", "multi_venue", "nbbo"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Latency in execution matters for time-sensitive strategies. Exchange co-location provides sub-microsecond latency. Direct market access (DMA) bypasses broker routing for ~100 microsecond latency. Retail broker API (Alpaca, IBKR) adds 1-50 milliseconds. For mean-reversion strategies with 10-minute holding periods, API latency is acceptable. For sub-second strategies, co-location is required.",
+    "type": "fact",
+    "tags": ["latency", "co_location", "dma"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Order book analysis reads Level 2 market data to assess supply/demand imbalance. A thick bid side (large resting buy orders) suggests support. Ask-side imbalance of 3:1 (3x more sell volume) suggests downward pressure. However, spoofing (placing and canceling large orders) can create false signals. True intent is better measured by aggressive orders (market orders hitting the book).",
+    "type": "skill",
+    "tags": ["order_book", "level2", "imbalance"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Execution quality metrics: arrival price slippage (actual vs decision price), VWAP slippage (actual vs market VWAP), fill rate (% of order filled), time to fill (seconds/minutes for complete execution), price improvement (% of orders filled better than NBBO), and reversion (price movement 5-30 minutes after execution, indicating information leakage).",
+    "type": "skill",
+    "tags": ["execution_quality", "metrics", "price_improvement"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Pre-trade cost estimation models predict expected execution costs before trading. The Kissell-Glantz model estimates: total cost = spread/2 + temporary impact + permanent impact + timing risk. Input parameters include order size, ADV, volatility, urgency, and market conditions. Pre-trade estimates allow traders to evaluate whether the expected alpha exceeds expected costs.",
+    "type": "skill",
+    "tags": ["pre_trade", "cost_estimation", "kissell"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Trade scheduling for multi-day orders: for an order representing 25% of ADV, executing in one day would cause severe impact. Rule of thumb: keep daily participation below 10% of ADV for minimal impact, 20% for moderate impact, 30%+ causes significant price distortion. A 25% ADV order should be spread over 3-5 days using a participation strategy.",
+    "type": "learning",
+    "tags": ["trade_scheduling", "multi_day", "participation"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Transaction cost benchmarks: zero-cost benchmark (compare to mid-price at time zero), VWAP benchmark (compare to day's VWAP), TWAP benchmark (compare to time-weighted average over execution window), close benchmark (compare to closing price), arrival price benchmark (compare to price when order was received). Choice of benchmark depends on trading strategy and client mandate.",
+    "type": "fact",
+    "tags": ["benchmarks", "vwap", "arrival_price"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Alpaca paper trading API provides realistic execution simulation with market data-driven fills. Key endpoints: POST /v2/orders (submit order), GET /v2/positions (current holdings), GET /v2/account (buying power, equity), DELETE /v2/orders/{id} (cancel). Rate limits: 200 requests/minute. Paper trading does not simulate slippage or partial fills, so backtest results may be optimistic.",
+    "type": "skill",
+    "tags": ["alpaca", "paper_trading", "api"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Position sizing rules for risk management: risk no more than 1-2% of portfolio per trade (if stop-loss is 5% below entry, position size = 2%/5% = 40% of portfolio is max). Use the ATR (Average True Range) for dynamic stop-loss placement: stop = entry - 2*ATR(14). Adjust position size so that maximum loss per trade = constant dollar amount regardless of volatility.",
+    "type": "skill",
+    "tags": ["position_sizing", "risk_per_trade", "atr"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Intraday volume patterns follow a U-shape: highest volume in the first 30 minutes (opening auction, overnight order flow) and last 30 minutes (closing auction, index rebalancing), with a midday trough. Monday mornings and Friday afternoons have distinct patterns. VWAP algorithms exploit this by concentrating execution in high-volume periods for minimal impact.",
+    "type": "fact",
+    "tags": ["volume_pattern", "intraday", "u_shape"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Execution risk types: timing risk (price moves adversely during extended execution), information leakage risk (market detects your trading pattern), adverse selection risk (you are consistently filled on the wrong side), technology risk (system failure during execution), and liquidity risk (insufficient volume to complete the order). Each risk requires different mitigation strategies.",
+    "type": "fact",
+    "tags": ["execution_risk", "timing_risk", "information_leakage"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "Pairs trading execution requires simultaneous entry and exit of the long and short legs to minimize tracking error. Use a ratio spread order or execute both legs within the same second. Leg risk (filling one leg but not the other) can be catastrophic for the strategy's risk profile. Bracket the execution with a maximum leg delay of 5 seconds.",
+    "type": "skill",
+    "tags": ["pairs_trading", "leg_risk", "simultaneous_execution"],
+    "source": "trading_knowledge"
+  },
+  {
+    "content": "After-hours and pre-market trading (4:00-9:30 AM, 4:00-8:00 PM ET) has wider spreads (typically 3-10x normal), lower liquidity, and higher volatility. Use limit orders only in extended hours to avoid extreme slippage. News-driven moves in pre-market often partially reverse at the open. Extended hours volume is typically only 5-10% of regular session volume.",
+    "type": "learning",
+    "tags": ["after_hours", "pre_market", "extended_hours"],
+    "source": "trading_knowledge"
+  }
+]

@@ -1,0 +1,152 @@
+[
+  {
+    "content": "Richardson Maturity Model defines 4 levels of REST maturity: Level 0 uses a single URI and HTTP POST for everything (RPC-style), Level 1 introduces individual resources with unique URIs, Level 2 adds proper HTTP verbs (GET/POST/PUT/DELETE) and status codes, Level 3 adds HATEOAS with hypermedia controls. Most production APIs reach Level 2; only about 5-10% implement full Level 3.",
+    "type": "fact",
+    "tags": ["rest", "api-design", "richardson-maturity"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "HATEOAS (Hypermedia As The Engine Of Application State) means each API response includes links to related actions and resources. A GET /orders/123 response includes links like {\"self\": \"/orders/123\", \"cancel\": \"/orders/123/cancel\", \"items\": \"/orders/123/items\"}. This allows clients to discover available transitions without hardcoded URLs, reducing coupling by 40-60% in large API ecosystems.",
+    "type": "fact",
+    "tags": ["rest", "hateoas", "api-design"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "OpenAPI/Swagger specifications describe REST APIs in machine-readable YAML/JSON format, enabling auto-generation of client SDKs, server stubs, and interactive docs. OpenAPI 3.1 aligns fully with JSON Schema 2020-12. A well-documented OpenAPI spec reduces API integration time by 30-50% and catches contract mismatches before deployment.",
+    "type": "skill",
+    "tags": ["openapi", "swagger", "api-documentation"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "GraphQL queries let clients request exactly the fields they need, eliminating over-fetching. A query like { user(id: 1) { name, posts { title } } } returns only name and post titles. Mutations modify data, subscriptions provide real-time updates via WebSocket. Facebook reported 60% reduction in mobile data transfer after adopting GraphQL internally.",
+    "type": "fact",
+    "tags": ["graphql", "api-design", "query-language"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "The GraphQL N+1 problem occurs when a resolver for a list field triggers one query per item. DataLoader solves this by batching and caching: instead of N individual DB queries, it collects all requested IDs within a single tick and issues 1 batched query. This reduces database round-trips from O(N) to O(1) per field, often improving response time by 10-100x for nested queries.",
+    "type": "skill",
+    "tags": ["graphql", "n-plus-one", "dataloader", "performance"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "gRPC uses Protocol Buffers (protobuf) for binary serialization, achieving 5-10x smaller payloads and 3-10x faster serialization than JSON. It supports 4 communication patterns: unary (request/response), server streaming, client streaming, and bidirectional streaming. HTTP/2 multiplexing allows multiple concurrent RPCs over a single TCP connection.",
+    "type": "fact",
+    "tags": ["grpc", "protobuf", "binary-serialization"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "gRPC bidirectional streaming opens a persistent HTTP/2 stream where both client and server send messages independently. Each stream is multiplexed over one TCP connection, supporting up to 100 concurrent streams per connection with configurable flow control windows (default 64KB per stream, 16MB per connection). Use cases include real-time chat, collaborative editing, and sensor data pipelines.",
+    "type": "skill",
+    "tags": ["grpc", "streaming", "http2"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "WebSocket heartbeat patterns prevent connection drops from idle timeouts (most load balancers drop idle connections after 60-120 seconds). The standard approach sends a ping frame every 30 seconds; if no pong is received within 10 seconds, the connection is considered dead. Application-level heartbeats (JSON messages) are preferred over protocol-level pings because they traverse all proxy types.",
+    "type": "skill",
+    "tags": ["websocket", "heartbeat", "connection-management"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Cursor-based pagination uses an opaque cursor (typically base64-encoded ID or timestamp) to fetch the next page: GET /items?after=cursor&limit=25. It provides O(1) performance regardless of page depth, unlike offset pagination which degrades to O(N) as offset grows. Keyset pagination (WHERE id > last_id ORDER BY id LIMIT 25) is the SQL implementation, avoiding the OFFSET scan penalty entirely.",
+    "type": "skill",
+    "tags": ["pagination", "cursor", "keyset", "api-performance"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Offset pagination (GET /items?offset=100&limit=25) is simple but suffers from two problems: performance degrades linearly with offset (database must scan and discard offset rows), and results shift when items are inserted/deleted between pages. For a table with 10M rows, offset=9999975 forces the DB to scan nearly all rows before returning 25.",
+    "type": "fact",
+    "tags": ["pagination", "offset", "api-performance"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Token bucket rate limiting allows bursts while enforcing average rates. A bucket holds max B tokens, refills at R tokens/second. Each request consumes 1 token; if empty, request is rejected (HTTP 429). For 100 req/min with burst of 20: B=20, R=1.67/sec. Response headers should include X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Reset, and Retry-After.",
+    "type": "skill",
+    "tags": ["rate-limiting", "token-bucket", "api-security"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Sliding window rate limiting tracks requests in a rolling time window, avoiding the boundary burst problem of fixed windows. A fixed window of 100/min allows 200 requests in 2 seconds (100 at end of window + 100 at start of next). Sliding window counter approximates by weighting the previous window: count = prev_count * overlap_percentage + current_count, using 70% less memory than storing individual timestamps.",
+    "type": "skill",
+    "tags": ["rate-limiting", "sliding-window", "api-security"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "API versioning strategies: URL path versioning (/v1/users) is most common (~70% of public APIs) and easiest to route; header versioning (Accept-Version: v2) keeps URLs clean but is harder to test in browsers; content-type versioning (Accept: application/vnd.api.v2+json) follows pure REST principles but has lowest adoption. Stripe uses date-based versioning (Stripe-Version: 2023-10-16) pinning clients to a specific API snapshot.",
+    "type": "fact",
+    "tags": ["api-versioning", "rest", "api-design"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Webhook delivery requires retry logic with exponential backoff: retry at 1min, 5min, 30min, 2hr, 8hr intervals (typically 5 retries over 10 hours). Each delivery should include an idempotency key (X-Webhook-Id) so receivers can deduplicate. HMAC-SHA256 signing (X-Hub-Signature-256) with a shared secret lets receivers verify payload authenticity: signature = HMAC-SHA256(secret, raw_body).",
+    "type": "skill",
+    "tags": ["webhooks", "retry", "idempotency", "hmac"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Webhook idempotency keys prevent duplicate processing when the same event is delivered multiple times (network retries, at-least-once delivery). The receiver stores processed webhook IDs in a set/database with a TTL of 24-72 hours. Without idempotency handling, webhook receivers process duplicates 2-5% of the time in production, leading to double charges or corrupted state.",
+    "type": "fact",
+    "tags": ["webhooks", "idempotency", "reliability"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "REST API error responses should use RFC 7807 Problem Details format: {\"type\": \"https://api.example.com/errors/insufficient-funds\", \"title\": \"Insufficient Funds\", \"status\": 422, \"detail\": \"Account balance is $30, but withdrawal amount is $50\", \"instance\": \"/accounts/12345/withdraw\"}. This standardized format reduces client-side error handling code by 30-40% compared to custom error schemas.",
+    "type": "skill",
+    "tags": ["rest", "error-handling", "rfc7807"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "API gateway patterns handle cross-cutting concerns: authentication, rate limiting, request routing, response caching, and protocol translation. Kong processes 100K+ requests/second per node. AWS API Gateway charges $3.50 per million requests. A gateway adds 2-10ms latency but eliminates duplicated auth/logging logic across 10-50 microservices.",
+    "type": "fact",
+    "tags": ["api-gateway", "microservices", "infrastructure"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "GraphQL schema stitching merges multiple GraphQL schemas into one unified API, while Apollo Federation uses @key directives to compose subgraphs. Federation is preferred for microservices: each team owns their subgraph, and the gateway composes them at runtime. Query planning in Federation resolves cross-service joins by generating execution plans with parallel fetches, reducing latency by 40-60% vs sequential resolution.",
+    "type": "skill",
+    "tags": ["graphql", "federation", "schema-stitching"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "ETag-based conditional requests reduce bandwidth by 60-80% for unchanged resources. Server returns ETag: \"abc123\" with the response; client sends If-None-Match: \"abc123\" on next request. If resource unchanged, server returns 304 Not Modified with no body. Weak ETags (W/\"abc\") indicate semantic equivalence; strong ETags indicate byte-for-byte identity.",
+    "type": "skill",
+    "tags": ["caching", "etag", "conditional-requests"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "CORS (Cross-Origin Resource Sharing) preflight requests add 100-500ms latency for cross-origin API calls. The browser sends an OPTIONS request with Origin, Access-Control-Request-Method, and Access-Control-Request-Headers. Server responds with Access-Control-Max-Age (cache preflight for up to 86400 seconds / 24 hours) to avoid repeated overhead. Simple requests (GET/POST with standard headers) skip preflight entirely.",
+    "type": "fact",
+    "tags": ["cors", "api-security", "browser"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "API request validation should happen in 3 layers: schema validation (JSON Schema / OpenAPI, catches 60% of errors), business logic validation (domain rules, catches 30%), and database constraints (unique keys, foreign keys, catches remaining 10%). Returning validation errors in batch ({\"errors\": [{\"field\": \"email\", \"message\": \"invalid format\"}]}) reduces round-trips by 70% vs single-error responses.",
+    "type": "skill",
+    "tags": ["validation", "api-design", "error-handling"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "API idempotency for non-GET requests uses client-generated Idempotency-Key headers. The server stores the response for each key (TTL 24-48 hours) and returns the cached response for duplicate requests. Stripe's implementation: POST /v1/charges with Idempotency-Key: uuid4. This prevents double-charging even if the client retries due to network timeout, requiring atomic check-and-set (Redis SETNX or DB row lock).",
+    "type": "skill",
+    "tags": ["idempotency", "api-reliability", "stripe"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "REST bulk operations reduce HTTP overhead for batch processing. Instead of N individual requests (each with ~100ms network latency), a single POST /bulk endpoint processes up to 100-1000 items. Response uses partial success: {\"succeeded\": 95, \"failed\": 5, \"errors\": [...]}. Batch requests reduce total latency from N*100ms to ~200ms and cut TCP connection overhead by 90%+.",
+    "type": "skill",
+    "tags": ["rest", "bulk-operations", "performance"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Server-Sent Events (SSE) provide one-way server-to-client streaming over HTTP/1.1. Unlike WebSocket (bidirectional, binary), SSE is text-only, auto-reconnects with Last-Event-ID, and works through HTTP proxies without upgrade. SSE supports event types, retry intervals (default 3 seconds), and named events. Ideal for live feeds, notifications, and progress updates where client-to-server messaging is not needed.",
+    "type": "fact",
+    "tags": ["sse", "streaming", "real-time"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "API deprecation best practices: announce 6-12 months before removal, return Deprecation and Sunset HTTP headers (RFC 8594), log usage of deprecated endpoints to identify affected clients, and provide migration guides with code examples. The Sunset header (Sunset: Sat, 01 Jun 2025 00:00:00 GMT) gives clients machine-readable removal dates. Use API analytics to track adoption — only remove when <1% of traffic hits the old version.",
+    "type": "skill",
+    "tags": ["api-deprecation", "api-lifecycle", "versioning"],
+    "source": "engineering_knowledge"
+  }
+]

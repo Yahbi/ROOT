@@ -101,6 +101,7 @@ class PolymarketBot:
         """Initialize SQLite database for market data and positions."""
         os.makedirs(os.path.dirname(self._db_path), exist_ok=True)
         conn = sqlite3.connect(self._db_path)
+        conn.execute("PRAGMA journal_mode=WAL")
         conn.executescript("""
             CREATE TABLE IF NOT EXISTS market_snapshots (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -178,6 +179,7 @@ class PolymarketBot:
     @property
     def conn(self) -> sqlite3.Connection:
         c = sqlite3.connect(self._db_path)
+        c.execute("PRAGMA journal_mode=WAL")
         c.row_factory = sqlite3.Row
         return c
 

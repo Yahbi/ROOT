@@ -1,0 +1,302 @@
+[
+  {
+    "content": "The Factory Method pattern defines an interface for creating objects but lets subclasses decide which class to instantiate. In Python, use a classmethod returning different subclass instances based on input parameters, allowing open/closed extension without modifying existing factory logic.",
+    "type": "fact",
+    "tags": ["design_patterns", "factory_method", "creational"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Abstract Factory groups related factory methods into a single interface, producing families of compatible objects. Implement it in Python with a base ABC class defining create_x() and create_y() methods, then concrete factories for each product family ensuring type-safe combinations.",
+    "type": "fact",
+    "tags": ["design_patterns", "abstract_factory", "creational"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "The Observer pattern with pub/sub decouples event producers from consumers by routing through a message bus. Register callbacks with topic strings and use wildcard matching (e.g., 'agent.*') to subscribe to groups of events, enabling extensible event-driven architectures without tight coupling.",
+    "type": "skill",
+    "tags": ["design_patterns", "observer", "pub_sub"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "The Strategy pattern encapsulates interchangeable algorithms behind a common Protocol interface. In Python, define a Protocol with a single execute() method, then pass different strategy implementations at runtime to switch between behaviors like LRU vs LFU cache eviction without conditional logic.",
+    "type": "fact",
+    "tags": ["design_patterns", "strategy", "behavioral"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "The Decorator pattern wraps objects to add behavior transparently without inheritance. In Python, use functools.wraps to preserve metadata when creating function decorators, and for class decorators implement __getattr__ delegation to the wrapped object for full interface transparency.",
+    "type": "skill",
+    "tags": ["design_patterns", "decorator", "structural"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "CQRS separates read models (queries) from write models (commands) into distinct paths, allowing independent optimization. Use thin query services returning denormalized DTOs for reads and command handlers with validation pipelines for writes, scaling each side independently based on traffic patterns.",
+    "type": "fact",
+    "tags": ["design_patterns", "cqrs", "architecture"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Event sourcing stores state as an append-only log of domain events rather than mutable rows. Reconstruct current state by replaying events through a fold function, enabling complete audit trails, temporal queries, and the ability to rebuild read models from the event stream at any point in time.",
+    "type": "fact",
+    "tags": ["design_patterns", "event_sourcing", "architecture"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Use asyncio.gather(*coros) to run multiple coroutines concurrently and collect all results in order. Pass return_exceptions=True to prevent one failure from cancelling siblings, which is critical for fanout patterns where partial results are acceptable and you need graceful degradation.",
+    "type": "skill",
+    "tags": ["python_async", "asyncio", "concurrency"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Python 3.11+ TaskGroup provides structured concurrency where all tasks share a lifetime scope. Use 'async with asyncio.TaskGroup() as tg: tg.create_task(coro())' to ensure automatic cancellation of remaining tasks if any task raises, preventing orphaned coroutines and resource leaks.",
+    "type": "skill",
+    "tags": ["python_async", "taskgroup", "structured_concurrency"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "asyncio.Semaphore(n) limits concurrent access to a shared resource to n coroutines at a time. Use it to rate-limit outbound API calls: 'async with semaphore: await fetch(url)' prevents overwhelming downstream services while still processing requests concurrently within the bounded limit.",
+    "type": "skill",
+    "tags": ["python_async", "semaphore", "rate_limiting"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "asyncio.Lock serializes access to shared mutable state across coroutines running on the same event loop. Unlike threading locks, asyncio locks are not reentrant, so avoid nested acquisitions. Use 'async with lock:' to protect critical sections like database connection initialization or cache updates.",
+    "type": "fact",
+    "tags": ["python_async", "lock", "synchronization"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Use asyncio.to_thread(blocking_fn, *args) to offload CPU-bound or blocking I/O operations to a thread pool without blocking the event loop. This is essential for calling synchronous libraries like PIL, pandas, or file system operations from within async handlers without starving other coroutines.",
+    "type": "skill",
+    "tags": ["python_async", "to_thread", "blocking_io"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Enable mypy strict mode with 'mypy --strict' or '[mypy] strict = true' in mypy.ini to enforce disallow_untyped_defs, disallow_any_generics, and warn_return_any. Strict mode catches approximately 30% more type errors than default settings by requiring explicit annotations on all function signatures.",
+    "type": "learning",
+    "tags": ["type_hints", "mypy", "static_analysis"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Protocol classes from typing enable structural subtyping (duck typing with type safety) without requiring inheritance. Define 'class Cacheable(Protocol): def cache_key(self) -> str: ...' and any class implementing cache_key() satisfies the type check, enabling flexible plugin architectures.",
+    "type": "fact",
+    "tags": ["type_hints", "protocol", "structural_typing"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Generic[T] enables type-safe containers and services parameterized by type variables. Define 'class Repository(Generic[T])' with methods returning T, then instantiate as Repository[User] for compile-time type checking. Combine with bound='BaseModel' to constrain T to specific base types.",
+    "type": "skill",
+    "tags": ["type_hints", "generics", "type_safety"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Pydantic v2 model_validator with mode='before' runs validation on raw input data before field parsing, enabling field renaming and data normalization. Use mode='after' for cross-field validation on the constructed model instance, such as ensuring end_date > start_date with access to typed fields.",
+    "type": "skill",
+    "tags": ["type_hints", "pydantic", "validation"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Pure ASGI middleware is approximately 40% faster than Starlette's BaseHTTPMiddleware because it avoids per-request task creation and body buffering overhead. Implement the ASGI interface directly with __init__(self, app) and async __call__(self, scope, receive, send) for high-throughput middleware like auth and rate limiting.",
+    "type": "learning",
+    "tags": ["fastapi", "asgi", "middleware", "performance"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "ORJSONResponse uses orjson for serialization which is 2-10x faster than the standard json module for API responses. Set default_response_class=ORJSONResponse on your FastAPI app to automatically use orjson for all JSON responses without changing individual endpoint return types.",
+    "type": "skill",
+    "tags": ["fastapi", "orjson", "serialization"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Running FastAPI with uvloop replaces the default asyncio event loop and delivers 2-4x throughput improvement for I/O-bound workloads. Install uvloop and launch with 'uvicorn app:app --loop uvloop' or set it programmatically with uvloop.install() before starting the application.",
+    "type": "learning",
+    "tags": ["fastapi", "uvloop", "throughput"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "FastAPI's Depends() system enables composable dependency injection for database sessions, auth tokens, and configuration. Dependencies are cached per-request by default, so calling Depends(get_db) multiple times in a handler chain reuses the same session without creating duplicates.",
+    "type": "fact",
+    "tags": ["fastapi", "dependency_injection", "architecture"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "B-tree indexes are optimal for equality and range queries on ordered data like timestamps and IDs. GIN (Generalized Inverted Index) indexes excel at full-text search and JSONB containment queries, while BRIN (Block Range Index) indexes use minimal storage for naturally ordered large tables like append-only logs.",
+    "type": "fact",
+    "tags": ["database", "indexes", "b_tree", "gin", "brin"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "EXPLAIN ANALYZE executes the query and shows actual row counts, execution times, and buffer usage per plan node. Compare 'estimated rows' vs 'actual rows' to detect stale statistics requiring ANALYZE, and look for sequential scans on large tables as candidates for index creation.",
+    "type": "skill",
+    "tags": ["database", "explain_analyze", "query_optimization"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "N+1 query problems occur when fetching a collection then issuing one query per item for related data. Detect them by logging query counts per request with middleware, then fix with JOIN FETCH, subquery loading, or batch IN clauses that reduce N+1 queries to constant 2 queries regardless of collection size.",
+    "type": "learning",
+    "tags": ["database", "n_plus_one", "query_optimization"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Connection pooling with asyncpg using pool_size=10 maintains a reusable pool of database connections, eliminating the 5-20ms overhead of establishing new TCP connections per query. Set min_size=2 for warm starts and max_size based on PostgreSQL max_connections divided by application instance count.",
+    "type": "skill",
+    "tags": ["database", "connection_pooling", "asyncpg"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "SQLite WAL (Write-Ahead Logging) mode enables concurrent reads while a write is in progress, dramatically improving throughput for read-heavy workloads. Enable with 'PRAGMA journal_mode=WAL' at connection time, and set 'PRAGMA busy_timeout=5000' to handle write contention gracefully instead of raising immediate errors.",
+    "type": "skill",
+    "tags": ["database", "sqlite", "wal", "concurrency"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "REST resource naming uses plural nouns for collections (/users, /orders) and nested paths for relationships (/users/{id}/orders). Use HTTP methods semantically: GET for reads, POST for creation, PUT for full replacement, PATCH for partial updates, and DELETE for removal, returning appropriate 2xx status codes.",
+    "type": "fact",
+    "tags": ["api_design", "rest", "naming_conventions"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Cursor-based pagination using opaque tokens (base64-encoded last-seen ID) scales better than offset pagination for large datasets. Offset pagination requires counting rows (O(n) cost) and produces inconsistent results during concurrent inserts, while cursor pagination maintains stable performance regardless of dataset size.",
+    "type": "learning",
+    "tags": ["api_design", "pagination", "cursor"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Rate limiting responses should include X-RateLimit-Limit (max requests), X-RateLimit-Remaining (requests left), and X-RateLimit-Reset (UTC epoch reset time) headers. Return 429 Too Many Requests with a Retry-After header when limits are exceeded, enabling clients to implement backoff without guessing.",
+    "type": "fact",
+    "tags": ["api_design", "rate_limiting", "headers"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "API versioning via URL path prefix (/v1/users, /v2/users) is the most explicit and cacheable strategy. Avoid header-based versioning for public APIs as it complicates debugging and caching. Maintain backward compatibility within a version, and deprecate old versions with Sunset and Deprecation response headers.",
+    "type": "fact",
+    "tags": ["api_design", "versioning", "backward_compatibility"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Idempotency keys (client-generated UUIDs in the Idempotency-Key header) prevent duplicate operations on retries for non-idempotent endpoints like POST /payments. Store the key with the response for 24 hours, returning the cached response on duplicate requests instead of processing the operation again.",
+    "type": "skill",
+    "tags": ["api_design", "idempotency", "reliability"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "The OWASP Top 10 identifies injection, broken authentication, and sensitive data exposure as the most critical web security risks. Mitigate injection with parameterized queries exclusively, enforce authentication with short-lived tokens, and encrypt sensitive data at rest with AES-256 and in transit with TLS 1.3.",
+    "type": "fact",
+    "tags": ["security", "owasp", "web_security"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "JWT access tokens should expire in 15 minutes to limit the damage window of token theft, paired with 7-day refresh tokens stored in httpOnly cookies. Rotate refresh tokens on each use (one-time use) and maintain a server-side deny list for immediate revocation of compromised sessions.",
+    "type": "skill",
+    "tags": ["security", "jwt", "authentication"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "OAuth2 PKCE (Proof Key for Code Exchange) protects public clients like SPAs and mobile apps from authorization code interception. The client generates a random code_verifier, sends its SHA-256 hash as code_challenge in the auth request, then proves possession by sending the original verifier during token exchange.",
+    "type": "fact",
+    "tags": ["security", "oauth2", "pkce"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "CORS allow_origins should be an explicit allowlist of trusted domains, never wildcard '*' for authenticated endpoints. Configure allow_methods to only permitted HTTP verbs and set Access-Control-Max-Age to 3600 to cache preflight responses, reducing OPTIONS request overhead by 50% for cross-origin API calls.",
+    "type": "skill",
+    "tags": ["security", "cors", "headers"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Content-Security-Policy headers prevent XSS by restricting resource loading sources. Set \"default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:\" as a baseline, then tighten by removing unsafe-inline and using nonce-based script loading for maximum protection.",
+    "type": "skill",
+    "tags": ["security", "csp", "xss_prevention"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Parameterized SQL queries with placeholder binding (cursor.execute('SELECT * FROM users WHERE id = ?', (user_id,))) prevent SQL injection by separating code from data at the database driver level. Never use f-strings or string concatenation for SQL construction, even for seemingly safe integer values.",
+    "type": "fact",
+    "tags": ["security", "sql_injection", "parameterized_queries"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "bcrypt password hashing with cost factor 12 provides approximately 250ms hash time per password, balancing security against brute force with acceptable login latency. Increase the cost factor by 1 every 18 months as hardware improves, and always use a per-password random salt which bcrypt generates automatically.",
+    "type": "fact",
+    "tags": ["security", "bcrypt", "password_hashing"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "pytest fixtures with scope='session' initialize expensive resources like database connections once per test suite, while scope='function' (default) ensures test isolation with fresh state. Use @pytest.fixture(autouse=True) for implicit setup like clearing caches, and yield fixtures for automatic cleanup of resources.",
+    "type": "skill",
+    "tags": ["testing", "pytest", "fixtures"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "unittest.mock.AsyncMock patches async functions and coroutines in tests, allowing you to set return_value or side_effect on awaitable calls. Use 'with patch('module.fetch', new_callable=AsyncMock, return_value=data)' to mock async dependencies, and assert await counts with assert_awaited_once_with().",
+    "type": "skill",
+    "tags": ["testing", "mock", "async_testing"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Property-based testing with Hypothesis generates hundreds of random inputs from declared strategies like st.integers(), st.text(), and st.lists(). It automatically shrinks failing inputs to minimal reproducible examples, catching edge cases like empty strings, negative numbers, and Unicode that manual test cases typically miss.",
+    "type": "learning",
+    "tags": ["testing", "hypothesis", "property_based"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Load testing with Locust defines user behavior as Python classes with @task-decorated methods simulating real traffic patterns. Run distributed Locust with --master and --worker flags across multiple machines, targeting response time p95 < 500ms and error rate < 1% as baseline production readiness thresholds.",
+    "type": "skill",
+    "tags": ["testing", "locust", "load_testing"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Test coverage above 80% is the recommended target, but prioritize critical path coverage over percentage. Use 'pytest --cov=backend --cov-report=term-missing' to identify uncovered lines, focusing on business logic and error handling branches rather than chasing 100% coverage on boilerplate and configuration code.",
+    "type": "learning",
+    "tags": ["testing", "coverage", "best_practices"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Redis caching with TTL strategy should use short TTLs (60-300s) for frequently changing data and longer TTLs (3600s+) for stable reference data. Implement cache stampede prevention with probabilistic early expiration: refresh the cache when random() < (time_until_expiry / ttl) to spread renewal across requests.",
+    "type": "skill",
+    "tags": ["performance", "redis", "caching", "ttl"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "LRU (Least Recently Used) eviction works best for recency-biased workloads like user sessions, while LFU (Least Frequently Used) excels for popularity-biased workloads like content CDNs. Redis 4.0+ supports both policies via maxmemory-policy configuration; use allkeys-lfu for mixed workloads with hot/cold access patterns.",
+    "type": "fact",
+    "tags": ["performance", "cache_eviction", "lru", "lfu"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Adding __slots__ = ('field1', 'field2') to Python classes reduces per-instance memory by approximately 40% by eliminating the per-instance __dict__. This is particularly impactful for data classes with millions of instances, but prevents dynamic attribute assignment and requires declaring all attributes upfront in the class definition.",
+    "type": "learning",
+    "tags": ["performance", "memory", "slots"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "functools.lru_cache(maxsize=128) memoizes pure function results in an LRU dictionary, avoiding recomputation of expensive deterministic calls. Use maxsize=None for unbounded caches on small key spaces, and call cache_info() to monitor hit rates. Note that arguments must be hashable, so convert lists to tuples.",
+    "type": "skill",
+    "tags": ["performance", "lru_cache", "memoization"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "orjson serializes Python objects to JSON 2-10x faster than the standard json module and natively handles datetime, UUID, and numpy types. Use orjson.dumps() which returns bytes (not str), and orjson.OPT_SORT_KEYS | orjson.OPT_INDENT_2 as option flags for deterministic and readable output respectively.",
+    "type": "fact",
+    "tags": ["performance", "orjson", "serialization"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Event sourcing with CQRS combines an append-only event store for writes with materialized read models rebuilt from events. Use snapshot checkpoints every N events (typically 100-1000) to avoid replaying the entire event history, reducing read model reconstruction time from minutes to milliseconds.",
+    "type": "learning",
+    "tags": ["design_patterns", "event_sourcing", "cqrs", "snapshots"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "The Observer pattern in async Python uses asyncio.Queue for backpressure-aware event distribution. Each subscriber gets its own queue, and the publisher awaits queue.put() which blocks if the queue is full (maxsize=100), preventing slow consumers from causing unbounded memory growth in the event bus.",
+    "type": "skill",
+    "tags": ["design_patterns", "observer", "async", "backpressure"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Pydantic v2 with model_validator mode='wrap' gives full control over the validation pipeline, receiving a ValidatorFunctionWrapHandler to call the next validator in the chain. This enables transparent deserialization from multiple formats (JSON string, dict, ORM object) into the same model with a single entry point.",
+    "type": "skill",
+    "tags": ["type_hints", "pydantic", "model_validator", "deserialization"],
+    "source": "engineering_knowledge"
+  }
+]

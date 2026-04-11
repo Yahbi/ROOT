@@ -1,5 +1,196 @@
 /* panels-trading.js — Trading, Backtesting, Strategies, Polymarket, Money/Council */
 
+// ── Portfolio Allocation Pie Chart ───────────────────────────
+function _renderPortfolioAllocation(positions, equity) {
+    if (typeof Chart === 'undefined') return;
+    const canvas = document.getElementById('chart-portfolio-allocation');
+    if (!canvas) return;
+
+    if (!positions || !positions.length) {
+        const ctx = canvas.getContext('2d');
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        const parent = canvas.parentElement;
+        const msg = parent.querySelector('.alloc-empty') || document.createElement('div');
+        msg.className = 'alloc-empty';
+        msg.style.cssText = 'position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:12px;color:var(--text-muted)';
+        msg.textContent = 'No open positions';
+        parent.style.position = 'relative';
+        parent.appendChild(msg);
+        return;
+    }
+
+    const cs = getComputedStyle(document.documentElement);
+    const colors = [
+        cs.getPropertyValue('--accent').trim(),
+        cs.getPropertyValue('--accent-green').trim(),
+        cs.getPropertyValue('--accent-cyan').trim(),
+        cs.getPropertyValue('--accent-gold').trim(),
+        cs.getPropertyValue('--accent-blue').trim(),
+        cs.getPropertyValue('--accent-purple').trim(),
+        cs.getPropertyValue('--accent-orange').trim(),
+        cs.getPropertyValue('--accent-red').trim(),
+    ];
+    const textMuted = cs.getPropertyValue('--text-muted').trim();
+
+    const labels = positions.map(p => p.symbol);
+    const values = positions.map(p => Math.abs(p.market_value || p.qty * (p.current_price || p.avg_entry_price || 1)));
+    const cashValue = Math.max(0, (equity || 0) - values.reduce((a, b) => a + b, 0));
+    if (cashValue > 0) { labels.push('Cash'); values.push(cashValue); }
+
+    _renderChart('chart-portfolio-allocation', {
+        type: 'doughnut',
+        data: {
+            labels,
+            datasets: [{
+                data: values,
+                backgroundColor: colors.map(c => c + 'bb'),
+                borderColor: colors,
+                borderWidth: 1.5,
+                hoverOffset: 6,
+            }],
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'right',
+                    labels: { color: textMuted, font: { size: 10 }, boxWidth: 10, padding: 8 },
+                },
+                tooltip: {
+                    callbacks: {
+                        label: ctx => {
+                            const total = ctx.dataset.data.reduce((a, b) => a + b, 0);
+                            const pct = total > 0 ? ((ctx.parsed / total) * 100).toFixed(1) : '0';
+                            return ` ${ctx.label}: $${ctx.parsed.toLocaleString(undefined, {maximumFractionDigits:0})} (${pct}%)`;
+                        },
+                    },
+                },
+            },
+        },
+    });
+}
+
+// ── P&L Timeline Chart ───────────────────────────────────────
+function _renderPnLTimeline(trades) {
+    if (typeof Chart === 'undefined') return;
+    const canvas = document.getElementById('chart-pnl-timeline');
+    if (!canvas) return;
+
+    const cs = getComputedStyle(document.documentElement);
+    const textMuted = cs.getPropertyValue('--text-muted').trim();
+    const border = cs.getPropertyValue('--border').trim();
+
+    // Build cumulative P&L from closed trades
+    const closed = (trades || []).filter(t => t.pnl !== undefined || t.profit_loss !== undefined || t.exit_price)
+        .sort((a, b) => new Date(a.created_at || a.exit_time || 0) - new Date(b.created_at || b.exit_time || 0));
+
+    if (!closed.length) {
+        const ctx = canvas.getContext('2d');
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        return;
+    }
+
+    let cumulative = 0;
+    const points = closed.map(t => {
+        const pnl = t.pnl || t.profit_loss || ((t.exit_price || 0) - (t.avg_entry_price || t.entry_price || 0)) * (t.qty || 1);
+        cumulative += pnl;
+        return cumulative;
+    });
+
+    const labels = closed.map(t => {
+        const d = new Date(t.created_at || t.exit_time || Date.now());
+        return `${d.getMonth()+1}/${d.getDate()}`;
+    });
+
+    const finalPnl = points[points.length - 1] || 0;
+    const lineColor = finalPnl >= 0 ? cs.getPropertyValue('--accent-green').trim() : cs.getPropertyValue('--accent-red').trim();
+
+    _renderChart('chart-pnl-timeline', {
+        type: 'line',
+        data: {
+            labels,
+            datasets: [{
+                label: 'Cumulative P&L',
+                data: points,
+                borderColor: lineColor,
+                backgroundColor: lineColor + '18',
+                fill: true,
+                tension: 0.3,
+                pointRadius: closed.length > 20 ? 0 : 3,
+                pointHoverRadius: 4,
+                borderWidth: 2,
+            }],
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    callbacks: {
+                        label: ctx => ` P&L: $${ctx.parsed.y.toFixed(2)}`,
+                    },
+                },
+            },
+            scales: {
+                x: { ticks: { color: textMuted, font: { size: 9 }, maxTicksLimit: 8 }, grid: { color: border + '30' } },
+                y: {
+                    ticks: { color: textMuted, font: { size: 9 }, callback: v => '$' + v.toFixed(0) },
+                    grid: { color: border + '30' },
+                    // Zero baseline
+                    afterDataLimits: scale => { scale.min = Math.min(scale.min, 0); },
+                },
+            },
+        },
+    });
+}
+
+// ── Position Risk Heatmap ────────────────────────────────────
+function _renderRiskHeatmap(positions) {
+    const el = document.getElementById('risk-heatmap');
+    if (!el) return;
+
+    if (!positions || !positions.length) {
+        el.innerHTML = '<div style="padding:20px;text-align:center;color:var(--text-muted);font-size:12px">No open positions to assess</div>';
+        return;
+    }
+
+    const totalEquity = positions.reduce((s, p) => s + Math.abs(p.market_value || p.qty * (p.current_price || p.avg_entry_price || 1)), 0) || 1;
+
+    el.innerHTML = positions.map(p => {
+        const mv = Math.abs(p.market_value || p.qty * (p.current_price || p.avg_entry_price || 1));
+        const allocation = mv / totalEquity;
+        const unrealizedPct = p.avg_entry_price ? ((p.current_price || p.avg_entry_price) - p.avg_entry_price) / p.avg_entry_price : 0;
+        const pnl = p.unrealized_pl || 0;
+
+        // Risk score: high allocation + negative P&L = high risk
+        const riskScore = allocation * (1 + Math.max(0, -unrealizedPct * 5));
+        const riskPct = Math.min(100, Math.round(riskScore * 100));
+
+        let riskColor, riskLabel;
+        if (riskPct > 70) { riskColor = 'var(--accent-red)'; riskLabel = 'HIGH'; }
+        else if (riskPct > 40) { riskColor = 'var(--accent-orange)'; riskLabel = 'MED'; }
+        else { riskColor = 'var(--accent-green)'; riskLabel = 'LOW'; }
+
+        const pnlColor = pnl >= 0 ? 'var(--accent-green)' : 'var(--accent-red)';
+        const allocPct = (allocation * 100).toFixed(1);
+
+        return `<div style="padding:8px 10px;border-bottom:1px solid var(--border);display:grid;grid-template-columns:80px 1fr 60px 60px 50px;align-items:center;gap:8px;font-size:12px">
+            <span style="font-weight:700">${escHtml(p.symbol)}</span>
+            <div>
+                <div style="background:var(--bg-secondary);border-radius:3px;height:6px;overflow:hidden">
+                    <div style="width:${allocPct}%;height:100%;background:${riskColor};transition:width 0.6s;border-radius:3px"></div>
+                </div>
+                <span style="font-size:10px;color:var(--text-muted)">${allocPct}% alloc</span>
+            </div>
+            <span style="color:${pnlColor};font-weight:600;text-align:right">${pnl >= 0 ? '+' : ''}$${pnl.toFixed(0)}</span>
+            <span style="color:${riskColor};font-weight:700;text-align:center;font-size:11px">${riskLabel}</span>
+            <span style="color:var(--text-muted);font-size:10px;text-align:right">${riskPct}%</span>
+        </div>`;
+    }).join('');
+}
+
 // ── Trading Panel ────────────────────────────────────────────
 async function loadTrading() {
     const [portfolio, signals, trades] = await Promise.all([
@@ -62,7 +253,7 @@ async function loadTrading() {
     loadMarketAnalysis();
     loadTradingIntelFeed();
 
-    // Portfolio chart
+    // Portfolio equity chart (existing)
     if (typeof Chart !== 'undefined' && portfolio?.snapshots?.length) {
         _renderChart('chart-portfolio', {
             type: 'line',
@@ -78,6 +269,18 @@ async function loadTrading() {
             options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { display: false }, y: { ticks: { color: 'var(--text-muted)', font: { size: 10 } } } } },
         });
     }
+
+    // NEW: Portfolio Allocation Pie
+    const positions = portfolio?.positions || [];
+    const equity = portfolio?.equity || 0;
+    _renderPortfolioAllocation(positions, equity);
+
+    // NEW: P&L Timeline (from trade history)
+    const tradeList = trades?.trades || (Array.isArray(trades) ? trades : []);
+    _renderPnLTimeline(tradeList);
+
+    // NEW: Position Risk Heatmap
+    _renderRiskHeatmap(positions);
 }
 
 async function runTradeCycle() {

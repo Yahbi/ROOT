@@ -1,4 +1,4 @@
-"""Engineering Division — 30 software engineering agents."""
+"""Engineering Division — 35 software engineering agents."""
 
 from __future__ import annotations
 
@@ -345,5 +345,70 @@ ENGINEERING_DIVISION: list[AgentProfile] = [
             _cap("optimization", "Optimize model inference latency and cost"),
             _cap("monitoring", "Monitor model performance and drift"),
         ],
+    ),
+    AgentProfile(
+        id="api_designer", name="API Designer",
+        role="API Design", tier=2, connector_type="internal",
+        description="Designs clean, versioned, and developer-friendly API contracts and specifications",
+        capabilities=[
+            _cap("architecture", "Design RESTful and GraphQL API contracts"),
+            _cap("documentation", "Produce OpenAPI, AsyncAPI, and GraphQL schema specs"),
+            _cap("code_review", "Review API designs for consistency and breaking changes"),
+            _cap("backend_dev", "Implement API versioning and deprecation strategies"),
+            _cap("testing", "Write API contract tests and mock servers"),
+        ],
+        metadata={"priority": 2},
+    ),
+    AgentProfile(
+        id="database_optimizer", name="Database Optimizer",
+        role="Database Optimization", tier=2, connector_type="internal",
+        description="Analyzes and optimizes database performance through indexing, query tuning, and schema improvements",
+        capabilities=[
+            _cap("database_design", "Analyze schema design for normalization and efficiency"),
+            _cap("optimization", "Tune slow queries, indexes, and execution plans"),
+            _cap("monitoring", "Profile database load, locks, and wait events"),
+            _cap("code_review", "Review ORM usage and N+1 query patterns"),
+            _cap("backend_dev", "Implement database connection pooling and caching layers"),
+        ],
+        metadata={"priority": 2},
+    ),
+    AgentProfile(
+        id="cache_strategist", name="Cache Strategist",
+        role="Caching Strategy", tier=2, connector_type="internal",
+        description="Designs and implements caching strategies to maximize system performance and reduce latency",
+        capabilities=[
+            _cap("architecture", "Design multi-layer caching architectures"),
+            _cap("optimization", "Tune cache hit rates, TTLs, and eviction policies"),
+            _cap("backend_dev", "Implement Redis, Memcached, and CDN caching layers"),
+            _cap("monitoring", "Track cache performance, hit ratios, and memory usage"),
+            _cap("debugging", "Diagnose cache invalidation and stampede issues"),
+        ],
+        metadata={"priority": 2},
+    ),
+    AgentProfile(
+        id="migration_planner", name="Migration Planner",
+        role="Migration Planning", tier=2, connector_type="internal",
+        description="Plans and executes database, infrastructure, and codebase migrations with minimal risk",
+        capabilities=[
+            _cap("database_design", "Design safe forward and rollback migration scripts"),
+            _cap("architecture", "Plan phased migration strategies with checkpoints"),
+            _cap("testing", "Validate migration correctness and data integrity"),
+            _cap("risk_assessment", "Assess migration risk and create contingency plans"),
+            _cap("deployment", "Coordinate zero-downtime migration deployments"),
+        ],
+        metadata={"priority": 2},
+    ),
+    AgentProfile(
+        id="load_tester", name="Load Tester",
+        role="Load Testing", tier=2, connector_type="internal",
+        description="Designs and executes load tests to identify system capacity limits and bottlenecks",
+        capabilities=[
+            _cap("testing", "Design and run load, stress, and soak test scenarios"),
+            _cap("monitoring", "Capture and analyze performance metrics under load"),
+            _cap("optimization", "Identify throughput bottlenecks and saturation points"),
+            _cap("code_generation", "Generate load test scripts for k6, Locust, and JMeter"),
+            _cap("benchmark_analysis", "Compare load test results against SLA targets"),
+        ],
+        metadata={"priority": 2},
     ),
 ]

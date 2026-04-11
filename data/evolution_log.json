@@ -1,789 +1,5 @@
 [
   {
-    "id": "evo_f6ce5ae949f3",
-    "action_type": "skill_created",
-    "description": "Created skill: general/auto-general \u2014 Auto-generated skill for general",
-    "details": {
-      "skill_path": "/Users/yohan/Desktop/ROOT/data/skills/general/auto-general/SKILL.md",
-      "tags": [
-        "auto-generated",
-        "builder-agent",
-        "general"
-      ]
-    },
-    "impact_score": 0.5,
-    "timestamp": "2026-03-21T19:58:15.140075+00:00"
-  },
-  {
-    "id": "evo_7ce3e8f5eb03",
-    "action_type": "skill_created",
-    "description": "Created skill: general/auto-general \u2014 Auto-generated skill for general",
-    "details": {
-      "skill_path": "/Users/yohan/Desktop/ROOT/data/skills/general/auto-general/SKILL.md",
-      "tags": [
-        "auto-generated",
-        "builder-agent",
-        "general"
-      ]
-    },
-    "impact_score": 0.5,
-    "timestamp": "2026-03-21T20:19:00.968415+00:00"
-  },
-  {
-    "id": "evo_89d1390df843",
-    "action_type": "skill_created",
-    "description": "Created skill: general/auto-general \u2014 Auto-generated skill for general",
-    "details": {
-      "skill_path": "/Users/yohan/Desktop/ROOT/data/skills/general/auto-general/SKILL.md",
-      "tags": [
-        "auto-generated",
-        "builder-agent",
-        "general"
-      ]
-    },
-    "impact_score": 0.5,
-    "timestamp": "2026-03-21T20:39:41.710452+00:00"
-  },
-  {
-    "id": "evo_5534cb2a6b04",
-    "action_type": "skill_created",
-    "description": "Created skill: general/auto-general \u2014 Auto-generated skill for general",
-    "details": {
-      "skill_path": "/Users/yohan/Desktop/ROOT/data/skills/general/auto-general/SKILL.md",
-      "tags": [
-        "auto-generated",
-        "builder-agent",
-        "general"
-      ]
-    },
-    "impact_score": 0.5,
-    "timestamp": "2026-03-21T21:00:32.718342+00:00"
-  },
-  {
-    "id": "evo_d532562cf10c",
-    "action_type": "code_proposed",
-    "description": "Proposed improvement in self_rewrite: {\"name\": \"reports_write_report\", \"parameters\": {\"title\": \"Impactful Improvements for ROOT's Capabilities\", \"sections\": \"[{\\\"heading\\\": \\\"Most Lacking Capability\\\", \\\"content\\\": \\\"Analyzing community intelligence shows that network analysis is crucial, but a more comprehensive sentiment analysis capa",
-    "details": {
-      "area": "self_rewrite",
-      "rationale": "Autonomous self-improvement proposal from Analyst + Coder pipeline"
-    },
-    "impact_score": 0.0,
-    "timestamp": "2026-03-21T21:05:40.473102+00:00"
-  },
-  {
-    "id": "evo_8c17b67a7b8d",
-    "action_type": "code_proposed",
-    "description": "Proposed improvement in knowledge: Expand 'error' memories (only 3 entries)",
-    "details": {
-      "area": "knowledge",
-      "rationale": "Identified by Builder Agent during improvement cycle"
-    },
-    "impact_score": 0.0,
-    "timestamp": "2026-03-21T21:05:54.734032+00:00"
-  },
-  {
-    "id": "evo_245c1135268f",
-    "action_type": "skill_created",
-    "description": "Created skill: general/auto-general \u2014 Auto-generated skill for general",
-    "details": {
-      "skill_path": "/Users/yohan/Desktop/ROOT/data/skills/general/auto-general/SKILL.md",
-      "tags": [
-        "auto-generated",
-        "builder-agent",
-        "general"
-      ]
-    },
-    "impact_score": 0.5,
-    "timestamp": "2026-03-21T21:22:09.271380+00:00"
-  },
-  {
-    "id": "evo_838540a67826",
-    "action_type": "skill_created",
-    "description": "Created skill: general/auto-general \u2014 Auto-generated skill for general",
-    "details": {
-      "skill_path": "/Users/yohan/Desktop/ROOT/data/skills/general/auto-general/SKILL.md",
-      "tags": [
-        "auto-generated",
-        "builder-agent",
-        "general"
-      ]
-    },
-    "impact_score": 0.5,
-    "timestamp": "2026-03-21T21:43:16.925635+00:00"
-  },
-  {
-    "id": "evo_9ff68938c996",
-    "action_type": "skill_created",
-    "description": "Created skill: general/auto-general \u2014 Auto-generated skill for general",
-    "details": {
-      "skill_path": "/Users/yohan/Desktop/ROOT/data/skills/general/auto-general/SKILL.md",
-      "tags": [
-        "auto-generated",
-        "builder-agent",
-        "general"
-      ]
-    },
-    "impact_score": 0.5,
-    "timestamp": "2026-03-21T22:04:28.546333+00:00"
-  },
-  {
-    "id": "evo_382623a5c9f2",
-    "action_type": "code_proposed",
-    "description": "Proposed improvement in knowledge: Expand knowledge: latest AI, trading, and automation insights",
-    "details": {
-      "area": "knowledge",
-      "rationale": "Identified by Builder Agent during improvement cycle"
-    },
-    "impact_score": 0.0,
-    "timestamp": "2026-03-21T22:19:59.514914+00:00"
-  },
-  {
-    "id": "evo_0518bed9e51f",
-    "action_type": "code_proposed",
-    "description": "Proposed improvement in skills: Train ROOT on large datasets of creative writing samples, humorous texts, and emotional intelligence scenarios. Integrate the new skills into ROOT's existing decision-making processes.",
-    "details": {
-      "area": "skills",
-      "rationale": "Developing additional skills in areas like creative writing, humor generation, and emotional intelligence will enable ROOT to interact more effectively with humans and improve its overall performance."
-    },
-    "impact_score": 0.0,
-    "timestamp": "2026-03-21T22:23:30.931229+00:00"
-  },
-  {
-    "id": "evo_da2c497681d7",
-    "action_type": "skill_created",
-    "description": "Created skill: general/auto-general \u2014 Auto-generated skill for general",
-    "details": {
-      "skill_path": "/Users/yohan/Desktop/ROOT/data/skills/general/auto-general/SKILL.md",
-      "tags": [
-        "auto-generated",
-        "builder-agent",
-        "general"
-      ]
-    },
-    "impact_score": 0.5,
-    "timestamp": "2026-03-21T22:26:13.728420+00:00"
-  },
-  {
-    "id": "evo_909a8d92ec74",
-    "action_type": "skill_created",
-    "description": "Created skill: general/auto-general \u2014 Auto-generated skill for general",
-    "details": {
-      "skill_path": "/Users/yohan/Desktop/ROOT/data/skills/general/auto-general/SKILL.md",
-      "tags": [
-        "auto-generated",
-        "builder-agent",
-        "general"
-      ]
-    },
-    "impact_score": 0.5,
-    "timestamp": "2026-03-21T22:46:41.835115+00:00"
-  },
-  {
-    "id": "evo_10c2462b8b45",
-    "action_type": "code_proposed",
-    "description": "Proposed improvement in knowledge: Expand 'error' memories (only 3 entries)",
-    "details": {
-      "area": "knowledge",
-      "rationale": "Identified by Builder Agent during improvement cycle"
-    },
-    "impact_score": 0.0,
-    "timestamp": "2026-03-21T22:51:50.464233+00:00"
-  },
-  {
-    "id": "evo_8b3d2912d050",
-    "action_type": "skill_created",
-    "description": "Created skill: general/auto-general \u2014 Auto-generated skill for general",
-    "details": {
-      "skill_path": "/Users/yohan/Desktop/ROOT/data/skills/general/auto-general/SKILL.md",
-      "tags": [
-        "auto-generated",
-        "builder-agent",
-        "general"
-      ]
-    },
-    "impact_score": 0.5,
-    "timestamp": "2026-03-21T23:08:48.916546+00:00"
-  },
-  {
-    "id": "evo_18e2ec6655e4",
-    "action_type": "code_proposed",
-    "description": "Proposed improvement in skills: Explore and integrate generative adversarial networks (GANs), variational autoencoders (VAEs) or diffusion-based models to generate novel solutions, ideas, or content. Develop a framework for integrating these models with existing skillsets.",
-    "details": {
-      "area": "skills",
-      "rationale": "Enhance creativity by incorporating generative models and techniques."
-    },
-    "impact_score": 0.0,
-    "timestamp": "2026-03-21T23:29:44.627015+00:00"
-  },
-  {
-    "id": "evo_7c253ae7f58f",
-    "action_type": "skill_created",
-    "description": "Created skill: general/auto-general \u2014 Auto-generated skill for general",
-    "details": {
-      "skill_path": "/Users/yohan/Desktop/ROOT/data/skills/general/auto-general/SKILL.md",
-      "tags": [
-        "auto-generated",
-        "builder-agent",
-        "general"
-      ]
-    },
-    "impact_score": 0.5,
-    "timestamp": "2026-03-21T23:30:26.898728+00:00"
-  },
-  {
-    "id": "evo_2ef099126aa9",
-    "action_type": "skill_created",
-    "description": "Created skill: general/auto-general \u2014 Auto-generated skill for general",
-    "details": {
-      "skill_path": "/Users/yohan/Desktop/ROOT/data/skills/general/auto-general/SKILL.md",
-      "tags": [
-        "auto-generated",
-        "builder-agent",
-        "general"
-      ]
-    },
-    "impact_score": 0.5,
-    "timestamp": "2026-03-21T23:51:30.952080+00:00"
-  },
-  {
-    "id": "evo_35d04c69de5f",
-    "action_type": "skill_created",
-    "description": "Created skill: general/auto-general \u2014 Auto-generated skill for general",
-    "details": {
-      "skill_path": "/Users/yohan/Desktop/ROOT/data/skills/general/auto-general/SKILL.md",
-      "tags": [
-        "auto-generated",
-        "builder-agent",
-        "general"
-      ]
-    },
-    "impact_score": 0.5,
-    "timestamp": "2026-03-22T00:14:18.664204+00:00"
-  },
-  {
-    "id": "evo_059554c7f064",
-    "action_type": "code_proposed",
-    "description": "Proposed improvement in knowledge: Expand 'error' memories (only 3 entries)",
-    "details": {
-      "area": "knowledge",
-      "rationale": "Identified by Builder Agent during improvement cycle"
-    },
-    "impact_score": 0.0,
-    "timestamp": "2026-03-22T00:19:24.767558+00:00"
-  },
-  {
-    "id": "evo_110da881edef",
-    "action_type": "skill_created",
-    "description": "Created skill: general/auto-general \u2014 Auto-generated skill for general",
-    "details": {
-      "skill_path": "/Users/yohan/Desktop/ROOT/data/skills/general/auto-general/SKILL.md",
-      "tags": [
-        "auto-generated",
-        "builder-agent",
-        "general"
-      ]
-    },
-    "impact_score": 0.5,
-    "timestamp": "2026-03-22T00:35:29.825963+00:00"
-  },
-  {
-    "id": "evo_cea0df36985f",
-    "action_type": "skill_created",
-    "description": "Created skill: general/auto-general \u2014 Auto-generated skill for general",
-    "details": {
-      "skill_path": "/Users/yohan/Desktop/ROOT/data/skills/general/auto-general/SKILL.md",
-      "tags": [
-        "auto-generated",
-        "builder-agent",
-        "general"
-      ]
-    },
-    "impact_score": 0.5,
-    "timestamp": "2026-03-22T00:56:38.821426+00:00"
-  },
-  {
-    "id": "evo_91468e27abb6",
-    "action_type": "skill_created",
-    "description": "Created skill: general/auto-general \u2014 Auto-generated skill for general",
-    "details": {
-      "skill_path": "/Users/yohan/Desktop/ROOT/data/skills/general/auto-general/SKILL.md",
-      "tags": [
-        "auto-generated",
-        "builder-agent",
-        "general"
-      ]
-    },
-    "impact_score": 0.5,
-    "timestamp": "2026-03-22T01:18:14.365233+00:00"
-  },
-  {
-    "id": "evo_2b91f9f677b9",
-    "action_type": "skill_created",
-    "description": "Created skill: general/auto-general \u2014 Auto-generated skill for general",
-    "details": {
-      "skill_path": "/Users/yohan/Desktop/ROOT/data/skills/general/auto-general/SKILL.md",
-      "tags": [
-        "auto-generated",
-        "builder-agent",
-        "general"
-      ]
-    },
-    "impact_score": 0.5,
-    "timestamp": "2026-03-22T01:38:54.489561+00:00"
-  },
-  {
-    "id": "evo_d135d43e0403",
-    "action_type": "skill_created",
-    "description": "Created skill: general/auto-general \u2014 Auto-generated skill for general",
-    "details": {
-      "skill_path": "/Users/yohan/Desktop/ROOT/data/skills/general/auto-general/SKILL.md",
-      "tags": [
-        "auto-generated",
-        "builder-agent",
-        "general"
-      ]
-    },
-    "impact_score": 0.5,
-    "timestamp": "2026-03-22T01:59:40.054135+00:00"
-  },
-  {
-    "id": "evo_dfb99d09fb00",
-    "action_type": "skill_created",
-    "description": "Created skill: general/auto-general \u2014 Auto-generated skill for general",
-    "details": {
-      "skill_path": "/Users/yohan/Desktop/ROOT/data/skills/general/auto-general/SKILL.md",
-      "tags": [
-        "auto-generated",
-        "builder-agent",
-        "general"
-      ]
-    },
-    "impact_score": 0.5,
-    "timestamp": "2026-03-22T02:21:02.785995+00:00"
-  },
-  {
-    "id": "evo_06669ed1dd28",
-    "action_type": "skill_created",
-    "description": "Created skill: general/auto-general \u2014 Auto-generated skill for general",
-    "details": {
-      "skill_path": "/Users/yohan/Desktop/ROOT/data/skills/general/auto-general/SKILL.md",
-      "tags": [
-        "auto-generated",
-        "builder-agent",
-        "general"
-      ]
-    },
-    "impact_score": 0.5,
-    "timestamp": "2026-03-22T02:42:30.303036+00:00"
-  },
-  {
-    "id": "evo_026241f198c6",
-    "action_type": "skill_created",
-    "description": "Created skill: general/auto-general \u2014 Auto-generated skill for general",
-    "details": {
-      "skill_path": "/Users/yohan/Desktop/ROOT/data/skills/general/auto-general/SKILL.md",
-      "tags": [
-        "auto-generated",
-        "builder-agent",
-        "general"
-      ]
-    },
-    "impact_score": 0.5,
-    "timestamp": "2026-03-22T03:04:24.584472+00:00"
-  },
-  {
-    "id": "evo_b15a6b394e62",
-    "action_type": "code_proposed",
-    "description": "Proposed improvement in self_rewrite: Based on the provided analysis and the requested functionality, here is the response in the specified format:\n\n{\"name\": \"proposals_propose_direction\", \"parameters\":\n {\"agent_id\": \"algorithm_researcher\",\n  \"category\": \"engineering\",\n  \"estimated_impact\": \"$500/month revenue from improved trading with",
-    "details": {
-      "area": "self_rewrite",
-      "rationale": "Autonomous self-improvement proposal from Analyst + Coder pipeline"
-    },
-    "impact_score": 0.0,
-    "timestamp": "2026-03-22T03:07:37.150609+00:00"
-  },
-  {
-    "id": "evo_026d2fef0f92",
-    "action_type": "skill_created",
-    "description": "Created skill: general/auto-general \u2014 Auto-generated skill for general",
-    "details": {
-      "skill_path": "/Users/yohan/Desktop/ROOT/data/skills/general/auto-general/SKILL.md",
-      "tags": [
-        "auto-generated",
-        "builder-agent",
-        "general"
-      ]
-    },
-    "impact_score": 0.5,
-    "timestamp": "2026-03-22T03:25:29.581161+00:00"
-  },
-  {
-    "id": "evo_b798379fd5f1",
-    "action_type": "skill_created",
-    "description": "Created skill: general/auto-general \u2014 Auto-generated skill for general",
-    "details": {
-      "skill_path": "/Users/yohan/Desktop/ROOT/data/skills/general/auto-general/SKILL.md",
-      "tags": [
-        "auto-generated",
-        "builder-agent",
-        "general"
-      ]
-    },
-    "impact_score": 0.5,
-    "timestamp": "2026-03-22T03:46:14.867152+00:00"
-  },
-  {
-    "id": "evo_aef6f5c72a7c",
-    "action_type": "code_proposed",
-    "description": "Proposed improvement in knowledge: Expand 'error' memories (only 3 entries)",
-    "details": {
-      "area": "knowledge",
-      "rationale": "Identified by Builder Agent during improvement cycle"
-    },
-    "impact_score": 0.0,
-    "timestamp": "2026-03-22T03:51:25.228000+00:00"
-  },
-  {
-    "id": "evo_e4b43a62b2fe",
-    "action_type": "skill_created",
-    "description": "Created skill: general/auto-general \u2014 Auto-generated skill for general",
-    "details": {
-      "skill_path": "/Users/yohan/Desktop/ROOT/data/skills/general/auto-general/SKILL.md",
-      "tags": [
-        "auto-generated",
-        "builder-agent",
-        "general"
-      ]
-    },
-    "impact_score": 0.5,
-    "timestamp": "2026-03-22T04:07:49.527820+00:00"
-  },
-  {
-    "id": "evo_8a5b9b35fcf6",
-    "action_type": "skill_created",
-    "description": "Created skill: general/auto-general \u2014 Auto-generated skill for general",
-    "details": {
-      "skill_path": "/Users/yohan/Desktop/ROOT/data/skills/general/auto-general/SKILL.md",
-      "tags": [
-        "auto-generated",
-        "builder-agent",
-        "general"
-      ]
-    },
-    "impact_score": 0.5,
-    "timestamp": "2026-03-22T04:32:11.246555+00:00"
-  },
-  {
-    "id": "evo_00400efb3928",
-    "action_type": "skill_created",
-    "description": "Created skill: general/auto-general \u2014 Auto-generated skill for general",
-    "details": {
-      "skill_path": "/Users/yohan/Desktop/ROOT/data/skills/general/auto-general/SKILL.md",
-      "tags": [
-        "auto-generated",
-        "builder-agent",
-        "general"
-      ]
-    },
-    "impact_score": 0.5,
-    "timestamp": "2026-03-22T04:53:41.616786+00:00"
-  },
-  {
-    "id": "evo_996e0d52ff41",
-    "action_type": "skill_created",
-    "description": "Created skill: general/auto-general \u2014 Auto-generated skill for general",
-    "details": {
-      "skill_path": "/Users/yohan/Desktop/ROOT/data/skills/general/auto-general/SKILL.md",
-      "tags": [
-        "auto-generated",
-        "builder-agent",
-        "general"
-      ]
-    },
-    "impact_score": 0.5,
-    "timestamp": "2026-03-22T05:21:29.732700+00:00"
-  },
-  {
-    "id": "evo_dc17e6da5e50",
-    "action_type": "skill_created",
-    "description": "Created skill: general/auto-general \u2014 Auto-generated skill for general",
-    "details": {
-      "skill_path": "/Users/yohan/Desktop/ROOT/data/skills/general/auto-general/SKILL.md",
-      "tags": [
-        "auto-generated",
-        "builder-agent",
-        "general"
-      ]
-    },
-    "impact_score": 0.5,
-    "timestamp": "2026-03-22T05:43:54.272987+00:00"
-  },
-  {
-    "id": "evo_e1ba39a32417",
-    "action_type": "skill_created",
-    "description": "Created skill: general/auto-general \u2014 Auto-generated skill for general",
-    "details": {
-      "skill_path": "/Users/yohan/Desktop/ROOT/data/skills/general/auto-general/SKILL.md",
-      "tags": [
-        "auto-generated",
-        "builder-agent",
-        "general"
-      ]
-    },
-    "impact_score": 0.5,
-    "timestamp": "2026-03-22T06:06:51.541660+00:00"
-  },
-  {
-    "id": "evo_ba3ae18060d5",
-    "action_type": "skill_created",
-    "description": "Created skill: general/auto-general \u2014 Auto-generated skill for general",
-    "details": {
-      "skill_path": "/Users/yohan/Desktop/ROOT/data/skills/general/auto-general/SKILL.md",
-      "tags": [
-        "auto-generated",
-        "builder-agent",
-        "general"
-      ]
-    },
-    "impact_score": 0.5,
-    "timestamp": "2026-03-22T06:28:34.045842+00:00"
-  },
-  {
-    "id": "evo_6941a0d1c2e4",
-    "action_type": "code_proposed",
-    "description": "Proposed improvement in knowledge: Expand 'error' memories (only 3 entries)",
-    "details": {
-      "area": "knowledge",
-      "rationale": "Identified by Builder Agent during improvement cycle"
-    },
-    "impact_score": 0.0,
-    "timestamp": "2026-03-22T06:34:20.538431+00:00"
-  },
-  {
-    "id": "evo_55a69f525f24",
-    "action_type": "skill_created",
-    "description": "Created skill: general/auto-general \u2014 Auto-generated skill for general",
-    "details": {
-      "skill_path": "/Users/yohan/Desktop/ROOT/data/skills/general/auto-general/SKILL.md",
-      "tags": [
-        "auto-generated",
-        "builder-agent",
-        "general"
-      ]
-    },
-    "impact_score": 0.5,
-    "timestamp": "2026-03-22T06:49:40.195051+00:00"
-  },
-  {
-    "id": "evo_f8fe6b09fd8e",
-    "action_type": "skill_created",
-    "description": "Created skill: general/auto-general \u2014 Auto-generated skill for general",
-    "details": {
-      "skill_path": "/Users/yohan/Desktop/ROOT/data/skills/general/auto-general/SKILL.md",
-      "tags": [
-        "auto-generated",
-        "builder-agent",
-        "general"
-      ]
-    },
-    "impact_score": 0.5,
-    "timestamp": "2026-03-22T07:10:57.896792+00:00"
-  },
-  {
-    "id": "evo_79d5c25c8f09",
-    "action_type": "code_proposed",
-    "description": "Proposed improvement in self_rewrite: Based on the analysis, I propose a concrete code enhancement for ROOT. Here is the JSON function call:\n\n```json\n{\n\"name\": \"proposals_propose_direction\",\n\"parameters\": {\n    \"agent_id\": \"code_generator\",\n    \"category\": \"engineering\",\n    \"estimated_impact\": \"$100,000 productivity gain in one year\",\n",
-    "details": {
-      "area": "self_rewrite",
-      "rationale": "Autonomous self-improvement proposal from Analyst + Coder pipeline"
-    },
-    "impact_score": 0.0,
-    "timestamp": "2026-03-22T07:20:46.997872+00:00"
-  },
-  {
-    "id": "evo_b176f0c49ffc",
-    "action_type": "skill_created",
-    "description": "Created skill: general/auto-general \u2014 Auto-generated skill for general",
-    "details": {
-      "skill_path": "/Users/yohan/Desktop/ROOT/data/skills/general/auto-general/SKILL.md",
-      "tags": [
-        "auto-generated",
-        "builder-agent",
-        "general"
-      ]
-    },
-    "impact_score": 0.5,
-    "timestamp": "2026-03-22T07:33:59.040839+00:00"
-  },
-  {
-    "id": "evo_2c01c6f9c4e5",
-    "action_type": "skill_created",
-    "description": "Created skill: general/auto-general \u2014 Auto-generated skill for general",
-    "details": {
-      "skill_path": "/Users/yohan/Desktop/ROOT/data/skills/general/auto-general/SKILL.md",
-      "tags": [
-        "auto-generated",
-        "builder-agent",
-        "general"
-      ]
-    },
-    "impact_score": 0.5,
-    "timestamp": "2026-03-22T07:54:48.138221+00:00"
-  },
-  {
-    "id": "evo_716b44074e02",
-    "action_type": "code_proposed",
-    "description": "Proposed improvement in skills: ['Train a large language model on a diverse dataset of texts, including financial reports, scientific articles, and technical documentation.', 'Develop a novel algorithm for automatically extracting key points and main ideas from the input text.', 'Integrate this summarization skill with existing kn",
-    "details": {
-      "area": "skills",
-      "rationale": "Improved text summarization abilities will enhance ROOT's ability to condense complex information into actionable insights."
-    },
-    "impact_score": 0.0,
-    "timestamp": "2026-03-22T07:58:58.835020+00:00"
-  },
-  {
-    "id": "evo_920805616fcc",
-    "action_type": "skill_created",
-    "description": "Created skill: general/auto-general \u2014 Auto-generated skill for general",
-    "details": {
-      "skill_path": "/Users/yohan/Desktop/ROOT/data/skills/general/auto-general/SKILL.md",
-      "tags": [
-        "auto-generated",
-        "builder-agent",
-        "general"
-      ]
-    },
-    "impact_score": 0.5,
-    "timestamp": "2026-03-22T08:15:24.977132+00:00"
-  },
-  {
-    "id": "evo_1b174f0f1198",
-    "action_type": "code_proposed",
-    "description": "Proposed improvement in skills: Develop a NLP training program for ROOT, focusing on tasks such as sentiment analysis, named entity recognition, and language modeling.",
-    "details": {
-      "area": "skills",
-      "rationale": "Acquiring expertise in natural language processing (NLP) will enhance ROOT's ability to analyze and generate human-like text, improving its communication with users and agents."
-    },
-    "impact_score": 0.0,
-    "timestamp": "2026-03-22T08:30:05.667713+00:00"
-  },
-  {
-    "id": "evo_a527b0cb12b9",
-    "action_type": "skill_created",
-    "description": "Created skill: general/auto-general \u2014 Auto-generated skill for general",
-    "details": {
-      "skill_path": "/Users/yohan/Desktop/ROOT/data/skills/general/auto-general/SKILL.md",
-      "tags": [
-        "auto-generated",
-        "builder-agent",
-        "general"
-      ]
-    },
-    "impact_score": 0.5,
-    "timestamp": "2026-03-22T08:36:13.755697+00:00"
-  },
-  {
-    "id": "evo_229ea9943d85",
-    "action_type": "skill_created",
-    "description": "Created skill: general/auto-general \u2014 Auto-generated skill for general",
-    "details": {
-      "skill_path": "/Users/yohan/Desktop/ROOT/data/skills/general/auto-general/SKILL.md",
-      "tags": [
-        "auto-generated",
-        "builder-agent",
-        "general"
-      ]
-    },
-    "impact_score": 0.5,
-    "timestamp": "2026-03-22T08:56:40.907323+00:00"
-  },
-  {
-    "id": "evo_41e38fdc536f",
-    "action_type": "code_proposed",
-    "description": "Proposed improvement in knowledge: Expand 'error' memories (only 3 entries)",
-    "details": {
-      "area": "knowledge",
-      "rationale": "Identified by Builder Agent during improvement cycle"
-    },
-    "impact_score": 0.0,
-    "timestamp": "2026-03-22T09:02:00.007922+00:00"
-  },
-  {
-    "id": "evo_bd75b10efc04",
-    "action_type": "skill_created",
-    "description": "Created skill: general/auto-general \u2014 Auto-generated skill for general",
-    "details": {
-      "skill_path": "/Users/yohan/Desktop/ROOT/data/skills/general/auto-general/SKILL.md",
-      "tags": [
-        "auto-generated",
-        "builder-agent",
-        "general"
-      ]
-    },
-    "impact_score": 0.5,
-    "timestamp": "2026-03-22T09:17:30.163310+00:00"
-  },
-  {
-    "id": "evo_1eb97df50e31",
-    "action_type": "skill_created",
-    "description": "Created skill: general/auto-general \u2014 Auto-generated skill for general",
-    "details": {
-      "skill_path": "/Users/yohan/Desktop/ROOT/data/skills/general/auto-general/SKILL.md",
-      "tags": [
-        "auto-generated",
-        "builder-agent",
-        "general"
-      ]
-    },
-    "impact_score": 0.5,
-    "timestamp": "2026-03-22T09:38:26.783026+00:00"
-  },
-  {
-    "id": "evo_0480b4d152c2",
-    "action_type": "skill_created",
-    "description": "Created skill: general/auto-general \u2014 Auto-generated skill for general",
-    "details": {
-      "skill_path": "/Users/yohan/Desktop/ROOT/data/skills/general/auto-general/SKILL.md",
-      "tags": [
-        "auto-generated",
-        "builder-agent",
-        "general"
-      ]
-    },
-    "impact_score": 0.5,
-    "timestamp": "2026-03-22T09:58:50.847041+00:00"
-  },
-  {
-    "id": "evo_6be71e3e0190",
-    "action_type": "skill_created",
-    "description": "Created skill: general/auto-general \u2014 Auto-generated skill for general",
-    "details": {
-      "skill_path": "/Users/yohan/Desktop/ROOT/data/skills/general/auto-general/SKILL.md",
-      "tags": [
-        "auto-generated",
-        "builder-agent",
-        "general"
-      ]
-    },
-    "impact_score": 0.5,
-    "timestamp": "2026-03-22T10:19:40.440766+00:00"
-  },
-  {
-    "id": "evo_8c7bd7d2097a",
-    "action_type": "skill_created",
-    "description": "Created skill: general/auto-general \u2014 Auto-generated skill for general",
-    "details": {
-      "skill_path": "/Users/yohan/Desktop/ROOT/data/skills/general/auto-general/SKILL.md",
-      "tags": [
-        "auto-generated",
-        "builder-agent",
-        "general"
-      ]
-    },
-    "impact_score": 0.5,
-    "timestamp": "2026-03-22T10:40:06.113672+00:00"
-  },
-  {
     "id": "evo_5887197b8d67",
     "action_type": "skill_created",
     "description": "Created skill: general/auto-general \u2014 Auto-generated skill for general",
@@ -6014,5 +5230,621 @@
     },
     "impact_score": 0.0,
     "timestamp": "2026-03-30T21:47:22.868499+00:00"
+  },
+  {
+    "id": "evo_73f8bf467630",
+    "action_type": "code_proposed",
+    "description": "Proposed improvement in knowledge: Initial knowledge bootstrap from AI folder",
+    "details": {
+      "area": "knowledge",
+      "rationale": "Seeded 57 core knowledge entries."
+    },
+    "impact_score": 0.0,
+    "timestamp": "2026-04-07T18:45:47.171526+00:00"
+  },
+  {
+    "id": "evo_fe2f818b2a4b",
+    "action_type": "code_proposed",
+    "description": "Proposed improvement in knowledge: Expand observation knowledge: Actively collect more observation entries",
+    "details": {
+      "area": "knowledge",
+      "rationale": "Identified by Builder Agent during improvement cycle"
+    },
+    "impact_score": 0.0,
+    "timestamp": "2026-04-07T18:45:49.360017+00:00"
+  },
+  {
+    "id": "evo_1711be667d8f",
+    "action_type": "code_proposed",
+    "description": "Proposed improvement in skills: Analyze existing patterns and create a reusable skill for {'area': 'memory_preference', 'description': 'Low preference memories (1)', 'suggestion': 'Actively collect more preference entries'}",
+    "details": {
+      "area": "skills",
+      "rationale": "Creating a skill for '{'area': 'memory_preference', 'description': 'Low preference memories (1)', 'suggestion': 'Actively collect more preference entries'}' closes the capability gap"
+    },
+    "impact_score": 0.0,
+    "timestamp": "2026-04-07T18:47:53.371934+00:00"
+  },
+  {
+    "id": "evo_c1ef565c6d16",
+    "action_type": "code_proposed",
+    "description": "Proposed improvement in skills: Analyze existing patterns and create a reusable skill for {'area': 'memory_skill', 'description': 'Low skill memories (1)', 'suggestion': 'Actively collect more skill entries'}",
+    "details": {
+      "area": "skills",
+      "rationale": "Creating a skill for '{'area': 'memory_skill', 'description': 'Low skill memories (1)', 'suggestion': 'Actively collect more skill entries'}' closes the capability gap"
+    },
+    "impact_score": 0.0,
+    "timestamp": "2026-04-07T18:47:53.385459+00:00"
+  },
+  {
+    "id": "evo_7ffd0bb89056",
+    "action_type": "code_proposed",
+    "description": "Proposed improvement in memory_preference: Actively collect more preference entries",
+    "details": {
+      "area": "memory_preference",
+      "rationale": "Proactive agent evolution \u2014 gap: Low preference memories (1)"
+    },
+    "impact_score": 0.0,
+    "timestamp": "2026-04-07T18:50:20.820899+00:00"
+  },
+  {
+    "id": "evo_d35006311e6a",
+    "action_type": "code_proposed",
+    "description": "Proposed improvement in memory_skill: Actively collect more skill entries",
+    "details": {
+      "area": "memory_skill",
+      "rationale": "Proactive agent evolution \u2014 gap: Low skill memories (1)"
+    },
+    "impact_score": 0.0,
+    "timestamp": "2026-04-07T18:50:20.826979+00:00"
+  },
+  {
+    "id": "evo_38d3b49f8eed",
+    "action_type": "code_proposed",
+    "description": "Proposed improvement in memory_reflection: Actively collect more reflection entries",
+    "details": {
+      "area": "memory_reflection",
+      "rationale": "Proactive agent evolution \u2014 gap: Low reflection memories (0)"
+    },
+    "impact_score": 0.0,
+    "timestamp": "2026-04-07T18:50:20.831484+00:00"
+  },
+  {
+    "id": "evo_2d38cf4551b4",
+    "action_type": "code_proposed",
+    "description": "Proposed improvement in knowledge: Expand preference knowledge: Actively collect more preference entries",
+    "details": {
+      "area": "knowledge",
+      "rationale": "Identified by Builder Agent during improvement cycle"
+    },
+    "impact_score": 0.0,
+    "timestamp": "2026-04-07T18:50:50.571017+00:00"
+  },
+  {
+    "id": "evo_bee7535db28c",
+    "action_type": "code_proposed",
+    "description": "Proposed improvement in knowledge: Expand preference knowledge: Actively collect more preference entries",
+    "details": {
+      "area": "knowledge",
+      "rationale": "Identified by Builder Agent during improvement cycle"
+    },
+    "impact_score": 0.0,
+    "timestamp": "2026-04-07T18:55:51.968242+00:00"
+  },
+  {
+    "id": "evo_32f6430209d1",
+    "action_type": "code_proposed",
+    "description": "Proposed improvement in knowledge: Expand preference knowledge: Actively collect more preference entries",
+    "details": {
+      "area": "knowledge",
+      "rationale": "Identified by Builder Agent during improvement cycle"
+    },
+    "impact_score": 0.0,
+    "timestamp": "2026-04-07T19:00:53.349960+00:00"
+  },
+  {
+    "id": "evo_121e3b6046d6",
+    "action_type": "code_proposed",
+    "description": "Proposed improvement in knowledge: Expand preference knowledge: Actively collect more preference entries",
+    "details": {
+      "area": "knowledge",
+      "rationale": "Identified by Builder Agent during improvement cycle"
+    },
+    "impact_score": 0.0,
+    "timestamp": "2026-04-07T19:05:54.738771+00:00"
+  },
+  {
+    "id": "evo_28cecfa89fc5",
+    "action_type": "code_proposed",
+    "description": "Proposed improvement in knowledge: Expand preference knowledge: Actively collect more preference entries",
+    "details": {
+      "area": "knowledge",
+      "rationale": "Identified by Builder Agent during improvement cycle"
+    },
+    "impact_score": 0.0,
+    "timestamp": "2026-04-07T19:10:56.123056+00:00"
+  },
+  {
+    "id": "evo_0035cc932fa8",
+    "action_type": "code_proposed",
+    "description": "Proposed improvement in knowledge: Expand preference knowledge: Actively collect more preference entries",
+    "details": {
+      "area": "knowledge",
+      "rationale": "Identified by Builder Agent during improvement cycle"
+    },
+    "impact_score": 0.0,
+    "timestamp": "2026-04-07T19:15:57.401495+00:00"
+  },
+  {
+    "id": "evo_174b0a583483",
+    "action_type": "code_proposed",
+    "description": "Proposed improvement in skills: Analyze existing patterns and create a reusable skill for {'area': 'memory_preference', 'description': 'Low preference memories (1)', 'suggestion': 'Actively collect more preference entries'}",
+    "details": {
+      "area": "skills",
+      "rationale": "Creating a skill for '{'area': 'memory_preference', 'description': 'Low preference memories (1)', 'suggestion': 'Actively collect more preference entries'}' closes the capability gap"
+    },
+    "impact_score": 0.0,
+    "timestamp": "2026-04-07T19:17:54.719976+00:00"
+  },
+  {
+    "id": "evo_2348f5c3b2e6",
+    "action_type": "code_proposed",
+    "description": "Proposed improvement in skills: Analyze existing patterns and create a reusable skill for {'area': 'memory_skill', 'description': 'Low skill memories (1)', 'suggestion': 'Actively collect more skill entries'}",
+    "details": {
+      "area": "skills",
+      "rationale": "Creating a skill for '{'area': 'memory_skill', 'description': 'Low skill memories (1)', 'suggestion': 'Actively collect more skill entries'}' closes the capability gap"
+    },
+    "impact_score": 0.0,
+    "timestamp": "2026-04-07T19:17:54.728340+00:00"
+  },
+  {
+    "id": "evo_90330c1c9833",
+    "action_type": "code_proposed",
+    "description": "Proposed improvement in skills: Analyze existing patterns and create a reusable skill for {'area': 'memory_reflection', 'description': 'Low reflection memories (0)', 'suggestion': 'Actively collect more reflection entries'}",
+    "details": {
+      "area": "skills",
+      "rationale": "Creating a skill for '{'area': 'memory_reflection', 'description': 'Low reflection memories (0)', 'suggestion': 'Actively collect more reflection entries'}' closes the capability gap"
+    },
+    "impact_score": 0.0,
+    "timestamp": "2026-04-07T19:17:54.734245+00:00"
+  },
+  {
+    "id": "evo_a02b6b041c66",
+    "action_type": "code_proposed",
+    "description": "Proposed improvement in knowledge: Expand preference knowledge: Actively collect more preference entries",
+    "details": {
+      "area": "knowledge",
+      "rationale": "Identified by Builder Agent during improvement cycle"
+    },
+    "impact_score": 0.0,
+    "timestamp": "2026-04-07T19:20:58.807852+00:00"
+  },
+  {
+    "id": "evo_672194dd3551",
+    "action_type": "code_proposed",
+    "description": "Proposed improvement in knowledge: Expand preference knowledge: Actively collect more preference entries",
+    "details": {
+      "area": "knowledge",
+      "rationale": "Identified by Builder Agent during improvement cycle"
+    },
+    "impact_score": 0.0,
+    "timestamp": "2026-04-07T19:26:00.186216+00:00"
+  },
+  {
+    "id": "evo_53bf2bebf681",
+    "action_type": "code_proposed",
+    "description": "Proposed improvement in knowledge: Expand preference knowledge: Actively collect more preference entries",
+    "details": {
+      "area": "knowledge",
+      "rationale": "Identified by Builder Agent during improvement cycle"
+    },
+    "impact_score": 0.0,
+    "timestamp": "2026-04-08T00:27:53.200193+00:00"
+  },
+  {
+    "id": "evo_d6d2caeb5b06",
+    "action_type": "code_proposed",
+    "description": "Proposed improvement in knowledge: Expand preference knowledge: Actively collect more preference entries",
+    "details": {
+      "area": "knowledge",
+      "rationale": "Identified by Builder Agent during improvement cycle"
+    },
+    "impact_score": 0.0,
+    "timestamp": "2026-04-08T00:29:33.089974+00:00"
+  },
+  {
+    "id": "evo_cc2052dec39d",
+    "action_type": "code_proposed",
+    "description": "Proposed improvement in skills: Analyze existing patterns and create a reusable skill for {'area': 'memory_preference', 'description': 'Low preference memories (1)', 'suggestion': 'Actively collect more preference entries'}",
+    "details": {
+      "area": "skills",
+      "rationale": "Creating a skill for '{'area': 'memory_preference', 'description': 'Low preference memories (1)', 'suggestion': 'Actively collect more preference entries'}' closes the capability gap"
+    },
+    "impact_score": 0.0,
+    "timestamp": "2026-04-08T00:31:32.913232+00:00"
+  },
+  {
+    "id": "evo_3af02459c009",
+    "action_type": "code_proposed",
+    "description": "Proposed improvement in skills: Analyze existing patterns and create a reusable skill for {'area': 'memory_skill', 'description': 'Low skill memories (1)', 'suggestion': 'Actively collect more skill entries'}",
+    "details": {
+      "area": "skills",
+      "rationale": "Creating a skill for '{'area': 'memory_skill', 'description': 'Low skill memories (1)', 'suggestion': 'Actively collect more skill entries'}' closes the capability gap"
+    },
+    "impact_score": 0.0,
+    "timestamp": "2026-04-08T00:31:32.924442+00:00"
+  },
+  {
+    "id": "evo_56df5a61f54b",
+    "action_type": "code_proposed",
+    "description": "Proposed improvement in skills: Analyze existing patterns and create a reusable skill for {'area': 'memory_reflection', 'description': 'Low reflection memories (0)', 'suggestion': 'Actively collect more reflection entries'}",
+    "details": {
+      "area": "skills",
+      "rationale": "Creating a skill for '{'area': 'memory_reflection', 'description': 'Low reflection memories (0)', 'suggestion': 'Actively collect more reflection entries'}' closes the capability gap"
+    },
+    "impact_score": 0.0,
+    "timestamp": "2026-04-08T00:31:32.934306+00:00"
+  },
+  {
+    "id": "evo_676d223c55db",
+    "action_type": "code_proposed",
+    "description": "Proposed improvement in memory_preference: Actively collect more preference entries",
+    "details": {
+      "area": "memory_preference",
+      "rationale": "Proactive agent evolution \u2014 gap: Low preference memories (1)"
+    },
+    "impact_score": 0.0,
+    "timestamp": "2026-04-08T00:33:13.679354+00:00"
+  },
+  {
+    "id": "evo_b66710fc3873",
+    "action_type": "code_proposed",
+    "description": "Proposed improvement in memory_skill: Actively collect more skill entries",
+    "details": {
+      "area": "memory_skill",
+      "rationale": "Proactive agent evolution \u2014 gap: Low skill memories (1)"
+    },
+    "impact_score": 0.0,
+    "timestamp": "2026-04-08T00:33:13.687134+00:00"
+  },
+  {
+    "id": "evo_397cba70d7d5",
+    "action_type": "code_proposed",
+    "description": "Proposed improvement in memory_reflection: Actively collect more reflection entries",
+    "details": {
+      "area": "memory_reflection",
+      "rationale": "Proactive agent evolution \u2014 gap: Low reflection memories (0)"
+    },
+    "impact_score": 0.0,
+    "timestamp": "2026-04-08T00:33:13.692516+00:00"
+  },
+  {
+    "id": "evo_3ed87c4cc8c2",
+    "action_type": "code_proposed",
+    "description": "Proposed improvement in knowledge: Initial knowledge bootstrap from AI folder",
+    "details": {
+      "area": "knowledge",
+      "rationale": "Seeded 556 core knowledge entries."
+    },
+    "impact_score": 0.0,
+    "timestamp": "2026-04-08T14:37:13.162214+00:00"
+  },
+  {
+    "id": "evo_679354ac3c84",
+    "action_type": "code_proposed",
+    "description": "Proposed improvement in memory_preference: Actively collect more preference entries",
+    "details": {
+      "area": "memory_preference",
+      "rationale": "Proactive agent evolution \u2014 gap: Low preference memories (1)"
+    },
+    "impact_score": 0.0,
+    "timestamp": "2026-04-08T15:26:52.400413+00:00"
+  },
+  {
+    "id": "evo_fd4ccf207cb1",
+    "action_type": "code_proposed",
+    "description": "Proposed improvement in memory_reflection: Actively collect more reflection entries",
+    "details": {
+      "area": "memory_reflection",
+      "rationale": "Proactive agent evolution \u2014 gap: Low reflection memories (0)"
+    },
+    "impact_score": 0.0,
+    "timestamp": "2026-04-08T15:26:52.406367+00:00"
+  },
+  {
+    "id": "evo_11e636b6f1c2",
+    "action_type": "code_proposed",
+    "description": "Proposed improvement in memory_error: Actively collect more error entries",
+    "details": {
+      "area": "memory_error",
+      "rationale": "Proactive agent evolution \u2014 gap: Low error memories (0)"
+    },
+    "impact_score": 0.0,
+    "timestamp": "2026-04-08T15:26:52.410688+00:00"
+  },
+  {
+    "id": "evo_3f266cc13a0b",
+    "action_type": "code_proposed",
+    "description": "Proposed improvement in knowledge: Expand preference knowledge: Actively collect more preference entries",
+    "details": {
+      "area": "knowledge",
+      "rationale": "Identified by Builder Agent during improvement cycle"
+    },
+    "impact_score": 0.0,
+    "timestamp": "2026-04-09T19:38:35.063301+00:00"
+  },
+  {
+    "id": "evo_0b4d034b4e9b",
+    "action_type": "code_proposed",
+    "description": "Proposed improvement in memory_preference: Actively collect more preference entries",
+    "details": {
+      "area": "memory_preference",
+      "rationale": "Proactive agent evolution \u2014 gap: Low preference memories (1)"
+    },
+    "impact_score": 0.0,
+    "timestamp": "2026-04-09T19:39:13.223407+00:00"
+  },
+  {
+    "id": "evo_4b8de79a64ad",
+    "action_type": "code_proposed",
+    "description": "Proposed improvement in memory_reflection: Actively collect more reflection entries",
+    "details": {
+      "area": "memory_reflection",
+      "rationale": "Proactive agent evolution \u2014 gap: Low reflection memories (0)"
+    },
+    "impact_score": 0.0,
+    "timestamp": "2026-04-09T19:39:13.227762+00:00"
+  },
+  {
+    "id": "evo_3e4a7f6d00f0",
+    "action_type": "code_proposed",
+    "description": "Proposed improvement in memory_error: Actively collect more error entries",
+    "details": {
+      "area": "memory_error",
+      "rationale": "Proactive agent evolution \u2014 gap: Low error memories (0)"
+    },
+    "impact_score": 0.0,
+    "timestamp": "2026-04-09T19:39:13.231571+00:00"
+  },
+  {
+    "id": "evo_2141dae13050",
+    "action_type": "code_proposed",
+    "description": "Proposed improvement in skills: Analyze existing patterns and create a reusable skill for {'area': 'memory_preference', 'description': 'Low preference memories (1)', 'suggestion': 'Actively collect more preference entries'}",
+    "details": {
+      "area": "skills",
+      "rationale": "Creating a skill for '{'area': 'memory_preference', 'description': 'Low preference memories (1)', 'suggestion': 'Actively collect more preference entries'}' closes the capability gap"
+    },
+    "impact_score": 0.0,
+    "timestamp": "2026-04-09T19:40:34.753481+00:00"
+  },
+  {
+    "id": "evo_f5811c06d86a",
+    "action_type": "code_proposed",
+    "description": "Proposed improvement in skills: Analyze existing patterns and create a reusable skill for {'area': 'memory_reflection', 'description': 'Low reflection memories (0)', 'suggestion': 'Actively collect more reflection entries'}",
+    "details": {
+      "area": "skills",
+      "rationale": "Creating a skill for '{'area': 'memory_reflection', 'description': 'Low reflection memories (0)', 'suggestion': 'Actively collect more reflection entries'}' closes the capability gap"
+    },
+    "impact_score": 0.0,
+    "timestamp": "2026-04-09T19:40:35.058633+00:00"
+  },
+  {
+    "id": "evo_f3a57befb74f",
+    "action_type": "code_proposed",
+    "description": "Proposed improvement in skills: Analyze existing patterns and create a reusable skill for {'area': 'memory_error', 'description': 'Low error memories (0)', 'suggestion': 'Actively collect more error entries'}",
+    "details": {
+      "area": "skills",
+      "rationale": "Creating a skill for '{'area': 'memory_error', 'description': 'Low error memories (0)', 'suggestion': 'Actively collect more error entries'}' closes the capability gap"
+    },
+    "impact_score": 0.0,
+    "timestamp": "2026-04-09T19:40:35.261607+00:00"
+  },
+  {
+    "id": "evo_7907b064542b",
+    "action_type": "code_proposed",
+    "description": "Proposed improvement in knowledge: Expand preference knowledge: Actively collect more preference entries",
+    "details": {
+      "area": "knowledge",
+      "rationale": "Identified by Builder Agent during improvement cycle"
+    },
+    "impact_score": 0.0,
+    "timestamp": "2026-04-09T19:42:05.701067+00:00"
+  },
+  {
+    "id": "evo_a0cb3412d6ec",
+    "action_type": "code_proposed",
+    "description": "Proposed improvement in skills: Analyze existing patterns and create a reusable skill for {'area': 'memory_preference', 'description': 'Low preference memories (1)', 'suggestion': 'Actively collect more preference entries'}",
+    "details": {
+      "area": "skills",
+      "rationale": "Creating a skill for '{'area': 'memory_preference', 'description': 'Low preference memories (1)', 'suggestion': 'Actively collect more preference entries'}' closes the capability gap"
+    },
+    "impact_score": 0.0,
+    "timestamp": "2026-04-09T19:44:05.350305+00:00"
+  },
+  {
+    "id": "evo_7818b0c86d69",
+    "action_type": "code_proposed",
+    "description": "Proposed improvement in skills: Analyze existing patterns and create a reusable skill for {'area': 'memory_reflection', 'description': 'Low reflection memories (0)', 'suggestion': 'Actively collect more reflection entries'}",
+    "details": {
+      "area": "skills",
+      "rationale": "Creating a skill for '{'area': 'memory_reflection', 'description': 'Low reflection memories (0)', 'suggestion': 'Actively collect more reflection entries'}' closes the capability gap"
+    },
+    "impact_score": 0.0,
+    "timestamp": "2026-04-09T19:44:05.570106+00:00"
+  },
+  {
+    "id": "evo_31902e3a7278",
+    "action_type": "code_proposed",
+    "description": "Proposed improvement in skills: Analyze existing patterns and create a reusable skill for {'area': 'memory_error', 'description': 'Low error memories (0)', 'suggestion': 'Actively collect more error entries'}",
+    "details": {
+      "area": "skills",
+      "rationale": "Creating a skill for '{'area': 'memory_error', 'description': 'Low error memories (0)', 'suggestion': 'Actively collect more error entries'}' closes the capability gap"
+    },
+    "impact_score": 0.0,
+    "timestamp": "2026-04-09T19:44:05.789338+00:00"
+  },
+  {
+    "id": "evo_795ad481fe3d",
+    "action_type": "code_proposed",
+    "description": "Proposed improvement in memory_preference: Actively collect more preference entries",
+    "details": {
+      "area": "memory_preference",
+      "rationale": "Proactive agent evolution \u2014 gap: Low preference memories (1)"
+    },
+    "impact_score": 0.0,
+    "timestamp": "2026-04-09T19:45:49.983516+00:00"
+  },
+  {
+    "id": "evo_bc886a1378de",
+    "action_type": "code_proposed",
+    "description": "Proposed improvement in memory_reflection: Actively collect more reflection entries",
+    "details": {
+      "area": "memory_reflection",
+      "rationale": "Proactive agent evolution \u2014 gap: Low reflection memories (0)"
+    },
+    "impact_score": 0.0,
+    "timestamp": "2026-04-09T19:45:49.988316+00:00"
+  },
+  {
+    "id": "evo_0666dc9071bc",
+    "action_type": "code_proposed",
+    "description": "Proposed improvement in memory_error: Actively collect more error entries",
+    "details": {
+      "area": "memory_error",
+      "rationale": "Proactive agent evolution \u2014 gap: Low error memories (0)"
+    },
+    "impact_score": 0.0,
+    "timestamp": "2026-04-09T19:45:49.992440+00:00"
+  },
+  {
+    "id": "evo_bce9f910de06",
+    "action_type": "code_proposed",
+    "description": "Proposed improvement in knowledge: Expand preference knowledge: Actively collect more preference entries",
+    "details": {
+      "area": "knowledge",
+      "rationale": "Identified by Builder Agent during improvement cycle"
+    },
+    "impact_score": 0.0,
+    "timestamp": "2026-04-09T19:47:07.415819+00:00"
+  },
+  {
+    "id": "evo_21fa2ac86e4f",
+    "action_type": "code_proposed",
+    "description": "Proposed improvement in knowledge: Expand preference knowledge: Actively collect more preference entries",
+    "details": {
+      "area": "knowledge",
+      "rationale": "Identified by Builder Agent during improvement cycle"
+    },
+    "impact_score": 0.0,
+    "timestamp": "2026-04-09T19:58:51.705518+00:00"
+  },
+  {
+    "id": "evo_9016f7e87d6b",
+    "action_type": "code_proposed",
+    "description": "Proposed improvement in memory_preference: Actively collect more preference entries",
+    "details": {
+      "area": "memory_preference",
+      "rationale": "Proactive agent evolution \u2014 gap: Low preference memories (1)"
+    },
+    "impact_score": 0.0,
+    "timestamp": "2026-04-09T20:00:43.826476+00:00"
+  },
+  {
+    "id": "evo_6b674f0954af",
+    "action_type": "code_proposed",
+    "description": "Proposed improvement in memory_reflection: Actively collect more reflection entries",
+    "details": {
+      "area": "memory_reflection",
+      "rationale": "Proactive agent evolution \u2014 gap: Low reflection memories (0)"
+    },
+    "impact_score": 0.0,
+    "timestamp": "2026-04-09T20:00:43.831501+00:00"
+  },
+  {
+    "id": "evo_11a746f80aab",
+    "action_type": "code_proposed",
+    "description": "Proposed improvement in memory_error: Actively collect more error entries",
+    "details": {
+      "area": "memory_error",
+      "rationale": "Proactive agent evolution \u2014 gap: Low error memories (0)"
+    },
+    "impact_score": 0.0,
+    "timestamp": "2026-04-09T20:00:43.835733+00:00"
+  },
+  {
+    "id": "evo_3896faed8d64",
+    "action_type": "code_proposed",
+    "description": "Proposed improvement in skills: Analyze existing patterns and create a reusable skill for {'area': 'memory_preference', 'description': 'Low preference memories (1)', 'suggestion': 'Actively collect more preference entries'}",
+    "details": {
+      "area": "skills",
+      "rationale": "Creating a skill for '{'area': 'memory_preference', 'description': 'Low preference memories (1)', 'suggestion': 'Actively collect more preference entries'}' closes the capability gap"
+    },
+    "impact_score": 0.0,
+    "timestamp": "2026-04-09T20:00:51.294450+00:00"
+  },
+  {
+    "id": "evo_1a832834f947",
+    "action_type": "code_proposed",
+    "description": "Proposed improvement in skills: Analyze existing patterns and create a reusable skill for {'area': 'memory_reflection', 'description': 'Low reflection memories (0)', 'suggestion': 'Actively collect more reflection entries'}",
+    "details": {
+      "area": "skills",
+      "rationale": "Creating a skill for '{'area': 'memory_reflection', 'description': 'Low reflection memories (0)', 'suggestion': 'Actively collect more reflection entries'}' closes the capability gap"
+    },
+    "impact_score": 0.0,
+    "timestamp": "2026-04-09T20:00:51.502088+00:00"
+  },
+  {
+    "id": "evo_e8e11a29f647",
+    "action_type": "code_proposed",
+    "description": "Proposed improvement in skills: Analyze existing patterns and create a reusable skill for {'area': 'memory_error', 'description': 'Low error memories (0)', 'suggestion': 'Actively collect more error entries'}",
+    "details": {
+      "area": "skills",
+      "rationale": "Creating a skill for '{'area': 'memory_error', 'description': 'Low error memories (0)', 'suggestion': 'Actively collect more error entries'}' closes the capability gap"
+    },
+    "impact_score": 0.0,
+    "timestamp": "2026-04-09T20:00:51.693794+00:00"
+  },
+  {
+    "id": "evo_b7f38b82b042",
+    "action_type": "code_proposed",
+    "description": "Proposed improvement in knowledge: Expand preference knowledge: Actively collect more preference entries",
+    "details": {
+      "area": "knowledge",
+      "rationale": "Identified by Builder Agent during improvement cycle"
+    },
+    "impact_score": 0.0,
+    "timestamp": "2026-04-11T07:39:27.918050+00:00"
+  },
+  {
+    "id": "evo_76edb188e88e",
+    "action_type": "code_proposed",
+    "description": "Proposed improvement in memory_preference: Actively collect more preference entries",
+    "details": {
+      "area": "memory_preference",
+      "rationale": "Proactive agent evolution \u2014 gap: Low preference memories (1)"
+    },
+    "impact_score": 0.0,
+    "timestamp": "2026-04-11T07:40:03.613618+00:00"
+  },
+  {
+    "id": "evo_8368efda1d67",
+    "action_type": "code_proposed",
+    "description": "Proposed improvement in memory_reflection: Actively collect more reflection entries",
+    "details": {
+      "area": "memory_reflection",
+      "rationale": "Proactive agent evolution \u2014 gap: Low reflection memories (0)"
+    },
+    "impact_score": 0.0,
+    "timestamp": "2026-04-11T07:40:03.620182+00:00"
+  },
+  {
+    "id": "evo_e13a1c2393fd",
+    "action_type": "code_proposed",
+    "description": "Proposed improvement in memory_error: Actively collect more error entries",
+    "details": {
+      "area": "memory_error",
+      "rationale": "Proactive agent evolution \u2014 gap: Low error memories (0)"
+    },
+    "impact_score": 0.0,
+    "timestamp": "2026-04-11T07:40:03.626012+00:00"
   }
 ]

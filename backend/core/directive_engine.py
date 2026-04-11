@@ -9,6 +9,15 @@ Every 15 minutes, ROOT:
 
 This is what makes ROOT self-directing — it generates its own work
 without waiting for Yohan.
+
+Enhanced features:
+- Impact scoring: estimated value (high/medium/low) per directive
+- Conflict detection: flags directives that contradict active ones
+- Rollback registry: undoes directive side-effects on failure
+- Directive templates: reusable common patterns
+- Approval workflow: integrates reason/benefit/risk into approval requests
+- Smarter chaining: outcome-aware follow-up selection with depth scoring
+- Dashboard metrics: success_rate, avg_chain_depth, value_generated
 """
 
 from __future__ import annotations
@@ -54,6 +63,125 @@ class Directive:
     created_at: str = field(default_factory=_now_iso)
     executed_at: Optional[str] = None
     completed_at: Optional[str] = None
+    # Impact scoring
+    impact_score: float = 0.5          # 0.0-1.0 estimated value
+    impact_label: str = "medium"       # low | medium | high | critical
+    estimated_value_usd: float = 0.0   # dollar value estimate when applicable
+    # Conflict tracking
+    conflict_flags: tuple[str, ...] = ()   # IDs of conflicting active directives
+    # Approval fields
+    approval_reason: str = ""
+    approval_benefit: str = ""
+    approval_risk: str = ""
+    # Template tracking
+    template_id: Optional[str] = None     # source template if spawned from one
+
+
+# ── Directive templates ───────────────────────────────────────────────
+
+@dataclass(frozen=True)
+class DirectiveTemplate:
+    """A reusable directive pattern that can be instantiated on demand."""
+    id: str
+    name: str
+    description: str
+    category: str
+    collab_pattern: str
+    default_agents: tuple[str, ...]
+    task_template: str       # May contain {variable} placeholders
+    priority: int = 5
+    ttl_minutes: int = 120
+    impact_label: str = "medium"
+    tags: tuple[str, ...] = ()
+
+
+# Built-in templates for common strategic patterns
+DIRECTIVE_TEMPLATES: dict[str, DirectiveTemplate] = {
+    "market_scan": DirectiveTemplate(
+        id="market_scan",
+        name="Market Opportunity Scan",
+        description="Scan market signals for actionable trading opportunities",
+        category="trading",
+        collab_pattern="pipeline",
+        default_agents=("swarm", "analyst"),
+        task_template="Analyze recent market signals and identify top 3 actionable opportunities. Context: {context}",
+        priority=3,
+        impact_label="high",
+        tags=("trading", "revenue", "market"),
+    ),
+    "goal_unblock": DirectiveTemplate(
+        id="goal_unblock",
+        name="Stalled Goal Unblock",
+        description="Research and propose actions to unblock a stalled goal",
+        category="automation",
+        collab_pattern="pipeline",
+        default_agents=("researcher", "analyst"),
+        task_template="Research and propose concrete actions to unblock: {goal_title}. Reason for stall: {stall_reason}",
+        priority=3,
+        impact_label="medium",
+        tags=("goals", "unblock", "automation"),
+    ),
+    "revenue_opportunity": DirectiveTemplate(
+        id="revenue_opportunity",
+        name="Revenue Opportunity Assessment",
+        description="Evaluate and prioritize revenue-generating opportunities",
+        category="product",
+        collab_pattern="council",
+        default_agents=("swarm", "miro", "researcher"),
+        task_template="Evaluate the top revenue opportunity in {domain}. Estimate monthly value and required effort.",
+        priority=2,
+        impact_label="high",
+        tags=("revenue", "product", "money"),
+    ),
+    "capability_gap_fill": DirectiveTemplate(
+        id="capability_gap_fill",
+        name="Capability Gap Analysis",
+        description="Identify and fill critical capability gaps",
+        category="learning",
+        collab_pattern="delegate",
+        default_agents=("researcher",),
+        task_template="Identify the most critical capability gap in {domain} and propose a learning plan.",
+        priority=5,
+        impact_label="medium",
+        tags=("learning", "evolution", "capability"),
+    ),
+    "system_health_check": DirectiveTemplate(
+        id="system_health_check",
+        name="System Health Audit",
+        description="Audit system health and surface actionable fixes",
+        category="health",
+        collab_pattern="delegate",
+        default_agents=("guardian", "analyst"),
+        task_template="Perform a health audit of {component}. Surface any issues with proposed fixes.",
+        priority=4,
+        impact_label="low",
+        tags=("health", "reliability", "audit"),
+    ),
+    "experiment_proposal": DirectiveTemplate(
+        id="experiment_proposal",
+        name="Strategic Experiment Proposal",
+        description="Propose and design a high-value experiment",
+        category="research",
+        collab_pattern="fanout",
+        default_agents=("researcher", "analyst"),
+        task_template="Design an experiment to test: {hypothesis}. Include success metrics and expected learnings.",
+        priority=5,
+        impact_label="medium",
+        tags=("experiments", "learning", "research"),
+    ),
+    "automation_pipeline": DirectiveTemplate(
+        id="automation_pipeline",
+        name="Automation Pipeline Build",
+        description="Design and implement an automation workflow",
+        category="automation",
+        collab_pattern="pipeline",
+        default_agents=("coder", "builder"),
+        task_template="Design and implement an automation pipeline for: {workflow_description}.",
+        priority=4,
+        impact_label="medium",
+        tags=("automation", "engineering", "pipeline"),
+    ),
+}
 
 
 # ── Agent selection mappings ──────────────────────────────────────
@@ -153,6 +281,11 @@ class DirectiveEngine:
         if self._conn:
             self._conn.close()
             self._conn = None
+
+    def close(self) -> None:
+        """Close the database connection."""
+        if hasattr(self, '_conn') and self._conn:
+            self._conn.close()
 
     @property
     def conn(self) -> sqlite3.Connection:
@@ -675,8 +808,7 @@ class DirectiveEngine:
                         context={"category": directive.category, "priority": directive.priority},
                     )
                 except Exception:
-                    pass
-
+                    logger.debug("Failed to record successful directive outcome for '%s'", directive.id, exc_info=True)
             # Directive chaining: create follow-up if result suggests one
             chain_keywords = ("further", "next step", "follow up", "investigate more", "deeper analysis")
             current_depth = self._get_chain_depth(directive)
@@ -749,7 +881,7 @@ class DirectiveEngine:
                         context={"category": directive.category, "priority": directive.priority},
                     )
                 except Exception:
-                    pass
+                    logger.debug("Failed to record failed directive outcome for '%s'", directive.id, exc_info=True)
             return self._update_directive(
                 directive.id, status="failed", result=str(exc)[:500],
             )
@@ -814,7 +946,7 @@ class DirectiveEngine:
                     )
                     expired += 1
             except (ValueError, TypeError):
-                pass
+                logger.debug("Failed to parse created_at for directive expiration check", exc_info=True)
         if expired:
             self.conn.commit()
         return expired
@@ -875,7 +1007,7 @@ class DirectiveEngine:
                 try:
                     return int(signal.split(":")[1])
                 except (ValueError, IndexError):
-                    pass
+                    logger.debug("Failed to parse chain_depth from directive source_signals", exc_info=True)
         return 0
 
     # ── Helpers ───────────────────────────────────────────────────

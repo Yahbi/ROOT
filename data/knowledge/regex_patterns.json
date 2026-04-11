@@ -1,0 +1,152 @@
+[
+  {
+    "content": "Email validation regex: ^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$ matches standard emails like user@domain.com. RFC 5322 compliant version is significantly more complex, but this covers 99.9% of valid addresses. The local part allows dots, underscores, percent, plus, and hyphens; domain requires at least one dot with 2+ char TLD.",
+    "type": "skill",
+    "tags": ["regex", "email", "validation", "RFC_5322"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "URL parsing regex: ^(https?:\\/\\/)?(www\\.)?([a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,}(\\/[^\\s]*)?$ captures protocol (optional http/https), subdomain (optional www), domain name, TLD, and path. For full URL with query params and fragments: ^(https?:\\/\\/)?([\\w.-]+)(:[0-9]+)?(\\/[^?#]*)?(\\?[^#]*)?(#.*)?$ — groups: protocol, host, port, path, query, fragment.",
+    "type": "skill",
+    "tags": ["regex", "URL", "parsing", "protocol"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "IPv4 regex: ^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$ validates each octet 0-255. IPv6 full form: ^([0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}$ with 8 groups of 4 hex digits. Abbreviated IPv6 with :: is much harder: requires handling zero compression with negative lookahead to prevent multiple :: groups.",
+    "type": "skill",
+    "tags": ["regex", "IPv4", "IPv6", "network", "validation"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "E.164 phone number regex: ^\\+[1-9]\\d{1,14}$ — starts with +, country code 1-3 digits (no leading zero), total 2-15 digits. US-specific: ^\\+1[2-9]\\d{2}[2-9]\\d{6}$ (area code cannot start with 0 or 1). For flexible input parsing with optional separators: ^\\+?\\d{1,3}[-.\\s]?\\(?\\d{1,4}\\)?[-.\\s]?\\d{1,4}[-.\\s]?\\d{1,9}$.",
+    "type": "skill",
+    "tags": ["regex", "phone_number", "E164", "validation"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "ISO 8601 date regex: ^\\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12]\\d|3[01])$ matches YYYY-MM-DD with valid month (01-12) and day (01-31) ranges. Full datetime with timezone: ^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d+)?(Z|[+-]\\d{2}:\\d{2})$. Note: regex cannot validate day-of-month against month (e.g., Feb 30 passes regex but is invalid).",
+    "type": "skill",
+    "tags": ["regex", "ISO_8601", "date", "datetime", "timezone"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Credit card number regex by type: Visa ^4[0-9]{12}(?:[0-9]{3})?$ (starts with 4, 13 or 16 digits), Mastercard ^5[1-5][0-9]{14}$ (starts with 51-55, 16 digits), Amex ^3[47][0-9]{13}$ (starts with 34/37, 15 digits). The Luhn algorithm validates the checksum: double every second digit from right, sum all digits, result mod 10 must equal 0.",
+    "type": "skill",
+    "tags": ["regex", "credit_card", "Luhn", "Visa", "Mastercard"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Password strength regex: ^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$ requires minimum 8 characters, at least one lowercase, one uppercase, one digit, and one special character using positive lookaheads. NIST 800-63B (2024) recommends: minimum 8 chars, check against breached password lists, no composition rules, allow up to 64 chars.",
+    "type": "skill",
+    "tags": ["regex", "password", "security", "NIST", "lookahead"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "SQL injection detection patterns: (\\b(SELECT|INSERT|UPDATE|DELETE|DROP|UNION|ALTER|CREATE)\\b.*\\b(FROM|INTO|SET|TABLE|ALL)\\b)|(--)|('\\s*(OR|AND)\\s*'?\\s*\\d*\\s*=\\s*\\d*)|(;\\s*(DROP|DELETE|UPDATE)). Key patterns: single quote followed by OR 1=1, double-dash comments, UNION SELECT for data exfiltration, semicolon followed by destructive commands. Always use parameterized queries instead of regex for actual protection.",
+    "type": "skill",
+    "tags": ["regex", "SQL_injection", "security", "detection", "WAF"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "XSS detection patterns: (<script[^>]*>[\\s\\S]*?<\\/script>)|(<[^>]+on\\w+\\s*=)|(javascript:\\s*)|(<iframe|<object|<embed|<applet)|(&#x?[0-9a-fA-F]+;). Detect script tags, inline event handlers (onclick=, onerror=), javascript: URIs, dangerous HTML elements, and HTML entity encoding bypass attempts. Content Security Policy (CSP) headers are more reliable than regex-based XSS prevention.",
+    "type": "skill",
+    "tags": ["regex", "XSS", "security", "detection", "CSP"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Common log format (CLF) parsing regex: ^(\\S+) (\\S+) (\\S+) \\[([^]]+)\\] \"(\\S+) (\\S+) (\\S+)\" (\\d{3}) (\\d+|-)$ captures: host, ident, user, timestamp, method, path, protocol, status code, bytes. Apache combined format adds: \"([^\"]+)\" \"([^\"]+)\" for referer and user-agent. Nginx access logs use the same format by default.",
+    "type": "skill",
+    "tags": ["regex", "log_parsing", "CLF", "Apache", "Nginx"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "CSV field extraction regex: (?:,|\\n|^)(\"(?:(?:\"\")*[^\"]*)*\"|[^\",\\n]*) handles both quoted and unquoted fields. Quoted fields can contain commas, newlines, and escaped quotes (doubled \"\"). Edge cases: empty fields (,,), fields with only whitespace, and mixed quoting. For production use, a proper CSV parser (Python csv module, Papa Parse in JS) is preferred over regex.",
+    "type": "skill",
+    "tags": ["regex", "CSV", "parsing", "quoted_fields"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "JSON path expression for nested extraction: \\\"(\\w+)\\\"\\s*:\\s*(\\\"[^\\\"]*\\\"|\\d+\\.?\\d*|true|false|null|\\{[^}]*\\}|\\[[^\\]]*\\]) matches key-value pairs in JSON strings. This is fragile for nested structures; use jq syntax for complex queries: .data[].items[] | select(.status == \"active\") | .name. Regex-based JSON parsing breaks on nested objects >1 level deep.",
+    "type": "learning",
+    "tags": ["regex", "JSON", "jq", "path_expression", "parsing"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Semantic versioning regex: ^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(?:-((?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\\.(?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\\+([0-9a-zA-Z-]+(?:\\.[0-9a-zA-Z-]+)*))?$ validates major.minor.patch with optional pre-release (-alpha.1) and build metadata (+build.123). SemVer 2.0.0 spec: major for breaking changes, minor for features, patch for fixes.",
+    "type": "skill",
+    "tags": ["regex", "semver", "versioning", "validation"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Lookahead and lookbehind assertions enable matching without consuming characters. Positive lookahead (?=...) matches if followed by pattern. Negative lookahead (?!...) matches if NOT followed. Example: \\d+(?=px) matches digits before 'px' without consuming 'px'. Lookbehind (?<=...) works backward. Not all regex engines support variable-length lookbehind (JavaScript added it in ES2018).",
+    "type": "learning",
+    "tags": ["regex", "lookahead", "lookbehind", "assertions", "advanced"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Named capture groups improve readability: (?P<name>pattern) in Python, (?<name>pattern) in JavaScript/PCRE. Example: (?P<year>\\d{4})-(?P<month>\\d{2})-(?P<day>\\d{2}) allows accessing matches as match.group('year'). Backreferences: \\1 or \\k<name> refer to previously captured groups. Useful for detecting duplicated words: \\b(\\w+)\\s+\\1\\b.",
+    "type": "skill",
+    "tags": ["regex", "named_groups", "backreference", "capture"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "UUID v4 regex: ^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$ validates RFC 4122 version 4 UUIDs. The 4 in position 13 indicates version 4 (random), and position 17 must be 8, 9, a, or b (variant 1). There are 2^122 possible UUIDv4 values (~5.3 x 10^36), making collision probability negligible at <10^-18 for 1 billion UUIDs.",
+    "type": "skill",
+    "tags": ["regex", "UUID", "RFC_4122", "validation"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Greedy vs lazy quantifiers: .* (greedy) matches maximum possible characters; .*? (lazy) matches minimum. In '<b>bold</b> and <i>italic</i>', regex <.*> greedily matches '<b>bold</b> and <i>italic</i>' (entire string). Use <.*?> to match '<b>' only. Possessive quantifiers .*+ (supported in Java/PCRE) never backtrack, improving performance on non-matching strings.",
+    "type": "learning",
+    "tags": ["regex", "greedy", "lazy", "possessive", "quantifiers"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Regex performance: catastrophic backtracking occurs with nested quantifiers like (a+)+ on input 'aaaaaaaaaaaaaab' — creates O(2^n) backtracking steps. Mitigations: use atomic groups (?>...), possessive quantifiers, or rewrite to avoid nesting (a+ instead of (a+)+). The RE2 engine (used by Go, Google) guarantees O(n) matching by using finite automata instead of backtracking.",
+    "type": "learning",
+    "tags": ["regex", "performance", "backtracking", "RE2", "catastrophic"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Markdown link extraction: \\[([^\\]]+)\\]\\(([^)]+)\\) captures display text (group 1) and URL (group 2). Extended for optional title: \\[([^\\]]+)\\]\\(([^\\s)]+)(?:\\s+\"([^\"]+)\")?\\). For image syntax: !\\[([^\\]]*?)\\]\\(([^)]+)\\). These patterns handle 95% of standard Markdown links but miss reference-style links [text][ref].",
+    "type": "skill",
+    "tags": ["regex", "markdown", "link_extraction", "parsing"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "HTML tag matching: <(\\w+)([^>]*)>(.*?)<\\/\\1> uses backreference \\1 to ensure opening and closing tags match. Attribute extraction from a tag: (\\w+)=[\"']([^\"']*)[\"'] captures attribute name and value. Important: regex cannot correctly parse nested HTML — use a DOM parser (BeautifulSoup, Cheerio) for production. Regex is acceptable only for simple, known-structure HTML fragments.",
+    "type": "learning",
+    "tags": ["regex", "HTML", "parsing", "backreference", "limitation"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Hex color code regex: ^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$ matches both #RRGGBB and shorthand #RGB formats. Extended for 8-digit (with alpha): ^#([A-Fa-f0-9]{8}|[A-Fa-f0-9]{6}|[A-Fa-f0-9]{4}|[A-Fa-f0-9]{3})$. CSS named colors (140 valid names) cannot be validated with regex and require a lookup table.",
+    "type": "skill",
+    "tags": ["regex", "hex_color", "CSS", "validation"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Word boundary \\b matches the position between a word character (\\w = [a-zA-Z0-9_]) and a non-word character. Pattern \\bcat\\b matches 'cat' in 'the cat sat' but not in 'concatenate'. Unicode word boundaries (\\b with Unicode flag) handle accented characters. For matching whole words in camelCase: (?<=[a-z])(?=[A-Z]) splits on case transitions without consuming characters.",
+    "type": "learning",
+    "tags": ["regex", "word_boundary", "camelCase", "unicode"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Conditional regex patterns: (?(condition)yes-pattern|no-pattern) supported in PCRE/Python. Example: (?(1)\\d{3}|\\d{4}) matches 3 digits if group 1 captured, else 4 digits. Python re module supports (?(name)...|...) conditionals. Useful for matching optional delimiters: (\\()?(\\d{3})(?(1)\\)) matches both (123) and 123 but not (123 or 123).",
+    "type": "skill",
+    "tags": ["regex", "conditional", "PCRE", "advanced_patterns"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Common regex flags: i (case-insensitive), g (global/all matches), m (multiline — ^ and $ match line start/end), s (dotall — . matches newline), x (verbose — allows comments and whitespace). In Python: re.IGNORECASE, re.MULTILINE, re.DOTALL, re.VERBOSE. Combining flags: re.compile(pattern, re.I | re.M). The x/VERBOSE flag is essential for documenting complex patterns.",
+    "type": "fact",
+    "tags": ["regex", "flags", "modifiers", "Python", "best_practices"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Whitespace and string trimming patterns: ^\\s+|\\s+$ matches leading/trailing whitespace (used by trim()). Normalize multiple spaces to single: replace /\\s{2,}/g with ' '. Match blank lines: ^\\s*$ with multiline flag. Extract quoted strings: (?:\"([^\"]*)\"|'([^']*)'). Match non-ASCII characters: [^\\x00-\\x7F]. These 5 patterns handle 80% of text normalization tasks in data cleaning pipelines.",
+    "type": "skill",
+    "tags": ["regex", "whitespace", "trimming", "text_normalization", "cleaning"],
+    "source": "engineering_knowledge"
+  }
+]

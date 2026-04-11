@@ -1,0 +1,152 @@
+[
+  {
+    "content": "ETL pipeline design follows extract (pull data from sources via API/DB/file), transform (clean, validate, enrich, deduplicate), and load (write to destination warehouse/lake). Transforms must be idempotent: running the same transform twice on the same input produces the same output. This enables safe retries and backfills without data corruption.",
+    "type": "skill",
+    "tags": ["etl", "idempotent", "data_pipeline"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Webhook reliability requires: retry with exponential backoff (1s, 2s, 4s, 8s, max 5 attempts) on non-2xx responses, dead letter queue (DLQ) for permanently failed deliveries, idempotency keys in the payload to prevent duplicate processing, HMAC signature verification (SHA-256) to authenticate the sender, and a 5-second timeout per delivery attempt.",
+    "type": "skill",
+    "tags": ["webhook", "retry", "dead_letter_queue", "hmac"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Job scheduling with cron expressions: '0 */6 * * *' (every 6 hours), '0 9 * * 1-5' (weekdays at 9am), '*/5 * * * *' (every 5 minutes). For complex workflows, use DAG-based schedulers (Airflow, Prefect, Dagster) that model task dependencies as directed acyclic graphs. Backfill capability re-runs failed date ranges without reprocessing successful ones.",
+    "type": "skill",
+    "tags": ["cron", "scheduling", "dag", "airflow"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Data validation in pipelines: schema validation (Pydantic, JSON Schema, Great Expectations) ensures correct types and required fields, range checks catch outliers (e.g., age > 150 or negative prices), referential integrity verifies foreign keys exist in lookup tables, and freshness checks alert when source data is stale (last update > expected interval).",
+    "type": "skill",
+    "tags": ["data_validation", "schema", "great_expectations"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Circuit breaker pattern prevents cascading failures by tracking failure rates over a sliding window. Three states: Closed (normal operation, count failures), Open (fail fast without calling downstream, after threshold like 5 failures in 60s), Half-Open (after cooldown period, allow one test request). If test succeeds, close the circuit; if fails, reopen. Prevents one failing service from overwhelming others.",
+    "type": "skill",
+    "tags": ["circuit_breaker", "resilience", "failure_handling"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Bulkhead isolation pattern partitions system resources so that a failure in one component cannot exhaust resources for others. In practice: separate thread pools per downstream service (10 threads for Service A, 10 for Service B), separate connection pools per database, separate rate limits per tenant. Named after ship bulkheads that prevent a hull breach from sinking the entire vessel.",
+    "type": "skill",
+    "tags": ["bulkhead", "isolation", "resource_partition"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "The four golden signals of monitoring (Google SRE): latency (how long requests take, track p50/p95/p99), traffic (requests per second, measuring demand), errors (rate of failed requests, both explicit 5xx and implicit wrong results), saturation (how full the system is, CPU/memory/disk/queue depth). Alert when these signals deviate from baseline.",
+    "type": "fact",
+    "tags": ["golden_signals", "monitoring", "sre"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Alerting best practices: alert on symptoms not causes (alert on 'error rate > 1%' not 'disk usage > 80%'), every alert must be actionable (if nobody needs to do anything, remove it), include runbook links in alert messages, use escalation chains (page on-call -> team lead -> engineering manager after 15/30/60 minutes), and review alert quality monthly to eliminate noise.",
+    "type": "learning",
+    "tags": ["alerting", "symptoms", "actionable", "escalation"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Runbook automation converts manual incident response into executable decision trees. Each runbook step is: check condition -> if true, execute action -> verify result. Tools like Rundeck, PagerDuty Runbook Automation, or custom scripts automate common remediations: restart service, scale up instances, failover to secondary, clear cache, roll back deployment.",
+    "type": "skill",
+    "tags": ["runbook", "automation", "incident_response"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Infrastructure as Code (IaC) principles: declarative > imperative (describe desired state, not steps to reach it), drift detection (regularly compare actual infrastructure to declared state), immutable infrastructure (replace instances instead of modifying them), version control all configs, plan before apply (terraform plan shows changes before execution). Tools: Terraform, Pulumi, CloudFormation.",
+    "type": "skill",
+    "tags": ["iac", "terraform", "declarative", "drift_detection"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "ChatOps integrates operational commands into chat platforms (Slack, Discord). Commands like '/deploy production v2.3.1' or '/rollback api-service' trigger CI/CD pipelines. Benefits: shared visibility (everyone sees what's happening), audit trail (chat logs capture who did what), lower barrier (no SSH required), and context (discussion and action in the same thread).",
+    "type": "skill",
+    "tags": ["chatops", "slack", "discord", "deployment"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Retry strategies: immediate retry (for transient network glitches), exponential backoff (delay = base * 2^attempt, e.g., 1s, 2s, 4s, 8s), exponential backoff with jitter (add random 0-1s to prevent thundering herd), and linear backoff (delay = base * attempt). Set max retries (3-5) and max delay (60s). Never retry on 4xx errors (client error, will always fail).",
+    "type": "skill",
+    "tags": ["retry", "exponential_backoff", "jitter"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Timeout strategy: set timeouts at every integration point. HTTP client timeout: 5-30s depending on operation. Database query timeout: 5s for OLTP, 60s for analytics. Message queue consumer timeout: 30-120s. Total request timeout should be less than client timeout. Cascade timeouts: if service A calls B which calls C, timeout_A > timeout_B > timeout_C.",
+    "type": "skill",
+    "tags": ["timeout", "cascading", "integration"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Feature flags enable separating deployment from release. Types: release flags (toggle new features), experiment flags (A/B tests), ops flags (circuit breakers, maintenance mode), permission flags (beta access for specific users). Use a feature flag service (LaunchDarkly, Unleash, Flagsmith) or simple config. Clean up stale flags quarterly to prevent tech debt accumulation.",
+    "type": "skill",
+    "tags": ["feature_flags", "deployment", "release"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Deployment strategies: rolling update (replace instances one at a time, zero downtime, slow rollback), blue-green (run two identical environments, switch traffic instantly, fast rollback but 2x resources), canary (route 1-5% of traffic to new version, monitor, then gradually increase), and shadow/dark launch (send copy of production traffic to new version without serving responses, safest testing).",
+    "type": "skill",
+    "tags": ["deployment", "blue_green", "canary", "rolling"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Event-driven automation with event sourcing: every state change emits an event to a bus (Kafka, RabbitMQ, Redis Streams). Downstream consumers react independently: event 'order_placed' triggers inventory update, payment processing, notification, and analytics update in parallel. Loose coupling means adding new consumers requires no changes to the producer.",
+    "type": "skill",
+    "tags": ["event_driven", "event_sourcing", "loose_coupling"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Queue-based load leveling absorbs traffic spikes by buffering requests in a message queue. Producers add work at any rate; consumers process at a steady rate. This prevents overloading downstream services during peaks. Queue depth monitoring alerts when the buffer grows beyond acceptable levels (e.g., > 10,000 messages or > 5 minute processing lag).",
+    "type": "skill",
+    "tags": ["queue", "load_leveling", "traffic_spikes"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Idempotent operations can be safely retried without side effects. Database: use UPSERT (INSERT ON CONFLICT UPDATE) instead of separate INSERT/UPDATE. APIs: include client-generated idempotency key in request header; server caches response keyed by idempotency key for 24 hours. File operations: write to temp file then atomic rename. Message processing: track processed message IDs in a set.",
+    "type": "skill",
+    "tags": ["idempotency", "upsert", "atomic_operations"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Log aggregation architecture: applications emit structured JSON logs (timestamp, level, service, trace_id, message, context). A log shipper (Filebeat, Fluentd) collects and forwards to a central store (Elasticsearch, Loki, CloudWatch). Structured logs enable queries like 'all ERROR logs for service=api trace_id=abc123 in last 1 hour'. Retention policy: 30 days hot, 90 days warm, 1 year cold.",
+    "type": "skill",
+    "tags": ["log_aggregation", "structured_logging", "elk"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Scheduled task anti-patterns to avoid: no overlap protection (two instances of the same job running simultaneously), no idempotency (re-running produces duplicates), no timeout (job runs forever consuming resources), no error notification (failures go unnoticed), hardcoded schedules (cannot adjust without redeployment), and no distributed locking (multiple servers all run the same job).",
+    "type": "learning",
+    "tags": ["anti_patterns", "scheduling", "distributed_locking"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Health check patterns: liveness check (is the process alive? simple HTTP 200 response), readiness check (can the service handle requests? verify DB connection, cache connection, dependent services), startup check (has initialization completed?). Kubernetes uses these: liveness failure triggers pod restart, readiness failure removes pod from service endpoints.",
+    "type": "skill",
+    "tags": ["health_check", "liveness", "readiness", "kubernetes"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Data pipeline orchestration with Airflow: define DAGs in Python, each task is an operator (PythonOperator, BashOperator, SQLOperator). Use XCom for small data passing between tasks (<48KB), external storage (S3, database) for large datasets. Set retries=3, retry_delay=timedelta(minutes=5), execution_timeout=timedelta(hours=1) per task. SLA monitoring alerts on late completions.",
+    "type": "skill",
+    "tags": ["airflow", "dag", "orchestration"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Graceful shutdown sequence: (1) stop accepting new requests (remove from load balancer), (2) wait for in-flight requests to complete (timeout: 30 seconds), (3) close database connections and flush buffers, (4) publish shutdown event to message bus, (5) exit process. Handle SIGTERM signal to trigger this sequence. Kubernetes sends SIGTERM, waits terminationGracePeriodSeconds (default 30s), then SIGKILL.",
+    "type": "skill",
+    "tags": ["graceful_shutdown", "sigterm", "kubernetes"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Configuration management hierarchy: defaults in code (lowest priority) -> config files (environment-specific) -> environment variables (12-factor app) -> command-line arguments (highest priority for overrides) -> remote config service (feature flags, dynamic settings). Never store secrets in config files; use a secret manager (Vault, AWS Secrets Manager) with runtime injection.",
+    "type": "skill",
+    "tags": ["configuration", "12_factor", "hierarchy"],
+    "source": "engineering_knowledge"
+  },
+  {
+    "content": "Observability-driven development: instrument code with metrics, logs, and traces BEFORE shipping to production, not after incidents. Add custom metrics for business-critical flows (orders_processed_total, payment_failures_total, queue_depth). Use OpenTelemetry SDK for vendor-neutral instrumentation. The cost of adding observability post-incident is 10x higher than building it in from the start.",
+    "type": "learning",
+    "tags": ["observability", "opentelemetry", "instrumentation"],
+    "source": "engineering_knowledge"
+  }
+]

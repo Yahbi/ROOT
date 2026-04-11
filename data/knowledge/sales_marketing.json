@@ -1,0 +1,152 @@
+[
+  {
+    "content": "BANT qualification framework evaluates leads on four criteria: Budget (can they afford the solution?), Authority (is the contact the decision-maker?), Need (do they have a problem you solve?), and Timeline (when do they plan to buy?). A lead scoring all four is sales-ready. Modern B2B sales often starts with Need and Authority, since Budget and Timeline can be influenced through value demonstration and urgency creation.",
+    "type": "skill",
+    "tags": ["sales", "qualification", "bant"],
+    "source": "business_knowledge"
+  },
+  {
+    "content": "MEDDIC is an enterprise sales qualification framework: Metrics (quantified business impact), Economic Buyer (person with budget authority), Decision Criteria (technical and business requirements), Decision Process (steps, timeline, stakeholders), Identify Pain (the specific problem driving urgency), and Champion (internal advocate who sells on your behalf). Deals without a champion close at 30% versus 70% with one.",
+    "type": "skill",
+    "tags": ["sales", "qualification", "meddic"],
+    "source": "business_knowledge"
+  },
+  {
+    "content": "Sales funnel conversion benchmarks: cold email campaigns achieve 1-3% reply rates and 0.1-0.3% meeting rates. Cold calling converts at 1-2% to meetings. Inbound leads convert to demos at 10-20%. Demo-to-close rates range from 20-40% depending on deal size. Enterprise deals ($100K+) have 3-6 month cycles with 15-25% close rates. Average B2B SaaS startup needs 100 top-of-funnel leads to close 1 deal.",
+    "type": "fact",
+    "tags": ["sales", "funnel", "conversion_rates"],
+    "source": "business_knowledge"
+  },
+  {
+    "content": "Content marketing ROI takes 6-12 months to materialize as SEO compounds over time. A blog post published today generates increasing organic traffic for 12-24 months before plateauing. The content flywheel: create quality content → rank in search → drive organic traffic → capture leads → nurture to customer → generate case studies → create more content. Companies with active blogs generate 67% more leads than those without.",
+    "type": "learning",
+    "tags": ["marketing", "content", "seo"],
+    "source": "business_knowledge"
+  },
+  {
+    "content": "Email marketing benchmarks: 40% open rate is good (industry average 20-25%), 2-5% click-through rate (CTR) is good (average 2.5%), and unsubscribe rate should stay below 0.5%. Segment by behavior (opened, clicked, purchased) rather than demographics for 14% higher open rates. Send frequency: 1-3x per week for B2C, 1-2x per week for B2B. Personalized subject lines increase open rates by 26%. Always include a clear, single CTA.",
+    "type": "skill",
+    "tags": ["marketing", "email", "benchmarks"],
+    "source": "business_knowledge"
+  },
+  {
+    "content": "Social proof increases conversion rates by an average of 34% when testimonials are displayed on landing pages. For B2B, case studies with specific metrics are most persuasive ('Company X increased revenue by 47% in 6 months'). For B2C, user-generated content and review counts matter more. Display logos of recognizable customers, aggregate review scores, and real-time purchase notifications ('15 people bought this today').",
+    "type": "fact",
+    "tags": ["marketing", "social_proof", "conversion"],
+    "source": "business_knowledge"
+  },
+  {
+    "content": "Pricing anchoring shows the most expensive option first to make subsequent options seem reasonable by comparison. SaaS pricing pages typically display 3 tiers: a decoy premium tier (anchor), the recommended middle tier (target), and a basic tier (entry point). The decoy effect means adding a dominated option increases selection of the target. Companies that raise prices and add a premium tier often see average revenue per user increase 20-40%.",
+    "type": "skill",
+    "tags": ["marketing", "pricing", "psychology"],
+    "source": "business_knowledge"
+  },
+  {
+    "content": "Urgency and scarcity tactics increase conversion rates by up to 332% in controlled studies. Legitimate scarcity includes limited inventory ('Only 3 left'), time-limited offers ('48-hour sale'), and cohort-based enrollment ('Next cohort starts January 15, 20 spots'). Countdown timers on landing pages increase conversion by 8-10%. Artificial scarcity (fake countdown timers, perpetual 'last day' sales) erodes trust and can violate FTC guidelines.",
+    "type": "fact",
+    "tags": ["marketing", "urgency", "scarcity"],
+    "source": "business_knowledge"
+  },
+  {
+    "content": "Two-sided referral programs (give $X, get $X) create a viral coefficient K = invitations_per_user * conversion_rate. If each user invites 5 people and 20% convert, K = 1.0 (viral breakeven). K > 1.0 means exponential organic growth. Dropbox's referral program (give 500MB, get 500MB) increased signups by 60%. PayPal's early referral program ($10 give/$10 get) drove initial adoption to 100K users. Cash incentives have higher K but lower LTV than product-based incentives.",
+    "type": "skill",
+    "tags": ["marketing", "referral", "viral"],
+    "source": "business_knowledge"
+  },
+  {
+    "content": "Customer success drives retention: NPS surveys at 30, 60, and 90 days after purchase identify at-risk customers early. Proactive outreach to customers showing declining usage reduces churn by 20%. A dedicated customer success manager for accounts above $10K ARR pays for itself if they prevent just 2-3 churns per year. The cost of acquiring a new customer is 5-7x the cost of retaining an existing one.",
+    "type": "skill",
+    "tags": ["sales", "customer_success", "retention"],
+    "source": "business_knowledge"
+  },
+  {
+    "content": "Customer Acquisition Cost (CAC) equals total sales and marketing spend divided by new customers acquired. B2B SaaS CAC ranges from $200-$500 for SMB and $5,000-$50,000 for enterprise. The LTV:CAC ratio should be at least 3:1, meaning lifetime value is 3x the acquisition cost. CAC payback period (months to recoup acquisition cost) should be under 12 months for healthy SaaS businesses and under 18 months for enterprise.",
+    "type": "fact",
+    "tags": ["marketing", "cac", "unit_economics"],
+    "source": "business_knowledge"
+  },
+  {
+    "content": "Landing page optimization focuses on: a single clear value proposition above the fold (5-second test), one primary CTA (multiple CTAs reduce conversion by 25%), social proof near the CTA, removing navigation to prevent exit, matching ad copy to landing page headline (message match), and fast load time (each second of delay reduces conversion by 7%). A/B test one element at a time; start with headline, then CTA, then hero image.",
+    "type": "skill",
+    "tags": ["marketing", "landing_page", "optimization"],
+    "source": "business_knowledge"
+  },
+  {
+    "content": "SEO fundamentals: target keywords with commercial intent (buyer keywords like 'best CRM for startups' convert 5-10x better than informational keywords like 'what is CRM'). On-page factors include title tag (keyword in first 60 chars), meta description (150-160 chars with CTA), H1 tag, URL structure, internal linking, and schema markup. Backlinks remain the #1 ranking factor — one link from a DA 50+ site is worth more than 100 links from DA 10 sites.",
+    "type": "skill",
+    "tags": ["marketing", "seo", "search"],
+    "source": "business_knowledge"
+  },
+  {
+    "content": "The SPIN selling framework asks four types of questions: Situation (gather facts about the customer's current state), Problem (uncover specific difficulties and pain points), Implication (explore consequences of not solving the problem), and Need-payoff (help the customer articulate the value of the solution). Research by Neil Rackham showed SPIN increases close rates by 17% in large, complex sales. The key is letting the customer discover the need rather than being told.",
+    "type": "skill",
+    "tags": ["sales", "spin", "methodology"],
+    "source": "business_knowledge"
+  },
+  {
+    "content": "Sales cadence (outreach sequence) best practices: 8-12 touches over 3-4 weeks mixing email, phone, LinkedIn, and video. Day 1: personalized email + LinkedIn connection. Day 3: phone call + voicemail. Day 5: follow-up email with value content. Day 8: LinkedIn message. Day 12: breakup email ('Is this still a priority?'). Multi-channel cadences get 3x higher response rates than email-only sequences.",
+    "type": "skill",
+    "tags": ["sales", "cadence", "outreach"],
+    "source": "business_knowledge"
+  },
+  {
+    "content": "Customer lifetime value (LTV) for subscription businesses equals average revenue per account (ARPA) divided by churn rate. If ARPA is $100/month and monthly churn is 2%, LTV = $100/0.02 = $5,000. With gross margin of 80%, gross margin-adjusted LTV = $4,000. Improving retention by 5% increases LTV by 25-95% because each retained month adds revenue at near-zero marginal cost.",
+    "type": "fact",
+    "tags": ["marketing", "ltv", "retention"],
+    "source": "business_knowledge"
+  },
+  {
+    "content": "Account-Based Marketing (ABM) targets specific high-value accounts with personalized campaigns rather than casting a wide net. ABM campaigns deliver 208% more revenue than traditional marketing for participating companies. The ABM playbook: identify target accounts (firmographic + intent data), map stakeholders (6-10 decision-makers per enterprise deal), create personalized content per account, orchestrate multi-channel outreach, and measure by account penetration, not MQLs.",
+    "type": "skill",
+    "tags": ["marketing", "abm", "enterprise"],
+    "source": "business_knowledge"
+  },
+  {
+    "content": "Churn analysis should distinguish between voluntary churn (customer actively cancels) and involuntary churn (failed payments, expired cards — recoverable with dunning emails). Involuntary churn represents 20-40% of total churn and is fixable: smart retry logic (retry on different days, escalating amounts), pre-dunning notifications (card expiring soon), and backup payment methods reduce involuntary churn by 50-70%.",
+    "type": "learning",
+    "tags": ["sales", "churn", "retention"],
+    "source": "business_knowledge"
+  },
+  {
+    "content": "Growth hacking channels ranked by typical efficiency for B2B SaaS: SEO/content marketing (lowest CAC, longest to ramp, 6-12 months), referral/word-of-mouth (lowest CAC once established), partnerships/integrations (medium CAC, ecosystem leverage), outbound sales (medium CAC, predictable pipeline), paid search/SEM (high CAC, instant results, $50-$200 per lead), and paid social (highest CAC for B2B, better for brand awareness). Start with owned channels before paid.",
+    "type": "learning",
+    "tags": ["marketing", "growth", "channels"],
+    "source": "business_knowledge"
+  },
+  {
+    "content": "Value-based selling focuses on quantifying the business impact of your solution in the customer's terms. The value equation: value = (benefit - cost) / risk. Build an ROI calculator showing: current cost of the problem (hours wasted x hourly rate, or revenue lost), projected savings with your solution, implementation cost, and payback period. A $50K/year software is easy to sell when it demonstrably saves $200K/year in labor costs.",
+    "type": "skill",
+    "tags": ["sales", "value_selling", "roi"],
+    "source": "business_knowledge"
+  },
+  {
+    "content": "The Challenger Sale model shows that the most successful B2B salespeople teach customers something new about their business, tailor the pitch to the customer's specific context, and take control of the sale (constructive tension). Challengers outperform Relationship Builders by 2x in complex sales. The key insight: customers value sellers who push their thinking, not those who simply agree with them and build rapport.",
+    "type": "learning",
+    "tags": ["sales", "challenger", "methodology"],
+    "source": "business_knowledge"
+  },
+  {
+    "content": "Product-qualified leads (PQLs) are users who have experienced product value during a free trial or freemium plan and exhibited buying signals (exceeded usage limits, invited team members, used premium features). PQLs convert to paid at 25-30% versus 1-3% for marketing-qualified leads (MQLs). Identifying the PQL trigger (the specific action correlated with conversion) is the most important growth lever for product-led companies.",
+    "type": "fact",
+    "tags": ["marketing", "pql", "product_led"],
+    "source": "business_knowledge"
+  },
+  {
+    "content": "Copywriting formulas that convert: AIDA (Attention-Interest-Desire-Action), PAS (Problem-Agitate-Solution), BAB (Before-After-Bridge). Headlines should include a specific number, a power word, and address the reader directly. Subject line length of 6-10 words gets the highest open rates. Bullet points outperform paragraphs for feature lists. Every piece of copy should answer: 'What's in it for me?' from the reader's perspective within the first sentence.",
+    "type": "skill",
+    "tags": ["marketing", "copywriting", "conversion"],
+    "source": "business_knowledge"
+  },
+  {
+    "content": "Net Revenue Retention (NRR) measures expansion revenue minus contraction and churn from existing customers. NRR > 100% means the business grows even without new customers. Best-in-class SaaS companies achieve 120-140% NRR (Snowflake: 158%, Twilio: 143%). NRR above 130% indicates strong product-market fit and expansion potential. The formula: (beginning MRR + expansion - contraction - churn) / beginning MRR * 100.",
+    "type": "fact",
+    "tags": ["sales", "nrr", "metrics"],
+    "source": "business_knowledge"
+  },
+  {
+    "content": "Competitive positioning uses a 2x2 matrix of the two most differentiating attributes to carve out a unique market position. The positioning statement format: 'For [target customer] who [need], [product] is a [category] that [key benefit]. Unlike [competitor], we [differentiator].' Effective positioning must be: true (defensible claim), relevant (matters to the customer), unique (competitors can't claim it), and provable (evidence or demo available).",
+    "type": "skill",
+    "tags": ["marketing", "positioning", "strategy"],
+    "source": "business_knowledge"
+  }
+]

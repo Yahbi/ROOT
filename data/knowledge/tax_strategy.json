@@ -1,0 +1,152 @@
+[
+  {
+    "content": "Short-term capital gains (assets held <1 year) are taxed at ordinary income rates ranging from 10% to 37%. Long-term capital gains (held >1 year) are taxed at preferential rates of 0% (income up to $47,025 single), 15% ($47,026-$518,900), or 20% (above $518,900) for 2024.",
+    "type": "fact",
+    "tags": ["capital_gains", "tax_rates", "investing"],
+    "source": "finance_knowledge"
+  },
+  {
+    "content": "Tax-loss harvesting involves selling investments at a loss to offset capital gains, reducing taxable income by up to $3,000/year in net losses against ordinary income. Excess losses carry forward indefinitely to future tax years.",
+    "type": "skill",
+    "tags": ["tax_loss_harvesting", "capital_gains", "tax_optimization"],
+    "source": "finance_knowledge"
+  },
+  {
+    "content": "The wash sale rule (IRC Section 1091) disallows a loss deduction if you buy a substantially identical security within 30 days before or after the sale, creating a 61-day window. The disallowed loss is added to the cost basis of the replacement security.",
+    "type": "fact",
+    "tags": ["wash_sale", "tax_loss_harvesting", "irs_rules"],
+    "source": "finance_knowledge"
+  },
+  {
+    "content": "Qualified dividends are taxed at long-term capital gains rates (0/15/20%) rather than ordinary income rates. To qualify, shares must be held for more than 60 days during the 121-day period beginning 60 days before the ex-dividend date.",
+    "type": "fact",
+    "tags": ["dividends", "qualified_dividends", "tax_rates"],
+    "source": "finance_knowledge"
+  },
+  {
+    "content": "Roth IRA conversions are optimal in low-income years when your marginal tax rate is temporarily reduced. Converting $50,000 of traditional IRA to Roth at 12% marginal rate saves $12,500 compared to converting at 37% rate. Post-conversion growth is entirely tax-free.",
+    "type": "skill",
+    "tags": ["roth_conversion", "retirement", "tax_planning"],
+    "source": "finance_knowledge"
+  },
+  {
+    "content": "The Qualified Business Income (QBI) deduction under Section 199A allows a 20% deduction on qualified income from pass-through entities (S-corps, partnerships, sole proprietorships). Phase-out begins at $191,950 single / $383,900 married for specified service trades.",
+    "type": "fact",
+    "tags": ["qbi", "section_199a", "pass_through", "small_business"],
+    "source": "finance_knowledge"
+  },
+  {
+    "content": "MACRS depreciation schedules assign recovery periods: 5-year (computers, vehicles), 7-year (office furniture, equipment), 15-year (land improvements), 27.5-year (residential rental), 39-year (commercial property). Section 179 allows immediate expensing up to $1,220,000 for 2024.",
+    "type": "fact",
+    "tags": ["depreciation", "macrs", "section_179", "business_deductions"],
+    "source": "finance_knowledge"
+  },
+  {
+    "content": "Bonus depreciation allows 60% first-year deduction in 2024 (down from 80% in 2023, phasing out 20% per year). Combined with Section 179, businesses can potentially deduct the full cost of qualifying assets in the year of purchase.",
+    "type": "fact",
+    "tags": ["bonus_depreciation", "tax_deductions", "business"],
+    "source": "finance_knowledge"
+  },
+  {
+    "content": "A 1031 like-kind exchange (IRC Section 1031) defers capital gains tax on real estate by reinvesting proceeds into a like-kind property. You must identify replacement property within 45 days and close within 180 days. Boot (non-like-kind property received) is taxable.",
+    "type": "skill",
+    "tags": ["1031_exchange", "real_estate", "capital_gains_deferral"],
+    "source": "finance_knowledge"
+  },
+  {
+    "content": "Qualified Opportunity Zones allow deferral of capital gains invested within 180 days of realization. If held 10+ years, appreciation on the QOZ investment is permanently excluded from capital gains tax. Original deferred gain is recognized by December 31, 2026.",
+    "type": "fact",
+    "tags": ["opportunity_zones", "capital_gains", "tax_deferral"],
+    "source": "finance_knowledge"
+  },
+  {
+    "content": "Donating appreciated stock held >1 year to charity allows a deduction for the full fair market value while avoiding capital gains tax on the appreciation. A $10,000 stock with $3,000 basis saves approximately $4,480 more than selling and donating cash (at 24% income + 15% LTCG rates).",
+    "type": "skill",
+    "tags": ["charitable_giving", "appreciated_stock", "tax_deduction"],
+    "source": "finance_knowledge"
+  },
+  {
+    "content": "A Donor-Advised Fund (DAF) allows an immediate tax deduction for the full contribution amount while distributing grants to charities over time. Contributions of cash (up to 60% AGI), appreciated securities (up to 30% AGI), or other assets are irrevocable.",
+    "type": "skill",
+    "tags": ["donor_advised_fund", "charitable_giving", "tax_planning"],
+    "source": "finance_knowledge"
+  },
+  {
+    "content": "The federal estate tax exemption is $13.61 million per individual ($27.22 million per couple) for 2024. Estates exceeding this threshold are taxed at a flat 40% rate. The exemption is scheduled to revert to approximately $7 million (inflation-adjusted) after 2025 under TCJA sunset.",
+    "type": "fact",
+    "tags": ["estate_tax", "exemption", "wealth_transfer"],
+    "source": "finance_knowledge"
+  },
+  {
+    "content": "The Alternative Minimum Tax (AMT) uses a parallel tax calculation with fewer deductions and a flat 26% rate on the first $232,600 (2024) and 28% above that. AMT exemption is $85,700 single / $133,300 married, phasing out at 25 cents per dollar above $609,350 single.",
+    "type": "fact",
+    "tags": ["amt", "alternative_minimum_tax", "tax_calculation"],
+    "source": "finance_knowledge"
+  },
+  {
+    "content": "Estimated quarterly tax payments (Form 1040-ES) are due April 15, June 15, September 15, and January 15. Underpayment penalties apply if you owe >$1,000 and paid less than 90% of current year tax or 100% of prior year tax (110% if AGI >$150,000).",
+    "type": "fact",
+    "tags": ["estimated_taxes", "quarterly_payments", "self_employment"],
+    "source": "finance_knowledge"
+  },
+  {
+    "content": "Self-employment tax is 15.3% on the first $168,600 of net earnings (2024): 12.4% Social Security + 2.9% Medicare. An additional 0.9% Medicare surtax applies above $200,000 single / $250,000 married. The deductible portion is 50% of SE tax paid.",
+    "type": "fact",
+    "tags": ["self_employment_tax", "social_security", "medicare"],
+    "source": "finance_knowledge"
+  },
+  {
+    "content": "Net Investment Income Tax (NIIT) imposes a 3.8% surtax on the lesser of net investment income or MAGI exceeding $200,000 single / $250,000 married. Investment income includes interest, dividends, capital gains, rents, and royalties but excludes active business income.",
+    "type": "fact",
+    "tags": ["niit", "investment_tax", "surtax"],
+    "source": "finance_knowledge"
+  },
+  {
+    "content": "Backdoor Roth IRA strategy: contribute $7,000 (2024 limit, $8,000 if 50+) to a non-deductible traditional IRA, then convert to Roth. The pro-rata rule applies if you have existing pre-tax IRA balances, making the conversion partially taxable based on the ratio of pre-tax to total IRA funds.",
+    "type": "skill",
+    "tags": ["backdoor_roth", "roth_ira", "high_income_strategy"],
+    "source": "finance_knowledge"
+  },
+  {
+    "content": "Health Savings Account (HSA) is triple tax-advantaged: deductible contributions ($4,150 individual / $8,300 family for 2024), tax-free growth, and tax-free withdrawals for qualified medical expenses. After age 65, non-medical withdrawals are taxed as ordinary income (no penalty).",
+    "type": "skill",
+    "tags": ["hsa", "health_savings", "tax_advantaged"],
+    "source": "finance_knowledge"
+  },
+  {
+    "content": "Installment sales (IRC Section 453) spread capital gains recognition across multiple years as payments are received. The gross profit ratio (gain/selling price) determines the taxable portion of each payment. This can keep income below higher tax bracket thresholds each year.",
+    "type": "skill",
+    "tags": ["installment_sale", "capital_gains", "tax_deferral"],
+    "source": "finance_knowledge"
+  },
+  {
+    "content": "Grantor Retained Annuity Trust (GRAT) transfers appreciation above the Section 7520 rate (currently ~5.4%) to beneficiaries gift-tax-free. A 2-year zeroed-out GRAT on $1M of stock appreciating 20% annually transfers approximately $310,000 tax-free.",
+    "type": "skill",
+    "tags": ["grat", "estate_planning", "wealth_transfer"],
+    "source": "finance_knowledge"
+  },
+  {
+    "content": "The standard deduction for 2024 is $14,600 single / $29,200 married filing jointly. Itemizing is beneficial when total deductions (SALT capped at $10,000, mortgage interest on $750K debt, charitable contributions, medical expenses exceeding 7.5% AGI) exceed the standard deduction.",
+    "type": "fact",
+    "tags": ["standard_deduction", "itemized_deductions", "salt"],
+    "source": "finance_knowledge"
+  },
+  {
+    "content": "Charitable remainder trusts (CRT) provide an immediate partial tax deduction, bypass capital gains on contributed appreciated assets, pay income to the donor for life or up to 20 years, with the remainder going to charity. The annuity must be 5-50% of initial value.",
+    "type": "skill",
+    "tags": ["charitable_remainder_trust", "estate_planning", "charitable"],
+    "source": "finance_knowledge"
+  },
+  {
+    "content": "Income shifting strategies include hiring family members (children under 18 in sole proprietorship are exempt from FICA), establishing family limited partnerships for valuation discounts (25-40% typical), and using irrevocable trusts to shift income to lower-bracket beneficiaries.",
+    "type": "skill",
+    "tags": ["income_shifting", "family_planning", "tax_strategy"],
+    "source": "finance_knowledge"
+  },
+  {
+    "content": "Tax bracket arbitrage involves accelerating deductions into high-income years and deferring income into low-income years. Bunching charitable donations every 2-3 years with a DAF, timing Roth conversions, and controlling business income recognition can save 10-15% effective tax rate.",
+    "type": "learning",
+    "tags": ["tax_arbitrage", "bracket_management", "tax_optimization"],
+    "source": "finance_knowledge"
+  }
+]

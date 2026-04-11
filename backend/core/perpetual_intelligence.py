@@ -164,7 +164,7 @@ class PerpetualIntelligence:
             try:
                 await self._task
             except asyncio.CancelledError:
-                pass
+                logger.debug("Perpetual intelligence task cancelled during shutdown")
         logger.info("Perpetual intelligence stopped after %d cycles", self._cycle_count)
 
     def stats(self) -> dict:
