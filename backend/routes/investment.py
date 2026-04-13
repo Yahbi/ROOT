@@ -32,14 +32,14 @@ router = APIRouter(prefix="/api/investment", tags=["investment"])
 # ── Request Models ───────────────────────────────────────────
 
 class ThesisRequest(BaseModel):
-    symbol: str
+    symbol: str = Field(min_length=1, max_length=10, pattern=r'^[A-Za-z0-9.\-]+$')
     agent_ids: Optional[list[str]] = None
     include_debate: bool = True
     portfolio_value: float = Field(default=100_000.0, gt=0)
 
 
 class QuickThesisRequest(BaseModel):
-    symbol: str
+    symbol: str = Field(min_length=1, max_length=10, pattern=r'^[A-Za-z0-9.\-]+$')
     portfolio_value: float = Field(default=100_000.0, gt=0)
 
 
@@ -49,13 +49,13 @@ class MultiThesisRequest(BaseModel):
 
 
 class DebateRequest(BaseModel):
-    symbol: str
+    symbol: str = Field(min_length=1, max_length=10, pattern=r'^[A-Za-z0-9.\-]+$')
     max_rounds: int = Field(default=2, ge=1, le=5)
     risk_rounds: int = Field(default=1, ge=1, le=3)
 
 
 class QuantRequest(BaseModel):
-    symbol: str
+    symbol: str = Field(min_length=1, max_length=10, pattern=r'^[A-Za-z0-9.\-]+$')
     portfolio_value: float = Field(default=100_000.0, gt=0)
 
 
@@ -68,7 +68,7 @@ class KellyRequest(BaseModel):
 
 
 class MonteCarloRequest(BaseModel):
-    symbol: str
+    symbol: str = Field(min_length=1, max_length=10, pattern=r'^[A-Za-z0-9.\-]+$')
     n_simulations: int = Field(default=10_000, ge=100, le=100_000)
     n_days: int = Field(default=30, ge=1, le=365)
     initial_value: float = Field(default=100_000.0, gt=0)
@@ -112,27 +112,12 @@ def _get_portfolio_optimizer(request: Request):
 
 def _thesis_to_dict(thesis) -> dict:
     """Convert InvestmentThesis to JSON-safe dict."""
-    d = asdict(thesis)
-    # Agent signals may have nested dataclasses
-    d["agent_signals"] = [asdict(s) for s in thesis.agent_signals]
-    d["quant_score"] = asdict(thesis.quant_score)
-    return d
+    return asdict(thesis)
 
 
 def _verdict_to_dict(verdict) -> dict:
     """Convert DebateVerdict to JSON-safe dict."""
-    d = asdict(verdict)
-    d["debate_rounds"] = [
-        {
-            "round_number": dr.round_number,
-            "bull_position": asdict(dr.bull_position),
-            "bear_position": asdict(dr.bear_position),
-            "duration_seconds": dr.duration_seconds,
-        }
-        for dr in verdict.debate_rounds
-    ]
-    d["risk_perspectives"] = [asdict(rp) for rp in verdict.risk_perspectives]
-    return d
+    return asdict(verdict)
 
 
 # ── Thesis Routes ────────────────────────────────────────────

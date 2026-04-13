@@ -15,6 +15,7 @@ All data is cached in-memory with TTL to avoid rate limiting.
 from __future__ import annotations
 
 import logging
+import threading
 import time
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
@@ -24,21 +25,30 @@ import numpy as np
 
 logger = logging.getLogger("root.market_data")
 
-# In-memory cache with TTL
+# In-memory cache with TTL + thread safety
 _cache: dict[str, tuple[float, Any]] = {}
+_cache_lock = threading.Lock()
 _CACHE_TTL = 300  # 5 minutes for real-time, 3600 for historical
+_CACHE_MAX_SIZE = 5000
 
 
 def _cache_get(key: str, ttl: int = _CACHE_TTL) -> Any:
-    if key in _cache:
-        ts, val = _cache[key]
-        if time.time() - ts < ttl:
-            return val
+    with _cache_lock:
+        if key in _cache:
+            ts, val = _cache[key]
+            if time.time() - ts < ttl:
+                return val
     return None
 
 
 def _cache_set(key: str, val: Any) -> None:
-    _cache[key] = (time.time(), val)
+    with _cache_lock:
+        # Evict oldest entries if cache is too large
+        if len(_cache) > _CACHE_MAX_SIZE:
+            oldest = sorted(_cache, key=lambda k: _cache[k][0])[:500]
+            for k in oldest:
+                del _cache[k]
+        _cache[key] = (time.time(), val)
 
 
 # ── Data Models ──────────────────────────────────────────────
@@ -186,7 +196,10 @@ class MarketDataService:
         if len(closes) < 2:
             return []
         arr = np.array(closes, dtype=np.float64)
-        return (np.diff(arr) / arr[:-1]).tolist()
+        prev = arr[:-1]
+        prev[prev == 0] = np.nan  # Guard against zero prices
+        returns = np.diff(arr) / prev
+        return [r for r in returns.tolist() if not np.isnan(r)]
 
     def get_quote(self, symbol: str) -> Optional[Quote]:
         """Fetch real-time quote."""
@@ -367,8 +380,8 @@ class MarketDataService:
 
         result = {}
         for sector, companies in sectors.items():
-            pe_ratios = [c.pe_ratio for c in companies if c.pe_ratio]
-            margins = [c.profit_margin for c in companies if c.profit_margin]
+            pe_ratios = [c.pe_ratio for c in companies if c.pe_ratio is not None]
+            margins = [c.profit_margin for c in companies if c.profit_margin is not None]
             result[sector] = {
                 "count": len(companies),
                 "avg_pe": round(sum(pe_ratios) / len(pe_ratios), 2) if pe_ratios else None,

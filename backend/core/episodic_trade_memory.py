@@ -20,10 +20,10 @@ import json
 import logging
 import sqlite3
 import uuid
-from dataclasses import asdict, dataclass, field
+from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any, Optional
+from typing import Optional
 
 from backend.config import ROOT_DIR
 
@@ -81,6 +81,7 @@ class EpisodicTradeMemory:
         self._conn = sqlite3.connect(str(self._db_path), check_same_thread=False)
         self._conn.execute("PRAGMA journal_mode=WAL")
         self._conn.execute("PRAGMA synchronous=NORMAL")
+        self._conn.execute("PRAGMA busy_timeout=5000")
         self._create_tables()
         logger.info("Episodic trade memory: started (db=%s)", self._db_path)
 
@@ -88,6 +89,11 @@ class EpisodicTradeMemory:
         if self._conn:
             self._conn.close()
             self._conn = None
+
+    def _ensure_started(self) -> None:
+        """Auto-start if not already started."""
+        if self._conn is None:
+            self.start()
 
     def _create_tables(self) -> None:
         self._conn.executescript("""
@@ -141,6 +147,7 @@ class EpisodicTradeMemory:
         tags: Optional[list[str]] = None,
     ) -> str:
         """Record a new trade entry. Returns episode ID."""
+        self._ensure_started()
         episode_id = f"ep-{uuid.uuid4().hex[:10]}"
 
         self._conn.execute(
@@ -172,6 +179,7 @@ class EpisodicTradeMemory:
         lesson: str = "",
     ) -> None:
         """Record trade exit with outcome."""
+        self._ensure_started()
         if pnl > 0:
             outcome = "win"
         elif pnl < 0:
@@ -204,6 +212,7 @@ class EpisodicTradeMemory:
 
     def extract_lesson(self, episode_id: str, llm=None) -> str:
         """Extract a lesson from a completed trade (LLM or heuristic)."""
+        self._ensure_started()
         episode = self.get_episode(episode_id)
         if not episode:
             return ""
@@ -244,6 +253,7 @@ class EpisodicTradeMemory:
 
     def get_episode(self, episode_id: str) -> Optional[dict]:
         """Retrieve a single episode."""
+        self._ensure_started()
         row = self._conn.execute(
             "SELECT * FROM trade_episodes WHERE id = ?", (episode_id,)
         ).fetchone()
@@ -259,6 +269,7 @@ class EpisodicTradeMemory:
         limit: int = 50,
     ) -> list[dict]:
         """Query episodes with filters."""
+        self._ensure_started()
         query = "SELECT * FROM trade_episodes WHERE 1=1"
         params = []
 
@@ -280,6 +291,7 @@ class EpisodicTradeMemory:
 
     def get_lessons(self, limit: int = 20) -> list[dict]:
         """Get recent lessons from completed trades."""
+        self._ensure_started()
         rows = self._conn.execute(
             """SELECT id, market_id, outcome, lesson, strategy, regime,
                       thesis_confidence, brier_error, pnl, pnl_pct, created_at
@@ -301,6 +313,7 @@ class EpisodicTradeMemory:
 
     def get_calibration_data(self) -> list[tuple[float, int]]:
         """Get (predicted_confidence, actual_outcome) pairs for Brier scoring."""
+        self._ensure_started()
         rows = self._conn.execute(
             """SELECT thesis_confidence, outcome
                FROM trade_episodes
@@ -314,6 +327,7 @@ class EpisodicTradeMemory:
 
     def get_strategy_stats(self) -> dict[str, dict]:
         """Aggregate stats per strategy."""
+        self._ensure_started()
         rows = self._conn.execute(
             """SELECT strategy,
                       COUNT(*) as total,
@@ -342,6 +356,7 @@ class EpisodicTradeMemory:
 
     def stats(self) -> dict:
         """Overall episodic memory stats."""
+        self._ensure_started()
         row = self._conn.execute(
             """SELECT
                  COUNT(*) as total,

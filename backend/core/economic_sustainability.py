@@ -14,10 +14,9 @@ The system must self-fund or die — no perpetual subsidies.
 from __future__ import annotations
 
 import logging
-import time
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
-from typing import Any, Optional
+from datetime import datetime, timedelta, timezone
+from typing import Optional
 
 logger = logging.getLogger("root.economic_sustainability")
 
@@ -136,9 +135,16 @@ class EconomicSustainability:
     ) -> ProfitAllocation:
         """Allocate profit according to reinvestment rules."""
         if amount <= 0:
+            # Losses deducted from trading balance + tracked per-strategy
+            self._trading_balance += amount
+            if strategy not in self._strategy_pnl:
+                self._strategy_pnl[strategy] = {"pnl": 0, "trades": 0, "wins": 0}
+            self._strategy_pnl[strategy]["pnl"] += amount
+            self._strategy_pnl[strategy]["trades"] += 1
+            self._update_mode()
             return ProfitAllocation(
                 gross_profit=amount,
-                to_trading=amount,  # Losses come from trading
+                to_trading=amount,
                 to_compute=0,
                 to_cold_storage=0,
                 strategy_source=strategy,
@@ -226,16 +232,15 @@ class EconomicSustainability:
         if self._notifications:
             import asyncio
             try:
-                loop = asyncio.get_event_loop()
-                if loop.is_running():
-                    asyncio.ensure_future(self._notifications.send(
-                        title="Economic Sustainability Alert",
-                        body=message,
-                        level="critical",
-                        source="economic_sustainability",
-                    ))
-            except Exception:
-                pass
+                loop = asyncio.get_running_loop()
+                loop.create_task(self._notifications.send(
+                    title="Economic Sustainability Alert",
+                    body=message,
+                    level="critical",
+                    source="economic_sustainability",
+                ))
+            except RuntimeError:
+                pass  # No running event loop
         logger.critical("ECONOMIC ALERT: %s", message)
 
     @property
@@ -284,11 +289,13 @@ class EconomicSustainability:
         return snapshot
 
     def _estimate_monthly_revenue(self) -> float:
-        """Estimate monthly revenue from recent allocations."""
+        """Estimate monthly revenue from allocations in the last 30 days."""
         if not self._allocations:
             return 0.0
-        # Use last 30 allocations as proxy
-        recent = self._allocations[-30:]
+        cutoff = (datetime.now(timezone.utc) - timedelta(days=30)).isoformat()
+        recent = [a for a in self._allocations if a.timestamp >= cutoff]
+        if not recent:
+            return 0.0
         total_profit = sum(a.gross_profit for a in recent)
         return max(0, total_profit)
 
@@ -329,8 +336,12 @@ class EconomicSustainability:
         return results
 
     def should_trade(self) -> bool:
-        """Whether the system is allowed to trade."""
-        return self._mode in ("full", "low_risk")
+        """Whether the system is allowed to trade.
+
+        Emergency mode allows small trades (25% size) to try to recover.
+        Only 'paused' fully blocks trading.
+        """
+        return self._mode in ("full", "low_risk", "emergency")
 
     def max_position_multiplier(self) -> float:
         """Position size multiplier based on mode.

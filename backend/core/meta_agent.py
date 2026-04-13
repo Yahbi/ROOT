@@ -179,7 +179,7 @@ class MetaAgent:
                     f"Reflection cycle {cycle_id}: Brier={bs:.3f}, "
                     f"Calibration error={cal.calibration_error:.3f}, "
                     f"Overconfidence={cal.overconfidence:+.3f}, "
-                    f"Sharpe={current_sharpe:.2f if current_sharpe else 'N/A'}, "
+                    f"Sharpe={f'{current_sharpe:.2f}' if current_sharpe else 'N/A'}, "
                     f"Regime={regime}. "
                     f"Generated {len(hypotheses)} hypotheses, accepted {accepted}."
                 )
@@ -391,11 +391,11 @@ class MetaAgent:
         self._running = True
         interval_seconds = interval_hours * 3600
         while self._running:
-            await asyncio.sleep(interval_seconds)
             try:
                 await self.run_reflection_cycle()
             except Exception as e:
                 logger.error("Meta-Agent reflection loop error: %s", e)
+            await asyncio.sleep(interval_seconds)
 
     def stop(self) -> None:
         self._running = False

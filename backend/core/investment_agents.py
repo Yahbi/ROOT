@@ -15,6 +15,8 @@ from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from typing import Any, Optional
 
+from backend.core.quant_models import compute_indicators
+
 logger = logging.getLogger("root.investment_agents")
 
 
@@ -592,7 +594,6 @@ class InvestmentAgentRunner:
             parts.append("\n".join(lines))
 
         # Technical indicators
-        from backend.core.quant_models import compute_indicators
         closes = self._market_data.get_closes(symbol, period="1y")
         if len(closes) >= 26:
             indicators = compute_indicators(closes)

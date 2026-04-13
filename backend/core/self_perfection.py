@@ -25,7 +25,7 @@ import time
 import uuid
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
-from typing import Any, Optional
+from typing import Optional
 
 logger = logging.getLogger("root.self_perfection")
 
@@ -145,10 +145,12 @@ class SelfPerfectionEngine:
         # 5. Learning efficiency gaps
         gaps.extend(self._check_learning_gaps())
 
-        for gap in gaps:
-            self._gaps.append(gap)
+        # Deduplicate: don't re-add gaps for the same metric
+        existing_metrics = {g.metric_name for g in self._gaps}
+        new_gaps = [g for g in gaps if g.metric_name not in existing_metrics]
+        self._gaps.extend(new_gaps)
 
-        if gaps:
+        if new_gaps:
             logger.info("Self-perfection: found %d gaps (%s)",
                         len(gaps), ", ".join(g.category for g in gaps))
 

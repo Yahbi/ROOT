@@ -140,8 +140,8 @@ class PortfolioOptimizer:
             if rets:
                 returns_map[sym] = rets
 
-        # 3. Correlation matrix
-        corr_matrix = self._compute_correlations(returns_map, symbols)
+        # 3. Correlation matrix (only symbols with return data)
+        corr_matrix, corr_symbols = self._compute_correlations(returns_map, symbols)
         max_corr = 0.0
         if corr_matrix is not None and len(corr_matrix) > 1:
             # Find max off-diagonal correlation
@@ -172,10 +172,10 @@ class PortfolioOptimizer:
 
             # Correlation penalty: reduce if highly correlated with existing
             corr_mult = 1.0
-            if corr_matrix is not None:
-                sym_idx = symbols.index(sym) if sym in symbols else -1
+            if corr_matrix is not None and sym in corr_symbols:
+                sym_idx = corr_symbols.index(sym)
                 if sym_idx >= 0:
-                    for j, other_sym in enumerate(symbols):
+                    for j, other_sym in enumerate(corr_symbols):
                         if j != sym_idx and abs(corr_matrix[sym_idx][j]) > self._max_correlation:
                             corr_mult = 0.5
                             risk_warnings.append(
@@ -199,8 +199,8 @@ class PortfolioOptimizer:
             )
 
             # Don't exceed total portfolio risk
-            if total_weight + weight > self._max_portfolio_risk * 100 / 100:
-                weight = max(0, self._max_portfolio_risk * 100 / 100 - total_weight)
+            if total_weight + weight > self._max_portfolio_risk:
+                weight = max(0, self._max_portfolio_risk - total_weight)
                 if weight <= 0:
                     risk_warnings.append(f"{sym}: Portfolio risk limit reached — skipped")
                     continue
@@ -274,19 +274,23 @@ class PortfolioOptimizer:
 
     def _compute_correlations(
         self, returns_map: dict[str, list[float]], symbols: list[str],
-    ) -> Optional[np.ndarray]:
-        """Compute correlation matrix from return series."""
+    ) -> tuple[Optional[np.ndarray], list[str]]:
+        """Compute correlation matrix from return series.
+
+        Returns (correlation_matrix, filtered_symbol_list) so callers
+        can index the matrix correctly even when some symbols lack data.
+        """
         available = [s for s in symbols if s in returns_map]
         if len(available) < 2:
-            return None
+            return None, available
 
         # Align length
         min_len = min(len(returns_map[s]) for s in available)
         if min_len < 10:
-            return None
+            return None, available
 
         matrix = np.array([returns_map[s][-min_len:] for s in available])
-        return np.corrcoef(matrix)
+        return np.corrcoef(matrix), available
 
     def _get_sector(self, symbol: str) -> str:
         """Get sector for a symbol."""

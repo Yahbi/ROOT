@@ -109,9 +109,6 @@ def kelly_prediction_market(
     p = max(0.001, min(0.999, true_probability))
     q = max(0.001, min(0.999, market_price))
 
-    if q >= 1.0:
-        q = 0.999
-
     # Win/loss ratio in prediction market: payout = 1/q, cost = q
     # So b = (1 - q) / q  (you pay q, win 1-q net)
     b = (1.0 - q) / q
@@ -184,8 +181,9 @@ def lmsr_cost(
 
     def _cost_fn(q: list[float]) -> float:
         q_arr = np.array(q, dtype=np.float64) / b
-        q_arr -= q_arr.max()
-        return b * (q_arr.max() * b / b + np.log(np.sum(np.exp(q_arr))))
+        max_val = q_arr.max()
+        q_shifted = q_arr - max_val
+        return b * (max_val + np.log(np.sum(np.exp(q_shifted))))
 
     return _cost_fn(quantities_after) - _cost_fn(quantities_before)
 
@@ -323,7 +321,7 @@ def brier_score(
     Perfect = 0.0, worst = 1.0, random = 0.25.
     """
     if not predictions:
-        return 0.5
+        return float('nan')
     n = len(predictions)
     return sum((p - o) ** 2 for p, o in predictions) / n
 
@@ -415,17 +413,23 @@ def monte_carlo_simulation(
 
     returns = np.array(historical_returns)
     mean_ret = np.mean(returns)
-    std_ret = np.std(returns)
+    std_ret = np.std(returns, ddof=1)
 
-    # Simulate paths
+    # Simulate paths, track per-path max drawdown
     final_values = []
+    max_drawdowns = []
     for _ in range(n_simulations):
         simulated_returns = np.random.normal(mean_ret, std_ret, n_days)
-        path_value = initial_value * np.prod(1 + simulated_returns)
-        final_values.append(path_value)
+        cum_path = initial_value * np.cumprod(1 + simulated_returns)
+        final_values.append(cum_path[-1])
+        # Max drawdown for this path
+        running_max = np.maximum.accumulate(cum_path)
+        drawdowns = (cum_path - running_max) / running_max
+        max_drawdowns.append(float(np.min(drawdowns)))
 
     final_values = np.array(final_values)
     total_returns = (final_values - initial_value) / initial_value
+    max_drawdowns = np.array(max_drawdowns)
 
     return {
         "initial_value": initial_value,
@@ -443,9 +447,7 @@ def monte_carlo_simulation(
         "p95_return": round(float(np.percentile(total_returns, 95)), 4),
         "prob_profit": round(float(np.mean(total_returns > 0)), 4),
         "prob_loss_gt_10pct": round(float(np.mean(total_returns < -0.10)), 4),
-        "max_drawdown_median": round(float(np.percentile(
-            np.minimum.accumulate(total_returns), 50
-        )), 4),
+        "max_drawdown_median": round(float(np.median(max_drawdowns)), 4),
     }
 
 
@@ -540,33 +542,39 @@ def garch_volatility(
     # Estimate conditional variance series
     n = len(ret)
     sigma2 = np.zeros(n)
-    sigma2[0] = np.var(ret)  # Initialize with sample variance
+    sigma2[0] = np.var(ret, ddof=1)  # Initialize with sample variance
 
     for t in range(1, n):
         sigma2[t] = omega + alpha * ret[t - 1] ** 2 + beta * sigma2[t - 1]
 
-    current_vol = math.sqrt(sigma2[-1])
+    current_vol = math.sqrt(max(0.0, sigma2[-1]))
     annualized_vol = current_vol * math.sqrt(252)
+
+    # Warn if non-stationary
+    persistence = alpha + beta
+    if persistence >= 1.0:
+        logger.warning("GARCH non-stationary: alpha+beta=%.3f >= 1.0", persistence)
 
     # Forecast variance
     forecast_var = []
     last_var = sigma2[-1]
     last_ret2 = ret[-1] ** 2
-    unconditional_var = omega / (1 - alpha - beta) if (alpha + beta) < 1 else np.var(ret)
+    unconditional_var = omega / (1 - persistence) if persistence < 1 else np.var(ret, ddof=1)
 
-    for i in range(forecast_days):
-        if i == 0:
-            next_var = omega + alpha * last_ret2 + beta * last_var
-        else:
-            # Multi-step: converges to unconditional
-            next_var = unconditional_var + (alpha + beta) ** i * (last_var - unconditional_var)
+    # 1-step-ahead forecast
+    one_step = omega + alpha * last_ret2 + beta * last_var
+    forecast_var.append(one_step)
+
+    for i in range(1, forecast_days):
+        # Multi-step: converges to unconditional variance
+        next_var = unconditional_var + persistence ** i * (one_step - unconditional_var)
         forecast_var.append(next_var)
 
-    forecast_vol = [math.sqrt(v) for v in forecast_var]
+    forecast_vol = [math.sqrt(max(0.0, v)) for v in forecast_var]
     forecast_vol_annual = [v * math.sqrt(252) for v in forecast_vol]
 
     # Regime detection
-    long_term_vol = math.sqrt(unconditional_var) * math.sqrt(252)
+    long_term_vol = math.sqrt(max(0.0, unconditional_var)) * math.sqrt(252)
     vol_ratio = annualized_vol / long_term_vol if long_term_vol > 0 else 1.0
 
     if vol_ratio > 1.5:
@@ -622,12 +630,13 @@ def cointegration_test(
     # Current z-score
     current_z = (spread[-1] - spread_mean) / spread_std if spread_std > 0 else 0.0
 
-    # Half-life of mean reversion (AR(1) on spread)
+    # Half-life of mean reversion (AR(1) on spread via OLS, not correlation)
     spread_lag = spread[:-1]
     spread_curr = spread[1:]
-    if np.var(spread_lag) > 0:
-        phi = np.corrcoef(spread_lag, spread_curr)[0, 1]
-        half_life = -math.log(2) / math.log(abs(phi)) if 0 < abs(phi) < 1 else float('inf')
+    var_lag = np.var(spread_lag)
+    if var_lag > 0:
+        phi = np.cov(spread_lag, spread_curr)[0, 1] / var_lag
+        half_life = -math.log(2) / math.log(phi) if 0 < phi < 1 else float('inf')
     else:
         phi = 0.0
         half_life = float('inf')
@@ -702,19 +711,24 @@ def compute_indicators(
     macd_signal = _ema(macd_line, 9) if len(macd_line) >= 9 else macd_line
     macd_hist = macd_line[-1] - macd_signal[-1] if macd_signal else 0.0
 
-    # RSI (14-period)
-    deltas = np.diff(arr[-15:])
+    # RSI (14-period, Wilder's smoothing)
+    deltas = np.diff(arr)
     gains = np.where(deltas > 0, deltas, 0)
     losses = np.where(deltas < 0, -deltas, 0)
-    avg_gain = np.mean(gains) if len(gains) > 0 else 0
-    avg_loss = np.mean(losses) if len(losses) > 0 else 0.001
-    rs = avg_gain / avg_loss if avg_loss > 0 else 100
+    # Seed with SMA of first 14, then Wilder smooth the rest
+    avg_gain = float(np.mean(gains[:14])) if len(gains) >= 14 else float(np.mean(gains))
+    avg_loss = float(np.mean(losses[:14])) if len(losses) >= 14 else float(np.mean(losses))
+    for i in range(14, len(gains)):
+        avg_gain = (avg_gain * 13 + gains[i]) / 14
+        avg_loss = (avg_loss * 13 + losses[i]) / 14
+    avg_loss = max(avg_loss, 0.001)
+    rs = avg_gain / avg_loss
     rsi = 100 - (100 / (1 + rs))
 
     # Bollinger Bands (20-period, 2 std)
     bb_period = arr[-20:]
     bb_mid = float(np.mean(bb_period))
-    bb_std = float(np.std(bb_period))
+    bb_std = float(np.std(bb_period, ddof=1))
     bb_upper = bb_mid + 2 * bb_std
     bb_lower = bb_mid - 2 * bb_std
     bb_pct = (prices[-1] - bb_lower) / (bb_upper - bb_lower) if (bb_upper - bb_lower) > 0 else 0.5
@@ -780,16 +794,16 @@ def risk_metrics(
 
     ret = np.array(returns, dtype=np.float64)
     mean_ret = float(np.mean(ret))
-    std_ret = float(np.std(ret))
+    std_ret = float(np.std(ret, ddof=1))
     annual_ret = mean_ret * 252
     annual_vol = std_ret * math.sqrt(252)
 
     # Sharpe
     sharpe = (annual_ret - risk_free_rate) / annual_vol if annual_vol > 0 else 0.0
 
-    # Sortino (downside deviation only)
-    downside = ret[ret < 0]
-    downside_std = float(np.std(downside)) * math.sqrt(252) if len(downside) > 0 else annual_vol
+    # Sortino (downside deviation: sqrt of mean of squared negative excess returns)
+    downside_diff = np.minimum(ret - risk_free_rate / 252, 0)
+    downside_std = float(np.sqrt(np.mean(downside_diff ** 2))) * math.sqrt(252)
     sortino = (annual_ret - risk_free_rate) / downside_std if downside_std > 0 else 0.0
 
     # Max Drawdown
@@ -818,7 +832,7 @@ def risk_metrics(
         "avg_win": round(float(np.mean(ret[ret > 0])), 4) if len(ret[ret > 0]) > 0 else 0.0,
         "avg_loss": round(float(np.mean(ret[ret < 0])), 4) if len(ret[ret < 0]) > 0 else 0.0,
         "profit_factor": round(
-            float(np.sum(ret[ret > 0]) / abs(np.sum(ret[ret < 0]))) if np.sum(ret[ret < 0]) != 0 else 0.0,
+            float(np.sum(ret[ret > 0]) / abs(np.sum(ret[ret < 0]))) if np.sum(ret[ret < 0]) != 0 else float('inf'),
             3,
         ),
         "total_trades": len(returns),

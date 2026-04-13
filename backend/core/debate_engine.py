@@ -474,8 +474,6 @@ class DebateEngine:
     ) -> tuple[str, float, float, str, str]:
         """Portfolio Manager makes final actionable decision."""
         risk_summary = "\n".join(
-            f"{rp.perspective}: {rp.verdict} (max {rp.max_posi_pct}%, confidence {rp.confidence}%)"
-            if hasattr(rp, 'max_posi_pct') else
             f"{rp.perspective}: {rp.verdict} (max {rp.max_position_pct}%, confidence {rp.confidence}%)"
             for rp in risk_perspectives
         )

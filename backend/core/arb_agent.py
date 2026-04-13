@@ -14,14 +14,12 @@ The PICO math core — runs pure math, no LLM needed at runtime for speed.
 from __future__ import annotations
 
 import logging
-import time
 import uuid
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from typing import Any, Optional
 
 from backend.core.quant_models import (
-    lmsr_prices,
     detect_arbitrage,
     logical_arbitrage,
     kelly_prediction_market,
@@ -240,7 +238,7 @@ class ArbAgent:
             confidence=confidence,
             kelly_size_pct=min(self._max_position_pct, confidence / 30),
             reasoning=(
-                f"Cointegrated pair (half-life: {half_life:.0f}d). "
+                f"Cointegrated pair (half-life: {f'{half_life:.0f}d' if half_life else 'N/A'}). "
                 f"Z-score: {result['current_z_score']:+.2f}, "
                 f"Signal: {signal}, Hedge ratio: {result['hedge_ratio']:.3f}"
             ),
