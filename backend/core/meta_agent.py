@@ -296,7 +296,7 @@ class MetaAgent:
             f"- Brier Score: {brier:.4f} (0=perfect, 0.25=random)\n"
             f"- Calibration Error: {cal.calibration_error:.4f}\n"
             f"- Overconfidence: {cal.overconfidence:+.4f}\n"
-            f"- Sharpe Ratio: {sharpe:.2f if sharpe else 'N/A'}\n"
+            f"- Sharpe Ratio: {f'{sharpe:.2f}' if sharpe else 'N/A'}\n"
             f"- Market Regime: {regime}\n"
             f"- Predictions Analyzed: {n_predictions}\n\n"
             f"BUCKET CALIBRATION:\n"
