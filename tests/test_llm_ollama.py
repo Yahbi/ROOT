@@ -74,16 +74,19 @@ class TestConvertToolsToOpenai:
 # OllamaLLMService._resolve_model tests
 # ===========================================================================
 
+_MOCK_TIERS = {
+    "fast": "llama3.2:3b",
+    "default": "llama3.1:8b",
+    "thinking": "deepseek-r1:8b",
+}
+
+
+@patch("backend.services.llm_ollama.OLLAMA_DEFAULT_MODEL", "llama3.1:8b")
+@patch("backend.services.llm_ollama.OLLAMA_FAST_MODEL", "llama3.2:3b")
+@patch("backend.services.llm_ollama.OLLAMA_THINKING_MODEL", "deepseek-r1:8b")
+@patch("backend.services.llm_ollama.MODEL_TIERS", _MOCK_TIERS)
 class TestResolveModel:
 
-    @patch("backend.services.llm_ollama.OLLAMA_DEFAULT_MODEL", "llama3.1:8b")
-    @patch("backend.services.llm_ollama.OLLAMA_FAST_MODEL", "mistral:7b")
-    @patch("backend.services.llm_ollama.OLLAMA_THINKING_MODEL", "deepseek-r1:8b")
-    @patch("backend.services.llm_ollama.MODEL_TIERS", {
-        "fast": "mistral:7b",
-        "default": "llama3.1:8b",
-        "thinking": "deepseek-r1:8b",
-    })
     def _make_service(self):
         """Create an OllamaLLMService with mocked openai client."""
         with patch("openai.AsyncOpenAI"):

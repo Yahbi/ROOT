@@ -29,8 +29,14 @@ def memory_engine(tmp_db):
 
 @pytest.fixture
 def mock_llm():
-    """Provide a mock LLM service."""
-    llm = AsyncMock()
+    """Provide a mock LLM service.
+
+    Uses MagicMock as the base so attribute access defaults to sync mocks
+    (matching production where chat_started/chat_finished are sync). Async
+    methods are explicitly opted in via AsyncMock so `await llm.complete(...)`
+    works as expected.
+    """
+    llm = MagicMock()
     llm.complete = AsyncMock(return_value="Mock LLM response")
     llm.complete_with_tools = AsyncMock(return_value=("Mock response", []))
     llm.provider = "mock"

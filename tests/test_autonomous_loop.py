@@ -87,10 +87,12 @@ def mock_learning():
 
 @pytest.fixture
 def mock_bus():
-    bus = AsyncMock()
+    # Bus has a mix of sync (create_message) and async (publish) methods.
+    # MagicMock as base + explicit AsyncMock for publish keeps both correct.
+    bus = MagicMock()
     msg = MagicMock()
     bus.create_message.return_value = msg
-    bus.publish.return_value = None
+    bus.publish = AsyncMock(return_value=None)
     return bus
 
 

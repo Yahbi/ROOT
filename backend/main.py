@@ -109,6 +109,7 @@ from backend.routes import scenarios as scenarios_routes
 from backend.routes import councils as councils_routes
 from backend.routes import agi as agi_routes
 from backend.routes import perpetual as perpetual_routes
+from backend.routes import investment as investment_routes
 
 logging.basicConfig(
     level=logging.INFO,
@@ -1266,6 +1267,136 @@ async def lifespan(app: FastAPI):
         await agent_swarm.start(interval=120)
         logger.info("Perpetual intelligence + Agent swarm: STARTED")
 
+    # ── INVESTMENT INTELLIGENCE (17 agents + debate + thesis + portfolio) ──
+    from backend.core.market_data import MarketDataService as YFMarketData
+    from backend.core.investment_agents import InvestmentAgentRunner
+    from backend.core.debate_engine import DebateEngine
+    from backend.core.thesis_engine import ThesisEngine
+    from backend.core.portfolio_optimizer import PortfolioOptimizer
+
+    yf_market_data = YFMarketData()
+    app.state.yf_market_data = yf_market_data
+
+    investment_runner = InvestmentAgentRunner(llm=llm, market_data=yf_market_data) if llm else None
+    app.state.investment_runner = investment_runner
+
+    debate_engine = DebateEngine(
+        llm=llm,
+        investment_runner=investment_runner,
+        market_data=yf_market_data,
+        experience_memory=experience_memory,
+        prediction_ledger=prediction_ledger,
+        bus=bus,
+    )
+    app.state.debate_engine = debate_engine
+
+    thesis_engine = ThesisEngine(
+        llm=llm,
+        market_data=yf_market_data,
+        debate_engine=debate_engine,
+        experience_memory=experience_memory,
+        prediction_ledger=prediction_ledger,
+        learning_engine=learning,
+        bus=bus,
+    )
+    app.state.thesis_engine = thesis_engine
+
+    portfolio_optimizer = PortfolioOptimizer(market_data=yf_market_data)
+    app.state.portfolio_optimizer = portfolio_optimizer
+
+    logger.info("Investment intelligence: 17 agents + debate + thesis + portfolio optimization ACTIVE")
+    logger.info("  Quant models: Kelly | LMSR | EV/Arb | Brier | ARIMA | GARCH | Monte Carlo")
+    logger.info("  Philosophy agents: Buffett | Graham | Munger | Burry | Wood | Taleb | Lynch | Fisher | Ackman | Druckenmiller | Damodaran | Pabrai | Jhunjhunwala")
+    logger.info("  Analysis agents: Valuation | Fundamentals | Sentiment | Technicals")
+
+    # ── META-AGENT (CEO / Self-Improver) ─────────────────────
+    from backend.core.meta_agent import MetaAgent
+    meta_agent = MetaAgent(
+        llm=llm,
+        prediction_ledger=prediction_ledger,
+        experience_memory=experience_memory,
+        learning_engine=learning,
+        thesis_engine=thesis_engine,
+        hedge_fund=hedge_fund,
+        bus=bus,
+        state_store=state_store,
+    )
+    app.state.meta_agent = meta_agent
+    logger.info("Meta-Agent: CEO self-improver — nightly reflection + Brier recalibration ACTIVE")
+
+    # ── ARB AGENT (pure-math spread harvesting) ──────────────
+    from backend.core.arb_agent import ArbAgent
+    arb_agent = ArbAgent()
+    app.state.arb_agent = arb_agent
+    logger.info("Arb Agent: LMSR spread harvesting + cross-market arbitrage ACTIVE")
+
+    # ── ECONOMIC SUSTAINABILITY ("pay for yourself or die") ──
+    from backend.core.economic_sustainability import EconomicSustainability
+    economic_sustainability = EconomicSustainability(
+        notification_engine=notifications,
+        bus=bus,
+    )
+    app.state.economic_sustainability = economic_sustainability
+    logger.info("Economic sustainability: pay-for-yourself-or-die engine ACTIVE (mode=%s)",
+                economic_sustainability.mode)
+
+    # ── EPISODIC TRADE MEMORY (per-trade learning) ───────────
+    from backend.core.episodic_trade_memory import EpisodicTradeMemory
+    episodic_trades = EpisodicTradeMemory()
+    episodic_trades.start()
+    app.state.episodic_trades = episodic_trades
+    logger.info("Episodic trade memory: per-trade logging + lesson extraction ACTIVE")
+
+    # ── SELF-PERFECTION ORGANISM ────────────────────────────────
+    from backend.core.self_perfection import SelfPerfectionEngine
+    self_perfection = SelfPerfectionEngine(
+        llm=llm,
+        meta_agent=meta_agent,
+        thesis_engine=thesis_engine,
+        prediction_ledger=prediction_ledger,
+        experience_memory=experience_memory,
+        learning_engine=learning,
+        episodic_trades=episodic_trades,
+        economic_sustainability=economic_sustainability,
+        self_writing_code=self_writing_code,
+        skills=skills,
+        bus=bus,
+        state_store=state_store,
+    )
+    app.state.self_perfection = self_perfection
+    logger.info("Self-perfection: gap finder + mutation loop + audit crew ACTIVE")
+
+    # ── ORGANISM HIERARCHY (CEO → Research → Signal → Risk → Execute) ──
+    from backend.core.organism_hierarchy import OrganismOrchestrator
+    organism = OrganismOrchestrator(
+        meta_agent=meta_agent,
+        thesis_engine=thesis_engine,
+        debate_engine=debate_engine,
+        arb_agent=arb_agent,
+        portfolio_optimizer=portfolio_optimizer,
+        hedge_fund=hedge_fund,
+        episodic_trades=episodic_trades,
+        economic_sustainability=economic_sustainability,
+        self_perfection=self_perfection,
+        prediction_ledger=prediction_ledger,
+        bus=bus,
+    )
+    app.state.organism = organism
+    logger.info("Organism hierarchy: %d nodes, %d tiers — living quant firm ACTIVE",
+                organism.stats()["total_nodes"], len(organism.stats()["tiers"]))
+
+    # Start background loops for self-improvement
+    if llm:
+        bg_tasks.append(asyncio.create_task(
+            _safe_loop("meta_agent", meta_agent.start_loop, 24.0),
+            name="meta_agent_loop",
+        ))
+        bg_tasks.append(asyncio.create_task(
+            _safe_loop("self_perfection", self_perfection.start_loop, 300, 86400),
+            name="self_perfection_loop",
+        ))
+        logger.info("Meta-Agent reflection (24h) + Self-Perfection (5min scan / 24h cycle): STARTED")
+
     # ── Startup complete ──────────────────────────────────────
     assessment = self_dev.assess()
     logger.info("=" * 60)
@@ -1295,6 +1426,12 @@ async def lifespan(app: FastAPI):
     logger.info("  AGI UPGRADES: Code Deployment | Decision Feedback | Adaptive Tuner")
     logger.info("  TRADING SUITE: Market Data | Consensus | 12 Investors | Model Racing")
     logger.info("  RESEARCH: Web Explorer | Document Analyzer | Continuous Research")
+    logger.info("  INVESTMENT: 17 philosophy+analysis agents | Bull/Bear debate | Thesis engine | Portfolio optimizer")
+    logger.info("  QUANT MODELS: Kelly | LMSR | EV/Arb | Brier | ARIMA | GARCH | Monte Carlo | Cointegration")
+    logger.info("  META-AGENT: CEO self-improver | Nightly reflection | Brier recalibration | Hypothesis testing")
+    logger.info("  ARB AGENT: LMSR spreads | Cross-market arb | Pairs trading | Bayesian updates")
+    logger.info("  ECONOMICS: Pay-for-yourself-or-die | Reinvestment rules | Strategy P&L | Survival mode")
+    logger.info("  EPISODIC MEMORY: Per-trade logging | Lesson extraction | Calibration tracking")
     logger.info("  PERPETUAL: All 172 agents working constantly (research + analysis + trading + coding + vision)")
     logger.info("  SKILLS: %d total (%d executable)", len(skills.list_all()), len(skill_executor.list_executable()))
     logger.info("  Dashboard: http://%s:%s", HOST, PORT)
@@ -1323,6 +1460,9 @@ async def lifespan(app: FastAPI):
     for t in bg_tasks:
         with contextlib.suppress(asyncio.CancelledError):
             await t
+    self_perfection.stop()
+    meta_agent.stop()
+    episodic_trades.stop()
     adaptive_tuner.stop()
     outcome_registry.stop()
     adaptive_config.stop()
@@ -1407,6 +1547,7 @@ _fastapi_app.include_router(scenarios_routes.router)
 _fastapi_app.include_router(councils_routes.router)
 _fastapi_app.include_router(agi_routes.router)
 _fastapi_app.include_router(perpetual_routes.router)
+_fastapi_app.include_router(investment_routes.router)
 
 
 # Health check
